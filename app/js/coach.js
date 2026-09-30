@@ -25,7 +25,7 @@ function page(profil, actif, contenu) {
   }).join('');
   return `<div class="bureau">
     <aside class="barre-laterale">
-      <img src="img/logo.jpg" alt="Booty Flow Coaching" class="logo-lateral">
+      <img src="img/banniere.jpg" alt="Booty Flow Coaching" class="logo-lateral">
       <nav aria-label="Menu coach">${liens}</nav>
       <button class="menu-lien deconnexion" id="deconnexion">${icone('sortie', 20)}<span>Se déconnecter</span></button>
     </aside>

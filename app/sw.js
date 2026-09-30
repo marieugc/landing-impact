@@ -1,19 +1,19 @@
 // Service worker : permet d'installer l'app et de l'ouvrir même avec une connexion faible.
 // Pense à changer le numéro de version à chaque mise à jour de l'app.
-const VERSION = 'bootyflow-v3';
+const VERSION = 'bootyflow-v4';
 
 const FICHIERS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/styles.css',
+  './css/styles.css?v=4',
   './js/config.js',
   './js/data.js',
   './js/ui.js',
   './js/eleve.js',
   './js/coach.js',
-  './js/app.js',
-  './img/logo.jpg',
+  './js/app.js?v=4',
+  './img/banniere.jpg',
   './img/coach.jpg',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -21,7 +21,8 @@ const FICHIERS = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(VERSION).then((cache) => cache.addAll(FICHIERS)));
+  event.waitUntil(caches.open(VERSION).then((cache) =>
+    cache.addAll(FICHIERS.map((f) => new Request(f, { cache: 'reload' })))));
   self.skipWaiting();
 });
 
@@ -41,7 +42,8 @@ self.addEventListener('fetch', (event) => {
 
   // Réseau d'abord (pour avoir toujours la dernière version), cache si hors ligne.
   event.respondWith(
-    fetch(event.request)
+    // cache: 'no-cache' : on redemande toujours au serveur s'il y a une nouvelle version
+    fetch(event.request, { cache: 'no-cache' })
       .then((reponse) => {
         const copie = reponse.clone();
         caches.open(VERSION).then((cache) => cache.put(event.request, copie));

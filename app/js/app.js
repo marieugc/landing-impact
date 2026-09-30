@@ -44,7 +44,7 @@ function ecranConnexion(onglet = 'connexion') {
   const inscription = onglet === 'inscription';
   racine.innerHTML = `<div class="connexion">
     ${bandeauDemo()}
-    <img src="img/logo.jpg" alt="Booty Flow Coaching" class="banniere">
+    <img src="img/banniere.jpg" alt="Booty Flow Coaching" class="banniere">
     <div class="bonjour centre">${inscription ? 'Bienvenue !' : 'Contente de te revoir'}</div>
     <div class="filtres centre" role="tablist">
       <button class="filtre${inscription ? '' : ' actif'}" data-onglet="connexion" role="tab" aria-selected="${!inscription}">Se connecter</button>
