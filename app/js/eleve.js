@@ -49,7 +49,7 @@ async function accueil(racine, profil) {
   const pct = Math.min(100, Math.round((profil.semaine / Math.max(1, profil.semaines_total)) * 100));
 
   racine.innerHTML = page(profil, 'accueil', `
-    <img src="img/logo.jpg" alt="Booty Flow Coaching" class="banniere">
+    <img src="img/banniere.jpg" alt="Booty Flow Coaching" class="banniere">
     <div class="ligne-entre">
       <div class="bonjour">Bonjour ${esc(profil.prenom)}</div>
       <button class="bouton-rond" id="cloche" aria-label="Notifications">${icone('cloche', 20)}
