@@ -135,7 +135,8 @@ async function afficher() {
       const ecran = {
         '': ecransCoach.tableau, undefined: ecransCoach.tableau,
         eleve: ecransCoach.fiche, videos: ecransCoach.videos, bilans: ecransCoach.bilans,
-        competitrices: ecransCoach.competitrices, nutrition: ecransCoach.plansNutrition
+        competitrices: ecransCoach.competitrices, nutrition: ecransCoach.plansNutrition,
+        charges: ecransCoach.suiviCharges
       }[sous] || ecransCoach.tableau;
       await ecran(racine, profil, params);
     } else {

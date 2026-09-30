@@ -15,7 +15,8 @@ const MENU = [
   { route: 'coach/nutrition', libelle: 'Plans nutrition', icone: 'nutrition' },
   { route: 'coach/videos', libelle: 'Vidéos à corriger', icone: 'video' },
   { route: 'coach/competitrices', libelle: 'Compétitrices', icone: 'etoile' },
-  { route: 'coach/bilans', libelle: 'Bilans', icone: 'progres' }
+  { route: 'coach/bilans', libelle: 'Bilans', icone: 'progres' },
+  { route: 'coach/charges', libelle: 'Suivi des charges', icone: 'haltere' }
 ];
 
 function page(profil, actif, contenu) {
@@ -376,4 +377,47 @@ async function plansNutrition(racine, profil) {
     </section>`);
 }
 
-export const ecransCoach = { tableau, fiche, videos, bilans, competitrices, plansNutrition };
+// Vue d'ensemble des charges de toutes les élèves
+async function suiviCharges(racine, profil) {
+  const [eleves, charges] = await Promise.all([api.listEleves(), api.listCharges()]);
+  const lignes = eleves.map((e) => {
+    const siennes = charges.filter((c) => c.eleve_id === e.id);
+    const parExo = new Map();
+    for (const c of siennes) {
+      if (!parExo.has(c.exercice)) parExo.set(c.exercice, []);
+      parExo.get(c.exercice).push(c);
+    }
+    // Records battus ces 7 derniers jours
+    let records = 0;
+    let meilleure = null;
+    for (const [exercice, liste] of parExo) {
+      liste.forEach((c, i) => {
+        const avant = liste.slice(0, i).map((x) => Number(x.poids));
+        if (avant.length && Number(c.poids) > Math.max(...avant) && joursAvant(c.date) >= -7) records += 1;
+      });
+      const gain = Number(liste[liste.length - 1].poids) - Number(liste[0].poids);
+      if (liste.length > 1 && (!meilleure || gain > meilleure.gain)) meilleure = { exercice, gain };
+    }
+    const derniere = siennes.length ? siennes[siennes.length - 1].date : null;
+    return { e, derniere, nbExos: parExo.size, records, meilleure };
+  }).sort((a, b) => (b.derniere || '').localeCompare(a.derniere || ''));
+
+  const html = lignes.map(({ e, derniere, nbExos, records, meilleure }) => `
+    <a href="#/coach/eleve/${esc(e.id)}/charges" class="tableau-ligne">
+      <span class="cellule-nom">${initiale(e.prenom)}<strong>${esc(e.prenom)}</strong>
+        ${records ? badge(`${records} RECORD${records > 1 ? 'S' : ''} CETTE SEMAINE`, VERT) : ''}</span>
+      <span class="gris">${derniere ? `Dernière séance : ${dateCourte(derniere)}` : 'Aucune charge notée'}</span>
+      <span class="gris">${nbExos ? `${nbExos} exercice${nbExos > 1 ? 's' : ''}` : ''}</span>
+      <span class="gris">${meilleure && meilleure.gain > 0 ? `${esc(meilleure.exercice)} <strong class="vert">${ecart(meilleure.gain)} kg</strong>` : ''}</span>
+      <span class="gris" aria-hidden="true">${icone('chevron', 20)}</span>
+    </a>`).join('');
+
+  racine.innerHTML = page(profil, 'coach/charges', titre('Suivi des charges') + `
+    <p class="gris">Clique sur une élève pour voir le détail de ses charges exercice par exercice, avec la courbe et l'historique.</p>
+    <section class="carte tableau">
+      <div class="tableau-tete"><span>ÉLÈVE</span><span>DERNIÈRE SÉANCE</span><span>EXERCICES</span><span>MEILLEURE PROGRESSION</span><span></span></div>
+      ${html || '<p class="vide">Aucune élève.</p>'}
+    </section>`);
+}
+
+export const ecransCoach = { tableau, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges };
