@@ -229,6 +229,7 @@ async function progres(racine, profil) {
       ${courbe(bilans.map((b) => ({ valeur: b.poids })))}
     </section>
     <div class="grille-3">${mesure('taille', 'Taille')}${mesure('hanches', 'Hanches')}${mesure('cuisse', 'Cuisse')}</div>
+    <div id="charges"></div>
     <section class="carte">
       <div class="ligne-entre"><div class="surtitre-carte">AVANT / APRÈS</div><span class="petit">Face</span></div>
       <div class="grille-2" id="photos">
@@ -236,10 +237,130 @@ async function progres(racine, profil) {
         <figure class="photo"><div class="photo-cadre" data-chemin="${esc(dernier.photo_face || '')}">Photo</div><figcaption>${dateCourte(dernier.date)}</figcaption></figure>
       </div>
     </section>
-  ` : `<section class="carte"><p class="vide">Fais ton premier bilan pour voir ta progression ici.</p></section>`) + `
+  ` : `<section class="carte"><p class="vide">Fais ton premier bilan pour voir ta progression ici.</p></section>
+    <div id="charges"></div>`) + `
     <a href="#/bilan" class="bouton-principal">${icone('plus', 18)}NOUVEAU BILAN DE LA SEMAINE</a>
   `);
   afficherPhotos(racine);
+  await blocCharges(racine.querySelector('#charges'), profil.id, true);
+}
+
+// ───────────── Suivi des charges (utilisé aussi dans la fiche coach) ─────────────
+const EXERCICES_COURANTS = [
+  'Hip thrust', 'Squat', 'Squat bulgare', 'Fentes', 'Fentes marchées', 'Soulevé de terre',
+  'Soulevé de terre roumain', 'Presse à cuisses', 'Leg curl', 'Leg extension', 'Abduction machine',
+  'Kickback poulie', 'Good morning', 'Step-up', 'Glute bridge', 'Hack squat', 'Développé couché',
+  'Développé militaire', 'Tirage vertical', 'Rowing', 'Élévations latérales', 'Curl biceps', 'Extension triceps'
+];
+
+function detailSerie(c) {
+  return c.series && c.reps ? `${c.series} × ${c.reps}` : c.reps ? `${c.reps} reps` : '';
+}
+
+// Regroupe les charges par exercice (le plus récemment travaillé en premier)
+function parExercice(charges) {
+  const groupes = new Map();
+  for (const c of charges) {
+    if (!groupes.has(c.exercice)) groupes.set(c.exercice, []);
+    groupes.get(c.exercice).push(c);
+  }
+  return [...groupes.entries()]
+    .map(([exercice, liste]) => ({ exercice, liste }))
+    .sort((a, b) => b.liste[b.liste.length - 1].date.localeCompare(a.liste[a.liste.length - 1].date));
+}
+
+export async function blocCharges(zone, eleveId, modifiable) {
+  if (!zone) return;
+  const charges = await api.listCharges(eleveId);
+  const groupes = parExercice(charges);
+  const cartes = groupes.map(({ exercice, liste }) => {
+    const premier = liste[0], dernier = liste[liste.length - 1];
+    const record = Math.max(...liste.map((c) => Number(c.poids)));
+    const progression = Number(dernier.poids) - Number(premier.poids);
+    return `<button class="ligne-charge" data-exercice="${esc(exercice)}">
+      <span class="ligne-charge-texte"><strong>${esc(exercice)}</strong>
+        <span class="petit">${dateCourte(dernier.date)}${detailSerie(dernier) ? ` · ${detailSerie(dernier)}` : ''} · record ${nombre(record)} kg</span></span>
+      <span class="ligne-charge-valeur"><strong>${nombre(dernier.poids)} kg</strong>
+        ${liste.length > 1 ? `<small class="${progression > 0 ? 'vert' : 'gris'}">${ecart(progression)} kg</small>` : ''}</span>
+      ${icone('chevron', 18, 'var(--doux)')}
+    </button>`;
+  }).join('');
+
+  zone.innerHTML = `<section class="carte">
+    <div class="ligne-entre"><div class="surtitre-carte">${modifiable ? 'MES CHARGES' : 'CHARGES'}</div>
+      ${modifiable ? `<button class="bouton-contour compact" id="noter-charge">${icone('plus', 16)}Noter</button>` : ''}</div>
+    <div class="liste-charges">${cartes || `<p class="vide">${modifiable
+      ? 'Note tes charges après chaque séance pour suivre ta progression exercice par exercice.'
+      : 'Aucune charge notée pour le moment.'}</p>`}</div>
+  </section>`;
+
+  const recharger = () => blocCharges(zone, eleveId, modifiable);
+  zone.querySelector('#noter-charge')?.addEventListener('click', () =>
+    formulaireCharge(eleveId, groupes.map((g) => g.exercice), '', recharger));
+  zone.querySelectorAll('[data-exercice]').forEach((b) => b.addEventListener('click', () => {
+    const groupe = groupes.find((g) => g.exercice === b.dataset.exercice);
+    detailCharge(eleveId, groupe, groupes.map((g) => g.exercice), modifiable, recharger);
+  }));
+}
+
+function detailCharge(eleveId, { exercice, liste }, exercices, modifiable, recharger) {
+  const historique = [...liste].reverse().map((c) => `<div class="historique-ligne">
+      <span class="petit">${dateCourte(c.date)}</span>
+      <strong>${nombre(c.poids)} kg</strong>
+      <span class="petit">${detailSerie(c)}</span>
+      ${modifiable ? `<button class="bouton-icone" data-suppr-charge="${esc(c.id)}" aria-label="Supprimer la charge du ${dateCourte(c.date)}">${icone('poubelle', 16)}</button>` : '<span></span>'}
+      ${c.note ? `<span class="petit historique-note">« ${esc(c.note)} »</span>` : ''}
+    </div>`).join('');
+  const f = fenetre(exercice, `
+    ${courbe(liste.map((c) => ({ valeur: c.poids })), {
+      libelle: `Charges sur ${exercice}`, vide: 'La courbe apparaîtra à partir de deux séances notées.'
+    })}
+    <div class="historique">${historique}</div>
+    ${modifiable ? `<button class="bouton-principal" id="noter-meme">${icone('plus', 18)}NOTER UNE NOUVELLE CHARGE</button>` : ''}`);
+  f.querySelector('#noter-meme')?.addEventListener('click', () => formulaireCharge(eleveId, exercices, exercice, recharger));
+  f.querySelectorAll('[data-suppr-charge]').forEach((b) => b.addEventListener('click', async () => {
+    if (!confirm('Supprimer cette charge ?')) return;
+    await pendant(b, '…', () => api.deleteCharge(b.dataset.supprCharge));
+    fermerFenetre();
+    toast('Charge supprimée.');
+    recharger();
+  }));
+}
+
+function formulaireCharge(eleveId, exercices, exercice, recharger) {
+  const suggestions = [...new Set([...exercices, ...EXERCICES_COURANTS])];
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  const f = fenetre('Noter une charge', `<form class="formulaire">
+    <label>Exercice<input name="exercice" list="liste-exercices" value="${esc(exercice)}" required placeholder="Ex. : Hip thrust" autocomplete="off"></label>
+    <datalist id="liste-exercices">${suggestions.map((e) => `<option value="${esc(e)}"></option>`).join('')}</datalist>
+    <label>Charge<span class="avec-unite"><input name="poids" type="number" inputmode="decimal" step="0.5" min="0" required><em>kg</em></span></label>
+    <div class="grille-3">
+      <label>Séries<input name="series" type="number" inputmode="numeric" min="1" step="1" placeholder="4"></label>
+      <label>Répétitions<input name="reps" type="number" inputmode="numeric" min="1" step="1" placeholder="10"></label>
+      <label>Date<input name="date" type="date" value="${aujourdhui}" max="${aujourdhui}" required></label>
+    </div>
+    <label>Remarque (facultatif)<input name="note" placeholder="Ex. : dernière série difficile"></label>
+    <button class="bouton-principal" type="submit">${icone('check', 18)}ENREGISTRER</button>
+  </form>`);
+  if (exercice) f.querySelector('[name=poids]').focus();
+  f.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const d = new FormData(e.target);
+    const entier = (k) => (d.get(k) === '' ? null : Math.round(Number(d.get(k))));
+    const nom = d.get('exercice').trim();
+    const poids = Number(d.get('poids'));
+    // Même nom qu'un exercice déjà noté, sans tenir compte des majuscules
+    const existant = exercices.find((x) => x.toLowerCase() === nom.toLowerCase()) || nom;
+    const avant = (await api.listCharges(eleveId)).filter((c) => c.exercice === existant);
+    await pendant(e.submitter, 'Enregistrement…', () => api.addCharge(eleveId, {
+      exercice: existant, poids, series: entier('series'), reps: entier('reps'),
+      date: d.get('date'), note: d.get('note').trim()
+    }));
+    fermerFenetre();
+    const record = avant.length && poids > Math.max(...avant.map((c) => Number(c.poids)));
+    toast(record ? `Nouveau record sur ${existant}, bravo !` : 'Charge enregistrée.');
+    recharger();
+  });
 }
 
 export async function afficherPhotos(racine) {

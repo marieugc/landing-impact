@@ -4,7 +4,7 @@ import {
   esc, icone, dateCourte, joursAvant, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
-import { afficherPhotos } from './eleve.js';
+import { afficherPhotos, blocCharges } from './eleve.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -102,7 +102,7 @@ async function tableau(racine, profil) {
 }
 
 // ───────────── Fiche élève ─────────────
-const ONGLETS_FICHE = [['suivi', 'Suivi'], ['nutrition', 'Nutrition'], ['videos', 'Vidéos'], ['bilans', 'Bilans'], ['competition', 'Compétition']];
+const ONGLETS_FICHE = [['suivi', 'Suivi'], ['nutrition', 'Nutrition'], ['videos', 'Vidéos'], ['bilans', 'Bilans'], ['charges', 'Charges'], ['competition', 'Compétition']];
 
 async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
   const e = await api.getProfile(eleveId);
@@ -121,7 +121,7 @@ async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
   `);
   const zone = racine.querySelector('#onglet');
   const recharger = () => fiche(racine, profil, [eleveId, onglet]);
-  await ({ suivi: ficheSuivi, nutrition: ficheNutrition, videos: ficheVideos, bilans: ficheBilans, competition: ficheCompetition }[onglet] || ficheSuivi)(zone, e, recharger);
+  await ({ suivi: ficheSuivi, nutrition: ficheNutrition, videos: ficheVideos, bilans: ficheBilans, charges: ficheCharges, competition: ficheCompetition }[onglet] || ficheSuivi)(zone, e, recharger);
 }
 
 async function ficheSuivi(zone, e, recharger) {
@@ -273,6 +273,11 @@ async function ficheBilans(zone, e, recharger) {
     <div class="pile">${cartes || '<p class="vide">Aucun bilan pour le moment.</p>'}</div>`;
   brancherLu(zone, recharger);
   afficherPhotos(zone);
+}
+
+async function ficheCharges(zone, e) {
+  zone.innerHTML = '<div class="large" id="charges-eleve"></div>';
+  await blocCharges(zone.querySelector('#charges-eleve'), e.id, false);
 }
 
 async function ficheCompetition(zone, e, recharger) {

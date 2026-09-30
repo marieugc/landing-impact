@@ -94,12 +94,27 @@ create table if not exists public.competitions (
   checklist jsonb not null default '[]'
 );
 
+-- 6. Suivi des charges (musculation)
+create table if not exists public.charges (
+  id uuid primary key default gen_random_uuid(),
+  eleve_id uuid not null default auth.uid() references public.profiles on delete cascade,
+  exercice text not null,
+  date date not null default current_date,
+  poids numeric not null,
+  series int,
+  reps int,
+  note text,
+  created_at timestamptz not null default now()
+);
+create index if not exists charges_eleve_exercice on public.charges (eleve_id, exercice, date);
+
 -- ─── Sécurité : chaque élève ne voit QUE ses données, la coach voit tout ───
 alter table public.profiles enable row level security;
 alter table public.nutrition enable row level security;
 alter table public.videos enable row level security;
 alter table public.bilans enable row level security;
 alter table public.competitions enable row level security;
+alter table public.charges enable row level security;
 
 drop policy if exists "profil lecture" on public.profiles;
 create policy "profil lecture" on public.profiles for select using (id = auth.uid() or public.est_coach());
@@ -131,6 +146,13 @@ drop policy if exists "compet coach" on public.competitions;
 create policy "compet coach" on public.competitions for all using (public.est_coach()) with check (public.est_coach());
 drop policy if exists "compet checklist eleve" on public.competitions;
 create policy "compet checklist eleve" on public.competitions for update using (eleve_id = auth.uid());
+
+drop policy if exists "charges lecture" on public.charges;
+create policy "charges lecture" on public.charges for select using (eleve_id = auth.uid() or public.est_coach());
+drop policy if exists "charges ajout" on public.charges;
+create policy "charges ajout" on public.charges for insert with check (eleve_id = auth.uid());
+drop policy if exists "charges suppression" on public.charges;
+create policy "charges suppression" on public.charges for delete using (eleve_id = auth.uid());
 
 -- ─── Stockage des vidéos, photos et PDF ───
 insert into storage.buckets (id, name, public)

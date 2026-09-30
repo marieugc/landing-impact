@@ -10,7 +10,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v1';
+const CLE_DEMO = 'bootyflow-demo-v2';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -72,7 +72,16 @@ function donneesDemo() {
       ]
     }
   };
-  return { profiles, nutrition, videos, bilans, competitions };
+  const series = {
+    'Hip thrust': [60, 65, 70, 70, 75, 80],
+    'Squat bulgare': [8, 10, 10, 12, 12, 14],
+    'Soulevé de terre roumain': [40, 42.5, 45, 47.5, 50, 50]
+  };
+  const charges = Object.entries(series).flatMap(([exercice, poids]) => poids.map((kg, i) => ({
+    id: `c-${exercice}-${i}`, eleve_id: 'sarah', exercice, date: dansJours(-41 + i * 7),
+    poids: kg, series: 4, reps: exercice === 'Squat bulgare' ? 10 : 8, note: ''
+  })));
+  return { profiles, nutrition, videos, bilans, competitions, charges };
 }
 
 function lireDemo() {
@@ -188,6 +197,23 @@ const demo = {
     ecrireDemo(d);
   },
   async saveChecklist(uid, checklist) { await demo.saveCompetition(uid, { checklist }); },
+
+  async listCharges(eleveId) {
+    return (lireDemo().charges || [])
+      .filter((c) => c.eleve_id === eleveId)
+      .sort((a, b) => a.date.localeCompare(b.date));
+  },
+  async addCharge(eleveId, data) {
+    const d = lireDemo();
+    d.charges = d.charges || [];
+    d.charges.push({ id: id(), eleve_id: eleveId, ...data });
+    ecrireDemo(d);
+  },
+  async deleteCharge(cid) {
+    const d = lireDemo();
+    d.charges = (d.charges || []).filter((c) => c.id !== cid);
+    ecrireDemo(d);
+  },
 
   async mediaUrl(chemin) { return chemin ? fichiersDemo.get(chemin) || null : null; }
 };
@@ -309,6 +335,17 @@ const reel = {
   // L'élève ne peut que cocher sa checklist (pas créer la fiche compétition)
   async saveChecklist(uid, checklist) {
     verifier(await (await client()).from('competitions').update({ checklist }).eq('eleve_id', uid));
+  },
+
+  async listCharges(eleveId) {
+    return verifier(await (await client()).from('charges').select('*')
+      .eq('eleve_id', eleveId).order('date').order('created_at'));
+  },
+  async addCharge(eleveId, data) {
+    verifier(await (await client()).from('charges').insert({ ...data, eleve_id: eleveId }));
+  },
+  async deleteCharge(cid) {
+    verifier(await (await client()).from('charges').delete().eq('id', cid));
   },
 
   async mediaUrl(chemin) {

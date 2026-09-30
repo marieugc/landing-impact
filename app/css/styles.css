@@ -220,6 +220,27 @@ input[type="date"] { color-scheme: dark; }
 .choix-photo.choisie { border-color: var(--vert); color: var(--vert); }
 .choix-photo.choisie span::after { content: ' ✓'; }
 
+/* Suivi des charges */
+.vert { color: var(--vert); }
+.liste-charges { display: flex; flex-direction: column; }
+.ligne-charge {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 12px 0;
+  background: none; border: 0; border-top: 1px solid var(--bord); text-align: left; color: var(--texte);
+}
+.ligne-charge:first-child { border-top: 0; }
+.ligne-charge-texte { display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; }
+.ligne-charge-valeur { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+.ligne-charge-valeur strong { font-family: var(--titre); font-size: 16px; }
+.ligne-charge-valeur small { font-size: 12px; font-weight: 700; }
+.historique { display: flex; flex-direction: column; margin: 12px 0 16px; }
+.historique-ligne {
+  display: grid; grid-template-columns: 64px 1fr auto 44px; align-items: center; gap: 8px;
+  padding: 6px 0; border-top: 1px solid var(--bord);
+}
+.historique-ligne:first-child { border-top: 0; }
+.historique-note { grid-column: 2 / 5; margin-top: -6px; }
+#charges-eleve.large { max-width: 820px; }
+
 /* ───────────── Espace coach (ordinateur) ───────────── */
 .bureau { display: flex; min-height: 100dvh; }
 .barre-laterale {
