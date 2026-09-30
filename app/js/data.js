@@ -200,7 +200,7 @@ const demo = {
 
   async listCharges(eleveId) {
     return (lireDemo().charges || [])
-      .filter((c) => c.eleve_id === eleveId)
+      .filter((c) => !eleveId || c.eleve_id === eleveId)
       .sort((a, b) => a.date.localeCompare(b.date));
   },
   async addCharge(eleveId, data) {
@@ -337,9 +337,11 @@ const reel = {
     verifier(await (await client()).from('competitions').update({ checklist }).eq('eleve_id', uid));
   },
 
+  // Sans eleveId : toutes les charges (la coach uniquement, grâce aux règles de sécurité)
   async listCharges(eleveId) {
-    return verifier(await (await client()).from('charges').select('*')
-      .eq('eleve_id', eleveId).order('date').order('created_at'));
+    let q = (await client()).from('charges').select('*').order('date').order('created_at');
+    if (eleveId) q = q.eq('eleve_id', eleveId);
+    return verifier(await q);
   },
   async addCharge(eleveId, data) {
     verifier(await (await client()).from('charges').insert({ ...data, eleve_id: eleveId }));
