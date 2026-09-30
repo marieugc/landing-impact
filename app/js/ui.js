@@ -117,10 +117,13 @@ export async function pendant(bouton, texte, action) {
 }
 
 // Petit graphique en ligne (poids) en SVG
-export function courbe(points, { largeur = 320, hauteur = 110 } = {}) {
+export function courbe(points, {
+  largeur = 320, hauteur = 110, libelle = 'Évolution du poids', unite = 'kg',
+  vide = 'Le graphique apparaîtra après ton deuxième bilan.'
+} = {}) {
   const valeurs = points.map((p) => Number(p.valeur)).filter((v) => !Number.isNaN(v));
   if (valeurs.length < 2) {
-    return `<p class="vide">Le graphique apparaîtra après ton deuxième bilan.</p>`;
+    return `<p class="vide">${esc(vide)}</p>`;
   }
   const min = Math.min(...valeurs), max = Math.max(...valeurs);
   const marge = (max - min) * 0.2 || 1;
@@ -130,7 +133,7 @@ export function courbe(points, { largeur = 320, hauteur = 110 } = {}) {
   const ligne = valeurs.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ');
   const zone = `${ligne} L${x(valeurs.length - 1).toFixed(1)} ${hauteur} L${x(0).toFixed(1)} ${hauteur} Z`;
   const dernier = valeurs.length - 1;
-  return `<svg class="courbe" viewBox="0 0 ${largeur} ${hauteur}" role="img" aria-label="Évolution du poids : de ${nombre(valeurs[0])} à ${nombre(valeurs[dernier])} kg">
+  return `<svg class="courbe" viewBox="0 0 ${largeur} ${hauteur}" role="img" aria-label="${esc(libelle)} : de ${nombre(valeurs[0])} à ${nombre(valeurs[dernier])} ${unite}">
     <defs><linearGradient id="degrade-courbe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B266FF" stop-opacity="0.35"/><stop offset="1" stop-color="#B266FF" stop-opacity="0"/></linearGradient></defs>
     <path d="${zone}" fill="url(#degrade-courbe)"/>
     <path d="${ligne}" fill="none" stroke="#B266FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>

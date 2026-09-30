@@ -155,11 +155,11 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 - **Nutrition** : calories, macros, repas de la journée, dernier ajustement, plan PDF
 - **Mouvement** : envoi de vidéos d'exercice, et tes corrections écrites
 - **Posing** (compétitrices seulement) : compte à rebours, poses imposées, checklist jour J, envoi de posing
-- **Progrès** : courbe de poids, mensurations, photos avant/après, formulaire de bilan hebdo
+- **Progrès** : courbe de poids, mensurations, **suivi des charges par exercice** (courbe, record, historique), photos avant/après, formulaire de bilan hebdo
 
 **Espace coach (ordinateur ou téléphone)**
 - **Mes élèves** : chiffres clés et liste avec statut automatique (vidéo à corriger, bilan reçu, bilan en retard, à jour)
-- **Fiche élève** : suivi, plan nutrition, vidéos, bilans (avec photos et écarts), compétition
+- **Fiche élève** : suivi, plan nutrition, vidéos, bilans (avec photos et écarts), charges de musculation, compétition
 - **Vidéos à corriger** : toutes les vidéos en attente, avec zone de correction
 - **Bilans**, **Compétitrices**, **Plans nutrition** : vues d'ensemble
 
@@ -177,6 +177,10 @@ de connexion et reçoit un lien par e-mail.
 **Je veux changer une couleur ou un texte ?** Les couleurs sont en haut de `app/css/styles.css`.
 Les textes sont dans `app/js/eleve.js` (élève) et `app/js/coach.js` (coach). Tu peux aussi
 simplement me demander !
+
+**Une nouvelle fonction a été ajoutée à la base de données (ex. : suivi des charges) ?**
+Si tu avais déjà fait l'étape 3b, refais-la simplement : recopie tout `supabase/schema.sql`
+dans le SQL Editor et clique sur **Run**. Tes données existantes ne sont pas effacées.
 
 **J'ai modifié l'app mais je vois l'ancienne version sur mon téléphone ?** Ferme complètement
 l'app et rouvre-la (parfois deux fois) : elle se met à jour toute seule.
