@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fessier court ou fessier long ? Fais le test 🍑</title>
+<meta name="description" content="Le mini-test de Marie pour découvrir ton profil de fessier et la stratégie d'entraînement qui te correspond." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --fond: #12022A;
+    --carte: #1F0B3D;
+    --carte-2: #2A1150;
+    --bord: #3D1D6B;
+    --texte: #F7F1FF;
+    --doux: #BCA8DE;
+    --lilas: #E3C8FF;
+    --accent: #B266FF;
+    --peche: #FF9E80;
+    --vert: #7FE0B8;
+    --titre: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --script: 'Kaushan Script', 'Brush Script MT', cursive;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: var(--titre);
+    color: var(--texte);
+    background: var(--fond);
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(178,102,255,.28), transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(255,158,128,.18), transparent 45%);
+    background-attachment: fixed;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 28px 16px 40px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  main { flex: 1; }
+  .ecran { display: none; animation: apparition .45s ease both; }
+  .ecran.actif { display: block; }
+  @keyframes apparition {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .carte {
+    background: linear-gradient(160deg, var(--carte-2), var(--carte));
+    border: 1px solid var(--bord);
+    border-radius: 24px;
+    padding: 28px 22px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.35);
+  }
+  .signature {
+    font-family: var(--script);
+    color: var(--lilas);
+    font-size: 1.15rem;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .emoji-geant {
+    font-size: 4.2rem;
+    text-align: center;
+    display: block;
+    animation: rebond 2.4s ease-in-out infinite;
+  }
+  @keyframes rebond {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-8px) rotate(4deg); }
+  }
+  h1 {
+    font-size: clamp(1.7rem, 7vw, 2.3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    text-align: center;
+    margin: 12px 0 16px;
+  }
+  h1 .degrade, .degrade {
+    background: linear-gradient(90deg, var(--lilas), var(--peche));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .intro { color: var(--doux); text-align: center; font-size: 1.02rem; margin-bottom: 26px; }
+  .intro strong { color: var(--texte); }
+  .puces {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    margin-bottom: 26px;
+  }
+  .puce {
+    font-size: .8rem; font-weight: 600;
+    padding: 6px 12px; border-radius: 999px;
+    background: rgba(178,102,255,.14); border: 1px solid var(--bord); color: var(--lilas);
+  }
+  .bouton {
+    display: block; width: 100%;
+    font: 800 1.05rem var(--titre);
+    color: #1a0633;
+    background: linear-gradient(90deg, var(--lilas), var(--peche));
+    border: none; border-radius: 16px;
+    padding: 17px 20px;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(255,158,128,.25);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .bouton:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(255,158,128,.35); }
+  .bouton:active { transform: translateY(0); }
+  .bouton.secondaire {
+    background: transparent; color: var(--lilas);
+    border: 1.5px solid var(--bord); box-shadow: none; font-weight: 600;
+  }
+  .bouton.secondaire:hover { border-color: var(--accent); }
+  .bouton:focus-visible, .choix:focus-visible, .retour:focus-visible {
+    outline: 3px solid var(--accent); outline-offset: 3px;
+  }
+
+  /* Quiz */
+  .entete-quiz { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 12px; }
+  .retour {
+    background: none; border: none; color: var(--doux);
+    font: 600 .9rem var(--titre); cursor: pointer; padding: 4px 0;
+  }
+  .retour[hidden] { visibility: hidden; display: inline; }
+  .compteur { font-size: .85rem; color: var(--doux); font-weight: 600; }
+  .barre {
+    height: 10px; border-radius: 999px; background: var(--carte);
+    border: 1px solid var(--bord); overflow: hidden; margin-bottom: 22px;
+  }
+  .barre-remplie {
+    height: 100%; width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--peche));
+    border-radius: 999px;
+    transition: width .45s cubic-bezier(.4,.0,.2,1);
+  }
+  .question-emoji { font-size: 2.4rem; display: block; margin-bottom: 6px; }
+  .question { font-size: 1.28rem; font-weight: 800; line-height: 1.3; margin-bottom: 8px; }
+  .aide { color: var(--doux); font-size: .92rem; margin-bottom: 20px; }
+  .choix-liste { display: grid; gap: 12px; }
+  .choix {
+    display: flex; align-items: center; gap: 14px;
+    width: 100%; text-align: left;
+    font: 600 1rem var(--titre); color: var(--texte);
+    background: var(--carte); border: 1.5px solid var(--bord);
+    border-radius: 16px; padding: 15px 16px;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  }
+  .choix:hover { border-color: var(--accent); transform: translateX(3px); }
+  .choix.choisi { border-color: var(--peche); background: rgba(255,158,128,.12); }
+  .choix .ico { font-size: 1.6rem; flex-shrink: 0; width: 34px; text-align: center; }
+  .choix small { display: block; font-weight: 400; color: var(--doux); font-size: .85rem; margin-top: 2px; }
+
+  /* Résultat */
+  .badge {
+    display: inline-block; font-size: .8rem; font-weight: 800; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--lilas);
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(178,102,255,.18); border: 1px solid var(--bord);
+  }
+  .centre { text-align: center; }
+  .resultat-titre { font-size: clamp(1.6rem, 6.5vw, 2rem); font-weight: 800; line-height: 1.2; margin: 14px 0 12px; }
+  .jauge { margin: 18px 0 8px; }
+  .jauge-etiquettes { display: flex; justify-content: space-between; font-size: .8rem; font-weight: 600; color: var(--doux); margin-bottom: 6px; }
+  .jauge-piste {
+    position: relative; height: 12px; border-radius: 999px;
+    background: linear-gradient(90deg, var(--peche), var(--lilas), var(--accent));
+  }
+  .jauge-curseur {
+    position: absolute; top: 50%; left: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--texte); border: 4px solid var(--fond);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 12px rgba(0,0,0,.4);
+    transition: left 1s cubic-bezier(.3,1.4,.5,1);
+  }
+  .bloc { margin-top: 22px; }
+  .bloc h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; display: flex; gap: 8px; align-items: center; }
+  .bloc p { color: var(--doux); }
+  .bloc p strong { color: var(--texte); }
+  .liste { list-style: none; display: grid; gap: 10px; }
+  .liste li {
+    background: var(--carte); border: 1px solid var(--bord); border-radius: 14px;
+    padding: 12px 14px; color: var(--doux); font-size: .95rem;
+  }
+  .liste li strong { color: var(--texte); display: block; margin-bottom: 2px; }
+  .message-cle {
+    margin-top: 24px; padding: 18px; border-radius: 18px;
+    background: linear-gradient(135deg, rgba(178,102,255,.2), rgba(255,158,128,.15));
+    border: 1px solid var(--bord); text-align: center;
+  }
+  .message-cle .script { font-family: var(--script); font-size: 1.35rem; color: var(--lilas); display: block; margin-bottom: 6px; }
+  .actions { display: grid; gap: 12px; margin-top: 24px; }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 30px);
+    background: var(--texte); color: var(--fond); font-weight: 600; font-size: .9rem;
+    padding: 12px 18px; border-radius: 999px; opacity: 0; pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease; max-width: calc(100% - 32px); text-align: center;
+  }
+  .toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
+  footer {
+    margin-top: 28px; text-align: center; font-size: .78rem; color: var(--doux); opacity: .85;
+  }
+  footer .auteur { font-family: var(--script); font-size: 1rem; color: var(--lilas); display: block; margin-top: 8px; opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <main>
+
+    <!-- 1. Accueil -->
+    <section class="ecran actif" id="accueil" aria-labelledby="titre-accueil">
+      <div class="carte">
+        <p class="signature">by Marie · coach & juge bodybuilding</p>
+        <span class="emoji-geant" aria-hidden="true">🍑</span>
+        <h1 id="titre-accueil">Fessier <span class="degrade">court</span> ou fessier <span class="degrade">long</span> ?<br>Fais le test</h1>
+        <p class="intro">
+          Tu t'entraînes dur mais ta fesse ne ressemble pas à celle des influenceuses ? <strong>C'est normal, et ce n'est pas un problème.</strong><br>
+          En 6 questions, découvre ton profil et la stratégie qui va vraiment te faire progresser.
+        </p>
+        <div class="puces" aria-hidden="true">
+          <span class="puce">⏱️ 1 minute</span>
+          <span class="puce">🪞 Devant un miroir</span>
+          <span class="puce">💜 Zéro jugement</span>
+        </div>
+        <button class="bouton" id="btn-commencer" type="button">Commencer le test</button>
+      </div>
+    </section>
+
+    <!-- 2. Quiz -->
+    <section class="ecran" id="quiz" aria-live="polite">
+      <div class="entete-quiz">
+        <button class="retour" id="btn-retour" type="button">← Retour</button>
+        <span class="compteur" id="compteur">Question 1 / 6</span>
+      </div>
+      <div class="barre" role="progressbar" aria-label="Progression du test" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0">
+        <div class="barre-remplie" id="barre"></div>
+      </div>
+      <div class="carte" id="carte-question"></div>
+    </section>
+
+    <!-- 3. Résultat -->
+    <section class="ecran" id="resultat" aria-live="polite">
+      <div class="carte" id="carte-resultat"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    Ce test est indicatif. La forme du fessier dépend aussi du bassin, du fémur et de la répartition des graisses.
+    <span class="auteur">Marie 🍑</span>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // Chaque réponse donne des points "court" ou "long" (0 = neutre).
+  var QUESTIONS = [
+    {
+      emoji: "🔍",
+      texte: "Où se situe ton pli sous-fessier (la ligne entre fesse et cuisse) ?",
+      aide: "Regarde-toi de dos dans un miroir, debout, pieds parallèles et fessiers relâchés.",
+      choix: [
+        { ico: "📏", label: "Très marqué et plutôt haut", detail: "On voit bien où la fesse s'arrête", court: 2, long: 0 },
+        { ico: "🌊", label: "Peu marqué, plutôt bas", detail: "La fesse se fond doucement dans la cuisse", court: 0, long: 2 },
+        { ico: "🤷‍♀️", label: "Entre les deux / je ne sais pas", detail: "", court: 1, long: 1 }
+      ]
+    },
+    {
+      emoji: "👀",
+      texte: "De profil, où se concentre le volume de ta fesse ?",
+      aide: "Mets-toi de côté face au miroir, posture naturelle.",
+      choix: [
+        { ico: "🫧", label: "En haut, rond et rebondi", detail: "Effet « bulle » qui s'arrête assez vite", court: 2, long: 0 },
+        { ico: "💧", label: "Sur toute la hauteur", detail: "Plutôt allongé, en forme de goutte", court: 0, long: 2 },
+        { ico: "⚖️", label: "Je dirais équilibré", detail: "", court: 1, long: 1 }
+      ]
+    },
+    {
+      emoji: "🦵",
+      texte: "Juste sous ta fesse, à l'arrière de la cuisse, tu vois plutôt…",
+      aide: "Toujours de profil ou de 3/4 dos.",
+      choix: [
+        { ico: "🕳️", label: "Un petit « creux » ou un espace", detail: "Entre la fesse et l'arrière de la cuisse", court: 2, long: 0 },
+        { ico: "➰", label: "Une continuité", detail: "La fesse descend et rejoint la cuisse sans cassure", court: 0, long: 2 },
+        { ico: "🤔", label: "Pas vraiment l'un ou l'autre", detail: "", court: 1, long: 1 }
+      ]
+    },
+    {
+      emoji: "💪",
+      texte: "Debout, contracte fort tes fessiers : où le muscle se durcit-il ?",
+      aide: "Pose tes mains dessus pour bien sentir.",
+      choix: [
+        { ico: "⬆️", label: "Surtout en haut", detail: "Le bas reste plus mou ou peu rempli", court: 2, long: 0 },
+        { ico: "⬇️", label: "Jusqu'en bas, près du pli", detail: "Toute la fesse se contracte", court: 0, long: 2 },
+        { ico: "🙈", label: "Difficile à dire", detail: "", court: 0, long: 0 }
+      ]
+    },
+    {
+      emoji: "🩳",
+      texte: "En legging, de dos, ta fesse dessine plutôt…",
+      aide: "Pense à tes photos de salle ou regarde-toi dans le miroir.",
+      choix: [
+        { ico: "⭕", label: "Un rond compact, placé haut", detail: "Ta fesse paraît courte en hauteur", court: 2, long: 0 },
+        { ico: "💧", label: "Une goutte qui descend", detail: "Ta fesse paraît longue, le volume va vers le bas", court: 0, long: 2 },
+        { ico: "🤷‍♀️", label: "Je n'arrive pas à trancher", detail: "", court: 1, long: 1 }
+      ]
+    },
+    {
+      emoji: "📈",
+      texte: "Quand tu prends du muscle (ou du volume), ça se voit d'abord…",
+      aide: "Pense à tes progrès des derniers mois ou à tes photos avant/après.",
+      choix: [
+        { ico: "🍑", label: "En haut : ma fesse « remonte »", detail: "Le haut s'arrondit plus vite que le bas", court: 2, long: 0 },
+        { ico: "🌙", label: "Partout, y compris dans le bas", detail: "La fesse s'allonge et se remplit vers la cuisse", court: 0, long: 2 },
+        { ico: "🌱", label: "Je débute, je n'ai pas encore de recul", detail: "", court: 0, long: 0 }
+      ]
+    }
+  ];
+
+  var PROFILS = {
+    court: {
+      badge: "Ton profil",
+      emoji: "🫧",
+      titre: "Plutôt fessier court",
+      description: "Tes insertions semblent plutôt hautes : ton fessier est <strong>compact, rond et haut perché</strong>. C'est ce qui donne ce joli effet « bulle » quand il se développe.",
+      forces: [
+        { t: "Un rebond naturel", d: "Le haut de ta fesse s'arrondit vite : l'effet « lifté » est ton atout." },
+        { t: "Une forme bien dessinée", d: "Le pli marqué donne une vraie séparation fesse / cuisse." }
+      ],
+      strategie: "Ton objectif : <strong>remplir le bas de la fesse</strong> et adoucir la transition avec l'arrière de la cuisse. On cherche des exercices en <strong>grande amplitude</strong>, avec le fessier bien étiré en bas du mouvement.",
+      exercices: [
+        { t: "Fentes bulgares, buste penché", d: "Descends bas et contrôle la descente : c'est l'étirement qui travaille le bas du fessier." },
+        { t: "Soulevé de terre roumain", d: "Hanches loin derrière, dos neutre : fessiers + ischios travaillent ensemble." },
+        { t: "Fentes arrière en déficit", d: "Pied avant sur une petite marche pour gagner en amplitude." }
+      ]
+    },
+    long: {
+      badge: "Ton profil",
+      emoji: "💧",
+      titre: "Plutôt fessier long",
+      description: "Tes insertions semblent plutôt basses : ton fessier <strong>s'étend sur une grande hauteur</strong> et se fond dans la cuisse. Tu as beaucoup de surface musculaire à développer !",
+      forces: [
+        { t: "Beaucoup de potentiel en volume", d: "Plus de longueur de muscle = plus de place pour construire." },
+        { t: "Une silhouette harmonieuse", d: "La transition fesse / cuisse est fluide et naturelle." }
+      ],
+      strategie: "Ton objectif : <strong>créer du rond et de la projection</strong>, surtout en haut et sur les côtés. On mise sur des exercices avec une <strong>contraction maximale en fin de mouvement</strong> et du travail du moyen fessier.",
+      exercices: [
+        { t: "Hip thrust avec pause", d: "Tiens 2 secondes en haut, bassin rétroversé : c'est là que ça se passe." },
+        { t: "Abductions (machine ou élastique)", d: "Buste légèrement penché en avant pour cibler le haut et les côtés de la fesse." },
+        { t: "Kickback à la poulie", d: "Mouvement lent, jambe légèrement vers l'extérieur, serre fort en fin de course." }
+      ]
+    },
+    mixte: {
+      badge: "Ton profil",
+      emoji: "⚖️",
+      titre: "Profil équilibré (entre les deux)",
+      description: "Tes réponses ne penchent pas franchement d'un côté : ton fessier a <strong>un peu des deux profils</strong>. C'est très fréquent, et c'est plutôt une bonne nouvelle !",
+      forces: [
+        { t: "Une vraie polyvalence", d: "Ton fessier répond bien à des stimulus variés." },
+        { t: "Pas de « zone oubliée »", d: "Tu peux construire une forme complète, du haut jusqu'au pli." }
+      ],
+      strategie: "Ton objectif : <strong>un programme complet</strong> qui combine exercices en étirement (pour le bas) et exercices en contraction (pour le haut et les côtés). Observe tes photos de progrès pour ajuster au fil des mois.",
+      exercices: [
+        { t: "Hip thrust", d: "La base pour la contraction et la projection." },
+        { t: "Fentes bulgares", d: "Pour l'amplitude et le bas du fessier." },
+        { t: "Abductions", d: "Pour le moyen fessier, le haut et les côtés." }
+      ]
+    }
+  };
+
+  var etat = { index: 0, reponses: [] };
+  var $ = function (id) { return document.getElementById(id); };
+
+  function afficherEcran(id) {
+    document.querySelectorAll(".ecran").forEach(function (e) { e.classList.remove("actif"); });
+    $(id).classList.add("actif");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function echapper(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function afficherQuestion() {
+    var q = QUESTIONS[etat.index];
+    var total = QUESTIONS.length;
+    $("compteur").textContent = "Question " + (etat.index + 1) + " / " + total;
+    $("barre").style.width = (etat.index / total * 100) + "%";
+    document.querySelector(".barre").setAttribute("aria-valuenow", etat.index);
+    $("btn-retour").hidden = false;
+
+    var html = '<span class="question-emoji" aria-hidden="true">' + q.emoji + '</span>' +
+      '<h2 class="question">' + echapper(q.texte) + '</h2>' +
+      '<p class="aide">' + echapper(q.aide) + '</p>' +
+      '<div class="choix-liste">';
+    q.choix.forEach(function (c, i) {
+      var choisi = etat.reponses[etat.index] === i ? " choisi" : "";
+      html += '<button type="button" class="choix' + choisi + '" data-i="' + i + '">' +
+        '<span class="ico" aria-hidden="true">' + c.ico + '</span>' +
+        '<span>' + echapper(c.label) + (c.detail ? '<small>' + echapper(c.detail) + '</small>' : '') + '</span>' +
+        '</button>';
+    });
+    html += '</div>';
+
+    var carte = $("carte-question");
+    carte.innerHTML = html;
+    carte.style.animation = "none";
+    void carte.offsetWidth;
+    carte.style.animation = "apparition .4s ease both";
+
+    carte.querySelectorAll(".choix").forEach(function (b) {
+      b.addEventListener("click", function () { choisir(parseInt(b.dataset.i, 10), b); });
+    });
+  }
+
+  var verrou = false;
+  function choisir(i, bouton) {
+    if (verrou) return;
+    verrou = true;
+    etat.reponses[etat.index] = i;
+    bouton.classList.add("choisi");
+    $("barre").style.width = ((etat.index + 1) / QUESTIONS.length * 100) + "%";
+    setTimeout(function () {
+      verrou = false;
+      if (etat.index < QUESTIONS.length - 1) {
+        etat.index++;
+        afficherQuestion();
+      } else {
+        afficherResultat();
+      }
+    }, 320);
+  }
+
+  function calculer() {
+    var court = 0, long = 0;
+    etat.reponses.forEach(function (r, qi) {
+      var c = QUESTIONS[qi].choix[r];
+      court += c.court; long += c.long;
+    });
+    var ecart = court - long;
+    var cle = ecart >= 3 ? "court" : ecart <= -3 ? "long" : "mixte";
+    // Position du curseur : 0 % = très court, 100 % = très long
+    var total = court + long;
+    var position = total === 0 ? 50 : Math.round(long / total * 100);
+    return { cle: cle, position: Math.min(92, Math.max(8, position)) };
+  }
+
+  function listeHTML(items) {
+    return '<ul class="liste">' + items.map(function (x) {
+      return '<li><strong>' + echapper(x.t) + '</strong>' + echapper(x.d) + '</li>';
+    }).join("") + '</ul>';
+  }
+
+  var dernierProfil = null;
+  function afficherResultat() {
+    var r = calculer();
+    var p = PROFILS[r.cle];
+    dernierProfil = p;
+
+    $("carte-resultat").innerHTML =
+      '<div class="centre">' +
+        '<span class="badge">' + p.badge + '</span>' +
+        '<span class="emoji-geant" aria-hidden="true" style="margin-top:12px">' + p.emoji + '</span>' +
+        '<h1 class="resultat-titre"><span class="degrade">' + p.titre + '</span></h1>' +
+      '</div>' +
+      '<div class="jauge" aria-hidden="true">' +
+        '<div class="jauge-etiquettes"><span>Court</span><span>Long</span></div>' +
+        '<div class="jauge-piste"><div class="jauge-curseur" id="curseur"></div></div>' +
+      '</div>' +
+      '<div class="bloc"><p>' + p.description + '</p></div>' +
+      '<div class="bloc"><h2><span aria-hidden="true">✨</span> Tes atouts</h2>' + listeHTML(p.forces) + '</div>' +
+      '<div class="bloc"><h2><span aria-hidden="true">🎯</span> Ta stratégie</h2><p>' + p.strategie + '</p></div>' +
+      '<div class="bloc"><h2><span aria-hidden="true">🏋️‍♀️</span> 3 exercices à prioriser</h2>' + listeHTML(p.exercices) + '</div>' +
+      '<div class="message-cle">' +
+        '<span class="script">On est toutes différentes 💜</span>' +
+        'Fessier court ou long, <strong>les deux profils peuvent énormément progresser</strong>. ' +
+        'Arrête de te comparer aux influenceuses : leur génétique n\'est pas la tienne. ' +
+        'Ce qui change, ce n\'est pas ton potentiel, c\'est <strong>la stratégie</strong>.' +
+      '</div>' +
+      '<div class="actions">' +
+        '<button class="bouton" type="button" id="btn-partager">📩 Copier mon résultat pour me l\'envoyer en DM</button>' +
+        '<button class="bouton secondaire" type="button" id="btn-refaire">↺ Refaire le test</button>' +
+      '</div>';
+
+    afficherEcran("resultat");
+    setTimeout(function () {
+      var c = $("curseur");
+      if (c) c.style.left = r.position + "%";
+    }, 250);
+
+    $("btn-refaire").addEventListener("click", recommencer);
+    $("btn-partager").addEventListener("click", partager);
+  }
+
+  function partager() {
+    var texte = "Coucou Marie ! J'ai fait le test 🍑 Mon résultat : " + dernierProfil.titre + " " + dernierProfil.emoji;
+    var ok = function () { toast("Copié ! Colle-le dans ta conversation avec moi 💌"); };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(texte).then(ok, function () { copieSecours(texte) ? ok() : toast(texte); });
+    } else {
+      copieSecours(texte) ? ok() : toast(texte);
+    }
+  }
+
+  function copieSecours(texte) {
+    try {
+      var zone = document.createElement("textarea");
+      zone.value = texte;
+      zone.setAttribute("readonly", "");
+      zone.style.position = "fixed"; zone.style.opacity = "0";
+      document.body.appendChild(zone);
+      zone.select();
+      var ok = document.execCommand("copy");
+      document.body.removeChild(zone);
+      return ok;
+    } catch (e) { return false; }
+  }
+
+  var minuteurToast;
+  function toast(msg) {
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("visible");
+    clearTimeout(minuteurToast);
+    minuteurToast = setTimeout(function () { t.classList.remove("visible"); }, 3200);
+  }
+
+  function recommencer() {
+    etat = { index: 0, reponses: [] };
+    afficherEcran("accueil");
+  }
+
+  $("btn-commencer").addEventListener("click", function () {
+    etat = { index: 0, reponses: [] };
+    afficherEcran("quiz");
+    afficherQuestion();
+  });
+
+  $("btn-retour").addEventListener("click", function () {
+    if (etat.index === 0) { afficherEcran("accueil"); return; }
+    etat.index--;
+    afficherQuestion();
+  });
+})();
+</script>
+</body>
+</html>
