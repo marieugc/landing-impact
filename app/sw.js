@@ -1,6 +1,6 @@
 // Service worker : permet d'installer l'app et de l'ouvrir même avec une connexion faible.
 // Pense à changer le numéro de version à chaque mise à jour de l'app.
-const VERSION = 'bootyflow-v1';
+const VERSION = 'bootyflow-v2';
 
 const FICHIERS = [
   './',
