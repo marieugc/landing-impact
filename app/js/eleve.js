@@ -125,11 +125,20 @@ function carteVideo(v) {
     <div class="carte-video-texte">
       <div class="ligne-entre"><strong>${esc(v.exercice)}</strong>${corrige ? badge('Corrigé', VERT) : badge('À corriger', ORANGE)}</div>
       <div class="petit">Envoyée le ${dateCourte(v.created_at)}</div>
-      <p class="texte-video">${corrige ? `« ${esc(v.retour)} »` : 'En attente du retour de ta coach.'}</p>
+      ${corrige && v.retour ? `<p class="texte-video">« ${esc(v.retour)} »</p>` : ''}
+      ${!corrige ? '<p class="texte-video">En attente du retour de ta coach.</p>' : ''}
+      ${v.retour_chemin ? `<button class="bouton-contour compact" data-correction="${esc(v.id)}">${icone('lecture', 16)}Voir la correction vidéo</button>` : ''}
     </div></article>`;
 }
 
 function brancherLecture(racine, videos) {
+  racine.querySelectorAll('[data-correction]').forEach((b) => b.addEventListener('click', async () => {
+    const v = videos.find((x) => x.id === b.dataset.correction);
+    const url = await api.mediaUrl(v.retour_chemin);
+    fenetre(`Correction · ${v.exercice}`, url
+      ? `<video src="${esc(url)}" controls playsinline class="lecteur"></video>`
+      : '<p class="vide">Vidéo indisponible.</p>');
+  }));
   racine.querySelectorAll('[data-video]').forEach((b) => b.addEventListener('click', async () => {
     const v = videos.find((x) => x.id === b.dataset.video);
     const url = await api.mediaUrl(v.chemin);

@@ -62,9 +62,13 @@ create table if not exists public.videos (
   chemin text,
   statut text not null default 'a_corriger' check (statut in ('a_corriger', 'corrige')),
   retour text,
+  retour_chemin text,
   corrige_le timestamptz,
   created_at timestamptz not null default now()
 );
+
+-- Vidéo de correction de la coach (ajoutée après la première version)
+alter table public.videos add column if not exists retour_chemin text;
 
 -- 4. Bilans hebdomadaires
 create table if not exists public.bilans (

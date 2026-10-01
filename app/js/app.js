@@ -154,14 +154,19 @@ async function afficher() {
   if (MODE === 'demo' && !racine.querySelector('.bandeau-demo')) racine.insertAdjacentHTML('afterbegin', bandeauDemo());
   const bouton = racine.querySelector('#installer');
   if (bouton && !estInstallee && (invitationInstall || estIOS)) bouton.removeAttribute('hidden');
-  bouton?.addEventListener('click', installer);
-  racine.querySelector('#deconnexion')?.addEventListener('click', async () => {
+}
+
+// Branché une seule fois sur toute l'app : ces boutons marchent même quand
+// un écran se redessine tout seul (filtre, correction envoyée…)
+racine.addEventListener('click', async (e) => {
+  if (e.target.closest('#installer')) installer();
+  if (e.target.closest('#deconnexion')) {
     await api.signOut();
     profil = null;
     location.hash = '';
     ecranConnexion();
-  });
-}
+  }
+});
 window.addEventListener('hashchange', afficher);
 
 async function demarrer() {

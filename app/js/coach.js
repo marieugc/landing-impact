@@ -215,8 +215,13 @@ function carteCorrection(v, avecPrenom) {
         ${corrige ? badge('Corrigé', VERT) : badge(v.type === 'posing' ? 'Posing à corriger' : 'À corriger', ORANGE)}</div>
       <div class="petit">Envoyée le ${dateCourte(v.created_at)}</div>
       <form class="formulaire-ligne" data-corriger="${esc(v.id)}">
-        <textarea name="retour" rows="2" required placeholder="Ton retour : placement, amplitude, respiration…" aria-label="Ton retour">${esc(v.retour || '')}</textarea>
-        <button class="bouton-principal compact" type="submit">${corrige ? 'MODIFIER' : 'ENVOYER LA CORRECTION'}</button>
+        <textarea name="retour" rows="2" placeholder="Ton retour : placement, amplitude, respiration…" aria-label="Ton retour">${esc(v.retour || '')}</textarea>
+        <label class="choix-video">${icone('video', 18, 'var(--accent)')}<span>${v.retour_chemin ? 'Remplacer ma vidéo de correction' : 'Ajouter une vidéo de correction (facultatif)'}</span>
+          <input type="file" name="fichier" accept="video/*"></label>
+        <div class="actions-correction">
+          ${v.retour_chemin ? `<button type="button" class="bouton-contour compact" data-voir-correction="${esc(v.id)}">${icone('lecture', 16)}Voir ma vidéo</button>` : ''}
+          <button class="bouton-principal compact" type="submit">${corrige ? 'MODIFIER' : 'ENVOYER LA CORRECTION'}</button>
+        </div>
       </form>
     </div></article>`;
 }
@@ -229,9 +234,33 @@ function brancherCorrections(zone, videos, apres) {
       ? `<video src="${esc(url)}" controls playsinline class="lecteur"></video>`
       : '<p class="vide">Pas de fichier vidéo pour cet exemple de démo.</p>');
   }));
+  zone.querySelectorAll('[data-voir-correction]').forEach((b) => b.addEventListener('click', async () => {
+    const v = videos.find((x) => x.id === b.dataset.voirCorrection);
+    const url = await api.mediaUrl(v.retour_chemin);
+    fenetre(`Ma correction · ${v.exercice}`, url
+      ? `<video src="${esc(url)}" controls playsinline class="lecteur"></video>`
+      : '<p class="vide">Vidéo indisponible.</p>');
+  }));
+  zone.querySelectorAll('.choix-video input').forEach((entree) => entree.addEventListener('change', () => {
+    const choisie = entree.files[0];
+    entree.parentElement.classList.toggle('choisie', !!choisie);
+    if (choisie) entree.previousElementSibling.textContent = choisie.name;
+  }));
   zone.querySelectorAll('[data-corriger]').forEach((f) => f.addEventListener('submit', async (ev) => {
     ev.preventDefault();
-    await pendant(ev.submitter, 'Envoi…', () => api.correctVideo(f.dataset.corriger, new FormData(f).get('retour').trim()));
+    const v = videos.find((x) => x.id === f.dataset.corriger);
+    const d = new FormData(f);
+    const retour = d.get('retour').trim();
+    const fichier = d.get('fichier')?.size ? d.get('fichier') : null;
+    if (!retour && !fichier && !v.retour_chemin) {
+      toast('Écris un retour ou ajoute une vidéo de correction.', true);
+      return;
+    }
+    if (fichier && fichier.size > 50 * 1024 * 1024) {
+      toast('Vidéo trop lourde (50 Mo max). Coupe-la ou réduis la qualité.', true);
+      return;
+    }
+    await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', () => api.correctVideo(v.id, retour, fichier, v.eleve_id));
     toast('Correction envoyée.');
     apres();
   }));

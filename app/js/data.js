@@ -165,9 +165,11 @@ const demo = {
       statut: 'a_corriger', retour: null, created_at: new Date().toISOString() });
     ecrireDemo(d);
   },
-  async correctVideo(vid, retour) {
+  async correctVideo(vid, retour, fichier) {
     const d = lireDemo();
-    Object.assign(d.videos.find((v) => v.id === vid), { retour, statut: 'corrige', corrige_le: new Date().toISOString() });
+    const v = d.videos.find((x) => x.id === vid);
+    Object.assign(v, { retour, statut: 'corrige', corrige_le: new Date().toISOString() });
+    if (fichier) v.retour_chemin = garderFichier(fichier);
     ecrireDemo(d);
   },
 
@@ -305,9 +307,11 @@ const reel = {
     const chemin = await envoyerFichier(eleveId, type, file);
     verifier(await (await client()).from('videos').insert({ eleve_id: eleveId, type, exercice, chemin }));
   },
-  async correctVideo(vid, retour) {
-    verifier(await (await client()).from('videos')
-      .update({ retour, statut: 'corrige', corrige_le: new Date().toISOString() }).eq('id', vid));
+  // La vidéo de correction est rangée dans le dossier de l'élève pour qu'elle puisse la voir
+  async correctVideo(vid, retour, fichier, eleveId) {
+    const maj = { retour, statut: 'corrige', corrige_le: new Date().toISOString() };
+    if (fichier) maj.retour_chemin = await envoyerFichier(eleveId, 'corrections', fichier);
+    verifier(await (await client()).from('videos').update(maj).eq('id', vid));
   },
 
   async listBilans(eleveId) {
