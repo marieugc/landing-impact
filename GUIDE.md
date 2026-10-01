@@ -160,7 +160,7 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 **Espace coach (ordinateur ou téléphone)**
 - **Mes élèves** : chiffres clés et liste avec statut automatique (vidéo à corriger, bilan reçu, bilan en retard, à jour)
 - **Fiche élève** : suivi, plan nutrition, vidéos, bilans (avec photos et écarts), charges de musculation, compétition
-- **Vidéos à corriger** : toutes les vidéos en attente, avec zone de correction
+- **Vidéos à corriger** : toutes les vidéos en attente, avec un retour écrit et/ou une vidéo de correction
 - **Bilans**, **Compétitrices**, **Plans nutrition** : vues d'ensemble
 - **Suivi des charges** : pour chaque élève, dernière séance, exercices suivis, records de la semaine et meilleure progression ; un clic ouvre le détail par exercice
 

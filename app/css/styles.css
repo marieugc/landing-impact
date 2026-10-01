@@ -220,6 +220,18 @@ input[type="date"] { color-scheme: dark; }
 .choix-photo.choisie { border-color: var(--vert); color: var(--vert); }
 .choix-photo.choisie span::after { content: ' ✓'; }
 
+/* Vidéo de correction (coach) */
+.choix-video {
+  position: relative; display: flex; align-items: center; gap: 8px; width: 100%;
+  min-height: 44px; padding: 10px 14px; border-radius: 12px; border: 1.5px dashed var(--bord);
+  color: var(--lilas); font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.choix-video:hover { border-color: var(--accent); }
+.choix-video input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.choix-video.choisie { border-color: var(--vert); color: var(--vert); }
+.actions-correction { display: flex; gap: 8px; flex-wrap: wrap; }
+.carte-video-texte .bouton-contour { align-self: flex-start; }
+
 /* Suivi des charges */
 .vert { color: var(--vert); }
 .liste-charges { display: flex; flex-direction: column; }
