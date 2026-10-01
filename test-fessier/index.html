@@ -157,6 +157,37 @@
   .choix .ico { font-size: 1.6rem; flex-shrink: 0; width: 34px; text-align: center; }
   .choix small { display: block; font-weight: 400; color: var(--doux); font-size: .85rem; margin-top: 2px; }
 
+  /* Visuels */
+  .vue-pastille {
+    display: inline-block; font-size: .75rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--peche); background: rgba(255,158,128,.12); border: 1px solid rgba(255,158,128,.35);
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 14px;
+  }
+  .choix-visuels { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .choix.visuel {
+    flex-direction: column; align-items: stretch; text-align: center; gap: 8px; padding: 12px 10px 14px;
+  }
+  .choix.visuel:hover { transform: translateY(-3px); }
+  .choix.visuel svg {
+    width: 100%; height: auto; max-height: 170px; display: block;
+    background: rgba(18,2,42,.55); border-radius: 12px;
+  }
+  .choix.visuel .label { font-size: .92rem; line-height: 1.3; }
+  .choix.visuel small { font-size: .78rem; }
+  .s-corps { fill: rgba(227,200,255,.13); stroke: var(--lilas); stroke-width: 1.6; stroke-linejoin: round; }
+  .s-legging { fill: #3a1670; stroke: var(--lilas); stroke-width: 1.6; stroke-linejoin: round; }
+  .s-trait { fill: none; stroke: var(--lilas); stroke-width: 1.4; stroke-linecap: round; opacity: .8; }
+  .s-lobe { fill: rgba(227,200,255,.08); stroke: var(--lilas); stroke-width: 1.4; opacity: .9; }
+  .s-lobe-doux { stroke-opacity: .35; }
+  .s-lobe-legging { fill: rgba(178,102,255,.35); stroke: var(--lilas); stroke-width: 1.4; }
+  .s-pli-fort { fill: none; stroke: var(--peche); stroke-width: 3.4; stroke-linecap: round; }
+  .s-pli-doux { fill: none; stroke: var(--peche); stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 3 4; opacity: .9; }
+  .s-zone { fill: var(--peche); opacity: .5; }
+  .s-repere { fill: none; stroke: var(--peche); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .s-cercle { fill: rgba(255,158,128,.15); stroke: var(--peche); stroke-width: 2; stroke-dasharray: 4 3; }
+  .choix.choisi svg { box-shadow: 0 0 0 2px var(--peche) inset; }
+  @media (max-width: 340px) { .choix-visuels { grid-template-columns: 1fr; } }
+
   /* Résultat */
   .badge {
     display: inline-block; font-size: .8rem; font-weight: 800; letter-spacing: .06em;
@@ -273,61 +304,67 @@
   var QUESTIONS = [
     {
       emoji: "🔍",
+      vue: "Vue de dos",
       texte: "Où se situe ton pli sous-fessier (la ligne entre fesse et cuisse) ?",
       aide: "Regarde-toi de dos dans un miroir, debout, pieds parallèles et fessiers relâchés.",
       choix: [
-        { ico: "📏", label: "Très marqué et plutôt haut", detail: "On voit bien où la fesse s'arrête", court: 2, long: 0 },
-        { ico: "🌊", label: "Peu marqué, plutôt bas", detail: "La fesse se fond doucement dans la cuisse", court: 0, long: 2 },
+        { ico: "📏", visuel: { vue: "dos", forme: "court", pli: true }, label: "Très marqué et plutôt haut", detail: "On voit bien où la fesse s'arrête", court: 2, long: 0 },
+        { ico: "🌊", visuel: { vue: "dos", forme: "long", pli: true }, label: "Peu marqué, plutôt bas", detail: "La fesse se fond doucement dans la cuisse", court: 0, long: 2 },
         { ico: "🤷‍♀️", label: "Entre les deux / je ne sais pas", detail: "", court: 1, long: 1 }
       ]
     },
     {
       emoji: "👀",
+      vue: "Vue de profil",
       texte: "De profil, où se concentre le volume de ta fesse ?",
       aide: "Mets-toi de côté face au miroir, posture naturelle.",
       choix: [
-        { ico: "🫧", label: "En haut, rond et rebondi", detail: "Effet « bulle » qui s'arrête assez vite", court: 2, long: 0 },
-        { ico: "💧", label: "Sur toute la hauteur", detail: "Plutôt allongé, en forme de goutte", court: 0, long: 2 },
+        { ico: "🫧", visuel: { vue: "profil", forme: "court", volume: true }, label: "En haut, rond et rebondi", detail: "Effet « bulle » qui s'arrête assez vite", court: 2, long: 0 },
+        { ico: "💧", visuel: { vue: "profil", forme: "long", volume: true }, label: "Sur toute la hauteur", detail: "Plutôt allongé, en forme de goutte", court: 0, long: 2 },
         { ico: "⚖️", label: "Je dirais équilibré", detail: "", court: 1, long: 1 }
       ]
     },
     {
       emoji: "🦵",
+      vue: "Vue de profil",
       texte: "Juste sous ta fesse, à l'arrière de la cuisse, tu vois plutôt…",
       aide: "Toujours de profil ou de 3/4 dos.",
       choix: [
-        { ico: "🕳️", label: "Un petit « creux » ou un espace", detail: "Entre la fesse et l'arrière de la cuisse", court: 2, long: 0 },
-        { ico: "➰", label: "Une continuité", detail: "La fesse descend et rejoint la cuisse sans cassure", court: 0, long: 2 },
+        { ico: "🕳️", visuel: { vue: "profil", forme: "court", jonction: true }, label: "Un petit « creux » ou un espace", detail: "Entre la fesse et l'arrière de la cuisse", court: 2, long: 0 },
+        { ico: "➰", visuel: { vue: "profil", forme: "long", jonction: true }, label: "Une continuité", detail: "La fesse descend et rejoint la cuisse sans cassure", court: 0, long: 2 },
         { ico: "🤔", label: "Pas vraiment l'un ou l'autre", detail: "", court: 1, long: 1 }
       ]
     },
     {
       emoji: "💪",
+      vue: "Vue de dos",
       texte: "Debout, contracte fort tes fessiers : où le muscle se durcit-il ?",
       aide: "Pose tes mains dessus pour bien sentir.",
       choix: [
-        { ico: "⬆️", label: "Surtout en haut", detail: "Le bas reste plus mou ou peu rempli", court: 2, long: 0 },
-        { ico: "⬇️", label: "Jusqu'en bas, près du pli", detail: "Toute la fesse se contracte", court: 0, long: 2 },
+        { ico: "⬆️", visuel: { vue: "dos", forme: "court", zone: "haut" }, label: "Surtout en haut", detail: "Le bas reste plus mou ou peu rempli", court: 2, long: 0 },
+        { ico: "⬇️", visuel: { vue: "dos", forme: "long", zone: "tout" }, label: "Jusqu'en bas, près du pli", detail: "Toute la fesse se contracte", court: 0, long: 2 },
         { ico: "🙈", label: "Difficile à dire", detail: "", court: 0, long: 0 }
       ]
     },
     {
       emoji: "🩳",
+      vue: "Vue de dos",
       texte: "En legging, de dos, ta fesse dessine plutôt…",
       aide: "Pense à tes photos de salle ou regarde-toi dans le miroir.",
       choix: [
-        { ico: "⭕", label: "Un rond compact, placé haut", detail: "Ta fesse paraît courte en hauteur", court: 2, long: 0 },
-        { ico: "💧", label: "Une goutte qui descend", detail: "Ta fesse paraît longue, le volume va vers le bas", court: 0, long: 2 },
+        { ico: "⭕", visuel: { vue: "dos", forme: "court", legging: true, hauteur: true }, label: "Un rond compact, placé haut", detail: "Ta fesse paraît courte en hauteur", court: 2, long: 0 },
+        { ico: "💧", visuel: { vue: "dos", forme: "long", legging: true, hauteur: true }, label: "Une goutte qui descend", detail: "Ta fesse paraît longue, le volume va vers le bas", court: 0, long: 2 },
         { ico: "🤷‍♀️", label: "Je n'arrive pas à trancher", detail: "", court: 1, long: 1 }
       ]
     },
     {
       emoji: "📈",
+      vue: "Vue de dos",
       texte: "Quand tu prends du muscle (ou du volume), ça se voit d'abord…",
       aide: "Pense à tes progrès des derniers mois ou à tes photos avant/après.",
       choix: [
-        { ico: "🍑", label: "En haut : ma fesse « remonte »", detail: "Le haut s'arrondit plus vite que le bas", court: 2, long: 0 },
-        { ico: "🌙", label: "Partout, y compris dans le bas", detail: "La fesse s'allonge et se remplit vers la cuisse", court: 0, long: 2 },
+        { ico: "🍑", visuel: { vue: "dos", forme: "court", fleches: "haut" }, label: "En haut : ma fesse « remonte »", detail: "Le haut s'arrondit plus vite que le bas", court: 2, long: 0 },
+        { ico: "🌙", visuel: { vue: "dos", forme: "long", fleches: "bas" }, label: "Partout, y compris dans le bas", detail: "La fesse s'allonge et se remplit vers la cuisse", court: 0, long: 2 },
         { ico: "🌱", label: "Je débute, je n'ai pas encore de recul", detail: "", court: 0, long: 0 }
       ]
     }
@@ -384,6 +421,73 @@
     }
   };
 
+
+  // ---------- Schémas (SVG dessinés dans la page) ----------
+  var LOBE = {
+    court: "M60 30 C42 26 19 38 19 56 C19 67 24 74 34 76 C45 78 54 77 59 73",
+    long:  "M60 30 C42 26 18 40 18 62 C18 79 25 91 37 94 C47 96 55 93 59 89"
+  };
+  var PLI = {
+    court: "M21 69 C28 77 46 80 59 73",
+    long:  "M20 85 C28 94 46 97 59 89"
+  };
+  var SILHOUETTE_DOS = "M34 6 C30 25 14 38 14 62 C14 84 18 105 22 128 L56 128 C57 112 58 100 60 92 C62 100 63 112 64 128 L98 128 C102 105 106 84 106 62 C106 38 90 25 86 6 Z";
+  var SILHOUETTE_PROFIL = {
+    court: "M40 4 L66 4 C63 14 62 22 68 30 C88 32 99 48 94 63 C91 73 84 78 74 80 C70 88 70 98 71 108 C72 116 73 122 73 128 L40 128 C38 100 36 70 38 42 C39 26 41 14 40 4 Z",
+    long:  "M40 4 L66 4 C63 14 62 22 68 30 C88 34 98 56 96 76 C94 92 86 102 78 108 C75 116 74 122 73 128 L40 128 C38 100 36 70 38 42 C39 26 41 14 40 4 Z"
+  };
+
+  function fleche(x1, y1, x2, y2) {
+    var a = Math.atan2(y2 - y1, x2 - x1), l = 6;
+    var p1 = (x2 - l * Math.cos(a - .5)) + " " + (y2 - l * Math.sin(a - .5));
+    var p2 = (x2 - l * Math.cos(a + .5)) + " " + (y2 - l * Math.sin(a + .5));
+    return '<path class="s-repere" d="M' + x1 + " " + y1 + " L" + x2 + " " + y2 + " M" + p1 + " L" + x2 + " " + y2 + " L" + p2 + '"/>';
+  }
+  function accolade(x, y1, y2) {
+    return '<path class="s-repere" d="M' + (x - 4) + " " + y1 + " H" + x + " V" + y2 + " H" + (x - 4) + '"/>';
+  }
+  function symetrie(contenu) {
+    return contenu + '<g transform="translate(120 0) scale(-1 1)">' + contenu + "</g>";
+  }
+
+  function schemaDos(v) {
+    var f = v.forme, bas = f === "court" ? 76 : 94;
+    var classeLobe = v.legging ? "s-lobe-legging" : f === "long" ? "s-lobe s-lobe-doux" : "s-lobe";
+    var cote = '<path class="' + classeLobe + '" d="' + LOBE[f] + '"/>';
+    if (v.zone === "tout") cote += '<path class="s-zone" d="' + LOBE[f] + ' Z"/>';
+    if (v.zone === "haut") cote += '<ellipse class="s-zone" cx="38" cy="46" rx="15" ry="11"/>';
+    if (v.pli) cote += '<path class="' + (f === "court" ? "s-pli-fort" : "s-pli-doux") + '" d="' + PLI[f] + '"/>';
+    if (v.fleches === "haut") cote += fleche(38, 54, 38, 36);
+    if (v.fleches === "bas") cote += fleche(38, 52, 38, 34) + fleche(40, 68, 40, 88);
+    var svg = '<path class="' + (v.legging ? "s-legging" : "s-corps") + '" d="' + SILHOUETTE_DOS + '"/>' +
+      '<path class="s-trait" d="M60 30 V' + (bas - 4) + '"/>' + symetrie(cote);
+    if (v.hauteur) svg += accolade(114, 30, bas);
+    return svg;
+  }
+
+  function schemaProfil(v) {
+    var f = v.forme;
+    var svg = '<path class="s-corps" d="' + SILHOUETTE_PROFIL[f] + '"/>';
+    if (v.volume) {
+      svg += f === "court"
+        ? '<ellipse class="s-zone" cx="84" cy="50" rx="10" ry="13"/>' + accolade(108, 30, 78)
+        : '<ellipse class="s-zone" cx="84" cy="68" rx="9" ry="28"/>' + accolade(108, 30, 108);
+    }
+    if (v.jonction) {
+      svg += f === "court"
+        ? '<circle class="s-cercle" cx="77" cy="84" r="10"/>'
+        : '<circle class="s-cercle" cx="84" cy="104" r="10"/>';
+    }
+    return svg;
+  }
+
+  function schema(v) {
+    var titre = v.forme === "court" ? "Schéma : profil plutôt court" : "Schéma : profil plutôt long";
+    var cadre = v.vue === "dos" ? "0 0 120 132" : "22 0 98 132";
+    return '<svg viewBox="' + cadre + '" role="img" aria-label="' + titre + '">' +
+      (v.vue === "dos" ? schemaDos(v) : schemaProfil(v)) + "</svg>";
+  }
+
   var etat = { index: 0, reponses: [] };
   var $ = function (id) { return document.getElementById(id); };
 
@@ -410,15 +514,29 @@
     var html = '<span class="question-emoji" aria-hidden="true">' + q.emoji + '</span>' +
       '<h2 class="question">' + echapper(q.texte) + '</h2>' +
       '<p class="aide">' + echapper(q.aide) + '</p>' +
-      '<div class="choix-liste">';
-    q.choix.forEach(function (c, i) {
+      (q.vue ? '<span class="vue-pastille">👀 ' + echapper(q.vue) + '</span>' : '');
+
+    function bouton(c, i) {
       var choisi = etat.reponses[etat.index] === i ? " choisi" : "";
-      html += '<button type="button" class="choix' + choisi + '" data-i="' + i + '">' +
+      if (c.visuel) {
+        return '<button type="button" class="choix visuel' + choisi + '" data-i="' + i + '">' +
+          schema(c.visuel) +
+          '<span class="label">' + echapper(c.label) + (c.detail ? '<small>' + echapper(c.detail) + '</small>' : '') + '</span>' +
+          '</button>';
+      }
+      return '<button type="button" class="choix' + choisi + '" data-i="' + i + '">' +
         '<span class="ico" aria-hidden="true">' + c.ico + '</span>' +
         '<span>' + echapper(c.label) + (c.detail ? '<small>' + echapper(c.detail) + '</small>' : '') + '</span>' +
         '</button>';
+    }
+
+    var visuels = "", autres = "";
+    q.choix.forEach(function (c, i) {
+      if (c.visuel) visuels += bouton(c, i); else autres += bouton(c, i);
     });
-    html += '</div>';
+    html += '<div class="choix-liste">' +
+      (visuels ? '<div class="choix-visuels">' + visuels + '</div>' : '') +
+      autres + '</div>';
 
     var carte = $("carte-question");
     carte.innerHTML = html;
