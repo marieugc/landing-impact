@@ -10,3 +10,8 @@ Pour la mettre en ligne pas à pas, suis le [**GUIDE.md**](GUIDE.md).
 
 Mini-guide interactif (lead magnet) dans [`test-fessier/index.html`](test-fessier/index.html).
 Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/test-fessier/`
+
+## Tunnel « RECOMP » 💜
+
+Quiz de recomposition corporelle → profil personnalisé → offre → appel Calendly, dans [`recomp/`](recomp/).
+Mode d'emploi (photo avant/après, textes, mise en ligne Netlify) : [`recomp/README.md`](recomp/README.md).
