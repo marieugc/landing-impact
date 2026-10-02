@@ -3,6 +3,7 @@ import { api, MODE } from './data.js';
 import { esc, icone, toast, pendant, fenetre } from './ui.js';
 import { ecransEleve } from './eleve.js';
 import { ecransCoach } from './coach.js';
+import { nonLus } from './chat.js';
 
 const racine = document.getElementById('app');
 let profil = null;
@@ -136,7 +137,7 @@ async function afficher() {
         '': ecransCoach.tableau, undefined: ecransCoach.tableau,
         eleve: ecransCoach.fiche, videos: ecransCoach.videos, bilans: ecransCoach.bilans,
         competitrices: ecransCoach.competitrices, nutrition: ecransCoach.plansNutrition,
-        charges: ecransCoach.suiviCharges
+        charges: ecransCoach.suiviCharges, messages: ecransCoach.messages
       }[sous] || ecransCoach.tableau;
       await ecran(racine, profil, params);
     } else {
@@ -152,9 +153,31 @@ async function afficher() {
   }
 
   if (MODE === 'demo' && !racine.querySelector('.bandeau-demo')) racine.insertAdjacentHTML('afterbegin', bandeauDemo());
+  majPastille();
   const bouton = racine.querySelector('#installer');
   if (bouton && !estInstallee && (invitationInstall || estIOS)) bouton.removeAttribute('hidden');
 }
+
+// Pastille du nombre de messages non lus sur l'onglet Chat (élève) ou Messages (coach)
+async function majPastille() {
+  if (!profil) return;
+  const coach = profil.role === 'coach';
+  const lien = racine.querySelector(coach ? 'a[href="#/coach/messages"]' : 'a[href="#/chat"].onglet');
+  if (!lien) return;
+  try {
+    const n = await nonLus(coach ? null : profil.id, coach);
+    let pastille = lien.querySelector('.compteur');
+    if (!n) { pastille?.remove(); return; }
+    if (!pastille) {
+      pastille = Object.assign(document.createElement('span'), { className: 'compteur' });
+      lien.appendChild(pastille);
+    }
+    pastille.textContent = n > 9 ? '9+' : n;
+    pastille.setAttribute('aria-label', `${n} message${n > 1 ? 's' : ''} non lu${n > 1 ? 's' : ''}`);
+  } catch (e) { /* hors ligne : on réessaiera */ }
+}
+document.addEventListener('messages-lus', majPastille);
+setInterval(() => { if (!document.hidden) majPastille(); }, 30000);
 
 // Branché une seule fois sur toute l'app : ces boutons marchent même quand
 // un écran se redessine tout seul (filtre, correction envoyée…)

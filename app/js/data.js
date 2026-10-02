@@ -10,7 +10,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v2';
+const CLE_DEMO = 'bootyflow-demo-v3';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -81,7 +81,14 @@ function donneesDemo() {
     id: `c-${exercice}-${i}`, eleve_id: 'sarah', exercice, date: dansJours(-41 + i * 7),
     poids: kg, series: 4, reps: exercice === 'Squat bulgare' ? 10 : 8, note: ''
   })));
-  return { profiles, nutrition, videos, bilans, competitions, charges };
+  const heure = (jours, h) => new Date(Date.now() + jours * 864e5 - h * 36e5).toISOString();
+  const messages = [
+    { id: 'm1', eleve_id: 'sarah', de_coach: true, texte: "Coucou Sarah ! N'hésite pas à m'écrire ici si tu as la moindre question.", lu: true, created_at: heure(-2, 3) },
+    { id: 'm2', eleve_id: 'sarah', de_coach: false, texte: 'Merci ! Je peux remplacer le riz par des pâtes le midi ?', lu: true, created_at: heure(-1, 5) },
+    { id: 'm3', eleve_id: 'sarah', de_coach: true, texte: 'Oui bien sûr, même quantité une fois cuites.', lu: false, created_at: heure(-1, 4) },
+    { id: 'm4', eleve_id: 'ines', de_coach: false, texte: 'Petite douleur au genou sur les fentes, je continue ou je remplace ?', lu: false, created_at: heure(0, 2) }
+  ].map((m) => ({ audio_chemin: null, duree: null, ...m }));
+  return { profiles, nutrition, videos, bilans, competitions, charges, messages };
 }
 
 function lireDemo() {
@@ -199,6 +206,26 @@ const demo = {
     ecrireDemo(d);
   },
   async saveChecklist(uid, checklist) { await demo.saveCompetition(uid, { checklist }); },
+
+  async listMessages(eleveId) {
+    return (lireDemo().messages || [])
+      .filter((m) => !eleveId || m.eleve_id === eleveId)
+      .sort((a, b) => a.created_at.localeCompare(b.created_at));
+  },
+  async sendMessage(eleveId, { deCoach, texte, audio, duree }) {
+    const d = lireDemo();
+    d.messages = d.messages || [];
+    d.messages.push({ id: id(), eleve_id: eleveId, de_coach: deCoach, texte: texte || null,
+      audio_chemin: garderFichier(audio), duree: duree || null, lu: false, created_at: new Date().toISOString() });
+    ecrireDemo(d);
+  },
+  async markMessagesLus(eleveId, lecteurEstCoach) {
+    const d = lireDemo();
+    for (const m of d.messages || []) {
+      if (m.eleve_id === eleveId && m.de_coach !== lecteurEstCoach) m.lu = true;
+    }
+    ecrireDemo(d);
+  },
 
   async listCharges(eleveId) {
     return (lireDemo().charges || [])
@@ -339,6 +366,22 @@ const reel = {
   // L'élève ne peut que cocher sa checklist (pas créer la fiche compétition)
   async saveChecklist(uid, checklist) {
     verifier(await (await client()).from('competitions').update({ checklist }).eq('eleve_id', uid));
+  },
+
+  // Sans eleveId : tous les messages (la coach uniquement, grâce aux règles de sécurité)
+  async listMessages(eleveId) {
+    let q = (await client()).from('messages').select('*').order('created_at');
+    if (eleveId) q = q.eq('eleve_id', eleveId);
+    return verifier(await q);
+  },
+  async sendMessage(eleveId, { deCoach, texte, audio, duree }) {
+    const audio_chemin = await envoyerFichier(eleveId, 'vocaux', audio);
+    verifier(await (await client()).from('messages').insert({
+      eleve_id: eleveId, de_coach: deCoach, texte: texte || null, audio_chemin, duree: duree || null
+    }));
+  },
+  async markMessagesLus(eleveId) {
+    verifier(await (await client()).rpc('marquer_messages_lus', { p_eleve: eleveId }));
   },
 
   // Sans eleveId : toutes les charges (la coach uniquement, grâce aux règles de sécurité)

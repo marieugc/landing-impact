@@ -25,7 +25,10 @@ const TRACES = {
   lecture: '<path d="M8 5v14l11-7z"/>',
   photo: '<rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l2-2h4l2 2"/>',
   croix: '<path d="M6 6l12 12M18 6L6 18"/>',
-  haltere: '<path d="M6 7v10M18 7v10M3 9.5v5M21 9.5v5M6 12h12"/>'
+  haltere: '<path d="M6 7v10M18 7v10M3 9.5v5M21 9.5v5M6 12h12"/>',
+  chat: '<path d="M4 5h16v11H9l-5 4z"/>',
+  micro: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+  avion: '<path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/>'
 };
 
 export function icone(nom, taille = 22, couleur = 'currentColor', plein = false) {

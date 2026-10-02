@@ -155,6 +155,7 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 - **Nutrition** : calories, macros, repas de la journée, dernier ajustement, plan PDF
 - **Mouvement** : envoi de vidéos d'exercice, et tes corrections écrites
 - **Posing** (compétitrices seulement) : compte à rebours, poses imposées, checklist jour J, envoi de posing
+- **Chat** : discussion privée avec la coach, en messages écrits ou vocaux (bouton micro)
 - **Progrès** : courbe de poids, mensurations, **suivi des charges par exercice** (courbe, record, historique), photos avant/après, formulaire de bilan hebdo
 
 **Espace coach (ordinateur ou téléphone)**
@@ -162,6 +163,7 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 - **Fiche élève** : suivi, plan nutrition, vidéos, bilans (avec photos et écarts), charges de musculation, compétition
 - **Vidéos à corriger** : toutes les vidéos en attente, avec un retour écrit et/ou une vidéo de correction
 - **Bilans**, **Compétitrices**, **Plans nutrition** : vues d'ensemble
+- **Messages** : une conversation par élève (texte et vocaux), avec le nombre de messages non lus dans le menu ; bouton « Écrire » sur chaque fiche élève
 - **Suivi des charges** : pour chaque élève, dernière séance, exercices suivis, records de la semaine et meilleure progression ; un clic ouvre le détail par exercice
 
 ---
@@ -182,6 +184,10 @@ simplement me demander !
 **Une nouvelle fonction a été ajoutée à la base de données (ex. : suivi des charges) ?**
 Si tu avais déjà fait l'étape 3b, refais-la simplement : recopie tout `supabase/schema.sql`
 dans le SQL Editor et clique sur **Run**. Tes données existantes ne sont pas effacées.
+
+**Le bouton micro ne marche pas ?** La première fois, le téléphone demande l'autorisation
+d'utiliser le micro : il faut accepter. Si elle a été refusée : sur iPhone, Réglages › Safari ›
+Micro ; sur Android, appuyer sur le cadenas à côté de l'adresse › Autorisations › Micro.
 
 **J'ai modifié l'app mais je vois l'ancienne version sur mon téléphone ?** Ferme complètement
 l'app et rouvre-la (parfois deux fois) : elle se met à jour toute seule.

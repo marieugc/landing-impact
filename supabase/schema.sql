@@ -112,6 +112,22 @@ create table if not exists public.charges (
 );
 create index if not exists charges_eleve_exercice on public.charges (eleve_id, exercice, date);
 
+-- 7. Messagerie élève ↔ coach (texte et vocaux)
+-- Une conversation par élève : eleve_id identifie la conversation.
+create table if not exists public.messages (
+  id uuid primary key default gen_random_uuid(),
+  eleve_id uuid not null references public.profiles on delete cascade,
+  auteur_id uuid not null default auth.uid() references public.profiles on delete cascade,
+  de_coach boolean not null default false,
+  texte text,
+  audio_chemin text,
+  duree int,
+  lu boolean not null default false,
+  created_at timestamptz not null default now(),
+  check (texte is not null or audio_chemin is not null)
+);
+create index if not exists messages_conversation on public.messages (eleve_id, created_at);
+
 -- ─── Sécurité : chaque élève ne voit QUE ses données, la coach voit tout ───
 alter table public.profiles enable row level security;
 alter table public.nutrition enable row level security;
@@ -119,6 +135,7 @@ alter table public.videos enable row level security;
 alter table public.bilans enable row level security;
 alter table public.competitions enable row level security;
 alter table public.charges enable row level security;
+alter table public.messages enable row level security;
 
 drop policy if exists "profil lecture" on public.profiles;
 create policy "profil lecture" on public.profiles for select using (id = auth.uid() or public.est_coach());
@@ -157,6 +174,23 @@ drop policy if exists "charges ajout" on public.charges;
 create policy "charges ajout" on public.charges for insert with check (eleve_id = auth.uid());
 drop policy if exists "charges suppression" on public.charges;
 create policy "charges suppression" on public.charges for delete using (eleve_id = auth.uid());
+
+drop policy if exists "messages lecture" on public.messages;
+create policy "messages lecture" on public.messages for select using (eleve_id = auth.uid() or public.est_coach());
+drop policy if exists "messages envoi" on public.messages;
+create policy "messages envoi" on public.messages for insert with check (
+  auteur_id = auth.uid() and lu = false and (
+    (eleve_id = auth.uid() and de_coach = false) or (public.est_coach() and de_coach = true)
+  )
+);
+
+-- Marque comme lus les messages reçus (sans permettre de modifier leur contenu)
+create or replace function public.marquer_messages_lus(p_eleve uuid)
+returns void language sql security definer set search_path = public as $$
+  update public.messages set lu = true
+  where eleve_id = p_eleve and lu = false
+    and ((public.est_coach() and de_coach = false) or (p_eleve = auth.uid() and de_coach = true));
+$$;
 
 -- ─── Stockage des vidéos, photos et PDF ───
 insert into storage.buckets (id, name, public)
