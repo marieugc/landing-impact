@@ -100,7 +100,7 @@ Quand une personne clique sur « Réserver mon appel », son profil est ajouté 
 3. **Glisse le dossier `recomp` entier** dans la zone « Drag and drop your site output folder here ».
 4. Attends quelques secondes : Netlify te donne une adresse du type `https://nom-au-hasard-123.netlify.app`. Ta page est en ligne ✅
 5. Pour un joli nom : **Site configuration** → **Change site name** → par exemple `bootyflow-recomp` → ton lien devient `https://bootyflow-recomp.netlify.app`.
-6. **Important pour l'aperçu en DM :** ouvre `index.html`, remplace les 2 lignes `assets/og-image.png` (balises `og:image` et `twitter:image`) par l'adresse complète, ex. :
+6. **Important pour l'aperçu en DM :** l'adresse de l'image est réglée pour GitHub Pages. Sur Netlify, ouvre `index.html`, remplace les 2 lignes `assets/og-image.png` (balises `og:image` et `twitter:image`) par l'adresse complète, ex. :
    `https://bootyflow-recomp.netlify.app/assets/og-image.png`
 7. **Pour mettre à jour le site** après une modification : dans Netlify, onglet **Deploys** → glisse à nouveau le dossier `recomp` dans la zone en bas de la page. Le lien ne change pas.
 
