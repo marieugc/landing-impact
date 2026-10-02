@@ -392,6 +392,20 @@ body.en-quiz .entete { position: sticky; top: 0; }
   font: 600 .8rem var(--corps); letter-spacing: .12em; text-transform: uppercase;
   padding: 6px 14px; border-radius: 99px; background: rgba(255, 255, 255, .92); color: var(--violet-fonce);
 }
+.transfo__onglets {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 4px;
+  padding: 4px; margin-bottom: 12px;
+  background: var(--lavande-2); border-radius: 99px;
+}
+.transfo__onglet {
+  min-height: 44px; border: 0; border-radius: 99px; cursor: pointer;
+  font: 700 .95rem var(--corps); color: var(--violet-fonce); background: transparent;
+  transition: background-color .2s, color .2s, box-shadow .2s;
+}
+.transfo__onglet[aria-pressed="true"] { background: var(--blanc); color: var(--noir); box-shadow: var(--ombre-s); }
+.transfo__vue { animation: monte .35s var(--ease) both; }
+.transfo__vue[hidden] { display: none; }
+.transfo__legende { margin-top: 10px; text-align: center; font-size: .88rem; font-weight: 500; color: var(--texte-doux); }
 .transfo__texte { font-size: 1.08rem; }
 
 /* ---------- Offre ---------- */
