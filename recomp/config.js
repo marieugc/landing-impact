@@ -212,10 +212,15 @@ window.RECOMP_CONFIG = {
   /* ---------- Écran transformation ---------- */
   transformation: {
     titre: "Elle était au même point que toi",
-    image: "assets/transformation.png",
-    imageAlt: "Photo avant / après d'une cliente après 6 mois de recomposition corporelle",
+    // Une ou plusieurs photos : s'il y en a plusieurs, des onglets apparaissent.
+    // Pour en ajouter une : copie une ligne { … }, et dépose l'image dans assets/.
+    images: [
+      { onglet: "De face", src: "assets/transformation-face.webp", alt: "Linda de face, avant et après 4 mois de recomposition corporelle" },
+      { onglet: "De dos",  src: "assets/transformation-dos.webp",  alt: "Linda de dos, avant et après 4 mois de recomposition corporelle : fessiers plus galbés" }
+    ],
+    legende: "Linda · 4 mois d'accompagnement",
     placeholder: "Photo avant / après",
-    texte: "6 mois de recomposition corporelle : <strong>-10 kg</strong>, et la preuve que perdre du gras et se muscler en même temps, ça fonctionne quand la stratégie est la bonne.",
+    texte: "4 mois de recomposition corporelle : <strong>-7&nbsp;kg</strong> pour Linda, avec une stratégie axée sur la musculation en priorité, du cardio dosé et un déficit calorique. La preuve que perdre du gras et se muscler en même temps, ça fonctionne quand la stratégie est la bonne.",
     bouton: "Je veux le même accompagnement"
   },
 

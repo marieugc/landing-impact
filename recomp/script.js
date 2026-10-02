@@ -411,15 +411,40 @@
      ------------------------------------------------------------------ */
   function ecranTransformation() {
     var T = C.transformation;
+    var images = T.images || [{ src: T.image, alt: T.imageAlt }];
+
+    function placeholder() {
+      return el("div", { class: "transfo__placeholder", role: "img", "aria-label": T.placeholder }, [
+        el("div", { class: "transfo__moitie" }, [el("span", { text: "Avant" })]),
+        el("div", { class: "transfo__moitie transfo__moitie--apres" }, [el("span", { text: "Après" })])
+      ]);
+    }
+
     var cadre = el("figure", { class: "transfo" });
-    var placeholder = el("div", { class: "transfo__placeholder", role: "img", "aria-label": T.placeholder }, [
-      el("div", { class: "transfo__moitie" }, [el("span", { text: "Avant" })]),
-      el("div", { class: "transfo__moitie transfo__moitie--apres" }, [el("span", { text: "Après" })])
-    ]);
-    var img = el("img", { class: "transfo__img", src: T.image, alt: T.imageAlt, decoding: "async" });
-    img.addEventListener("error", function () { if (img.parentNode) img.parentNode.replaceChild(placeholder, img); });
-    img.addEventListener("load", function () { img.classList.add("est-chargee"); });
-    cadre.appendChild(img);
+    var vues = images.map(function (im, i) {
+      var img = el("img", { class: "transfo__img", src: im.src, alt: im.alt, decoding: "async", loading: i ? "lazy" : null });
+      img.addEventListener("error", function () { if (img.parentNode) img.parentNode.replaceChild(placeholder(), img); });
+      img.addEventListener("load", function () { img.classList.add("est-chargee"); });
+      return el("div", { class: "transfo__vue", id: "transfo-vue-" + i, hidden: i > 0 }, [img]);
+    });
+
+    if (images.length > 1) {
+      var onglets = el("div", { class: "transfo__onglets", role: "group", "aria-label": "Choisir la vue" });
+      images.forEach(function (im, i) {
+        var b = el("button", {
+          type: "button", class: "transfo__onglet", "aria-pressed": i === 0 ? "true" : "false",
+          "aria-controls": "transfo-vue-" + i, text: im.onglet || "Photo " + (i + 1),
+          onclick: function () {
+            Array.prototype.forEach.call(onglets.children, function (x, k) { x.setAttribute("aria-pressed", k === i ? "true" : "false"); });
+            vues.forEach(function (v, k) { v.hidden = k !== i; });
+          }
+        });
+        onglets.appendChild(b);
+      });
+      cadre.appendChild(onglets);
+    }
+    vues.forEach(function (v) { cadre.appendChild(v); });
+    if (T.legende) cadre.appendChild(el("figcaption", { class: "transfo__legende", text: T.legende }));
 
     return el("section", { "aria-labelledby": "titre-transfo" }, [
       el("h1", { id: "titre-transfo", class: "titre-l", html: T.titre }),

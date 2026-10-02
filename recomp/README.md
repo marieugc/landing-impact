@@ -15,20 +15,27 @@ recomp/
 └── assets/
     ├── og-image.png        ← l'image d'aperçu quand tu partages le lien
     ├── favicon.svg         ← la petite icône de l'onglet
-    └── transformation.png  ← TON image avant/après (à ajouter)
+    ├── transformation-face.webp  ← avant/après de Linda, de face
+    └── transformation-dos.webp   ← avant/après de Linda, de dos
 ```
 
 ---
 
-## 1. Ajouter ton image avant / après
+## 1. Changer ou ajouter une photo avant / après
 
-1. Prépare ton image (idéalement **verticale**, format 4:5, ex. 1080 × 1350 px, moins de 500 Ko).
-2. Renomme-la exactement : **`transformation.png`** (tout en minuscules).
-3. Place-la dans le dossier **`assets/`**.
+Les photos de Linda (de face et de dos) sont déjà en place, avec des onglets « De face / De dos ».
 
-C'est tout. Tant que l'image n'est pas là, un encadré élégant « Avant / Après » s'affiche à la place.
+**Remplacer une photo :** dépose ta nouvelle image dans `assets/` en lui donnant **exactement le même nom** (ex. `transformation-face.webp`).
 
-> Ton image est en `.jpg` ? Soit tu la renommes en `.png` après conversion, soit tu ouvres `config.js`, tu cherches `image: "assets/transformation.png"` et tu remplaces par `"assets/transformation.jpg"`.
+**Ajouter une photo (ex. de profil) :**
+1. Dépose l'image dans `assets/`, par exemple `transformation-profil.jpg` (idéalement verticale, format 4:5, moins de 500 Ko).
+2. Dans `config.js`, section `transformation`, copie une ligne de la liste `images` et adapte-la :
+   ```js
+   { onglet: "De profil", src: "assets/transformation-profil.jpg", alt: "Linda de profil, avant et après" },
+   ```
+3. Le texte (« -7 kg en 4 mois… ») et la légende se changent juste en dessous (`texte` et `legende`).
+
+Si une image est introuvable, un encadré élégant « Avant / Après » s'affiche à la place.
 
 ---
 
