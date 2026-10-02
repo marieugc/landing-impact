@@ -5,6 +5,7 @@ import {
   esc, icone, dateCourte, dateAvecJour, joursAvant, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
+import { conversation } from './chat.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -14,7 +15,8 @@ const ONGLETS = [
   { route: 'nutrition', libelle: 'Nutrition', icone: 'nutrition' },
   { route: 'mouvement', libelle: 'Mouvement', icone: 'video' },
   { route: 'posing', libelle: 'Posing', icone: 'etoile', competitrice: true },
-  { route: 'progres', libelle: 'Progrès', icone: 'progres' }
+  { route: 'progres', libelle: 'Progrès', icone: 'progres' },
+  { route: 'chat', libelle: 'Chat', icone: 'chat' }
 ];
 
 function navigation(profil, actif) {
@@ -71,6 +73,7 @@ async function accueil(racine, profil) {
       <div class="ligne-auteur"><img src="img/coach.jpg" alt="" class="avatar-petit">
         <div><strong>Coach ${esc(NOM_COACH)}</strong><div class="petit">Message du jour</div></div></div>
       <p class="texte">${profil.message_coach ? esc(profil.message_coach) : 'Pas de nouveau message pour le moment.'}</p>
+      <a href="#/chat" class="lien-chat">${icone('chat', 16)}Écrire à ma coach</a>
     </section>
     <a href="#/bilan" class="bouton-principal">${icone('check', 18, 'currentColor')}FAIRE MON BILAN</a>
     <div class="pied-accueil">
@@ -422,4 +425,14 @@ async function bilan(racine, profil) {
   });
 }
 
-export const ecransEleve = { accueil, nutrition, mouvement, posing, progres, bilan };
+// ───────────── Chat avec la coach ─────────────
+async function chat(racine, profil) {
+  racine.innerHTML = page(profil, 'chat', '<div class="chat-plein" id="chat-zone"></div>');
+  await conversation(racine.querySelector('#chat-zone'), {
+    eleveId: profil.id, moiCoach: false,
+    titre: `Coach ${NOM_COACH}`, sousTitre: 'Réponse en général sous 24 h',
+    avatar: '<img src="img/coach.jpg" alt="" class="avatar-coach">'
+  });
+}
+
+export const ecransEleve = { accueil, nutrition, mouvement, posing, progres, bilan, chat };

@@ -5,6 +5,7 @@ import {
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { afficherPhotos, blocCharges } from './eleve.js';
+import { conversation } from './chat.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -16,7 +17,8 @@ const MENU = [
   { route: 'coach/videos', libelle: 'Vidéos à corriger', icone: 'video' },
   { route: 'coach/competitrices', libelle: 'Compétitrices', icone: 'etoile' },
   { route: 'coach/bilans', libelle: 'Bilans', icone: 'progres' },
-  { route: 'coach/charges', libelle: 'Suivi des charges', icone: 'haltere' }
+  { route: 'coach/charges', libelle: 'Suivi des charges', icone: 'haltere' },
+  { route: 'coach/messages', libelle: 'Messages', icone: 'chat' }
 ];
 
 function page(profil, actif, contenu) {
@@ -116,7 +118,8 @@ async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
     <div class="bureau-tete"><div class="ligne-auteur">
       <a href="#/coach" class="bouton-rond" aria-label="Retour à la liste">${icone('retour', 20)}</a>
       ${initiale(e.prenom)}<div><div class="surtitre">FICHE ÉLÈVE</div><h1>${esc(e.prenom)}</h1></div></div>
-      <span class="petit">${esc(e.email || '')}</span></div>
+      <div class="bureau-actions"><span class="petit">${esc(e.email || '')}</span>
+        <a href="#/coach/messages/${esc(e.id)}" class="bouton-contour compact">${icone('chat', 16)}Écrire</a></div></div>
     <div class="filtres">${onglets}</div>
     <div id="onglet"></div>
   `);
@@ -449,4 +452,49 @@ async function suiviCharges(racine, profil) {
     </section>`);
 }
 
-export const ecransCoach = { tableau, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges };
+// ───────────── Messages ─────────────
+function apercu(m) {
+  if (!m) return 'Aucun message';
+  const qui = m.de_coach ? 'Toi : ' : '';
+  return qui + (m.texte ? m.texte : 'Message vocal');
+}
+
+async function messages(racine, profil, [eleveId]) {
+  if (eleveId) return discussion(racine, profil, eleveId);
+  const [eleves, tous] = await Promise.all([api.listEleves(), api.listMessages()]);
+  const lignes = eleves.map((e) => {
+    const siens = tous.filter((m) => m.eleve_id === e.id);
+    return { e, dernier: siens[siens.length - 1], nonLus: siens.filter((m) => !m.de_coach && !m.lu).length };
+  }).sort((a, b) => (b.nonLus - a.nonLus) || (b.dernier?.created_at || '').localeCompare(a.dernier?.created_at || ''));
+
+  racine.innerHTML = page(profil, 'coach/messages', titre('Messages') + `
+    <section class="carte liste-conversations">
+      ${lignes.map(({ e, dernier, nonLus }) => `
+        <a href="#/coach/messages/${esc(e.id)}" class="ligne-conversation${nonLus ? ' non-lue' : ''}">
+          ${initiale(e.prenom)}
+          <span class="ligne-conversation-texte"><strong>${esc(e.prenom)}</strong>
+            <span class="petit">${esc(apercu(dernier))}</span></span>
+          <span class="ligne-conversation-info">
+            ${dernier ? `<small class="petit">${dateCourte(dernier.created_at)}</small>` : ''}
+            ${nonLus ? `<span class="compteur">${nonLus}</span>` : ''}
+          </span>
+        </a>`).join('') || '<p class="vide">Aucune élève inscrite.</p>'}
+    </section>`);
+}
+
+async function discussion(racine, profil, eleveId) {
+  const e = await api.getProfile(eleveId);
+  if (!e) { location.hash = '#/coach/messages'; return; }
+  racine.innerHTML = page(profil, 'coach/messages', `
+    <div class="bureau-tete"><div class="ligne-auteur">
+      <a href="#/coach/messages" class="bouton-rond" aria-label="Retour aux messages">${icone('retour', 20)}</a>
+      <div><div class="surtitre">MESSAGES</div><h1>${esc(e.prenom)}</h1></div></div>
+      <a href="#/coach/eleve/${esc(e.id)}" class="bouton-contour compact">Voir sa fiche</a></div>
+    <div class="chat-bureau" id="chat-zone"></div>`);
+  await conversation(racine.querySelector('#chat-zone'), {
+    eleveId, moiCoach: true, titre: e.prenom,
+    sousTitre: esc(e.objectif || ''), avatar: initiale(e.prenom)
+  });
+}
+
+export const ecransCoach = { tableau, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages };
