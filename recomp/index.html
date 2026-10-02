@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Ta stratégie de recomposition · Booty Flow</title>
+  <meta name="description" content="Tu penses devoir maigrir avant de muscler tes fessiers ? Réponds à 6 questions et découvre ta stratégie de recomposition personnalisée (2 min)." />
+  <meta name="theme-color" content="#6A2BD9" />
+
+  <!-- Aperçu du lien (Instagram, WhatsApp, iMessage…) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:site_name" content="Booty Flow" />
+  <meta property="og:title" content="Tu penses devoir maigrir avant de muscler tes fessiers ?" />
+  <meta property="og:description" content="Réponds à 6 questions et découvre ta stratégie de recomposition personnalisée 💜" />
+  <!-- ⚠️ Remplace par l'adresse complète une fois en ligne, ex : https://ton-site.netlify.app/assets/og-image.png -->
+  <meta property="og:image" content="assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Booty Flow · Ta stratégie de recomposition corporelle" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tu penses devoir maigrir avant de muscler tes fessiers ?" />
+  <meta name="twitter:description" content="Réponds à 6 questions et découvre ta stratégie de recomposition personnalisée 💜" />
+  <meta name="twitter:image" content="assets/og-image.png" />
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+  <header class="entete">
+    <span class="logo" id="logo">Booty Flow</span>
+    <div class="progression" id="progression" hidden>
+      <div class="progression__texte" id="progression-texte" aria-hidden="true"></div>
+      <div class="progression__barre" role="progressbar" id="progression-barre"
+           aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" aria-label="Progression du questionnaire">
+        <span class="progression__remplissage" id="progression-remplissage"></span>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenu" class="scene">
+    <!-- Les écrans sont générés par script.js à partir de config.js -->
+    <noscript>
+      <p class="noscript">Active JavaScript pour découvrir ta stratégie personnalisée 💜</p>
+    </noscript>
+  </main>
+
+  <footer class="pied" id="pied"></footer>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
