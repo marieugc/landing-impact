@@ -56,6 +56,8 @@ devient
 prix: "1350 €",
 ```
 
+**Après chaque modification mise en ligne :** ouvre `index.html` et augmente le numéro de version à la fin du fichier (`?v=2` → `?v=3`) sur les lignes `style.css`, `config.js` et `script.js`. Sinon, les téléphones qui ont déjà visité la page peuvent continuer à afficher l'ancienne version.
+
 **Les règles à respecter :**
 - Garde les guillemets `"` au début et à la fin, et la virgule en fin de ligne.
 - Pour mettre un mot en gras : `<strong>mot</strong>`.
