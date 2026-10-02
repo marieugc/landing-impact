@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1A0B33" />
+  <title>Ton diagnostic Booty Flow · Découvre ce qui bloque tes résultats</title>
+  <meta name="description" content="Réponds à quelques questions (2 min) et reçois ton diagnostic personnalisé : entraînement, alimentation, suivi. Par Marie, coach Booty Flow." />
+
+  <!-- Aperçu du lien en DM (Instagram, WhatsApp, Messenger…) -->
+  <!-- 👉 Après la mise en ligne sur Netlify, remplace l'adresse dans og:url et og:image (voir README). -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:site_name" content="Booty Flow Coaching" />
+  <meta property="og:title" content="Découvre ce qui bloque vraiment tes résultats 💜" />
+  <meta property="og:description" content="Ton diagnostic personnalisé en 2 min : entraînement, alimentation, suivi. Par Marie, compétitrice Wellness et juge de compétition." />
+  <meta property="og:url" content="https://marieugc.github.io/landing-impact/diagnostic/" />
+  <meta property="og:image" content="https://marieugc.github.io/landing-impact/diagnostic/assets/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Booty Flow Coaching" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Découvre ce qui bloque vraiment tes résultats 💜" />
+  <meta name="twitter:description" content="Ton diagnostic personnalisé en 2 min : entraînement, alimentation, suivi." />
+  <meta name="twitter:image" content="https://marieugc.github.io/landing-impact/diagnostic/assets/og-image.jpg" />
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/marie.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=1" />
+</head>
+<body>
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+  <header class="entete" id="entete">
+    <div class="entete__ligne">
+      <button type="button" class="retour" id="retour" hidden>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="retour-texte">Retour</span>
+      </button>
+      <img class="entete__logo" id="entete-logo" src="assets/logo.webp" alt="Booty Flow Coaching" width="900" height="425" />
+      <span class="entete__cale" aria-hidden="true"></span>
+    </div>
+    <div class="progression" id="progression" hidden>
+      <div class="progression__texte" id="progression-texte" aria-hidden="true"></div>
+      <div class="progression__barre" role="progressbar" id="progression-barre"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progression du test">
+        <span class="progression__remplissage" id="progression-remplissage"></span>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenu" class="scene" tabindex="-1">
+    <!-- Les écrans sont générés par script.js à partir de config.js -->
+    <noscript>
+      <p class="noscript">Active JavaScript pour découvrir ton diagnostic personnalisé 💜</p>
+    </noscript>
+  </main>
+
+  <div class="annonce" id="annonce" aria-live="polite" role="status"></div>
+
+  <footer class="pied" id="pied"></footer>
+
+  <script src="config.js?v=1"></script>
+  <script src="script.js?v=1"></script>
+</body>
+</html>
