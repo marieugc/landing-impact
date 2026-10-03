@@ -412,6 +412,9 @@ button { font: inherit; }
 .carrousel__piste {
   display: flex; margin: 0; padding: 0; list-style: none;
   overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  align-items: flex-start;
+  overflow-y: hidden;
+  transition: height .35s var(--ease);
   border-radius: var(--rayon);
   -webkit-overflow-scrolling: touch;
 }
@@ -422,6 +425,7 @@ button { font: inherit; }
   border: 1px solid var(--lavande-2); height: 100%;
 }
 .diapo__img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.diapo__img--libre { aspect-ratio: auto; height: auto; }   /* photo au format paysage, non recadrée */
 .diapo figcaption { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; }
 .diapo__legende { color: var(--violet-fonce); }
 .diapo__texte { font-size: 15px; }

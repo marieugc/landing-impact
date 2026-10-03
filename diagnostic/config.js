@@ -415,6 +415,8 @@ window.BF_CONFIG = {
      11. ÉCRAN PREUVE (carrousel)
      Pour ajouter une transformation : copie un bloc { … },
      dépose l'image dans le dossier assets/ et change "src".
+     Photo verticale (4:5) : rien à ajouter. Photo plus large que haute :
+     ajoute la ligne  format: "paysage",  pour qu'elle ne soit pas recadrée.
      ================================================================= */
   preuve: {
     titre: "Elle était au même point que toi",
@@ -431,6 +433,13 @@ window.BF_CONFIG = {
         alt: "Linda de dos, avant et après 4 mois d'accompagnement : fessiers plus galbés",
         legende: "Linda · 4 mois · de dos",
         texte: "Moins de gras, <strong>des fessiers plus galbés</strong> : la recomposition quand la stratégie est la bonne."
+      },
+      {
+        src: "assets/transformation-maria.webp",
+        format: "paysage",   // photo plus large que haute : affichée entière, sans recadrage
+        alt: "Maria de profil, avant le coaching et après 1 mois : fessiers plus hauts et plus galbés",
+        legende: "Maria · 1 mois · de profil",
+        texte: "Après <strong>seulement 1 mois</strong> de coaching, ses fessiers réagissent déjà : plus de galbe et de volume, avec un entraînement ciblé et une surcharge progressive."
       }
     ],
     titrePiliers: "La méthode Booty Flow",

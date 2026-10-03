@@ -567,7 +567,7 @@
             T.map(function (t, i) {
               return '<li class="diapo" aria-roledescription="diapositive" aria-label="' + (i + 1) + ' sur ' + T.length + '">' +
                 '<figure>' +
-                  image(t.src, t.alt, "diapo__img", P.placeholder) +
+                  image(t.src, t.alt, "diapo__img" + (t.format === "paysage" ? " diapo__img--libre" : ""), P.placeholder) +
                   '<figcaption><strong class="diapo__legende">' + t.legende + '</strong>' +
                   (t.texte ? '<span class="diapo__texte">' + t.texte + '</span>' : "") + '</figcaption>' +
                 '</figure>' +
@@ -596,6 +596,15 @@
     if (plusieurs) {
       var piste = $(".carrousel__piste", n), points = $$(".point", n);
       var courant = 0;
+      var diapos = $$(".diapo", n);
+      // La hauteur suit la diapositive affichée (photos verticales ou paysage)
+      function ajusterHauteur() {
+        var d = diapos[courant];
+        if (d && d.offsetHeight) piste.style.height = d.offsetHeight + "px";
+      }
+      $$(".diapo img", n).forEach(function (img) { img.addEventListener("load", ajusterHauteur); });
+      window.addEventListener("resize", ajusterHauteur);
+      requestAnimationFrame(ajusterHauteur);
       function vers(i) {
         i = (i + T.length) % T.length;
         piste.scrollTo({ left: i * piste.clientWidth, behavior: reduitMouvement ? "auto" : "smooth" });
@@ -604,6 +613,7 @@
         var i = Math.round(piste.scrollLeft / Math.max(piste.clientWidth, 1));
         if (i === courant) return;
         courant = i;
+        ajusterHauteur();
         points.forEach(function (p, k) {
           p.classList.toggle("actif", k === i);
           if (k === i) p.setAttribute("aria-current", "true"); else p.removeAttribute("aria-current");
