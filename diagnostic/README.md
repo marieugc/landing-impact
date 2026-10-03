@@ -33,6 +33,8 @@ Dépose tes images dans le dossier `assets/`, **avec exactement le même nom** q
 **Ajouter une transformation au carrousel** : dans `config.js`, section `11. ÉCRAN PREUVE`, copie un bloc
 `{ src: …, alt: …, legende: …, texte: … },`, colle-le juste en dessous, puis change le nom de l'image et les textes.
 Dépose l'image dans `assets/`. Les points et les flèches du carrousel s'ajoutent tout seuls.
+Si ta photo est plus large que haute (deux photos côte à côte, par exemple), ajoute la ligne `format: "paysage",` dans son bloc :
+elle s'affichera entière, sans être recadrée (comme celle de Maria).
 
 ---
 
