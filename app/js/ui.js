@@ -75,6 +75,7 @@ export function badge(texte, couleur = 'var(--accent)') {
 
 // Message bref en bas de l'écran
 export function toast(message, erreur = false) {
+  document.querySelectorAll('.toast').forEach((t) => t.remove()); // un seul message à la fois
   const el = document.createElement('div');
   el.className = 'toast' + (erreur ? ' toast-erreur' : '');
   el.setAttribute('role', 'status');

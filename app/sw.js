@@ -1,19 +1,20 @@
 // Service worker : permet d'installer l'app et de l'ouvrir même avec une connexion faible.
 // Pense à changer le numéro de version à chaque mise à jour de l'app.
-const VERSION = 'bootyflow-v8';
+const VERSION = 'bootyflow-v9';
 
 const FICHIERS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/styles.css?v=8',
+  './css/styles.css?v=9',
   './js/config.js',
   './js/data.js',
   './js/ui.js',
   './js/eleve.js',
   './js/coach.js',
   './js/chat.js',
-  './js/app.js?v=8',
+  './js/videotheque.js',
+  './js/app.js?v=9',
   './img/banniere.jpg',
   './img/coach.jpg',
   './icons/icon-192.png',

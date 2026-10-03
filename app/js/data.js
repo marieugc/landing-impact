@@ -10,7 +10,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v3';
+const CLE_DEMO = 'bootyflow-demo-v4';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -88,7 +88,17 @@ function donneesDemo() {
     { id: 'm3', eleve_id: 'sarah', de_coach: true, texte: 'Oui bien sûr, même quantité une fois cuites.', lu: false, created_at: heure(-1, 4) },
     { id: 'm4', eleve_id: 'ines', de_coach: false, texte: 'Petite douleur au genou sur les fentes, je continue ou je remplace ?', lu: false, created_at: heure(0, 2) }
   ].map((m) => ({ audio_chemin: null, duree: null, ...m }));
-  return { profiles, nutrition, videos, bilans, competitions, charges, messages };
+  const bibliotheque = [
+    ['Hip thrust : placement du bassin', 'Fessiers', 'Rétroversion en haut, menton rentré, tibias verticaux.', -20],
+    ['Squat bulgare : distance du pied', 'Jambes', 'Comment trouver la bonne distance pour cibler les fessiers.', -12],
+    ['Échauffement bas du corps (8 min)', 'Échauffement', 'À faire avant chaque séance jambes / fessiers.', -6],
+    ['Soulevé de terre roumain', 'Fessiers', 'Garder le dos neutre et pousser les hanches loin derrière.', -1]
+  ].map(([titre, categorie, description, j], i) => ({
+    id: `bib${i}`, titre, categorie, description, chemin: null, lien: null, created_at: dansJours(j) + 'T10:00:00.000Z'
+  }));
+  // Sarah a ouvert la vidéothèque il y a 3 jours : la dernière vidéo est « Nouveau »
+  profiles.find((p) => p.id === 'sarah').biblio_vue_le = dansJours(-3) + 'T12:00:00.000Z';
+  return { profiles, nutrition, videos, bilans, competitions, charges, messages, bibliotheque };
 }
 
 function lireDemo() {
@@ -224,6 +234,30 @@ const demo = {
     for (const m of d.messages || []) {
       if (m.eleve_id === eleveId && m.de_coach !== lecteurEstCoach) m.lu = true;
     }
+    ecrireDemo(d);
+  },
+
+  async listBibliotheque() {
+    return [...(lireDemo().bibliotheque || [])].sort((a, b) => b.created_at.localeCompare(a.created_at));
+  },
+  async saveBibliotheque(vid, data, fichier) {
+    const d = lireDemo();
+    d.bibliotheque = d.bibliotheque || [];
+    const ligne = { ...data, ...(fichier ? { chemin: garderFichier(fichier) } : {}) };
+    if (vid) Object.assign(d.bibliotheque.find((v) => v.id === vid), ligne);
+    else d.bibliotheque.push({ id: id(), chemin: null, lien: null, ...ligne, created_at: new Date().toISOString() });
+    ecrireDemo(d);
+  },
+  async deleteBibliotheque(vid) {
+    const d = lireDemo();
+    d.bibliotheque = (d.bibliotheque || []).filter((v) => v.id !== vid);
+    ecrireDemo(d);
+  },
+  async markBibliothequeVue() {
+    const d = lireDemo();
+    const uid = localStorage.getItem(CLE_SESSION);
+    const p = d.profiles.find((x) => x.id === uid);
+    if (p) p.biblio_vue_le = new Date().toISOString();
     ecrireDemo(d);
   },
 
@@ -382,6 +416,25 @@ const reel = {
   },
   async markMessagesLus(eleveId) {
     verifier(await (await client()).rpc('marquer_messages_lus', { p_eleve: eleveId }));
+  },
+
+  async listBibliotheque() {
+    return verifier(await (await client()).from('bibliotheque').select('*').order('created_at', { ascending: false }));
+  },
+  async saveBibliotheque(vid, data, fichier) {
+    const ligne = { ...data };
+    if (fichier) ligne.chemin = await envoyerFichier('bibliotheque', 'videos', fichier);
+    const table = (await client()).from('bibliotheque');
+    verifier(await (vid ? table.update(ligne).eq('id', vid) : table.insert(ligne)));
+  },
+  async deleteBibliotheque(vid) {
+    const sb = await client();
+    const v = verifier(await sb.from('bibliotheque').select('chemin').eq('id', vid).maybeSingle());
+    verifier(await sb.from('bibliotheque').delete().eq('id', vid));
+    if (v?.chemin) await sb.storage.from('medias').remove([v.chemin]);
+  },
+  async markBibliothequeVue() {
+    verifier(await (await client()).rpc('marquer_bibliotheque_vue'));
   },
 
   // Sans eleveId : toutes les charges (la coach uniquement, grâce aux règles de sécurité)

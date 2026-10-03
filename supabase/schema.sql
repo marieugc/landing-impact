@@ -128,6 +128,21 @@ create table if not exists public.messages (
 );
 create index if not exists messages_conversation on public.messages (eleve_id, created_at);
 
+-- 8. Vidéothèque : vidéos d'explication accessibles à toutes les élèves
+create table if not exists public.bibliotheque (
+  id uuid primary key default gen_random_uuid(),
+  titre text not null,
+  categorie text not null default 'Autre',
+  description text,
+  chemin text,          -- vidéo envoyée dans l'app
+  lien text,            -- ou lien YouTube / Vimeo
+  created_at timestamptz not null default now(),
+  check (chemin is not null or lien is not null)
+);
+-- Date à laquelle chaque élève a ouvert la vidéothèque pour la dernière fois
+-- (les vidéos ajoutées après sont signalées comme « Nouveau »)
+alter table public.profiles add column if not exists biblio_vue_le timestamptz;
+
 -- ─── Sécurité : chaque élève ne voit QUE ses données, la coach voit tout ───
 alter table public.profiles enable row level security;
 alter table public.nutrition enable row level security;
@@ -136,6 +151,7 @@ alter table public.bilans enable row level security;
 alter table public.competitions enable row level security;
 alter table public.charges enable row level security;
 alter table public.messages enable row level security;
+alter table public.bibliotheque enable row level security;
 
 drop policy if exists "profil lecture" on public.profiles;
 create policy "profil lecture" on public.profiles for select using (id = auth.uid() or public.est_coach());
@@ -192,6 +208,16 @@ returns void language sql security definer set search_path = public as $$
     and ((public.est_coach() and de_coach = false) or (p_eleve = auth.uid() and de_coach = true));
 $$;
 
+drop policy if exists "bibliotheque lecture" on public.bibliotheque;
+create policy "bibliotheque lecture" on public.bibliotheque for select using (auth.uid() is not null);
+drop policy if exists "bibliotheque coach" on public.bibliotheque;
+create policy "bibliotheque coach" on public.bibliotheque for all using (public.est_coach()) with check (public.est_coach());
+
+create or replace function public.marquer_bibliotheque_vue()
+returns void language sql security definer set search_path = public as $$
+  update public.profiles set biblio_vue_le = now() where id = auth.uid();
+$$;
+
 -- ─── Stockage des vidéos, photos et PDF ───
 insert into storage.buckets (id, name, public)
 values ('medias', 'medias', false)
@@ -204,6 +230,13 @@ create policy "medias envoi" on storage.objects for insert
 drop policy if exists "medias lecture" on storage.objects;
 create policy "medias lecture" on storage.objects for select
   using (bucket_id = 'medias' and ((storage.foldername(name))[1] = auth.uid()::text or public.est_coach()));
+-- Le dossier « bibliotheque » est lisible par toutes les élèves connectées
+drop policy if exists "medias bibliotheque lecture" on storage.objects;
+create policy "medias bibliotheque lecture" on storage.objects for select
+  using (bucket_id = 'medias' and (storage.foldername(name))[1] = 'bibliotheque' and auth.uid() is not null);
+drop policy if exists "medias suppression coach" on storage.objects;
+create policy "medias suppression coach" on storage.objects for delete
+  using (bucket_id = 'medias' and public.est_coach());
 drop policy if exists "medias remplacement coach" on storage.objects;
 create policy "medias remplacement coach" on storage.objects for update
   using (bucket_id = 'medias' and public.est_coach());

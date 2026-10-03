@@ -1,11 +1,12 @@
 // ESPACE ÉLÈVE — les 5 onglets de la maquette + le formulaire de bilan.
 import { api, MODE } from './data.js';
-import { NOM_COACH } from './config.js';
+import { NOM_COACH, NOM_VIDEOTHEQUE } from './config.js';
 import {
   esc, icone, dateCourte, dateAvecJour, joursAvant, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { conversation } from './chat.js';
+import { CATEGORIES, nouveautes, estNouvelle, vignette, chargerMiniatures, ouvrirVideo } from './videotheque.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -13,7 +14,7 @@ const ORANGE = '#FFB86B';
 const ONGLETS = [
   { route: 'accueil', libelle: 'Accueil', icone: 'accueil' },
   { route: 'nutrition', libelle: 'Nutrition', icone: 'nutrition' },
-  { route: 'mouvement', libelle: 'Mouvement', icone: 'video' },
+  { route: 'mouvement', lien: 'videotheque', libelle: 'Mouvement', icone: 'video' },
   { route: 'posing', libelle: 'Posing', icone: 'etoile', competitrice: true },
   { route: 'progres', libelle: 'Progrès', icone: 'progres' },
   { route: 'chat', libelle: 'Chat', icone: 'chat' }
@@ -24,7 +25,7 @@ function navigation(profil, actif) {
     .filter((o) => !o.competitrice || profil.competitrice)
     .map((o) => {
       const on = o.route === actif;
-      return `<a href="#/${o.route}" class="onglet${on ? ' actif' : ''}"${on ? ' aria-current="page"' : ''}>
+      return `<a href="#/${o.lien || o.route}" data-onglet="${o.route}" class="onglet${on ? ' actif' : ''}"${on ? ' aria-current="page"' : ''}>
         ${icone(o.icone)}<span>${o.libelle}</span><i></i></a>`;
     }).join('');
   return `<nav class="barre-onglets" aria-label="Navigation principale">${liens}</nav>`;
@@ -48,6 +49,7 @@ function page(profil, actif, contenu) {
 async function accueil(racine, profil) {
   const videos = await api.listVideos({ eleveId: profil.id });
   const recentes = videos.filter((v) => v.statut === 'corrige' && joursAvant(v.corrige_le || v.created_at) >= -7);
+  const nouvelles = await nouveautes(profil);
   const pct = Math.min(100, Math.round((profil.semaine / Math.max(1, profil.semaines_total)) * 100));
 
   racine.innerHTML = page(profil, 'accueil', `
@@ -55,8 +57,14 @@ async function accueil(racine, profil) {
     <div class="ligne-entre">
       <div class="bonjour">Bonjour ${esc(profil.prenom)}</div>
       <button class="bouton-rond" id="cloche" aria-label="Notifications">${icone('cloche', 20)}
-        ${recentes.length ? '<span class="pastille"></span>' : ''}</button>
+        ${recentes.length || nouvelles.length ? '<span class="pastille"></span>' : ''}</button>
     </div>
+    ${nouvelles.length ? `<a href="#/videotheque" class="carte carte-nouveaute">
+      ${vignette(nouvelles[0])}
+      <span class="carte-nouveaute-texte"><span class="surtitre-carte">NOUVEAU · ${esc(NOM_VIDEOTHEQUE.toUpperCase())}</span>
+        <strong>${esc(nouvelles[0].titre)}</strong>
+        <span class="petit">${nouvelles.length > 1 ? `+ ${nouvelles.length - 1} autre${nouvelles.length > 2 ? 's' : ''} vidéo${nouvelles.length > 2 ? 's' : ''}` : 'Ta coach a ajouté une vidéo'}</span></span>
+      ${icone('chevron', 18, 'var(--doux)')}</a>` : ''}
     <section class="carte">
       <div class="surtitre-carte">TON OBJECTIF</div>
       <div class="titre-carte">${esc(profil.objectif || 'Ta coach définit ton objectif')}</div>
@@ -82,11 +90,15 @@ async function accueil(racine, profil) {
     </div>
   `);
 
+  chargerMiniatures(racine);
   racine.querySelector('#cloche').addEventListener('click', () => {
-    fenetre('Notifications', recentes.length
-      ? recentes.map((v) => `<a class="notif" href="#/mouvement" data-fermer><strong>${esc(v.exercice)}</strong>
-          <span class="petit">Correction reçue le ${dateCourte(v.corrige_le || v.created_at)}</span></a>`).join('')
-      : '<p class="vide">Aucune nouvelle notification.</p>');
+    const notifs = [
+      ...nouvelles.map((v) => ({ date: v.created_at, html: `<a class="notif" href="#/videotheque" data-fermer><strong>Nouvelle vidéo : ${esc(v.titre)}</strong>
+          <span class="petit">${esc(NOM_VIDEOTHEQUE)} · ajoutée le ${dateCourte(v.created_at)}</span></a>` })),
+      ...recentes.map((v) => ({ date: v.corrige_le || v.created_at, html: `<a class="notif" href="#/mouvement" data-fermer><strong>${esc(v.exercice)}</strong>
+          <span class="petit">Correction reçue le ${dateCourte(v.corrige_le || v.created_at)}</span></a>` }))
+    ].sort((a, b) => b.date.localeCompare(a.date));
+    fenetre('Notifications', notifs.map((n) => n.html).join('') || '<p class="vide">Aucune nouvelle notification.</p>');
   });
 }
 
@@ -181,7 +193,7 @@ async function mouvement(racine, profil) {
   const visibles = videos.filter((v) => filtreVideos === 'toutes' || v.statut === filtreVideos);
   const filtre = (cle, texte) => `<button class="filtre${filtreVideos === cle ? ' actif' : ''}" data-filtre="${cle}">${texte}</button>`;
 
-  racine.innerHTML = page(profil, 'mouvement', entete('CORRECTIONS', 'Mouvement') + `
+  racine.innerHTML = page(profil, 'mouvement', entete('MOUVEMENT', 'Mes corrections') + segments('mouvement') + `
     <button class="zone-envoi" id="envoyer">${icone('envoi', 26, 'var(--accent)')}Envoyer une vidéo d'exercice</button>
     <div class="filtres">${filtre('toutes', 'Toutes')}${filtre('a_corriger', `À corriger · ${aCorriger}`)}${filtre('corrige', `Corrigées · ${videos.length - aCorriger}`)}</div>
     <div class="pile">${visibles.map(carteVideo).join('') || '<p class="vide">Aucune vidéo pour le moment.</p>'}</div>
@@ -193,6 +205,52 @@ async function mouvement(racine, profil) {
   racine.querySelector('#envoyer').addEventListener('click', () =>
     formulaireVideo(profil, 'mouvement', 'Envoyer une vidéo', () => mouvement(racine, profil)));
   brancherLecture(racine, videos);
+}
+
+// ───────────── Vidéothèque (vidéos d'explication de la coach) ─────────────
+function segments(actif) {
+  const lien = (route, texte) => `<a href="#/${route}" class="segment${route === actif ? ' actif' : ''}"${route === actif ? ' aria-current="page"' : ''}>${texte}</a>`;
+  return `<nav class="segments" aria-label="Mouvement">${lien('videotheque', esc(NOM_VIDEOTHEQUE))}${lien('mouvement', 'Mes corrections')}</nav>`;
+}
+
+let categorieBiblio = 'Toutes';
+async function videotheque(racine, profil) {
+  const liste = await api.listBibliotheque();
+  const categories = ['Toutes', ...CATEGORIES.filter((c) => liste.some((v) => v.categorie === c))];
+  if (!categories.includes(categorieBiblio)) categorieBiblio = 'Toutes';
+  const visibles = liste.filter((v) => categorieBiblio === 'Toutes' || v.categorie === categorieBiblio);
+
+  racine.innerHTML = page(profil, 'mouvement', entete('MOUVEMENT', NOM_VIDEOTHEQUE) + segments('videotheque') + `
+    <p class="petit">Les explications de ta coach pour bien exécuter chaque mouvement.</p>
+    ${categories.length > 2 ? `<div class="filtres defile-filtres">${categories.map((c) =>
+      `<button class="filtre${c === categorieBiblio ? ' actif' : ''}" data-categorie="${esc(c)}">${esc(c)}</button>`).join('')}</div>` : ''}
+    <div class="grille-biblio">${visibles.map((v) => `
+      <button class="carte-biblio" data-biblio="${esc(v.id)}">
+        ${vignette(v)}
+        <span class="carte-biblio-texte">
+          ${estNouvelle(v, profil) ? '<span class="badge-nouveau">NOUVEAU</span>' : ''}
+          <strong>${esc(v.titre)}</strong>
+          <span class="petit">${esc(v.categorie)}</span>
+        </span>
+      </button>`).join('') || `<p class="vide">Ta coach n'a pas encore ajouté de vidéo. Tu seras prévenue dès qu'il y en aura une.</p>`}
+    </div>`);
+
+  racine.querySelectorAll('[data-categorie]').forEach((b) => b.addEventListener('click', () => {
+    categorieBiblio = b.dataset.categorie;
+    videotheque(racine, profil);
+  }));
+  racine.querySelectorAll('[data-biblio]').forEach((b) => b.addEventListener('click', () =>
+    ouvrirVideo(liste.find((v) => v.id === b.dataset.biblio))));
+  chargerMiniatures(racine);
+
+  // Ouverture de la vidéothèque : les nouveautés sont vues (le badge « Nouveau » reste affiché jusqu'à la prochaine visite)
+  if (liste.some((v) => estNouvelle(v, profil))) {
+    try {
+      await api.markBibliothequeVue();
+      profil.biblio_vue_le = new Date().toISOString();
+      document.dispatchEvent(new CustomEvent('messages-lus'));
+    } catch (e) { /* on réessaiera à la prochaine visite */ }
+  }
 }
 
 // ───────────── Posing (compétitrices) ─────────────
@@ -435,4 +493,4 @@ async function chat(racine, profil) {
   });
 }
 
-export const ecransEleve = { accueil, nutrition, mouvement, posing, progres, bilan, chat };
+export const ecransEleve = { accueil, nutrition, mouvement, videotheque, posing, progres, bilan, chat };
