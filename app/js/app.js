@@ -4,6 +4,7 @@ import { esc, icone, toast, pendant, fenetre } from './ui.js';
 import { ecransEleve } from './eleve.js';
 import { ecransCoach } from './coach.js';
 import { nonLus } from './chat.js';
+import { nouveautes } from './videotheque.js';
 
 const racine = document.getElementById('app');
 let profil = null;
@@ -137,7 +138,8 @@ async function afficher() {
         '': ecransCoach.tableau, undefined: ecransCoach.tableau,
         eleve: ecransCoach.fiche, videos: ecransCoach.videos, bilans: ecransCoach.bilans,
         competitrices: ecransCoach.competitrices, nutrition: ecransCoach.plansNutrition,
-        charges: ecransCoach.suiviCharges, messages: ecransCoach.messages
+        charges: ecransCoach.suiviCharges, messages: ecransCoach.messages,
+        videotheque: ecransCoach.videotheque
       }[sous] || ecransCoach.tableau;
       await ecran(racine, profil, params);
     } else {
@@ -159,21 +161,31 @@ async function afficher() {
 }
 
 // Pastille du nombre de messages non lus sur l'onglet Chat (élève) ou Messages (coach)
+// et sur l'onglet Mouvement quand la coach a ajouté des vidéos à la vidéothèque
+function poserPastille(lien, n, libelle) {
+  if (!lien) return;
+  let pastille = lien.querySelector('.compteur');
+  if (!n) { pastille?.remove(); return; }
+  if (!pastille) {
+    pastille = Object.assign(document.createElement('span'), { className: 'compteur' });
+    lien.appendChild(pastille);
+  }
+  pastille.textContent = n > 9 ? '9+' : n;
+  pastille.setAttribute('aria-label', libelle(n));
+}
 async function majPastille() {
   if (!profil) return;
   const coach = profil.role === 'coach';
-  const lien = racine.querySelector(coach ? 'a[href="#/coach/messages"]' : 'a[href="#/chat"].onglet');
-  if (!lien) return;
+  const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
   try {
     const n = await nonLus(coach ? null : profil.id, coach);
-    let pastille = lien.querySelector('.compteur');
-    if (!n) { pastille?.remove(); return; }
-    if (!pastille) {
-      pastille = Object.assign(document.createElement('span'), { className: 'compteur' });
-      lien.appendChild(pastille);
+    poserPastille(racine.querySelector(coach ? 'a[href="#/coach/messages"]' : '[data-onglet="chat"]'), n,
+      (x) => `${pluriel(x, 'message')} non lu${x > 1 ? 's' : ''}`);
+    if (!coach) {
+      const nouvelles = (await nouveautes(profil)).length;
+      poserPastille(racine.querySelector('[data-onglet="mouvement"]'), nouvelles,
+        (x) => `${pluriel(x, 'nouvelle vidéo')} dans la vidéothèque`);
     }
-    pastille.textContent = n > 9 ? '9+' : n;
-    pastille.setAttribute('aria-label', `${n} message${n > 1 ? 's' : ''} non lu${n > 1 ? 's' : ''}`);
   } catch (e) { /* hors ligne : on réessaiera */ }
 }
 document.addEventListener('messages-lus', majPastille);

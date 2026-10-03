@@ -13,3 +13,6 @@ export const SUPABASE_ANON_KEY = '';  // la clé "anon public" (longue, commence
 
 // Prénom affiché côté élève pour la coach
 export const NOM_COACH = 'Marie';
+
+// Nom de la bibliothèque de vidéos d'explication (tu peux le changer ici)
+export const NOM_VIDEOTHEQUE = 'Vidéothèque';

@@ -6,6 +6,8 @@ import {
 } from './ui.js';
 import { afficherPhotos, blocCharges } from './eleve.js';
 import { conversation } from './chat.js';
+import { NOM_VIDEOTHEQUE } from './config.js';
+import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide } from './videotheque.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -18,7 +20,8 @@ const MENU = [
   { route: 'coach/competitrices', libelle: 'Compétitrices', icone: 'etoile' },
   { route: 'coach/bilans', libelle: 'Bilans', icone: 'progres' },
   { route: 'coach/charges', libelle: 'Suivi des charges', icone: 'haltere' },
-  { route: 'coach/messages', libelle: 'Messages', icone: 'chat' }
+  { route: 'coach/messages', libelle: 'Messages', icone: 'chat' },
+  { route: 'coach/videotheque', libelle: NOM_VIDEOTHEQUE, icone: 'lecture' }
 ];
 
 function page(profil, actif, contenu) {
@@ -497,4 +500,76 @@ async function discussion(racine, profil, eleveId) {
   });
 }
 
-export const ecransCoach = { tableau, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages };
+// ───────────── Vidéothèque ─────────────
+async function videotheque(racine, profil) {
+  const liste = await api.listBibliotheque();
+  racine.innerHTML = page(profil, 'coach/videotheque', titre(esc(NOM_VIDEOTHEQUE),
+    `<button class="bouton-principal compact" id="ajouter-video">${icone('plus', 18)}AJOUTER UNE VIDÉO</button>`) + `
+    <p class="gris">Ces vidéos d'explication sont visibles par toutes tes élèves (onglet Mouvement). Quand tu en ajoutes une,
+      elles voient un badge « Nouveau » et une notification dans l'app.</p>
+    <div class="grille-biblio bureau-biblio">${liste.map((v) => `
+      <article class="carte-biblio">
+        <button class="carte-biblio-media" data-voir="${esc(v.id)}" aria-label="Voir ${esc(v.titre)}">${vignette(v)}</button>
+        <span class="carte-biblio-texte">
+          <strong>${esc(v.titre)}</strong>
+          <span class="petit">${esc(v.categorie)} · ajoutée le ${dateCourte(v.created_at)}</span>
+          <span class="actions-biblio">
+            <button class="bouton-contour compact" data-modifier="${esc(v.id)}">Modifier</button>
+            <button class="bouton-icone" data-supprimer="${esc(v.id)}" aria-label="Supprimer ${esc(v.titre)}">${icone('poubelle', 18)}</button>
+          </span>
+        </span>
+      </article>`).join('') || '<p class="vide">Aucune vidéo pour le moment. Ajoute ta première explication !</p>'}
+    </div>`);
+
+  const recharger = () => videotheque(racine, profil);
+  racine.querySelector('#ajouter-video').addEventListener('click', () => formulaireBiblio(null, recharger));
+  racine.querySelectorAll('[data-voir]').forEach((b) => b.addEventListener('click', () => ouvrirVideo(liste.find((v) => v.id === b.dataset.voir))));
+  racine.querySelectorAll('[data-modifier]').forEach((b) => b.addEventListener('click', () => formulaireBiblio(liste.find((v) => v.id === b.dataset.modifier), recharger)));
+  racine.querySelectorAll('[data-supprimer]').forEach((b) => b.addEventListener('click', async () => {
+    const v = liste.find((x) => x.id === b.dataset.supprimer);
+    if (!confirm(`Supprimer « ${v.titre} » ? Tes élèves ne la verront plus.`)) return;
+    await pendant(b, '…', () => api.deleteBibliotheque(v.id));
+    toast('Vidéo supprimée.');
+    recharger();
+  }));
+  chargerMiniatures(racine);
+}
+
+function formulaireBiblio(v, recharger) {
+  const f = fenetre(v ? 'Modifier la vidéo' : 'Ajouter une vidéo', `<form class="formulaire">
+    <label>Titre<input name="titre" required value="${esc(v?.titre || '')}" placeholder="Ex. : Hip thrust, placement du bassin"></label>
+    <label>Catégorie<select name="categorie">${CATEGORIES.map((c) => `<option${c === (v?.categorie || 'Fessiers') ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></label>
+    <label>Explication (facultatif)<textarea name="description" rows="3" placeholder="Les points clés à retenir">${esc(v?.description || '')}</textarea></label>
+    <div class="surtitre-carte">LA VIDÉO</div>
+    <label class="choix-video">${icone('video', 18, 'var(--accent)')}<span>${v?.chemin ? 'Remplacer la vidéo envoyée' : 'Choisir une vidéo sur mon appareil (50 Mo max)'}</span>
+      <input type="file" name="fichier" accept="video/*"></label>
+    <label>Ou un lien YouTube / Vimeo<input name="lien" type="url" inputmode="url" value="${esc(v?.lien || '')}" placeholder="https://youtu.be/…"></label>
+    <p class="petit">Astuce : pour une vidéo longue (plus de 50 Mo), mets-la sur YouTube en « Non répertoriée » et colle le lien ici.</p>
+    <button class="bouton-principal" type="submit">${v ? 'ENREGISTRER' : 'PUBLIER LA VIDÉO'}</button>
+  </form>`);
+  const entree = f.querySelector('[name=fichier]');
+  entree.addEventListener('change', () => {
+    entree.parentElement.classList.toggle('choisie', !!entree.files[0]);
+    if (entree.files[0]) entree.previousElementSibling.textContent = entree.files[0].name;
+  });
+  f.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const d = new FormData(e.target);
+    const fichier = d.get('fichier')?.size ? d.get('fichier') : null;
+    const lien = d.get('lien').trim();
+    if (!fichier && !lien && !v?.chemin) { toast('Choisis une vidéo ou colle un lien.', true); return; }
+    if (lien && !lienValide(lien)) { toast('Le lien doit commencer par https://', true); return; }
+    if (fichier && fichier.size > 50 * 1024 * 1024) {
+      toast('Vidéo trop lourde (50 Mo max). Utilise plutôt un lien YouTube non répertorié.', true);
+      return;
+    }
+    await pendant(e.submitter, fichier ? 'Envoi de la vidéo…' : 'Enregistrement…', () => api.saveBibliotheque(v?.id, {
+      titre: d.get('titre').trim(), categorie: d.get('categorie'), description: d.get('description').trim(), lien: lien || null
+    }, fichier));
+    fermerFenetre();
+    toast(v ? 'Vidéo modifiée.' : 'Vidéo publiée ! Tes élèves vont la voir apparaître.');
+    recharger();
+  });
+}
+
+export const ecransCoach = { tableau, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages, videotheque };
