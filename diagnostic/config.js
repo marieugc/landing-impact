@@ -440,6 +440,13 @@ window.BF_CONFIG = {
         alt: "Maria de profil, avant le coaching et après 1 mois : fessiers plus hauts et plus galbés",
         legende: "Maria · 1 mois · de profil",
         texte: "Après <strong>seulement 1 mois</strong> de coaching, ses fessiers réagissent déjà : plus de galbe et de volume, avec un entraînement ciblé et une surcharge progressive."
+      },
+      {
+        src: "assets/transformation-camille.webp",
+        format: "paysage",
+        alt: "Camille de profil, avant le coaching et après 1 mois : fessiers plus ronds et plus hauts",
+        legende: "Camille · 1 mois · de profil",
+        texte: "<strong>1 mois</strong> après avoir démarré son coaching : des fessiers plus ronds et plus hauts, grâce à une séance spécifique fessiers et des rappels ciblés chaque semaine."
       }
     ],
     titrePiliers: "La méthode Booty Flow",
