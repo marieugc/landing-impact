@@ -1,6 +1,6 @@
 // Démarrage de l'app : connexion, choix élève/coach, navigation entre les écrans.
 import { api, MODE } from './data.js';
-import { esc, icone, toast, pendant, fenetre } from './ui.js';
+import { esc, icone, toast, pendant, fenetre, VERSION_APP } from './ui.js';
 import { ecransEleve } from './eleve.js';
 import { ecransCoach } from './coach.js';
 import { nonLus } from './chat.js';
@@ -66,6 +66,7 @@ function ecranConnexion(onglet = 'connexion') {
       <button class="bouton-contour" data-demo="marie@demo.fr">${icone('eleves', 18)}Espace coach (Marie)</button>
       <button class="lien" id="reinit">Remettre la démo à zéro</button>
     </div>` : ''}
+    <p class="version">Version ${VERSION_APP}</p>
   </div>`;
 
   racine.querySelectorAll('[data-onglet]').forEach((b) => b.addEventListener('click', () => ecranConnexion(b.dataset.onglet)));

@@ -2,7 +2,7 @@
 import { api, MODE } from './data.js';
 import { NOM_COACH, NOM_VIDEOTHEQUE } from './config.js';
 import {
-  esc, icone, dateCourte, dateAvecJour, joursAvant, nombre, ecart, badge,
+  esc, icone, VERSION_APP, dateCourte, dateAvecJour, joursAvant, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { conversation } from './chat.js';
@@ -87,6 +87,7 @@ async function accueil(racine, profil) {
     <div class="pied-accueil">
       <button class="lien" id="installer" hidden>Installer l'app sur mon téléphone</button>
       <button class="lien" id="deconnexion">Se déconnecter</button>
+      <p class="version">Version ${VERSION_APP}</p>
     </div>
   `);
 

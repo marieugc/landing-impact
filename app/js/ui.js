@@ -1,5 +1,9 @@
 // Petits outils d'affichage partagés par l'espace élève et l'espace coach.
 
+// Numéro affiché en bas de l'app : permet de vérifier que le téléphone a bien la dernière version.
+// À augmenter à chaque mise à jour, en même temps que VERSION dans sw.js et ?v= dans index.html.
+export const VERSION_APP = '12';
+
 // Protège le texte saisi (évite qu'un nom ou un message casse la page)
 export function esc(v) {
   return String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
