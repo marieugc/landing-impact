@@ -1,7 +1,7 @@
 // ESPACE COACH — tableau de bord, fiches élèves, corrections vidéo, bilans, compétitrices.
 import { api, MODE } from './data.js';
 import {
-  esc, icone, dateCourte, joursAvant, nombre, ecart, badge,
+  esc, icone, VERSION_APP, dateCourte, joursAvant, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { afficherPhotos, blocCharges } from './eleve.js';
@@ -35,7 +35,7 @@ function page(profil, actif, contenu) {
       <nav aria-label="Menu coach">${liens}</nav>
       <button class="menu-lien deconnexion" id="deconnexion">${icone('sortie', 20)}<span>Se déconnecter</span></button>
     </aside>
-    <main class="bureau-contenu">${contenu}</main>
+    <main class="bureau-contenu">${contenu}<p class="version">Booty Flow · version ${VERSION_APP}</p></main>
   </div>`;
 }
 
