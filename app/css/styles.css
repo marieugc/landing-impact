@@ -128,7 +128,7 @@ input[type="date"] { color-scheme: dark; }
 .deux-colonnes { grid-column: span 2; }
 
 /* ───────────── Connexion ───────────── */
-.connexion { max-width: 420px; margin: 0 auto; padding: 24px 16px calc(40px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 18px; }
+.connexion { max-width: 420px; margin: 0 auto; padding: calc(24px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 18px; }
 .essais .bouton-contour { justify-content: flex-start; }
 .bandeau-demo { background: var(--carte-2); color: var(--lilas); text-align: center; font-size: 12px; padding: 8px 12px; border-radius: 12px; }
 .bureau .bandeau-demo, #app > .bandeau-demo { border-radius: 0; }
@@ -351,7 +351,7 @@ button.carte-biblio:hover, .carte-biblio-media:hover .biblio-vignette { border-c
 .bureau { display: flex; min-height: 100dvh; }
 .barre-laterale {
   width: 260px; flex-shrink: 0; background: var(--carte); border-right: 1px solid var(--bord);
-  padding: 24px 16px; display: flex; flex-direction: column; gap: 6px;
+  padding: calc(24px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 6px;
   position: sticky; top: 0; height: 100dvh;
 }
 .barre-laterale nav { display: flex; flex-direction: column; gap: 6px; }
@@ -430,7 +430,10 @@ button.carte-biblio:hover, .carte-biblio-media:hover .biblio-vignette { border-c
   .bureau { flex-direction: column; }
   .barre-laterale {
     width: 100%; height: auto; position: sticky; top: 0; z-index: 10;
-    flex-direction: row; align-items: center; padding: 10px 12px; gap: 4px;
+    flex-direction: row; align-items: center; gap: 4px;
+    /* Sur iPhone (app installée), l'heure et la batterie s'affichent par-dessus le haut de l'écran :
+       on laisse leur place pour que le menu reste cliquable */
+    padding: calc(10px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 10px calc(12px + env(safe-area-inset-left));
     border-right: 0; border-bottom: 1px solid var(--bord); overflow-x: auto;
   }
   .barre-laterale nav { flex-direction: row; gap: 4px; }
@@ -438,7 +441,8 @@ button.carte-biblio:hover, .carte-biblio-media:hover .biblio-vignette { border-c
   .menu-lien { padding: 10px 12px; font-size: 13px; }
   .menu-lien.deconnexion { margin-top: 0; }
   .menu-lien.deconnexion span { display: none; }
-  .bureau-contenu { padding: 20px 16px 40px; gap: 18px; }
+  .bureau-contenu { padding: 20px 16px calc(40px + env(safe-area-inset-bottom)); gap: 18px; }
+  .chat-bureau { height: calc(100dvh - 230px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
   .bureau-tete h1 { font-size: 24px; }
   .grille-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .stat strong { font-size: 26px; }
