@@ -10,7 +10,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v4';
+const CLE_DEMO = 'bootyflow-demo-v5';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -98,7 +98,14 @@ function donneesDemo() {
   }));
   // Sarah a ouvert la vidéothèque il y a 3 jours : la dernière vidéo est « Nouveau »
   profiles.find((p) => p.id === 'sarah').biblio_vue_le = dansJours(-3) + 'T12:00:00.000Z';
-  return { profiles, nutrition, videos, bilans, competitions, charges, messages, bibliotheque };
+  const programmes = [
+    { id: 'p1', eleve_id: 'sarah', titre: 'Bloc 1 · Semaines 1 à 4', chemin: null, nom_fichier: null, lien: null,
+      description: 'Phase d\'apprentissage technique : 3 séances par semaine, charges modérées.', created_at: dansJours(-40) + 'T09:00:00.000Z' },
+    { id: 'p2', eleve_id: 'sarah', titre: 'Bloc 2 · Semaines 5 à 8', chemin: null, nom_fichier: null, lien: null,
+      description: 'Séance A : Hip thrust 4×8, Squat bulgare 3×10, RDL 3×10.\nSéance B : Fentes 3×12, Abduction 3×15, Kickback 3×15.\nSéance C : Full body + gainage.',
+      created_at: dansJours(-2) + 'T09:00:00.000Z' }
+  ];
+  return { profiles, nutrition, videos, bilans, competitions, charges, messages, bibliotheque, programmes };
 }
 
 function lireDemo() {
@@ -234,6 +241,25 @@ const demo = {
     for (const m of d.messages || []) {
       if (m.eleve_id === eleveId && m.de_coach !== lecteurEstCoach) m.lu = true;
     }
+    ecrireDemo(d);
+  },
+
+  async listProgrammes(eleveId) {
+    return (lireDemo().programmes || [])
+      .filter((p) => p.eleve_id === eleveId)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  },
+  async saveProgramme(pid, eleveId, data, fichier) {
+    const d = lireDemo();
+    d.programmes = d.programmes || [];
+    const ligne = { ...data, ...(fichier ? { chemin: garderFichier(fichier), nom_fichier: fichier.name } : {}) };
+    if (pid) Object.assign(d.programmes.find((p) => p.id === pid), ligne);
+    else d.programmes.push({ id: id(), eleve_id: eleveId, chemin: null, nom_fichier: null, lien: null, ...ligne, created_at: new Date().toISOString() });
+    ecrireDemo(d);
+  },
+  async deleteProgramme(pid) {
+    const d = lireDemo();
+    d.programmes = (d.programmes || []).filter((p) => p.id !== pid);
     ecrireDemo(d);
   },
 
@@ -418,6 +444,26 @@ const reel = {
     verifier(await (await client()).rpc('marquer_messages_lus', { p_eleve: eleveId }));
   },
 
+  async listProgrammes(eleveId) {
+    return verifier(await (await client()).from('programmes').select('*')
+      .eq('eleve_id', eleveId).order('created_at', { ascending: false }));
+  },
+  async saveProgramme(pid, eleveId, data, fichier) {
+    const ligne = { ...data };
+    if (fichier) {
+      ligne.chemin = await envoyerFichier(eleveId, 'programmes', fichier);
+      ligne.nom_fichier = fichier.name;
+    }
+    const table = (await client()).from('programmes');
+    verifier(await (pid ? table.update(ligne).eq('id', pid) : table.insert({ ...ligne, eleve_id: eleveId })));
+  },
+  async deleteProgramme(pid) {
+    const sb = await client();
+    const p = verifier(await sb.from('programmes').select('chemin').eq('id', pid).maybeSingle());
+    verifier(await sb.from('programmes').delete().eq('id', pid));
+    if (p?.chemin) await sb.storage.from('medias').remove([p.chemin]);
+  },
+
   async listBibliotheque() {
     return verifier(await (await client()).from('bibliotheque').select('*').order('created_at', { ascending: false }));
   },
@@ -450,9 +496,11 @@ const reel = {
     verifier(await (await client()).from('charges').delete().eq('id', cid));
   },
 
-  async mediaUrl(chemin) {
+  // telecharger : nom du fichier à proposer, pour forcer le téléchargement au lieu de l'ouverture
+  async mediaUrl(chemin, telecharger) {
     if (!chemin) return null;
-    const { data } = await (await client()).storage.from('medias').createSignedUrl(chemin, 3600);
+    const { data } = await (await client()).storage.from('medias')
+      .createSignedUrl(chemin, 3600, telecharger ? { download: telecharger } : undefined);
     return data?.signedUrl || null;
   }
 };

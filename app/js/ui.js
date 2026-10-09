@@ -2,7 +2,7 @@
 
 // Numéro affiché en bas de l'app : permet de vérifier que le téléphone a bien la dernière version.
 // À augmenter à chaque mise à jour, en même temps que VERSION dans sw.js et ?v= dans index.html.
-export const VERSION_APP = '12';
+export const VERSION_APP = '13';
 
 // Protège le texte saisi (évite qu'un nom ou un message casse la page)
 export function esc(v) {
@@ -21,6 +21,7 @@ const TRACES = {
   chevron: '<path d="M9 5l7 7-7 7"/>',
   retour: '<path d="M15 5l-7 7 7 7"/>',
   envoi: '<path d="M12 16V4M6 10l6-6 6 6M4 20h16"/>',
+  telecharger: '<path d="M12 4v12M6 10l6 6 6-6M4 20h16"/>',
   doc: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>',
   eleves: '<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 4a4 4 0 0 1 0 8M22 21a6 6 0 0 0-4-5.6"/>',
   sortie: '<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 16l-4-4 4-4M6 12h11"/>',
