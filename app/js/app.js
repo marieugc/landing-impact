@@ -38,6 +38,39 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 
+// ───────────── Mises à jour automatiques ─────────────
+// Sur téléphone, l'app installée reste souvent ouverte en arrière-plan avec l'ancienne version.
+// À chaque ouverture (et retour sur l'app), on compare avec version.json publié sur le site.
+let bandeauMaj = false;
+async function verifierMiseAJour() {
+  if (bandeauMaj) return;
+  try {
+    const rep = await fetch(`version.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (!rep.ok) return;
+    const { version } = await rep.json();
+    if (version && String(version) !== VERSION_APP) afficherBandeauMaj(version);
+  } catch (e) { /* hors ligne : on réessaiera */ }
+}
+function afficherBandeauMaj(version) {
+  bandeauMaj = true;
+  const el = document.createElement('div');
+  el.className = 'bandeau-maj';
+  el.setAttribute('role', 'status');
+  el.innerHTML = `<span>Nouvelle version disponible (${esc(version)})</span><button class="bouton-principal compact">METTRE À JOUR</button>`;
+  el.querySelector('button').addEventListener('click', mettreAJour);
+  document.body.appendChild(el);
+}
+async function mettreAJour() {
+  try {
+    const reg = await navigator.serviceWorker?.getRegistration();
+    await reg?.update();
+    if (window.caches) await Promise.all((await caches.keys()).map((c) => caches.delete(c)));
+  } catch (e) { /* on recharge quand même */ }
+  location.reload();
+}
+window.addEventListener('load', verifierMiseAJour);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) verifierMiseAJour(); });
+
 // ───────────── Écrans de connexion ─────────────
 function bandeauDemo() {
   return MODE === 'demo' ? `<div class="bandeau-demo">Mode démo : données fictives, rien n'est envoyé en ligne.</div>` : '';
