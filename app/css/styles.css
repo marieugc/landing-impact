@@ -430,6 +430,14 @@ button.carte-biblio:hover, .carte-biblio-media:hover .biblio-vignette { border-c
 .fenetre-corps p { margin: 0 0 8px; line-height: 1.5; }
 .etapes { margin: 0; padding-left: 20px; line-height: 1.8; }
 
+.bandeau-maj {
+  position: fixed; z-index: 70; left: 50%; transform: translateX(-50%);
+  top: calc(12px + env(safe-area-inset-top)); width: min(456px, calc(100% - 24px));
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 10px 10px 16px; border-radius: 16px; background: var(--carte); border: 1px solid var(--accent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); font-size: 14px; font-weight: 700; color: var(--texte);
+}
+.bandeau-maj .bouton-principal { flex-shrink: 0; }
 .toast {
   position: fixed; z-index: 60; left: 50%; bottom: calc(100px + env(safe-area-inset-bottom));
   transform: translate(-50%, 20px); opacity: 0; transition: 0.25s;

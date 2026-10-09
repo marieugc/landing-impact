@@ -1,12 +1,12 @@
 // Service worker : permet d'installer l'app et de l'ouvrir même avec une connexion faible.
 // Pense à changer le numéro de version à chaque mise à jour de l'app.
-const VERSION = 'bootyflow-v13';
+const VERSION = 'bootyflow-v14';
 
 const FICHIERS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/styles.css?v=13',
+  './css/styles.css?v=14',
   './js/config.js',
   './js/data.js',
   './js/ui.js',
@@ -15,7 +15,7 @@ const FICHIERS = [
   './js/chat.js',
   './js/videotheque.js',
   './js/programmes.js',
-  './js/app.js?v=13',
+  './js/app.js?v=14',
   './img/banniere.jpg',
   './img/coach.jpg',
   './icons/icon-192.png',
@@ -42,6 +42,8 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   // On ne met jamais en cache les données (Supabase) ni les requêtes d'envoi.
   if (event.request.method !== 'GET' || url.origin !== self.location.origin) return;
+  // Le numéro de version publié doit toujours venir du site, jamais du cache
+  if (url.pathname.endsWith('/version.json')) return;
 
   // Réseau d'abord (pour avoir toujours la dernière version), cache si hors ligne.
   event.respondWith(
