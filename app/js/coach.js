@@ -323,7 +323,7 @@ async function ficheTraining(zone, e, recharger) {
   zone.innerHTML = `<div class="pile large">
     <button class="bouton-principal" id="ajouter-programme">${icone('plus', 18)}AJOUTER UN PROGRAMME</button>
     <p class="petit">Le dernier programme ajouté devient le « programme en cours » de ${esc(e.prenom)}. Les précédents restent consultables.
-      Elle voit un badge « Nouveau » dans son onglet Plan.</p>
+      Elle voit un badge « Nouveau » dans son onglet « Plan personnalisé ».</p>
     ${programmes.map((p, i) => carteProgramme(p, { enCours: i === 0, modifiable: true })).join('')
       || `<p class="vide">Aucun programme pour ${esc(e.prenom)}. Ajoute son premier training !</p>`}
   </div>`;

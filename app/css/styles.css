@@ -240,6 +240,8 @@ input[type="date"] { color-scheme: dark; }
   font-size: 11px; font-weight: 800; line-height: 1;
 }
 .onglet { position: relative; }
+.onglet span { text-align: center; }
+.onglet .deux-lignes { font-size: 10px; line-height: 1.1; max-width: 64px; }
 .onglet .compteur { position: absolute; top: 0; right: 6px; min-width: 18px; height: 18px; font-size: 10px; }
 .menu-lien .compteur { margin-left: auto; }
 .lien-chat { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; font-size: 13px; font-weight: 700; color: var(--accent); min-height: 32px; }

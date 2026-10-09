@@ -14,7 +14,7 @@ const ORANGE = '#FFB86B';
 
 const ONGLETS = [
   { route: 'accueil', libelle: 'Accueil', icone: 'accueil' },
-  { route: 'plan', lien: 'training', libelle: 'Plan', icone: 'doc' },
+  { route: 'plan', lien: 'training', libelle: 'Plan personnalisé', icone: 'doc', deuxLignes: true },
   { route: 'mouvement', lien: 'videotheque', libelle: 'Mouvement', icone: 'video' },
   { route: 'posing', libelle: 'Posing', icone: 'etoile', competitrice: true },
   { route: 'progres', libelle: 'Progrès', icone: 'progres' },
@@ -27,7 +27,7 @@ function navigation(profil, actif) {
     .map((o) => {
       const on = o.route === actif;
       return `<a href="#/${o.lien || o.route}" data-onglet="${o.route}" class="onglet${on ? ' actif' : ''}"${on ? ' aria-current="page"' : ''}>
-        ${icone(o.icone)}<span>${o.libelle}</span><i></i></a>`;
+        ${icone(o.icone)}<span${o.deuxLignes ? ' class="deux-lignes"' : ''}>${o.libelle}</span><i></i></a>`;
     }).join('');
   return `<nav class="barre-onglets" aria-label="Navigation principale">${liens}</nav>`;
 }
@@ -123,7 +123,7 @@ async function nutrition(racine, profil) {
     <div class="repas"><div class="repas-heure">${esc(r.heure)}</div>
       <div><strong>${esc(r.nom)}</strong><div class="petit">${esc(r.details)}</div></div></div>`).join('');
 
-  racine.innerHTML = page(profil, 'plan', entete('MON PLAN', 'Nutrition') + segmentsPlan('nutrition') + (n ? `
+  racine.innerHTML = page(profil, 'plan', entete('MON PLAN PERSONNALISÉ', 'Nutrition') + segmentsPlan('nutrition') + (n ? `
     <section class="carte">
       <div class="ligne-entre"><div class="surtitre-carte">OBJECTIF DU JOUR</div>${n.type_jour ? badge(n.type_jour.toUpperCase()) : ''}</div>
       <div class="gros-chiffre">${nombre(n.kcal, 0)} <small>kcal</small></div>
@@ -144,13 +144,13 @@ async function nutrition(racine, profil) {
 // ───────────── Training (programme d'entraînement) ─────────────
 function segmentsPlan(actif) {
   const lien = (route, texte) => `<a href="#/${route}" class="segment${route === actif ? ' actif' : ''}"${route === actif ? ' aria-current="page"' : ''}>${texte}</a>`;
-  return `<nav class="segments" aria-label="Mon plan">${lien('training', 'Training')}${lien('nutrition', 'Nutrition')}</nav>`;
+  return `<nav class="segments" aria-label="Mon plan personnalisé">${lien('training', 'Training')}${lien('nutrition', 'Nutrition')}</nav>`;
 }
 
 async function training(racine, profil) {
   const programmes = await api.listProgrammes(profil.id);
   const [enCours, ...anciens] = programmes;
-  racine.innerHTML = page(profil, 'plan', entete('MON PLAN', 'Training') + segmentsPlan('training') + (enCours ? `
+  racine.innerHTML = page(profil, 'plan', entete('MON PLAN PERSONNALISÉ', 'Training') + segmentsPlan('training') + (enCours ? `
     ${carteProgramme(enCours, { enCours: true, nouveau: estNouveau(enCours, profil.id) })}
     ${anciens.length ? `<details class="anciens-programmes">
       <summary>Programmes précédents (${anciens.length})</summary>
