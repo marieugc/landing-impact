@@ -143,6 +143,20 @@ create table if not exists public.bibliotheque (
 -- (les vidéos ajoutées après sont signalées comme « Nouveau »)
 alter table public.profiles add column if not exists biblio_vue_le timestamptz;
 
+-- 9. Programmes d'entraînement (training) déposés par la coach pour chaque élève
+create table if not exists public.programmes (
+  id uuid primary key default gen_random_uuid(),
+  eleve_id uuid not null references public.profiles on delete cascade,
+  titre text not null,
+  description text,
+  chemin text,          -- fichier (PDF, image, Excel…) rangé dans le dossier de l'élève
+  nom_fichier text,
+  lien text,            -- ou lien Google Drive / Sheets…
+  created_at timestamptz not null default now(),
+  check (chemin is not null or lien is not null or description is not null)
+);
+create index if not exists programmes_eleve on public.programmes (eleve_id, created_at);
+
 -- ─── Sécurité : chaque élève ne voit QUE ses données, la coach voit tout ───
 alter table public.profiles enable row level security;
 alter table public.nutrition enable row level security;
@@ -152,6 +166,7 @@ alter table public.competitions enable row level security;
 alter table public.charges enable row level security;
 alter table public.messages enable row level security;
 alter table public.bibliotheque enable row level security;
+alter table public.programmes enable row level security;
 
 drop policy if exists "profil lecture" on public.profiles;
 create policy "profil lecture" on public.profiles for select using (id = auth.uid() or public.est_coach());
@@ -217,6 +232,11 @@ create or replace function public.marquer_bibliotheque_vue()
 returns void language sql security definer set search_path = public as $$
   update public.profiles set biblio_vue_le = now() where id = auth.uid();
 $$;
+
+drop policy if exists "programmes lecture" on public.programmes;
+create policy "programmes lecture" on public.programmes for select using (eleve_id = auth.uid() or public.est_coach());
+drop policy if exists "programmes coach" on public.programmes;
+create policy "programmes coach" on public.programmes for all using (public.est_coach()) with check (public.est_coach());
 
 -- ─── Stockage des vidéos, photos et PDF ───
 insert into storage.buckets (id, name, public)

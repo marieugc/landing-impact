@@ -6,6 +6,7 @@ import {
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { conversation } from './chat.js';
+import { carteProgramme, brancherFichiers, estNouveau, nouveauxProgrammes, marquerTrainingVu } from './programmes.js';
 import { CATEGORIES, nouveautes, estNouvelle, vignette, chargerMiniatures, ouvrirVideo } from './videotheque.js';
 
 const VERT = '#7FE0B8';
@@ -13,7 +14,7 @@ const ORANGE = '#FFB86B';
 
 const ONGLETS = [
   { route: 'accueil', libelle: 'Accueil', icone: 'accueil' },
-  { route: 'nutrition', libelle: 'Nutrition', icone: 'nutrition' },
+  { route: 'plan', lien: 'training', libelle: 'Plan personnalisé', icone: 'doc', deuxLignes: true },
   { route: 'mouvement', lien: 'videotheque', libelle: 'Mouvement', icone: 'video' },
   { route: 'posing', libelle: 'Posing', icone: 'etoile', competitrice: true },
   { route: 'progres', libelle: 'Progrès', icone: 'progres' },
@@ -26,7 +27,7 @@ function navigation(profil, actif) {
     .map((o) => {
       const on = o.route === actif;
       return `<a href="#/${o.lien || o.route}" data-onglet="${o.route}" class="onglet${on ? ' actif' : ''}"${on ? ' aria-current="page"' : ''}>
-        ${icone(o.icone)}<span>${o.libelle}</span><i></i></a>`;
+        ${icone(o.icone)}<span${o.deuxLignes ? ' class="deux-lignes"' : ''}>${o.libelle}</span><i></i></a>`;
     }).join('');
   return `<nav class="barre-onglets" aria-label="Navigation principale">${liens}</nav>`;
 }
@@ -50,6 +51,9 @@ async function accueil(racine, profil) {
   const videos = await api.listVideos({ eleveId: profil.id });
   const recentes = videos.filter((v) => v.statut === 'corrige' && joursAvant(v.corrige_le || v.created_at) >= -7);
   const nouvelles = await nouveautes(profil);
+  const programmes = await api.listProgrammes(profil.id);
+  const programme = programmes[0];
+  const programmesNouveaux = programmes.filter((p) => estNouveau(p, profil.id));
   const pct = Math.min(100, Math.round((profil.semaine / Math.max(1, profil.semaines_total)) * 100));
 
   racine.innerHTML = page(profil, 'accueil', `
@@ -57,8 +61,14 @@ async function accueil(racine, profil) {
     <div class="ligne-entre">
       <div class="bonjour">Bonjour ${esc(profil.prenom)}</div>
       <button class="bouton-rond" id="cloche" aria-label="Notifications">${icone('cloche', 20)}
-        ${recentes.length || nouvelles.length ? '<span class="pastille"></span>' : ''}</button>
+        ${recentes.length || nouvelles.length || programmesNouveaux.length ? '<span class="pastille"></span>' : ''}</button>
     </div>
+    ${programme ? `<a href="#/training" class="carte carte-training${programmesNouveaux.length ? ' nouveau' : ''}">
+      <span class="icone-training">${icone('doc', 24, 'var(--accent)')}</span>
+      <span class="carte-nouveaute-texte"><span class="surtitre-carte">${programmesNouveaux.length ? 'NOUVEAU · ' : ''}MON TRAINING</span>
+        <strong>${esc(programme.titre)}</strong>
+        <span class="petit">Voir mon programme</span></span>
+      ${icone('chevron', 18, 'var(--doux)')}</a>` : ''}
     ${nouvelles.length ? `<a href="#/videotheque" class="carte carte-nouveaute">
       ${vignette(nouvelles[0])}
       <span class="carte-nouveaute-texte"><span class="surtitre-carte">NOUVEAU · ${esc(NOM_VIDEOTHEQUE.toUpperCase())}</span>
@@ -94,6 +104,8 @@ async function accueil(racine, profil) {
   chargerMiniatures(racine);
   racine.querySelector('#cloche').addEventListener('click', () => {
     const notifs = [
+      ...programmesNouveaux.map((p) => ({ date: p.created_at, html: `<a class="notif" href="#/training" data-fermer><strong>Nouveau programme : ${esc(p.titre)}</strong>
+          <span class="petit">Training · ajouté le ${dateCourte(p.created_at)}</span></a>` })),
       ...nouvelles.map((v) => ({ date: v.created_at, html: `<a class="notif" href="#/videotheque" data-fermer><strong>Nouvelle vidéo : ${esc(v.titre)}</strong>
           <span class="petit">${esc(NOM_VIDEOTHEQUE)} · ajoutée le ${dateCourte(v.created_at)}</span></a>` })),
       ...recentes.map((v) => ({ date: v.corrige_le || v.created_at, html: `<a class="notif" href="#/mouvement" data-fermer><strong>${esc(v.exercice)}</strong>
@@ -111,7 +123,7 @@ async function nutrition(racine, profil) {
     <div class="repas"><div class="repas-heure">${esc(r.heure)}</div>
       <div><strong>${esc(r.nom)}</strong><div class="petit">${esc(r.details)}</div></div></div>`).join('');
 
-  racine.innerHTML = page(profil, 'nutrition', entete('MON PLAN', 'Nutrition') + (n ? `
+  racine.innerHTML = page(profil, 'plan', entete('MON PLAN PERSONNALISÉ', 'Nutrition') + segmentsPlan('nutrition') + (n ? `
     <section class="carte">
       <div class="ligne-entre"><div class="surtitre-carte">OBJECTIF DU JOUR</div>${n.type_jour ? badge(n.type_jour.toUpperCase()) : ''}</div>
       <div class="gros-chiffre">${nombre(n.kcal, 0)} <small>kcal</small></div>
@@ -123,14 +135,33 @@ async function nutrition(racine, profil) {
     </section>
     ${n.ajustement ? `<section class="carte carte-ligne">${icone('doc', 22, 'var(--accent)')}
       <div><strong>Dernier ajustement · ${dateCourte(n.ajustement_date)}</strong><div class="petit">${esc(n.ajustement)}</div></div></section>` : ''}
-    ${n.pdf_chemin ? `<button class="bouton-contour" id="pdf">${icone('doc', 18)}Mon plan complet (PDF)</button>` : ''}
+    ${n.pdf_chemin ? `<a class="bouton-contour" data-ouvrir="${esc(n.pdf_chemin)}" target="_blank" rel="noopener" aria-disabled="true">${icone('doc', 18)}Mon plan complet (PDF)</a>` : ''}
   ` : `<section class="carte"><p class="vide">Ta coach prépare ton plan nutrition. Il apparaîtra ici dès qu'il sera prêt.</p></section>`));
 
-  racine.querySelector('#pdf')?.addEventListener('click', async () => {
-    const url = await api.mediaUrl(n.pdf_chemin);
-    if (url) window.open(url, '_blank', 'noopener');
-    else toast("Le PDF n'est pas disponible en mode démo.", true);
-  });
+  brancherFichiers(racine);
+}
+
+// ───────────── Training (programme d'entraînement) ─────────────
+function segmentsPlan(actif) {
+  const lien = (route, texte) => `<a href="#/${route}" class="segment${route === actif ? ' actif' : ''}"${route === actif ? ' aria-current="page"' : ''}>${texte}</a>`;
+  return `<nav class="segments" aria-label="Mon plan personnalisé">${lien('training', 'Training')}${lien('nutrition', 'Nutrition')}</nav>`;
+}
+
+async function training(racine, profil) {
+  const programmes = await api.listProgrammes(profil.id);
+  const [enCours, ...anciens] = programmes;
+  racine.innerHTML = page(profil, 'plan', entete('MON PLAN PERSONNALISÉ', 'Training') + segmentsPlan('training') + (enCours ? `
+    ${carteProgramme(enCours, { enCours: true, nouveau: estNouveau(enCours, profil.id) })}
+    ${anciens.length ? `<details class="anciens-programmes">
+      <summary>Programmes précédents (${anciens.length})</summary>
+      <div class="pile">${anciens.map((p) => carteProgramme(p, { nouveau: estNouveau(p, profil.id) })).join('')}</div>
+    </details>` : ''}
+  ` : `<section class="carte"><p class="vide">Ta coach prépare ton programme d'entraînement. Il apparaîtra ici dès qu'il sera prêt.</p></section>`));
+  brancherFichiers(racine);
+  if (programmes.some((p) => estNouveau(p, profil.id))) {
+    marquerTrainingVu(profil.id);
+    document.dispatchEvent(new CustomEvent('messages-lus'));
+  }
 }
 
 // ───────────── Vidéos (partagé Mouvement / Posing) ─────────────
@@ -494,4 +525,4 @@ async function chat(racine, profil) {
   });
 }
 
-export const ecransEleve = { accueil, nutrition, mouvement, videotheque, posing, progres, bilan, chat };
+export const ecransEleve = { accueil, training, nutrition, mouvement, videotheque, posing, progres, bilan, chat };

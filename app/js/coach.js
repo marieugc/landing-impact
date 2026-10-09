@@ -7,6 +7,7 @@ import {
 import { afficherPhotos, blocCharges } from './eleve.js';
 import { conversation } from './chat.js';
 import { NOM_VIDEOTHEQUE } from './config.js';
+import { carteProgramme, brancherFichiers } from './programmes.js';
 import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide } from './videotheque.js';
 
 const VERT = '#7FE0B8';
@@ -108,7 +109,7 @@ async function tableau(racine, profil) {
 }
 
 // ───────────── Fiche élève ─────────────
-const ONGLETS_FICHE = [['suivi', 'Suivi'], ['nutrition', 'Nutrition'], ['videos', 'Vidéos'], ['bilans', 'Bilans'], ['charges', 'Charges'], ['competition', 'Compétition']];
+const ONGLETS_FICHE = [['suivi', 'Suivi'], ['training', 'Training'], ['nutrition', 'Nutrition'], ['videos', 'Vidéos'], ['bilans', 'Bilans'], ['charges', 'Charges'], ['competition', 'Compétition']];
 
 async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
   const e = await api.getProfile(eleveId);
@@ -128,7 +129,7 @@ async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
   `);
   const zone = racine.querySelector('#onglet');
   const recharger = () => fiche(racine, profil, [eleveId, onglet]);
-  await ({ suivi: ficheSuivi, nutrition: ficheNutrition, videos: ficheVideos, bilans: ficheBilans, charges: ficheCharges, competition: ficheCompetition }[onglet] || ficheSuivi)(zone, e, recharger);
+  await ({ suivi: ficheSuivi, training: ficheTraining, nutrition: ficheNutrition, videos: ficheVideos, bilans: ficheBilans, charges: ficheCharges, competition: ficheCompetition }[onglet] || ficheSuivi)(zone, e, recharger);
 }
 
 async function ficheSuivi(zone, e, recharger) {
@@ -314,6 +315,63 @@ async function ficheBilans(zone, e, recharger) {
 async function ficheCharges(zone, e) {
   zone.innerHTML = '<div class="large" id="charges-eleve"></div>';
   await blocCharges(zone.querySelector('#charges-eleve'), e.id, false);
+}
+
+// Training : programmes d'entraînement de l'élève (le plus récent = programme en cours)
+async function ficheTraining(zone, e, recharger) {
+  const programmes = await api.listProgrammes(e.id);
+  zone.innerHTML = `<div class="pile large">
+    <button class="bouton-principal" id="ajouter-programme">${icone('plus', 18)}AJOUTER UN PROGRAMME</button>
+    <p class="petit">Le dernier programme ajouté devient le « programme en cours » de ${esc(e.prenom)}. Les précédents restent consultables.
+      Elle voit un badge « Nouveau » dans son onglet « Plan personnalisé ».</p>
+    ${programmes.map((p, i) => carteProgramme(p, { enCours: i === 0, modifiable: true })).join('')
+      || `<p class="vide">Aucun programme pour ${esc(e.prenom)}. Ajoute son premier training !</p>`}
+  </div>`;
+  zone.querySelector('#ajouter-programme').addEventListener('click', () => formulaireProgramme(e, null, recharger));
+  zone.querySelectorAll('[data-modifier-prog]').forEach((b) => b.addEventListener('click', () =>
+    formulaireProgramme(e, programmes.find((p) => p.id === b.dataset.modifierProg), recharger)));
+  zone.querySelectorAll('[data-supprimer-prog]').forEach((b) => b.addEventListener('click', async () => {
+    const p = programmes.find((x) => x.id === b.dataset.supprimerProg);
+    if (!confirm(`Supprimer « ${p.titre} » ? ${e.prenom} ne le verra plus.`)) return;
+    await pendant(b, '…', () => api.deleteProgramme(p.id));
+    toast('Programme supprimé.');
+    recharger();
+  }));
+  brancherFichiers(zone);
+}
+
+function formulaireProgramme(e, p, recharger) {
+  const f = fenetre(p ? 'Modifier le programme' : `Programme de ${e.prenom}`, `<form class="formulaire">
+    <label>Titre<input name="titre" required value="${esc(p?.titre || '')}" placeholder="Ex. : Bloc 2 · Semaines 5 à 8"></label>
+    <label>Consignes / séances (facultatif)<textarea name="description" rows="5" placeholder="Ex. : Séance A : Hip thrust 4×8, Squat bulgare 3×10…">${esc(p?.description || '')}</textarea></label>
+    <div class="surtitre-carte">LE FICHIER DU PROGRAMME</div>
+    <label class="choix-video">${icone('doc', 18, 'var(--accent)')}<span>${p?.chemin ? `Remplacer « ${esc(p.nom_fichier || 'le fichier')} »` : 'Choisir un fichier (PDF, image, Excel, Word…)'}</span>
+      <input type="file" name="fichier" accept=".pdf,image/*,.xls,.xlsx,.csv,.numbers,.doc,.docx,.pages"></label>
+    <label>Ou un lien (Google Drive, Google Sheets…)<input name="lien" type="url" inputmode="url" value="${esc(p?.lien || '')}" placeholder="https://…"></label>
+    <p class="petit">Astuce : le PDF est le format le plus pratique, il s'ouvre sur tous les téléphones.</p>
+    <button class="bouton-principal" type="submit">${p ? 'ENREGISTRER' : 'ENVOYER LE PROGRAMME'}</button>
+  </form>`);
+  const entree = f.querySelector('[name=fichier]');
+  entree.addEventListener('change', () => {
+    entree.parentElement.classList.toggle('choisie', !!entree.files[0]);
+    if (entree.files[0]) entree.previousElementSibling.textContent = entree.files[0].name;
+  });
+  f.querySelector('form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const d = new FormData(ev.target);
+    const fichier = d.get('fichier')?.size ? d.get('fichier') : null;
+    const lien = d.get('lien').trim();
+    const description = d.get('description').trim();
+    if (!fichier && !lien && !description && !p?.chemin) { toast('Ajoute un fichier, un lien ou des consignes.', true); return; }
+    if (lien && !lienValide(lien)) { toast('Le lien doit commencer par https://', true); return; }
+    if (fichier && fichier.size > 50 * 1024 * 1024) { toast('Fichier trop lourd (50 Mo max).', true); return; }
+    await pendant(ev.submitter, fichier ? 'Envoi du fichier…' : 'Enregistrement…', () => api.saveProgramme(p?.id, e.id, {
+      titre: d.get('titre').trim(), description: description || null, lien: lien || null
+    }, fichier));
+    fermerFenetre();
+    toast(p ? 'Programme modifié.' : `Programme envoyé à ${e.prenom} !`);
+    recharger();
+  });
 }
 
 async function ficheCompetition(zone, e, recharger) {

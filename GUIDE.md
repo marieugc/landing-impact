@@ -152,7 +152,8 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 
 **Espace élève (téléphone)**
 - **Accueil** : objectif et avancement, prochain bilan, vidéos corrigées, ton message du jour
-- **Nutrition** : calories, macros, repas de la journée, dernier ajustement, plan PDF
+- **Plan personnalisé › Training** : le programme d'entraînement en cours (fichier PDF / image / Excel à ouvrir ou télécharger, consignes, lien), et les programmes précédents
+- **Plan personnalisé › Nutrition** : calories, macros, repas de la journée, dernier ajustement, plan PDF
 - **Mouvement** : la **Vidéothèque** (tes vidéos d'explication, par catégorie, avec badge « Nouveau ») et **Mes corrections** (envoi de vidéos d'exercice et tes corrections)
 - **Posing** (compétitrices seulement) : compte à rebours, poses imposées, checklist jour J, envoi de posing
 - **Chat** : discussion privée avec la coach, en messages écrits ou vocaux (bouton micro)
@@ -163,6 +164,7 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 - **Fiche élève** : suivi, plan nutrition, vidéos, bilans (avec photos et écarts), charges de musculation, compétition
 - **Vidéos à corriger** : toutes les vidéos en attente, avec un retour écrit et/ou une vidéo de correction
 - **Bilans**, **Compétitrices**, **Plans nutrition** : vues d'ensemble
+- **Fiche élève › Training** : dépose le programme de chaque élève (fichier, lien Google Drive ou consignes écrites). Le dernier ajouté devient son « programme en cours » et elle voit un badge « Nouveau »
 - **Vidéothèque** : ajoute, modifie ou supprime tes vidéos d'explication (fichier de 50 Mo max, ou lien YouTube / Vimeo). Tes élèves voient un badge « Nouveau », une pastille sur l'onglet Mouvement et une notification dans l'app. Pour renommer cette partie, change `NOM_VIDEOTHEQUE` dans `app/js/config.js`
 - **Messages** : une conversation par élève (texte et vocaux), avec le nombre de messages non lus dans le menu ; bouton « Écrire » sur chaque fiche élève
 - **Suivi des charges** : pour chaque élève, dernière séance, exercices suivis, records de la semaine et meilleure progression ; un clic ouvre le détail par exercice

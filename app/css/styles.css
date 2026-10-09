@@ -240,6 +240,8 @@ input[type="date"] { color-scheme: dark; }
   font-size: 11px; font-weight: 800; line-height: 1;
 }
 .onglet { position: relative; }
+.onglet span { text-align: center; }
+.onglet .deux-lignes { font-size: 10px; line-height: 1.1; max-width: 64px; }
 .onglet .compteur { position: absolute; top: 0; right: 6px; min-width: 18px; height: 18px; font-size: 10px; }
 .menu-lien .compteur { margin-left: auto; }
 .lien-chat { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; font-size: 13px; font-weight: 700; color: var(--accent); min-height: 32px; }
@@ -288,6 +290,26 @@ input[type="date"] { color-scheme: dark; }
 .ligne-conversation-texte .petit { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ligne-conversation.non-lue .ligne-conversation-texte .petit { color: var(--texte); font-weight: 700; }
 .ligne-conversation-info { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+
+/* Training (programmes) */
+.programme.en-cours { border-color: var(--accent); box-shadow: 0 0 24px rgba(178, 102, 255, 0.18); }
+.programme-texte { white-space: pre-wrap; }
+.actions-programme { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.actions-programme .bouton-principal { box-shadow: none; }
+.actions-programme [aria-disabled="true"] { opacity: 0.55; }
+.actions-coach { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; }
+.anciens-programmes summary {
+  cursor: pointer; list-style: none; padding: 12px 4px; color: var(--lilas); font-weight: 700; font-size: 14px;
+}
+.anciens-programmes summary::-webkit-details-marker { display: none; }
+.anciens-programmes summary::before { content: '▸ '; }
+.anciens-programmes[open] summary::before { content: '▾ '; }
+.carte-training { flex-direction: row; align-items: center; gap: 12px; padding: 14px; }
+.carte-training.nouveau { border-color: var(--accent); }
+.icone-training {
+  width: 48px; height: 48px; flex-shrink: 0; border-radius: 14px; background: var(--carte-2);
+  display: flex; align-items: center; justify-content: center;
+}
 
 /* Vidéothèque */
 .segments { display: flex; padding: 4px; gap: 4px; border-radius: 14px; background: var(--carte); border: 1px solid var(--bord); }
