@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Ta séance fessiers · Booty Flow</title>
+  <meta name="description" content="La séance fessiers de Marie, compétitrice Wellness et juge de compétition : 6 exercices, séries, repos, tempo et conseils de juge pour enfin faire pousser tes fessiers." />
+  <meta name="theme-color" content="#12062A" />
+
+  <!-- 👉 Après la mise en ligne, remplace l'adresse dans og:url et og:image (voir README). -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:site_name" content="Booty Flow Coaching" />
+  <meta property="og:title" content="Ta séance fessiers offerte 🍑💜" />
+  <meta property="og:description" content="6 exercices, le bon volume, les bons repos et mes conseils de juge de compétition. À faire dès ta prochaine séance." />
+  <meta property="og:url" content="https://marieugc.github.io/landing-impact/seance-fessiers/" />
+  <meta property="og:image" content="https://marieugc.github.io/landing-impact/seance-fessiers/assets/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =================================================================
+       BOOTY FLOW · SÉANCE FESSIERS · couleurs principales ici
+       ================================================================= */
+    :root {
+      --nuit: #0E0420;          /* fond */
+      --nuit-2: #1A0B33;
+      --carte: #1D0D3A;         /* fond des cartes */
+      --carte-2: #261148;
+      --bord: rgba(180, 92, 255, .28);
+      --violet: #7B2CE0;
+      --neon: #B45CFF;          /* lueur néon */
+      --neon-clair: #D8A8FF;
+      --rose: #E25CFF;
+      --texte: #F3ECFF;
+      --texte-doux: #C2B2DE;
+      --texte-pale: #9786B5;
+      --vert: #5BE3A5;
+      --titre: "Playfair Display", Georgia, serif;
+      --corps: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --rayon: 22px;
+      --lueur: 0 0 0 1px rgba(180, 92, 255, .45), 0 0 22px rgba(180, 92, 255, .45), 0 0 60px -10px rgba(226, 92, 255, .45);
+      --ease: cubic-bezier(.22, .9, .32, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; overflow-x: hidden; }
+    body {
+      margin: 0;
+      font-family: var(--corps);
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--texte);
+      background-color: var(--nuit);
+      background-image:
+        radial-gradient(80% 40% at 100% 0%, rgba(180, 92, 255, .22), transparent 60%),
+        radial-gradient(70% 35% at 0% 45%, rgba(123, 44, 224, .16), transparent 60%),
+        radial-gradient(80% 40% at 100% 100%, rgba(226, 92, 255, .14), transparent 60%);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    @supports (overflow: clip) { html, body { overflow-x: clip; } }
+    img { max-width: 100%; display: block; }
+    h1, h2, h3, h4, p, ul, ol, figure { margin: 0; }
+    strong { color: #fff; }
+    a { color: var(--neon-clair); }
+    button { font: inherit; cursor: pointer; }
+    :focus-visible { outline: 3px solid var(--neon); outline-offset: 3px; border-radius: 8px; }
+
+    .conteneur { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 16px; }
+    section { padding: 64px 0; }
+    .surtitre {
+      display: inline-block;
+      font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--neon-clair);
+      margin-bottom: 14px;
+    }
+    h2 {
+      font-family: var(--titre);
+      font-size: clamp(30px, 6.5vw, 42px);
+      line-height: 1.12;
+      margin-bottom: 18px;
+    }
+    h2 em, h1 em {
+      font-style: italic;
+      color: var(--neon-clair);
+      text-shadow: 0 0 18px rgba(180, 92, 255, .8), 0 0 42px rgba(226, 92, 255, .5);
+    }
+    .chapeau { color: var(--texte-doux); font-size: 18px; max-width: 60ch; }
+    .chapeau + .chapeau { margin-top: 12px; }
+
+    /* ---------- Boutons ---------- */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-height: 56px; padding: 14px 28px;
+      border: 0; border-radius: 999px;
+      font-weight: 700; font-size: 17px; text-decoration: none; text-align: center;
+      color: #fff;
+      background: linear-gradient(135deg, var(--violet), var(--rose));
+      box-shadow: var(--lueur);
+      transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(216, 168, 255, .7), 0 0 30px rgba(180, 92, 255, .75), 0 0 80px -10px rgba(226, 92, 255, .7); }
+    .btn-fantome {
+      background: transparent;
+      box-shadow: inset 0 0 0 2px var(--bord);
+      color: var(--texte);
+    }
+    .btn-fantome:hover { box-shadow: inset 0 0 0 2px var(--neon), 0 0 20px rgba(180, 92, 255, .35); }
+    .btn-bloc { width: 100%; }
+
+    /* ---------- En-tête ---------- */
+    .entete {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(14, 4, 32, .82);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(180, 92, 255, .18);
+      padding-top: env(safe-area-inset-top);
+    }
+    .entete .conteneur { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 60px; }
+    .entete img { height: 40px; width: auto; border-radius: 8px; }
+    .entete a.lien-rdv {
+      font-size: 14px; font-weight: 700; text-decoration: none; color: #fff;
+      padding: 8px 14px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px var(--neon);
+      white-space: nowrap;
+    }
+    .barre-progression { height: 3px; background: rgba(180, 92, 255, .12); }
+    .barre-progression span {
+      display: block; height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--violet), var(--rose));
+      box-shadow: 0 0 12px var(--neon);
+      transition: width .4s var(--ease);
+    }
+
+    /* ---------- Héros ---------- */
+    .heros { padding: 40px 0 56px; text-align: center; }
+    .heros .surtitre {
+      padding: 7px 14px; border-radius: 999px;
+      background: rgba(180, 92, 255, .12); box-shadow: inset 0 0 0 1px var(--bord);
+    }
+    h1 {
+      font-family: var(--titre);
+      font-size: clamp(36px, 9vw, 60px);
+      line-height: 1.05;
+      margin: 6px 0 18px;
+    }
+    .heros .chapeau { margin: 0 auto; }
+    .portrait {
+      position: relative;
+      width: min(78vw, 340px); aspect-ratio: 1;
+      margin: 34px auto 30px;
+    }
+    .portrait img {
+      width: 100%; height: 100%; object-fit: cover;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(216, 168, 255, .9), 0 0 30px rgba(180, 92, 255, .9), 0 0 90px rgba(226, 92, 255, .55);
+      animation: pulse 3.6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(216, 168, 255, .9), 0 0 30px rgba(180, 92, 255, .9), 0 0 90px rgba(226, 92, 255, .55); }
+      50% { box-shadow: 0 0 0 3px rgba(216, 168, 255, 1), 0 0 44px rgba(180, 92, 255, 1), 0 0 130px rgba(226, 92, 255, .75); }
+    }
+    .portrait .badge {
+      position: absolute; bottom: 6%; right: -4%;
+      padding: 8px 14px; border-radius: 14px;
+      background: var(--carte-2); box-shadow: var(--lueur);
+      font-size: 13px; font-weight: 700; line-height: 1.25; text-align: left;
+    }
+    .portrait .badge small { display: block; font-weight: 500; color: var(--texte-doux); }
+    .puces { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 0 28px; padding: 0; list-style: none; }
+    .puces li {
+      font-size: 14px; padding: 7px 12px; border-radius: 999px;
+      background: rgba(255, 255, 255, .05); box-shadow: inset 0 0 0 1px rgba(180, 92, 255, .25);
+    }
+    .actions { display: flex; flex-direction: column; gap: 12px; max-width: 420px; margin: 0 auto; }
+    .resume {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+      margin: 32px auto 0; max-width: 520px;
+    }
+    .resume div { padding: 14px 6px; border-radius: 16px; background: var(--carte); box-shadow: inset 0 0 0 1px var(--bord); }
+    .resume b { display: block; font-family: var(--titre); font-size: 26px; color: var(--neon-clair); line-height: 1.1; }
+    .resume span { font-size: 13px; color: var(--texte-doux); }
+
+    /* ---------- Cartes génériques ---------- */
+    .carte {
+      background: linear-gradient(180deg, var(--carte-2), var(--carte));
+      border-radius: var(--rayon);
+      box-shadow: inset 0 0 0 1px var(--bord);
+      padding: 22px;
+    }
+    .grille { display: grid; gap: 14px; margin-top: 28px; }
+    @media (min-width: 640px) { .grille-2 { grid-template-columns: 1fr 1fr; } }
+
+    /* ---------- Auto-diagnostic ---------- */
+    .coche-liste { list-style: none; padding: 0; margin-top: 28px; display: grid; gap: 10px; }
+    .coche-liste label {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 16px 18px; border-radius: 16px; cursor: pointer;
+      background: var(--carte); box-shadow: inset 0 0 0 1px var(--bord);
+      transition: box-shadow .2s, background .2s;
+    }
+    .coche-liste input { position: absolute; opacity: 0; pointer-events: none; }
+    .coche-liste .case {
+      flex: none; width: 26px; height: 26px; border-radius: 8px; margin-top: 1px;
+      box-shadow: inset 0 0 0 2px var(--neon);
+      display: grid; place-items: center; font-size: 15px; color: transparent;
+      transition: background .2s, color .2s;
+    }
+    .coche-liste input:checked + label { background: rgba(180, 92, 255, .14); box-shadow: inset 0 0 0 1.5px var(--neon), 0 0 20px rgba(180, 92, 255, .25); }
+    .coche-liste input:checked + label .case { background: var(--neon); color: #fff; }
+    .coche-liste input:focus-visible + label { outline: 3px solid var(--neon); outline-offset: 3px; }
+    .coche-liste b { display: block; }
+    .coche-liste small { color: var(--texte-doux); font-size: 15px; }
+    .verdict {
+      margin-top: 16px; padding: 16px 18px; border-radius: 16px;
+      background: rgba(226, 92, 255, .1); border-left: 3px solid var(--rose);
+      color: var(--texte); display: none;
+    }
+    .verdict.visible { display: block; animation: apparait .4s var(--ease); }
+    @keyframes apparait { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* ---------- Règles ---------- */
+    .regle { display: flex; gap: 16px; }
+    .regle .num {
+      flex: none; width: 46px; height: 46px; border-radius: 50%;
+      display: grid; place-items: center;
+      font-family: var(--titre); font-size: 22px; font-weight: 700;
+      box-shadow: inset 0 0 0 2px var(--neon), 0 0 16px rgba(180, 92, 255, .5);
+      color: var(--neon-clair);
+    }
+    .regle h3 { font-size: 18px; margin-bottom: 4px; }
+    .regle p { color: var(--texte-doux); font-size: 16px; }
+
+    .juge {
+      margin-top: 28px; padding: 22px; border-radius: var(--rayon);
+      background: radial-gradient(120% 120% at 0% 0%, rgba(226, 92, 255, .22), transparent 60%), var(--carte);
+      box-shadow: var(--lueur);
+    }
+    .juge .etiquette, .astuce .etiquette {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--neon-clair); margin-bottom: 8px;
+    }
+    .juge p { font-size: 17px; }
+
+    /* ---------- Séance ---------- */
+    .bloc-titre { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 44px 0 14px; }
+    .bloc-titre h3 { font-family: var(--titre); font-size: 26px; }
+    .bloc-titre span { font-size: 14px; color: var(--texte-pale); white-space: nowrap; }
+
+    .echauffement { list-style: none; padding: 0; display: grid; gap: 10px; }
+    .echauffement li { display: flex; justify-content: space-between; gap: 12px; padding: 14px 18px; border-radius: 14px; background: var(--carte); box-shadow: inset 0 0 0 1px var(--bord); }
+    .echauffement b { font-weight: 700; }
+    .echauffement span { color: var(--neon-clair); font-weight: 700; white-space: nowrap; }
+
+    .exo {
+      position: relative; margin-top: 18px;
+      border-radius: var(--rayon); overflow: hidden;
+      background: linear-gradient(180deg, var(--carte-2), var(--carte));
+      box-shadow: inset 0 0 0 1px var(--bord);
+      transition: box-shadow .3s;
+    }
+    .exo.fini { box-shadow: inset 0 0 0 1.5px var(--vert), 0 0 24px rgba(91, 227, 165, .18); }
+    .exo-tete { padding: 22px 22px 0; display: flex; gap: 16px; align-items: flex-start; }
+    .exo-num {
+      flex: none; width: 52px; height: 52px; border-radius: 16px;
+      display: grid; place-items: center;
+      font-family: var(--titre); font-size: 26px; font-weight: 700;
+      background: linear-gradient(135deg, var(--violet), var(--rose));
+      box-shadow: 0 0 18px rgba(180, 92, 255, .6);
+    }
+    .exo.fini .exo-num { background: var(--vert); color: var(--nuit); box-shadow: 0 0 18px rgba(91, 227, 165, .5); }
+    .exo h4 { font-size: 21px; line-height: 1.25; }
+    .exo .cible { font-size: 14px; color: var(--texte-pale); margin-top: 2px; }
+    .exo-corps { padding: 18px 22px 22px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .stats div { text-align: center; padding: 10px 4px; border-radius: 12px; background: rgba(255, 255, 255, .04); }
+    .stats b { display: block; font-size: 17px; color: #fff; line-height: 1.2; }
+    .stats span { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--texte-pale); }
+    .exo-corps ol { margin: 18px 0 0; padding-left: 20px; color: var(--texte-doux); font-size: 16px; display: grid; gap: 6px; }
+    .exo-corps ol strong { color: var(--texte); }
+    .astuce { margin-top: 16px; padding: 14px 16px; border-radius: 14px; background: rgba(180, 92, 255, .1); font-size: 15px; }
+    .astuce.erreur { background: rgba(226, 92, 255, .08); }
+    .astuce .etiquette { margin-bottom: 4px; }
+
+    .suivi { margin-top: 18px; padding-top: 18px; border-top: 1px dashed rgba(180, 92, 255, .25); }
+    .suivi-ligne { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .suivi-ligne > span { font-size: 14px; color: var(--texte-doux); margin-right: 4px; }
+    .serie {
+      width: 46px; height: 46px; border-radius: 50%;
+      border: 0; color: var(--texte-doux); font-weight: 700;
+      background: transparent; box-shadow: inset 0 0 0 2px var(--bord);
+      transition: background .2s, box-shadow .2s, transform .15s;
+    }
+    .serie:hover { box-shadow: inset 0 0 0 2px var(--neon); }
+    .serie[aria-pressed="true"] { background: var(--neon); color: #fff; box-shadow: 0 0 16px rgba(180, 92, 255, .8); }
+    .serie:active { transform: scale(.92); }
+    .charge { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 14px; color: var(--texte-doux); }
+    .charge input {
+      width: 110px; min-height: 44px; padding: 8px 12px; border-radius: 12px;
+      border: 0; font: inherit; font-size: 16px; color: #fff;
+      background: rgba(255, 255, 255, .06); box-shadow: inset 0 0 0 1.5px var(--bord);
+    }
+    .charge input:focus { outline: none; box-shadow: inset 0 0 0 2px var(--neon); }
+    .btn-repos {
+      margin-top: 14px; min-height: 44px; padding: 10px 16px; border-radius: 999px;
+      border: 0; color: #fff; font-weight: 700; font-size: 15px;
+      background: rgba(180, 92, 255, .16); box-shadow: inset 0 0 0 1.5px var(--neon);
+    }
+    .btn-repos:hover { background: rgba(180, 92, 255, .3); }
+
+    .bilan {
+      margin-top: 28px; padding: 26px 22px; text-align: center; border-radius: var(--rayon);
+      background: radial-gradient(100% 120% at 50% 0%, rgba(180, 92, 255, .3), transparent 70%), var(--carte);
+      box-shadow: var(--lueur);
+    }
+    .bilan .compteur { font-family: var(--titre); font-size: 44px; color: var(--neon-clair); line-height: 1; }
+    .bilan p { color: var(--texte-doux); margin: 8px 0 18px; }
+    .bilan .bravo { display: none; }
+    .bilan.complet .bravo { display: block; }
+    .bilan.complet .encours { display: none; }
+    .lien-discret { background: none; border: 0; color: var(--texte-pale); text-decoration: underline; font-size: 14px; margin-top: 14px; }
+
+    /* ---------- Minuteur flottant ---------- */
+    .minuteur {
+      position: fixed; z-index: 40; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom));
+      transform: translate(-50%, 140%);
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 10px 10px 20px; border-radius: 999px;
+      background: rgba(29, 13, 58, .96); box-shadow: var(--lueur);
+      transition: transform .35s var(--ease);
+      width: max-content; max-width: calc(100% - 32px);
+    }
+    .minuteur.visible { transform: translate(-50%, 0); }
+    .minuteur .temps { font-family: var(--titre); font-size: 30px; min-width: 76px; font-variant-numeric: tabular-nums; }
+    .minuteur .lib { font-size: 12px; color: var(--texte-doux); line-height: 1.2; max-width: 90px; }
+    .minuteur button {
+      min-width: 44px; height: 44px; padding: 0 12px; border-radius: 999px; border: 0;
+      color: #fff; font-weight: 700; background: rgba(180, 92, 255, .2);
+    }
+    .minuteur.termine { animation: clignote .8s ease-in-out 4; }
+    @keyframes clignote { 50% { box-shadow: 0 0 0 2px var(--vert), 0 0 40px rgba(91, 227, 165, .7); } }
+
+    /* ---------- Progression ---------- */
+    .tableau { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 24px; font-size: 15px; }
+    .tableau th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--texte-pale); padding: 0 12px; }
+    .tableau td { padding: 14px 12px; background: var(--carte); vertical-align: top; }
+    .tableau td:first-child { border-radius: 14px 0 0 14px; font-weight: 700; color: var(--neon-clair); white-space: nowrap; }
+    .tableau td:last-child { border-radius: 0 14px 14px 0; color: var(--texte-doux); }
+
+    /* ---------- Transformations ---------- */
+    .defile { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 6px 2px 18px; margin-top: 26px; }
+    .defile figure {
+      flex: 0 0 min(82%, 340px); scroll-snap-align: start;
+      border-radius: var(--rayon); overflow: hidden; background: var(--carte); box-shadow: inset 0 0 0 1px var(--bord);
+    }
+    .defile img { width: 100%; aspect-ratio: 4 / 4.2; object-fit: cover; background: #fff; }
+    .defile figcaption { padding: 14px 16px 18px; font-size: 15px; color: var(--texte-doux); }
+    .defile figcaption b { display: block; color: #fff; margin-bottom: 2px; }
+
+    /* ---------- Coach ---------- */
+    .coach { display: grid; gap: 22px; align-items: center; }
+    @media (min-width: 640px) { .coach { grid-template-columns: 200px 1fr; } }
+    .coach img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; margin: 0 auto; box-shadow: 0 0 0 3px var(--neon), 0 0 34px rgba(180, 92, 255, .7); }
+    .coach ul { padding: 0; list-style: none; display: grid; gap: 10px; margin-top: 16px; }
+    .coach li { padding-left: 28px; position: relative; color: var(--texte-doux); }
+    .coach li::before { content: "💜"; position: absolute; left: 0; font-size: 15px; top: 1px; }
+
+    /* ---------- Offre coaching ---------- */
+    .offre {
+      position: relative; overflow: hidden;
+      padding: 34px 22px; border-radius: 28px; text-align: center;
+      background:
+        radial-gradient(90% 60% at 50% 0%, rgba(226, 92, 255, .35), transparent 70%),
+        linear-gradient(180deg, #2A0F55, #160733);
+      box-shadow: var(--lueur);
+    }
+    .offre img.logo { width: min(100%, 320px); margin: 0 auto 22px; border-radius: 14px; }
+    .offre ul { list-style: none; padding: 0; margin: 24px 0 26px; display: grid; gap: 10px; text-align: left; }
+    .offre li { display: flex; gap: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, .05); }
+    .offre li span { flex: none; color: var(--vert); font-weight: 700; }
+    .offre .mention { font-size: 14px; color: var(--texte-doux); margin-top: 14px; }
+
+    /* ---------- FAQ ---------- */
+    details { border-radius: 16px; background: var(--carte); box-shadow: inset 0 0 0 1px var(--bord); }
+    details + details { margin-top: 10px; }
+    summary {
+      list-style: none; cursor: pointer; padding: 18px 50px 18px 20px; font-weight: 700; position: relative;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: "+"; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+      font-size: 24px; color: var(--neon-clair); transition: transform .2s;
+    }
+    details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+    details p { padding: 0 20px 18px; color: var(--texte-doux); }
+
+    footer { padding: 40px 0 120px; text-align: center; font-size: 13px; color: var(--texte-pale); }
+    footer a { color: var(--texte-doux); }
+
+    .reveler { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+    .reveler.vu { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveler { opacity: 1; transform: none; transition: none; }
+      .portrait img { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <img src="assets/logo.webp" alt="Booty Flow Coaching" width="85" height="40" />
+      <a class="lien-rdv" href="#coaching">Coaching 💜</a>
+    </div>
+    <div class="barre-progression" aria-hidden="true"><span id="barre"></span></div>
+  </header>
+
+  <main>
+    <!-- ============ HÉROS ============ -->
+    <section class="heros">
+      <div class="conteneur">
+        <span class="surtitre">Guide offert · Séance fessiers</span>
+        <h1>La séance qui fait <em>enfin</em> pousser tes fessiers</h1>
+        <p class="chapeau">Tu t'entraînes, tu transpires… et dans le miroir, rien ne bouge ? Voici exactement la séance que je donne à mes clientes pour construire des fessiers ronds, hauts et pleins.</p>
+
+        <div class="portrait">
+          <img src="assets/marie-neon.webp" alt="Marie, coach Booty Flow, compétitrice Wellness" width="720" height="720" />
+          <div class="badge">Marie<small>Athlète Wellness<br />& juge de compétition</small></div>
+        </div>
+
+        <ul class="puces">
+          <li>🏆 Compétitrice Wellness</li>
+          <li>⚖️ Juge de compétition</li>
+          <li>📅 11 ans de coaching</li>
+        </ul>
+
+        <div class="actions">
+          <a class="btn" href="#seance">Je commence ma séance 🍑</a>
+          <a class="btn btn-fantome" href="#pourquoi">Pourquoi ça ne marche pas pour moi ?</a>
+        </div>
+
+        <div class="resume">
+          <div><b>6</b><span>exercices</span></div>
+          <div><b>~60</b><span>minutes</span></div>
+          <div><b>2×</b><span>par semaine</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ POURQUOI ============ -->
+    <section id="pourquoi">
+      <div class="conteneur reveler">
+        <span class="surtitre">Avant de commencer</span>
+        <h2>Tu t'entraînes… mais tes fessiers <em>ne suivent pas</em> ?</h2>
+        <p class="chapeau">Ce n'est ni ta génétique, ni un manque de motivation. En 11 ans de coaching, je retrouve presque toujours les mêmes blocages. Coche ceux qui te ressemblent :</p>
+
+        <ul class="coche-liste" id="diagnostic">
+          <li>
+            <input type="checkbox" id="d1" />
+            <label for="d1"><span class="case">✓</span><span><b>Je fais les mêmes charges depuis des semaines</b><small>Sans surcharge progressive, ton corps n'a aucune raison de construire du muscle.</small></span></label>
+          </li>
+          <li>
+            <input type="checkbox" id="d2" />
+            <label for="d2"><span class="case">✓</span><span><b>Je sens surtout mes cuisses ou mon bas du dos</b><small>Le placement et l'amplitude décident du muscle qui travaille vraiment.</small></span></label>
+          </li>
+          <li>
+            <input type="checkbox" id="d3" />
+            <label for="d3"><span class="case">✓</span><span><b>Je finis mes séries « à l'aise »</b><small>Une série qui s'arrête à 5 répétitions de l'échec ne stimule presque pas l'hypertrophie.</small></span></label>
+          </li>
+          <li>
+            <input type="checkbox" id="d4" />
+            <label for="d4"><span class="case">✓</span><span><b>Je change de programme toutes les 2 semaines</b><small>Varier tout le temps empêche de progresser sur un exercice et de mesurer quoi que ce soit.</small></span></label>
+          </li>
+          <li>
+            <input type="checkbox" id="d5" />
+            <label for="d5"><span class="case">✓</span><span><b>Je mange « healthy » mais pas assez de protéines</b><small>Sans matière première, pas de construction, même avec le meilleur programme.</small></span></label>
+          </li>
+        </ul>
+        <p class="verdict" id="verdict" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- ============ RÈGLES ============ -->
+    <section id="regles">
+      <div class="conteneur reveler">
+        <span class="surtitre">La méthode Booty Flow</span>
+        <h2>Les 4 règles qui font <em>vraiment</em> grossir un fessier</h2>
+        <p class="chapeau">Ta séance ne marchera que si tu respectes ces 4 règles. Lis-les une fois, elles changent tout.</p>
+
+        <div class="grille grille-2">
+          <div class="carte regle"><span class="num">1</span><div><h3>Surcharge progressive</h3><p>Chaque semaine, une répétition ou un peu de charge en plus. C'est le signal n°1 pour construire du muscle.</p></div></div>
+          <div class="carte regle"><span class="num">2</span><div><h3>Proche de l'échec</h3><p>Termine chaque série à 1 ou 2 répétitions de l'échec (RIR 1-2). Si tu pourrais en faire 5 de plus, ça ne compte pas.</p></div></div>
+          <div class="carte regle"><span class="num">3</span><div><h3>Amplitude complète</h3><p>Le fessier grossit surtout quand il travaille en étirement. Descends bas, contrôle la descente, ne triche pas l'amplitude.</p></div></div>
+          <div class="carte regle"><span class="num">4</span><div><h3>Régularité</h3><p>2 séances fessiers par semaine, 8 semaines minimum sur le même programme. Le muscle se construit dans la durée.</p></div></div>
+        </div>
+
+        <div class="juge">
+          <span class="etiquette">⚖️ L'œil de la juge</span>
+          <p>En compétition Wellness, ce qu'on juge, ce n'est pas un fessier « gros » : c'est un fessier <strong>haut, rond et bien attaché à l'ischio</strong>, avec un galbe visible sur le côté (le moyen fessier). Cette séance travaille ces 3 zones : <strong>grand fessier, moyen fessier et jonction fessier-ischios</strong>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SÉANCE ============ -->
+    <section id="seance">
+      <div class="conteneur">
+        <div class="reveler">
+          <span class="surtitre">Ta séance</span>
+          <h2>Séance <em>Booty Lift</em></h2>
+          <p class="chapeau">Coche tes séries au fur et à mesure, note tes charges (elles restent enregistrées sur ton téléphone) et lance le minuteur de repos d'un clic.</p>
+        </div>
+
+        <div class="bloc-titre"><h3>Échauffement</h3><span>⏱ 8 min</span></div>
+        <ul class="echauffement">
+          <li><b>Vélo ou marche inclinée</b><span>5 min</span></li>
+          <li><b>Abduction à l'élastique, assise</b><span>2 × 20</span></li>
+          <li><b>Pont fessier au sol, pause 2 s en haut</b><span>2 × 15</span></li>
+          <li><b>Hip thrust à vide (barre seule)</b><span>1 × 12</span></li>
+        </ul>
+
+        <div class="bloc-titre"><h3>Séance principale</h3><span>⏱ ~50 min</span></div>
+        <div id="exercices"></div>
+
+        <div class="bilan" id="bilan">
+          <div class="encours">
+            <div class="compteur"><span id="seriesFaites">0</span>/<span id="seriesTotal">0</span></div>
+            <p>séries validées. Chaque série cochée te rapproche de tes fessiers de rêve.</p>
+          </div>
+          <div class="bravo">
+            <div class="compteur">Bravo 🔥</div>
+            <p>Séance terminée ! Note tes charges : la semaine prochaine, ton seul objectif est de les battre.<br />Tu veux un programme complet, ajusté à ton corps et suivi chaque semaine ?</p>
+            <a class="btn" href="#coaching">Je veux être coachée par Marie</a>
+          </div>
+          <button class="lien-discret" type="button" id="reinit">Remettre la séance à zéro</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROGRESSION ============ -->
+    <section id="progression">
+      <div class="conteneur reveler">
+        <span class="surtitre">Les 4 prochaines semaines</span>
+        <h2>Comment <em>progresser</em> avec cette séance</h2>
+        <p class="chapeau">Fais-la 2 fois par semaine (ex. lundi et jeudi), avec au moins 48 h entre les deux. Utilise la <strong>double progression</strong> :</p>
+
+        <table class="tableau">
+          <thead><tr><th>Semaine</th><th>Ton objectif</th></tr></thead>
+          <tbody>
+            <tr><td>S1</td><td>Trouve tes charges : finis chaque série à 2 répétitions de l'échec, dans le bas de la fourchette.</td></tr>
+            <tr><td>S2</td><td>Même charge, ajoute 1 à 2 répétitions par série.</td></tr>
+            <tr><td>S3</td><td>Tu atteins le haut de la fourchette ? Ajoute 2 à 5 % de charge et repars du bas.</td></tr>
+            <tr><td>S4</td><td>Continue. Si la fatigue s'accumule, enlève 1 série par exercice cette semaine (décharge).</td></tr>
+          </tbody>
+        </table>
+
+        <div class="juge">
+          <span class="etiquette">💡 Mon conseil</span>
+          <p>La séance seule ne suffit pas. Pour que le muscle se construise, vise <strong>1,6 à 2 g de protéines par kilo</strong> de poids de corps, dors 7 h minimum et marche 7 000 à 10 000 pas par jour. C'est exactement ce qu'on ajuste ensemble en coaching.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TRANSFORMATIONS ============ -->
+    <section id="resultats">
+      <div class="conteneur reveler">
+        <span class="surtitre">Elles l'ont fait</span>
+        <h2>Des fessiers qui <em>changent</em>, pour de vrai</h2>
+        <p class="chapeau">Ces femmes s'entraînaient déjà. Ce qui a changé : un programme ciblé, une progression suivie et des ajustements chaque semaine.</p>
+
+        <div class="defile" tabindex="0" aria-label="Transformations de clientes">
+          <figure>
+            <img src="assets/transformation-maria.webp" alt="Maria de profil, avant et après 1 mois de coaching" loading="lazy" />
+            <figcaption><b>Maria · 1 mois</b>Des fessiers plus hauts et plus galbés dès le premier mois.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/transformation-camille.webp" alt="Camille de profil, avant et après 1 mois de coaching" loading="lazy" />
+            <figcaption><b>Camille · 1 mois</b>Plus ronds, plus hauts, grâce à une séance fessiers spécifique.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/transformation-dos.webp" alt="Linda de dos, avant et après 4 mois de coaching" loading="lazy" />
+            <figcaption><b>Linda · 4 mois</b>-7 kg et des fessiers bien plus galbés, avec la musculation en priorité.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COACH ============ -->
+    <section id="marie">
+      <div class="conteneur reveler">
+        <div class="carte coach">
+          <img src="assets/marie.jpg" alt="Marie, fondatrice de Booty Flow" width="180" height="180" loading="lazy" />
+          <div>
+            <span class="surtitre">Qui suis-je ?</span>
+            <h2>Moi c'est <em>Marie</em></h2>
+            <p class="chapeau">J'ai construit mes fessiers pour monter sur scène, et aujourd'hui je juge celles des autres. Je sais exactement ce qui fait un bas du corps développé et harmonieux.</p>
+            <ul>
+              <li>11 ans d'expérience en coaching</li>
+              <li>Athlète Wellness, la catégorie où le bas du corps est roi</li>
+              <li>Juge de compétition : je vois en un coup d'œil ce qui manque à un physique</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COACHING ============ -->
+    <section id="coaching">
+      <div class="conteneur reveler">
+        <div class="offre">
+          <img class="logo" src="assets/logo.webp" alt="Booty Flow Coaching" loading="lazy" />
+          <span class="surtitre">Passe au niveau supérieur</span>
+          <h2>Cette séance, c'est <em>une pièce</em> du puzzle</h2>
+          <p class="chapeau">En coaching, je construis <strong>ton</strong> programme selon ta morphologie, ton niveau et ton matériel, et je l'ajuste chaque semaine selon tes résultats.</p>
+          <ul>
+            <li><span>✓</span><div><strong>Programme 100 % personnalisé</strong> : fessiers en priorité, corps harmonieux</div></li>
+            <li><span>✓</span><div><strong>Plan alimentaire adapté</strong> pour construire du muscle sans prendre de gras</div></li>
+            <li><span>✓</span><div><strong>Bilan chaque semaine</strong> : photos, mensurations, charges, ajustements</div></li>
+            <li><span>✓</span><div><strong>Correction de ta technique</strong> en vidéo, avec mon œil de juge</div></li>
+            <li><span>✓</span><div><strong>App Booty Flow</strong> + messagerie directe avec moi</div></li>
+          </ul>
+          <div class="actions">
+            <a class="btn" id="lienCalendly" href="https://calendly.com/bootyflow/nouvelle-reunion" target="_blank" rel="noopener">Réserver mon appel découverte offert</a>
+            <a class="btn btn-fantome" href="https://ig.me/m/booty__flow" target="_blank" rel="noopener">M'écrire « COACHING » sur Instagram</a>
+          </div>
+          <p class="mention">Appel de 20 min, sans engagement. Places limitées chaque mois pour garantir un vrai suivi.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section id="faq">
+      <div class="conteneur reveler">
+        <span class="surtitre">Tes questions</span>
+        <h2>Questions <em>fréquentes</em></h2>
+        <details>
+          <summary>Je suis débutante, je peux faire cette séance ?</summary>
+          <p>Oui. Commence avec des charges légères, 2 séries par exercice au lieu de 3 ou 4, et concentre-toi sur la technique pendant 2 semaines. Le hip thrust peut se faire avec un haltère au début.</p>
+        </details>
+        <details>
+          <summary>Je n'ai pas de machine d'abduction ou de poulie, je fais comment ?</summary>
+          <p>Remplace l'abduction machine par une abduction à l'élastique (assise, buste penché), et le kickback poulie par un kickback à l'élastique ou une extension de hanche au banc à lombaires.</p>
+        </details>
+        <details>
+          <summary>Je sens mes cuisses et pas mes fessiers, c'est normal ?</summary>
+          <p>C'est le problème n°1. Sur le hip thrust : tibias verticaux en haut, menton rentré, bascule du bassin. Sur la fente bulgare : buste penché, pied avant un peu plus loin. Si ça persiste, filme-toi : en coaching, je corrige ta technique en vidéo.</p>
+        </details>
+        <details>
+          <summary>En combien de temps je verrai des résultats ?</summary>
+          <p>Avec une vraie surcharge progressive, une alimentation adaptée et de la régularité, les premiers changements se voient souvent entre 4 et 8 semaines. Une transformation marquée demande plutôt 3 à 6 mois.</p>
+        </details>
+        <details>
+          <summary>Je fais aussi des jambes / du haut du corps ?</summary>
+          <p>Oui ! Cette séance complète une semaine d'entraînement. Un exemple simple : fessiers lundi, haut du corps mardi, repos mercredi, fessiers-ischios jeudi, haut du corps vendredi.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="conteneur">
+      <p>© Booty Flow Coaching · <a href="https://instagram.com/booty__flow" target="_blank" rel="noopener">@booty__flow</a></p>
+      <p>Ces conseils sont généraux et ne remplacent pas un avis médical. En cas de douleur, arrête l'exercice.</p>
+    </div>
+  </footer>
+
+  <!-- Minuteur de repos -->
+  <div class="minuteur" id="minuteur" role="timer" aria-live="off" aria-hidden="true">
+    <div class="temps" id="temps">0:00</div>
+    <div class="lib" id="minuteurLib">Repos</div>
+    <button type="button" id="plus15" aria-label="Ajouter 15 secondes">+15</button>
+    <button type="button" id="stop" aria-label="Arrêter le minuteur">✕</button>
+  </div>
+
+  <script>
+    /* =================================================================
+       👉 LES EXERCICES SE MODIFIENT ICI
+       repos = secondes du minuteur
+       ================================================================= */
+    const EXERCICES = [
+      {
+        nom: "Hip thrust à la barre",
+        cible: "Grand fessier · le roi des exercices fessiers",
+        series: 4, reps: "6-10", repos: 150, tempo: "2-0-1-2", rir: "1-2",
+        etapes: [
+          "Haut du dos sur le banc (bas des omoplates), barre dans le pli de la hanche.",
+          "Pieds largeur de bassin, <strong>tibias verticaux en position haute</strong>.",
+          "Menton rentré, regard vers l'avant : le buste bouge d'un bloc.",
+          "Pousse dans les talons, <strong>bascule le bassin</strong> et serre 2 s en haut."
+        ],
+        erreur: "Cambrer le bas du dos en haut du mouvement. Si tu sens tes lombaires, ce ne sont pas tes fessiers qui finissent la répétition.",
+        astuce: "Pense « côtes basses, pubis vers le nombril » en haut. La contraction double d'intensité."
+      },
+      {
+        nom: "Soulevé de terre roumain",
+        cible: "Grand fessier en étirement · jonction fessier-ischios",
+        series: 3, reps: "8-10", repos: 120, tempo: "3-1-1-0", rir: "1-2",
+        etapes: [
+          "Barre ou haltères contre les cuisses, genoux légèrement fléchis et fixes.",
+          "<strong>Pousse les fesses loin derrière</strong> comme pour fermer une porte.",
+          "Descends en 3 s, dos neutre, jusqu'à sentir un fort étirement derrière les cuisses.",
+          "Remonte en poussant les hanches vers l'avant, sans hyper-extension."
+        ],
+        erreur: "Descendre la barre en pliant les genoux : ça devient un squat raté. Les genoux restent fixes, ce sont les hanches qui reculent.",
+        astuce: "C'est LUI qui dessine la jonction fessier-ischio, ce qu'on regarde de profil en compétition."
+      },
+      {
+        nom: "Fente bulgare, buste penché",
+        cible: "Grand fessier · stabilité du moyen fessier",
+        series: 3, reps: "8-12 / jambe", repos: 90, tempo: "3-0-1-0", rir: "1-2",
+        etapes: [
+          "Pied arrière sur le banc, pied avant <strong>un grand pas devant</strong>.",
+          "Penche le buste vers l'avant d'environ 30°, haltères le long du corps.",
+          "Descends lentement jusqu'à ce que la cuisse avant soit parallèle au sol.",
+          "Remonte en poussant dans le talon avant. Commence par ta jambe la plus faible."
+        ],
+        erreur: "Rester le buste droit avec le pied trop près : ce sont tes quadriceps qui prennent tout.",
+        astuce: "Pas d'équilibre ? Tiens-toi d'une main à un support et prends un haltère plus lourd de l'autre côté."
+      },
+      {
+        nom: "Kickback à la poulie basse",
+        cible: "Grand fessier · partie haute (effet « fessier rebondi »)",
+        series: 3, reps: "12-15 / jambe", repos: 60, tempo: "2-0-1-1", rir: "1",
+        etapes: [
+          "Sangle à la cheville, mains sur la machine, buste penché à 45°.",
+          "Jambe d'appui légèrement fléchie, bassin fixe et face à la machine.",
+          "Pousse le talon <strong>vers l'arrière et légèrement vers l'extérieur</strong>.",
+          "Marque 1 s de contraction, puis reviens lentement."
+        ],
+        erreur: "Monter la jambe trop haut en cambrant. L'amplitude s'arrête quand le bassin commence à bouger.",
+        astuce: "Charge modérée, contraction maximale : ici on cherche la brûlure, pas l'ego."
+      },
+      {
+        nom: "Abduction machine, buste penché",
+        cible: "Moyen et petit fessier · le galbe sur le côté",
+        series: 3, reps: "15-20", repos: 60, tempo: "1-0-1-1", rir: "0-1",
+        etapes: [
+          "Assise au bord du siège, <strong>buste penché en avant</strong>, mains sur la machine.",
+          "Ouvre les genoux le plus loin possible, marque 1 s.",
+          "Reviens en contrôlant, sans laisser les plaques se toucher.",
+          "Dernière série : dégressive. À l'échec, baisse la charge de 30 % et continue."
+        ],
+        erreur: "Faire des mouvements rapides et partiels. Le moyen fessier répond à l'amplitude et à la tension continue.",
+        astuce: "C'est le muscle qui donne la forme « ronde » vue de face. Indispensable pour un physique harmonieux sur scène."
+      },
+      {
+        nom: "Frog pumps (finisher)",
+        cible: "Grand fessier · congestion maximale",
+        series: 2, reps: "max (30+)", repos: 45, tempo: "rapide", rir: "0",
+        etapes: [
+          "Allongée sur le dos, <strong>plantes des pieds collées</strong>, genoux ouverts.",
+          "Pousse dans le bord extérieur des pieds et monte le bassin.",
+          "Serre fort en haut, redescends sans poser les fesses.",
+          "Enchaîne jusqu'à ce que tu ne puisses plus monter."
+        ],
+        erreur: "S'arrêter quand ça commence à brûler. C'est justement là que ça devient intéressant !",
+        astuce: "Mets un haltère sur le bassin quand tu dépasses 40 répétitions."
+      }
+    ];
+
+    /* ================= Moteur de la page ================= */
+    const CLE = "bootyflow-seance-v1";
+    let etat = {};
+    try { etat = JSON.parse(localStorage.getItem(CLE)) || {}; } catch (e) { etat = {}; }
+    const sauver = () => { try { localStorage.setItem(CLE, JSON.stringify(etat)); } catch (e) {} };
+    etat.series = etat.series || {};
+    etat.charges = etat.charges || {};
+
+    const formatRepos = s => s >= 60 ? (Math.floor(s / 60) + " min" + (s % 60 ? " " + (s % 60) : "")) : s + " s";
+
+    const conteneur = document.getElementById("exercices");
+    EXERCICES.forEach((ex, i) => {
+      const art = document.createElement("article");
+      art.className = "exo reveler";
+      art.id = "exo-" + i;
+      let boutons = "";
+      for (let s = 0; s < ex.series; s++) {
+        boutons += `<button class="serie" type="button" data-exo="${i}" data-serie="${s}" aria-pressed="false" aria-label="Série ${s + 1} de ${ex.nom}">${s + 1}</button>`;
+      }
+      art.innerHTML = `
+        <div class="exo-tete">
+          <span class="exo-num">${i + 1}</span>
+          <div><h4>${ex.nom}</h4><p class="cible">${ex.cible}</p></div>
+        </div>
+        <div class="exo-corps">
+          <div class="stats">
+            <div><b>${ex.series}</b><span>séries</span></div>
+            <div><b>${ex.reps}</b><span>reps</span></div>
+            <div><b>${formatRepos(ex.repos)}</b><span>repos</span></div>
+            <div><b>${ex.rir}</b><span>RIR</span></div>
+          </div>
+          <ol>${ex.etapes.map(e => `<li>${e}</li>`).join("")}</ol>
+          <div class="astuce erreur"><span class="etiquette">⚠️ L'erreur que je vois partout</span><p>${ex.erreur}</p></div>
+          <div class="astuce"><span class="etiquette">⚖️ Conseil de juge</span><p>${ex.astuce} <br /><small style="color:var(--texte-pale)">Tempo ${ex.tempo} : descente · pause en bas · montée · pause en haut (en secondes).</small></p></div>
+          <div class="suivi">
+            <div class="suivi-ligne"><span>Mes séries :</span>${boutons}</div>
+            <label class="charge">Charge utilisée <input type="text" inputmode="decimal" placeholder="ex. 60 kg" data-charge="${i}" /></label>
+            <button class="btn-repos" type="button" data-repos="${i}">⏱ Lancer le repos (${formatRepos(ex.repos)})</button>
+          </div>
+        </div>`;
+      conteneur.appendChild(art);
+    });
+
+    const total = EXERCICES.reduce((n, ex) => n + ex.series, 0);
+    document.getElementById("seriesTotal").textContent = total;
+
+    function majCompteur() {
+      let faites = 0;
+      EXERCICES.forEach((ex, i) => {
+        let fe = 0;
+        for (let s = 0; s < ex.series; s++) if (etat.series[i + "-" + s]) fe++;
+        faites += fe;
+        document.getElementById("exo-" + i).classList.toggle("fini", fe === ex.series);
+      });
+      document.getElementById("seriesFaites").textContent = faites;
+      document.getElementById("barre").style.width = (faites / total * 100) + "%";
+      document.getElementById("bilan").classList.toggle("complet", faites === total);
+    }
+
+    document.querySelectorAll(".serie").forEach(b => {
+      const k = b.dataset.exo + "-" + b.dataset.serie;
+      if (etat.series[k]) b.setAttribute("aria-pressed", "true");
+      b.addEventListener("click", () => {
+        const actif = b.getAttribute("aria-pressed") !== "true";
+        b.setAttribute("aria-pressed", actif);
+        etat.series[k] = actif;
+        sauver(); majCompteur();
+        const ex = EXERCICES[b.dataset.exo];
+        // Lance le repos automatiquement après une série validée (sauf la dernière de l'exercice)
+        if (actif && Number(b.dataset.serie) < ex.series - 1) lancerRepos(ex.repos, ex.nom);
+      });
+    });
+    document.querySelectorAll("[data-charge]").forEach(inp => {
+      inp.value = etat.charges[inp.dataset.charge] || "";
+      inp.addEventListener("input", () => { etat.charges[inp.dataset.charge] = inp.value; sauver(); });
+    });
+    document.querySelectorAll("[data-repos]").forEach(b => {
+      b.addEventListener("click", () => { const ex = EXERCICES[b.dataset.repos]; lancerRepos(ex.repos, ex.nom); });
+    });
+    document.getElementById("reinit").addEventListener("click", () => {
+      if (!confirm("Remettre toutes les séries à zéro ? (tes charges sont conservées)")) return;
+      etat.series = {}; sauver();
+      document.querySelectorAll(".serie").forEach(b => b.setAttribute("aria-pressed", "false"));
+      majCompteur();
+    });
+    majCompteur();
+
+    /* ---------- Minuteur de repos ---------- */
+    const minuteur = document.getElementById("minuteur");
+    const affTemps = document.getElementById("temps");
+    let fin = 0, tic = null;
+    function afficher(s) { affTemps.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+    function bip() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        [0, .25, .5].forEach(t => {
+          const o = ctx.createOscillator(), g = ctx.createGain();
+          o.frequency.value = 880; o.connect(g); g.connect(ctx.destination);
+          g.gain.setValueAtTime(.2, ctx.currentTime + t);
+          g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + t + .2);
+          o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + .2);
+        });
+      } catch (e) {}
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    }
+    function boucle() {
+      const reste = Math.max(0, Math.ceil((fin - Date.now()) / 1000));
+      afficher(reste);
+      if (reste === 0) {
+        clearInterval(tic); tic = null;
+        document.getElementById("minuteurLib").textContent = "C'est reparti 💪";
+        minuteur.classList.add("termine");
+        bip();
+        setTimeout(arreter, 4000);
+      }
+    }
+    function lancerRepos(secondes, nom) {
+      fin = Date.now() + secondes * 1000;
+      document.getElementById("minuteurLib").textContent = "Repos · " + nom;
+      minuteur.classList.remove("termine");
+      minuteur.classList.add("visible");
+      minuteur.setAttribute("aria-hidden", "false");
+      clearInterval(tic); boucle(); tic = setInterval(boucle, 250);
+    }
+    function arreter() {
+      clearInterval(tic); tic = null;
+      minuteur.classList.remove("visible", "termine");
+      minuteur.setAttribute("aria-hidden", "true");
+    }
+    document.getElementById("plus15").addEventListener("click", () => { if (tic) fin += 15000; boucle(); });
+    document.getElementById("stop").addEventListener("click", arreter);
+
+    /* ---------- Auto-diagnostic ---------- */
+    const verdict = document.getElementById("verdict");
+    const cases = document.querySelectorAll("#diagnostic input");
+    const messages = [
+      "",
+      "1 point à corriger : la séance ci-dessous va déjà t'aider à le régler. 💜",
+      "2 blocages : ta séance va t'aider, mais c'est souvent l'ensemble entraînement + alimentation qu'il faut revoir.",
+      "3 blocages ou plus : tu fais des efforts, mais ils ne sont pas dirigés au bon endroit. C'est exactement ce que je corrige en coaching. <a href=\"#coaching\">Découvrir le coaching →</a>"
+    ];
+    cases.forEach(c => c.addEventListener("change", () => {
+      const n = [...cases].filter(x => x.checked).length;
+      verdict.innerHTML = n ? "<strong>" + n + "/5</strong> · " + messages[Math.min(n, 3)] : "";
+      verdict.classList.toggle("visible", n > 0);
+    }));
+
+    /* ---------- Apparition au défilement ---------- */
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(entrees => entrees.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add("vu"); io.unobserve(e.target); }
+      }), { rootMargin: "0px 0px -8% 0px" });
+      document.querySelectorAll(".reveler").forEach(el => io.observe(el));
+    } else {
+      document.querySelectorAll(".reveler").forEach(el => el.classList.add("vu"));
+    }
+  </script>
+</body>
+</html>
