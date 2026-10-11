@@ -234,8 +234,13 @@ async function ficheNutrition(zone, e, recharger) {
       majIndice();
       if (trouves.length) {
         const noms = { kcal: `${m.kcal} kcal${m.kcalCalculees ? ' (calculées)' : ''}`, proteines: `P ${m.proteines} g`, glucides: `G ${m.glucides} g`, lipides: `L ${m.lipides} g` };
-        statut.classList.add('ok');
-        statut.innerHTML = `${icone('check', 16)} Trouvé dans le PDF : <strong>${trouves.map((k) => noms[k]).join(' · ')}</strong>. Vérifie puis clique sur « Enregistrer le plan ».`;
+        const libelles = { kcal: 'les calories', proteines: 'les protéines', glucides: 'les glucides', lipides: 'les lipides' };
+        const manquants = ['kcal', 'proteines', 'glucides', 'lipides'].filter((k) => m[k] == null);
+        if (manquants.length) statut.classList.add('attention');
+        else statut.classList.add('ok');
+        statut.innerHTML = `${icone('check', 16)} Trouvé dans le PDF : <strong>${trouves.map((k) => noms[k]).join(' · ')}</strong>.
+          ${manquants.length ? `<br>Pas de total journalier pour ${manquants.map((k) => libelles[k]).join(', ')} : ces cases gardent l'ancienne valeur, corrige-les à la main.` : ''}
+          Vérifie puis clique sur « Enregistrer le plan ».`;
       } else {
         statut.classList.add('attention');
         statut.textContent = m.texteTrouve
