@@ -2,7 +2,7 @@
 
 // Numéro affiché en bas de l'app : permet de vérifier que le téléphone a bien la dernière version.
 // À augmenter à chaque mise à jour, en même temps que version.json, VERSION dans sw.js et ?v= dans index.html.
-export const VERSION_APP = '15';
+export const VERSION_APP = '16';
 
 // Protège le texte saisi (évite qu'un nom ou un message casse la page)
 export function esc(v) {
@@ -123,6 +123,24 @@ export async function pendant(bouton, texte, action) {
   } finally {
     bouton.disabled = false;
     bouton.innerHTML = avant;
+  }
+}
+
+// Allège une photo avant l'envoi (1600 px max, JPEG) : ~300 Ko au lieu de 3 Mo, sans perte visible à l'écran.
+// Si le navigateur ne sait pas la lire (ex. HEIC sur ordinateur), la photo d'origine est gardée.
+export async function compresserImage(fichier, cote = 1600) {
+  try {
+    const image = await createImageBitmap(fichier);
+    const ratio = Math.min(1, cote / Math.max(image.width, image.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(image.width * ratio);
+    canvas.height = Math.round(image.height * ratio);
+    canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.85));
+    if (!blob || blob.size >= fichier.size) return fichier;
+    return new File([blob], fichier.name.replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' });
+  } catch (e) {
+    return fichier;
   }
 }
 

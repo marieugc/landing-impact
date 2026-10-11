@@ -2,8 +2,11 @@
 import { api, MODE } from './data.js';
 import {
   esc, icone, VERSION_APP, dateCourte, joursAvant, nombre, ecart, badge,
-  toast, fenetre, fermerFenetre, pendant, courbe
+  toast, fenetre, fermerFenetre, pendant, courbe, compresserImage
 } from './ui.js';
+import { retourBilanHtml, brancherRetours } from './bilans.js';
+import { enregistreurVocal } from './vocal.js';
+import { lireMacrosPdf, kcalDepuisMacros } from './macros.js';
 import { afficherPhotos, blocCharges } from './eleve.js';
 import { conversation } from './chat.js';
 import { NOM_VIDEOTHEQUE } from './config.js';
@@ -175,11 +178,15 @@ async function ficheNutrition(zone, e, recharger) {
   const n = (await api.getNutrition(e.id)) || { repas: [] };
   const nb = (nom, libelle, val) => `<label>${libelle}<input name="${nom}" type="number" min="0" value="${val ?? ''}"></label>`;
   zone.innerHTML = `<form class="formulaire carte large" id="form-nutri">
+    <label>Plan complet en PDF ${n.pdf_chemin ? '(un PDF est déjà en ligne, en choisir un autre le remplace)' : '(facultatif)'}<input name="pdf" type="file" accept="application/pdf"></label>
+    <p class="petit">Quand tu choisis un PDF, l'app y cherche les calories et les macros et remplit les cases ci-dessous. Vérifie puis enregistre.</p>
+    <div id="statut-pdf" class="statut-pdf" hidden></div>
     <div class="grille-3">
       <label>Type de jour<input name="type_jour" value="${esc(n.type_jour || 'Jour entraînement')}"></label>
       ${nb('kcal', 'Calories (kcal)', n.kcal)}
     </div>
     <div class="grille-3">${nb('proteines', 'Protéines (g)', n.proteines)}${nb('glucides', 'Glucides (g)', n.glucides)}${nb('lipides', 'Lipides (g)', n.lipides)}</div>
+    <p class="petit indice-kcal" id="indice-kcal"></p>
     <div class="surtitre-carte">REPAS</div>
     <div id="repas">${(n.repas.length ? n.repas : [{}]).map(ligneRepas).join('')}</div>
     <button type="button" class="bouton-contour" id="ajout-repas">${icone('plus', 18)}Ajouter un repas</button>
@@ -187,13 +194,59 @@ async function ficheNutrition(zone, e, recharger) {
       <label class="deux-colonnes">Dernier ajustement<input name="ajustement" value="${esc(n.ajustement || '')}" placeholder="Ex. : +100 kcal les jours d'entraînement"></label>
       <label>Date<input name="ajustement_date" type="date" value="${esc(n.ajustement_date || '')}"></label>
     </div>
-    <label>Plan complet en PDF ${n.pdf_chemin ? '(un PDF est déjà en ligne, en choisir un autre le remplace)' : '(facultatif)'}<input name="pdf" type="file" accept="application/pdf"></label>
     <button class="bouton-principal" type="submit">ENREGISTRER LE PLAN</button>
   </form>`;
 
   const liste = zone.querySelector('#repas');
   zone.querySelector('#ajout-repas').addEventListener('click', () => liste.insertAdjacentHTML('beforeend', ligneRepas()));
   liste.addEventListener('click', (ev) => ev.target.closest('[data-suppr]')?.parentElement.remove());
+
+  // Calories recalculées depuis les macros (4 kcal/g protéines et glucides, 9 kcal/g lipides)
+  const champ = (nom) => zone.querySelector(`[name=${nom}]`);
+  const indice = zone.querySelector('#indice-kcal');
+  function majIndice() {
+    const v = (nom) => Number(champ(nom).value) || 0;
+    if (!v('proteines') && !v('glucides') && !v('lipides')) { indice.innerHTML = ''; return; }
+    const calcul = kcalDepuisMacros({ proteines: v('proteines'), glucides: v('glucides'), lipides: v('lipides') });
+    const ecartKcal = v('kcal') ? Math.abs(calcul - v('kcal')) : null;
+    indice.innerHTML = `D'après les macros : <strong>${calcul} kcal</strong>${ecartKcal != null && ecartKcal > 50 ? ` (tu as noté ${v('kcal')} kcal)` : ''}
+      ${ecartKcal === null || ecartKcal > 50 ? '<button type="button" class="lien" id="utiliser-kcal">Utiliser ce total</button>' : ' ✓'}`;
+    indice.querySelector('#utiliser-kcal')?.addEventListener('click', () => { champ('kcal').value = calcul; majIndice(); });
+  }
+  ['kcal', 'proteines', 'glucides', 'lipides'].forEach((nom) => champ(nom).addEventListener('input', majIndice));
+  majIndice();
+
+  // Lecture des macros dans le PDF choisi
+  const statut = zone.querySelector('#statut-pdf');
+  champ('pdf').addEventListener('change', async () => {
+    const fichier = champ('pdf').files[0];
+    if (!fichier) { statut.hidden = true; return; }
+    statut.hidden = false;
+    statut.className = 'statut-pdf';
+    statut.textContent = 'Lecture du PDF…';
+    try {
+      const m = await lireMacrosPdf(fichier);
+      const trouves = ['kcal', 'proteines', 'glucides', 'lipides'].filter((k) => m[k] != null);
+      trouves.forEach((k) => {
+        champ(k).value = m[k];
+        champ(k).classList.add('rempli-auto');
+      });
+      majIndice();
+      if (trouves.length) {
+        const noms = { kcal: `${m.kcal} kcal${m.kcalCalculees ? ' (calculées)' : ''}`, proteines: `P ${m.proteines} g`, glucides: `G ${m.glucides} g`, lipides: `L ${m.lipides} g` };
+        statut.classList.add('ok');
+        statut.innerHTML = `${icone('check', 16)} Trouvé dans le PDF : <strong>${trouves.map((k) => noms[k]).join(' · ')}</strong>. Vérifie puis clique sur « Enregistrer le plan ».`;
+      } else {
+        statut.classList.add('attention');
+        statut.textContent = m.texteTrouve
+          ? "Je n'ai pas trouvé les calories ni les macros dans ce PDF. Remplis-les à la main (le PDF sera bien envoyé)."
+          : "Ce PDF est une image (scan) : impossible d'y lire les macros. Remplis-les à la main (le PDF sera bien envoyé).";
+      }
+    } catch (err) {
+      statut.classList.add('attention');
+      statut.textContent = "Impossible de lire ce PDF. Remplis les macros à la main (le PDF sera bien envoyé).";
+    }
+  });
 
   zone.querySelector('form').addEventListener('submit', async (ev) => {
     ev.preventDefault();
@@ -293,7 +346,66 @@ function carteBilan(b, precedent) {
     ${b.ressenti ? `<p class="texte">« ${esc(b.ressenti)} »</p>` : ''}
     ${b.photo_face || b.photo_profil || b.photo_dos ? `<div class="grille-3">${['face', 'profil', 'dos'].map((c) =>
       `<figure class="photo"><div class="photo-cadre" data-chemin="${esc(b[`photo_${c}`] || '')}">—</div><figcaption>${c}</figcaption></figure>`).join('')}</div>` : ''}
+    ${retourBilanHtml(b, { pourCoach: true })}
+    <button class="bouton-${b.retour_le ? 'contour' : 'principal'} compact bouton-retour" data-repondre="${esc(b.id)}">
+      ${icone('chat', 16)}${b.retour_le ? 'Modifier mon retour' : 'RÉPONDRE AU BILAN'}</button>
   </article>`;
+}
+
+// Retour de la coach sur un bilan : texte, photos (avant / après…) et vocal
+function brancherReponses(zone, bilans, apres) {
+  brancherRetours(zone);
+  zone.querySelectorAll('[data-repondre]').forEach((bouton) => bouton.addEventListener('click', () => {
+    const b = bilans.find((x) => x.id === bouton.dataset.repondre);
+    let gardees = [...(b.retour_photos || [])];
+    const f = fenetre(`Retour · ${b.prenom ? `${b.prenom} · ` : ''}bilan du ${dateCourte(b.date)}`, `<form class="formulaire">
+      <label>Ton message<textarea name="texte" rows="4" placeholder="Ex. : Super semaine ! La taille baisse, on garde le cap…">${esc(b.retour || '')}</textarea></label>
+      <div class="surtitre-carte">PHOTOS (AVANT / APRÈS, COMPARAISONS…)</div>
+      <div class="grille-photos-retour" id="photos-gardees">${gardees.map((c) => `<span class="miniature-retour">
+        <span class="photo-cadre" data-chemin="${esc(c)}">Photo</span>
+        <button type="button" class="retirer" data-retirer="${esc(c)}" aria-label="Retirer cette photo">${icone('croix', 14)}</button></span>`).join('')}</div>
+      <label class="choix-video">${icone('photo', 18, 'var(--accent)')}<span>Ajouter des photos</span>
+        <input type="file" name="photos" accept="image/*" multiple></label>
+      <div class="surtitre-carte">MESSAGE VOCAL</div>
+      ${b.retour_audio ? `<label class="case"><input type="checkbox" name="suppr_audio"><span>Supprimer le vocal déjà envoyé</span></label>` : ''}
+      <div id="zone-vocal"></div>
+      <button class="bouton-principal" type="submit">${icone('avion', 18)}ENVOYER MON RETOUR</button>
+    </form>`);
+    const vocal = enregistreurVocal(f.querySelector('#zone-vocal'));
+    afficherPhotos(f.querySelector('#photos-gardees'));
+    f.querySelector('#photos-gardees').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-retirer]');
+      if (!btn) return;
+      gardees = gardees.filter((c) => c !== btn.dataset.retirer);
+      btn.parentElement.remove();
+    });
+    const entree = f.querySelector('[name=photos]');
+    entree.addEventListener('change', () => {
+      const n = entree.files.length;
+      entree.parentElement.classList.toggle('choisie', n > 0);
+      entree.previousElementSibling.textContent = n ? `${n} photo${n > 1 ? 's' : ''} sélectionnée${n > 1 ? 's' : ''}` : 'Ajouter des photos';
+    });
+    f.querySelector('form').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const d = new FormData(ev.target);
+      const texte = d.get('texte').trim();
+      const nouvelles = [...entree.files];
+      const audio = vocal.fichier();
+      if (!texte && !nouvelles.length && !gardees.length && !audio && !b.retour_audio) {
+        toast('Écris un message, ajoute une photo ou un vocal.', true);
+        return;
+      }
+      await pendant(ev.submitter, 'Envoi…', async () => {
+        const photos = await Promise.all(nouvelles.map((p) => compresserImage(p)));
+        await api.repondreBilan(b.id, b.eleve_id, {
+          texte, photos, photosGardees: gardees, audio, duree: vocal.duree(), supprimerAudio: d.get('suppr_audio') === 'on'
+        });
+      });
+      fermerFenetre();
+      toast('Retour envoyé !');
+      apres();
+    });
+  }));
 }
 
 function brancherLu(zone, apres) {
@@ -309,6 +421,7 @@ async function ficheBilans(zone, e, recharger) {
   zone.innerHTML = `${bilans.length > 1 ? `<section class="carte large"><div class="surtitre-carte">POIDS</div>${courbe(bilans.map((b) => ({ valeur: b.poids })), { largeur: 640, hauteur: 140 })}</section>` : ''}
     <div class="pile">${cartes || '<p class="vide">Aucun bilan pour le moment.</p>'}</div>`;
   brancherLu(zone, recharger);
+  brancherReponses(zone, bilans, recharger);
   afficherPhotos(zone);
 }
 
@@ -429,6 +542,7 @@ async function bilans(racine, profil) {
   racine.innerHTML = page(profil, 'coach/bilans', titre('Bilans') +
     `<div class="pile">${tries.map((b) => carteBilan(b, precedent(b))).join('') || '<p class="vide">Aucun bilan reçu.</p>'}</div>`);
   brancherLu(racine, () => bilans(racine, profil));
+  brancherReponses(racine, tous, () => bilans(racine, profil));
   afficherPhotos(racine);
 }
 

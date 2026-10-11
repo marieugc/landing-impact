@@ -86,6 +86,12 @@ create table if not exists public.bilans (
   lu boolean not null default false,
   created_at timestamptz not null default now()
 );
+-- Retour de la coach sur le bilan : texte, vocal et photos (avant / après…)
+alter table public.bilans add column if not exists retour text;
+alter table public.bilans add column if not exists retour_audio text;
+alter table public.bilans add column if not exists retour_audio_duree int;
+alter table public.bilans add column if not exists retour_photos jsonb not null default '[]';
+alter table public.bilans add column if not exists retour_le timestamptz;
 
 -- 5. Compétition (pour les compétitrices)
 create table if not exists public.competitions (

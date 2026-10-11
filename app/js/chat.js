@@ -2,6 +2,7 @@
 // Utilisé par l'espace élève (onglet Chat) et l'espace coach (Messages).
 import { api, MODE } from './data.js';
 import { esc, icone, toast, dateCourte } from './ui.js';
+import { formatAudio, versWav, extension } from './vocal.js';
 
 const RAFRAICHISSEMENT = 5000; // on regarde s'il y a de nouveaux messages toutes les 5 s
 const DUREE_MAX = 180; // un vocal dure 3 minutes maximum
@@ -42,52 +43,6 @@ async function brancherAudios(fil) {
   }
 }
 
-// Format d'enregistrement préféré du navigateur. Quel qu'il soit, le vocal est ensuite converti en WAV
-// avant l'envoi : le WebM de Chrome / Firefox ne se lit pas sur iPhone, et le MP4 « en morceaux » de Chrome
-// n'a pas de durée lisible partout. Le WAV se lit sur tous les téléphones et ordinateurs.
-function formatAudio() {
-  const formats = ['audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'];
-  return formats.find((f) => window.MediaRecorder?.isTypeSupported?.(f)) || '';
-}
-
-// Convertit un enregistrement en WAV mono 16 kHz (qualité voix, ~2 Mo par minute), lisible sur tous les téléphones
-async function versWav(blob) {
-  const Contexte = window.AudioContext || window.webkitAudioContext;
-  const ctx = new Contexte();
-  try {
-    const source = await ctx.decodeAudioData(await blob.arrayBuffer());
-    const frequence = 16000;
-    const hors = new OfflineAudioContext(1, Math.ceil(source.duration * frequence), frequence);
-    const lecteur = hors.createBufferSource();
-    lecteur.buffer = source;
-    lecteur.connect(hors.destination);
-    lecteur.start();
-    const rendu = await hors.startRendering();
-    return encoderWav(rendu.getChannelData(0), frequence);
-  } finally {
-    ctx.close?.();
-  }
-}
-function encoderWav(echantillons, frequence) {
-  const tampon = new ArrayBuffer(44 + echantillons.length * 2);
-  const v = new DataView(tampon);
-  const texte = (pos, t) => [...t].forEach((c, i) => v.setUint8(pos + i, c.charCodeAt(0)));
-  texte(0, 'RIFF'); v.setUint32(4, 36 + echantillons.length * 2, true); texte(8, 'WAVE');
-  texte(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
-  v.setUint32(24, frequence, true); v.setUint32(28, frequence * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
-  texte(36, 'data'); v.setUint32(40, echantillons.length * 2, true);
-  echantillons.forEach((s, i) => {
-    const x = Math.max(-1, Math.min(1, s));
-    v.setInt16(44 + i * 2, x < 0 ? x * 0x8000 : x * 0x7fff, true);
-  });
-  return new Blob([tampon], { type: 'audio/wav' });
-}
-function extension(type) {
-  if (type.includes('wav')) return 'wav';
-  if (type.includes('mp4')) return 'm4a';
-  if (type.includes('ogg')) return 'ogg';
-  return 'webm';
-}
 
 export function arreterChat() {
   clearInterval(minuterie);

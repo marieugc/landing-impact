@@ -291,6 +291,38 @@ input[type="date"] { color-scheme: dark; }
 .ligne-conversation.non-lue .ligne-conversation-texte .petit { color: var(--texte); font-weight: 700; }
 .ligne-conversation-info { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
 
+/* Retours de la coach sur les bilans */
+.retour-bilan {
+  display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 14px;
+  background: var(--carte-2); border-left: 3px solid var(--accent);
+}
+.grille-photos-retour { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+.grille-photos-retour:empty { display: none; }
+.photo-retour { padding: 0; border: 1px solid var(--bord); cursor: zoom-in; font: inherit; }
+.miniature-retour { position: relative; display: block; }
+.miniature-retour .photo-cadre { display: flex; }
+.miniature-retour .retirer {
+  position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; border-radius: 14px; border: 0;
+  background: rgba(0, 0, 0, 0.7); color: #fff; display: flex; align-items: center; justify-content: center;
+}
+.photo-agrandie { width: 100%; max-height: 75vh; object-fit: contain; border-radius: 12px; display: block; }
+.bouton-retour { align-self: flex-start; }
+.liste-bilans { display: flex; flex-direction: column; }
+.bilan-eleve { border-top: 1px solid var(--bord); padding: 10px 0; }
+.bilan-eleve:first-child { border-top: 0; }
+.bilan-eleve summary {
+  list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 32px;
+}
+.bilan-eleve summary::-webkit-details-marker { display: none; }
+.bilan-eleve[open] summary { margin-bottom: 10px; }
+.badge-nouveau.discret { background: var(--carte-2); color: var(--lilas); }
+.statut-pdf { padding: 10px 12px; border-radius: 12px; background: var(--carte-2); font-size: 13px; color: var(--texte); display: flex; gap: 8px; align-items: flex-start; }
+.statut-pdf.ok { border: 1px solid var(--vert); }
+.statut-pdf.attention { border: 1px solid var(--orange); }
+.rempli-auto { border-color: var(--vert) !important; }
+.indice-kcal { margin: -4px 0 0; }
+.indice-kcal:empty { display: none; }
+
 /* Training (programmes) */
 .programme.en-cours { border-color: var(--accent); box-shadow: 0 0 24px rgba(178, 102, 255, 0.18); }
 .programme-texte { white-space: pre-wrap; }

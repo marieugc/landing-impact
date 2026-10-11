@@ -6,6 +6,7 @@ import { ecransCoach } from './coach.js';
 import { nonLus } from './chat.js';
 import { nouveautes } from './videotheque.js';
 import { nouveauxProgrammes } from './programmes.js';
+import { nouveauxRetours } from './bilans.js';
 
 const racine = document.getElementById('app');
 let profil = null;
@@ -222,6 +223,8 @@ async function majPastille() {
         (x) => `${pluriel(x, 'nouvelle vidéo')} dans la vidéothèque`);
       poserPastille(racine.querySelector('[data-onglet="plan"]'), (await nouveauxProgrammes(profil.id)).length,
         (x) => `${pluriel(x, 'nouveau programme')}`);
+      poserPastille(racine.querySelector('[data-onglet="progres"]'), (await nouveauxRetours(profil.id)).length,
+        (x) => `${pluriel(x, 'nouveau retour')} sur tes bilans`);
     }
   } catch (e) { /* hors ligne : on réessaiera */ }
 }
