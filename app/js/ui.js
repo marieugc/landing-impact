@@ -2,7 +2,7 @@
 
 // Numéro affiché en bas de l'app : permet de vérifier que le téléphone a bien la dernière version.
 // À augmenter à chaque mise à jour, en même temps que version.json, VERSION dans sw.js et ?v= dans index.html.
-export const VERSION_APP = '16';
+export const VERSION_APP = '17';
 
 // Protège le texte saisi (évite qu'un nom ou un message casse la page)
 export function esc(v) {
@@ -63,6 +63,31 @@ export function joursAvant(v) {
   midi.setHours(12, 0, 0, 0);
   return Math.round((d - midi) / 864e5);
 }
+
+// Bilans hebdomadaires : à partir de la date réglée par la coach, un bilan tombe tous les 7 jours.
+// Renvoie la dernière échéance passée ou du jour (null si la première n'est pas encore arrivée)
+// et la prochaine échéance (aujourd'hui compris).
+const plusJours = (v, n) => {
+  const d = versDate(v);
+  d.setDate(d.getDate() + n);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+export function echeancesBilan(depart) {
+  const n = joursAvant(depart);
+  if (n === null) return { derniere: null, prochaine: null };
+  if (n >= 0) return { derniere: n === 0 ? depart : null, prochaine: depart };
+  const derniere = plusJours(depart, Math.floor(-n / 7) * 7);
+  return { derniere, prochaine: joursAvant(derniere) === 0 ? derniere : plusJours(derniere, 7) };
+}
+// En retard : la dernière échéance est passée (pas le jour même) et aucun bilan n'a été envoyé
+// depuis 3 jours avant cette échéance (un bilan envoyé un peu en avance compte).
+export function bilanEnRetard(depart, bilansEleve) {
+  const { derniere } = echeancesBilan(depart);
+  if (!derniere || joursAvant(derniere) >= 0) return false;
+  const debut = plusJours(derniere, -3);
+  return !bilansEleve.some((b) => (b.date || String(b.created_at).slice(0, 10)) >= debut);
+}
+
 export function nombre(v, dec = 1) {
   if (v === null || v === undefined || v === '') return '—';
   return Number(v).toLocaleString('fr-FR', { maximumFractionDigits: dec });

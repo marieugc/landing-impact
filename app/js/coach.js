@@ -1,7 +1,7 @@
 // ESPACE COACH — tableau de bord, fiches élèves, corrections vidéo, bilans, compétitrices.
 import { api, MODE } from './data.js';
 import {
-  esc, icone, VERSION_APP, dateCourte, joursAvant, nombre, ecart, badge,
+  esc, icone, VERSION_APP, dateCourte, joursAvant, bilanEnRetard, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe, compresserImage
 } from './ui.js';
 import { retourBilanHtml, brancherRetours } from './bilans.js';
@@ -53,7 +53,7 @@ function titre(texte, action = '') {
 function statutEleve(e, aCorriger, bilans) {
   if (aCorriger.some((v) => v.eleve_id === e.id)) return ['Vidéo à corriger', ORANGE];
   if (bilans.some((b) => b.eleve_id === e.id && !b.lu)) return ['Bilan reçu', VERT];
-  if (e.prochain_bilan && joursAvant(e.prochain_bilan) < 0) return ['Bilan en retard', ORANGE];
+  if (e.prochain_bilan && bilanEnRetard(e.prochain_bilan, bilans.filter((b) => b.eleve_id === e.id))) return ['Bilan en retard', ORANGE];
   return ['À jour', GRIS];
 }
 
