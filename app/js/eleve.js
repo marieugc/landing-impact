@@ -6,6 +6,7 @@ import {
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { conversation } from './chat.js';
+import { retourBilanHtml, brancherRetours, retourEstNouveau, marquerRetoursVus } from './bilans.js';
 import { carteProgramme, brancherFichiers, estNouveau, nouveauxProgrammes, marquerTrainingVu } from './programmes.js';
 import { CATEGORIES, nouveautes, estNouvelle, vignette, chargerMiniatures, ouvrirVideo } from './videotheque.js';
 
@@ -54,6 +55,7 @@ async function accueil(racine, profil) {
   const programmes = await api.listProgrammes(profil.id);
   const programme = programmes[0];
   const programmesNouveaux = programmes.filter((p) => estNouveau(p, profil.id));
+  const retoursNouveaux = (await api.listBilans(profil.id)).filter((b) => retourEstNouveau(b, profil.id));
   const pct = Math.min(100, Math.round((profil.semaine / Math.max(1, profil.semaines_total)) * 100));
 
   racine.innerHTML = page(profil, 'accueil', `
@@ -61,8 +63,14 @@ async function accueil(racine, profil) {
     <div class="ligne-entre">
       <div class="bonjour">Bonjour ${esc(profil.prenom)}</div>
       <button class="bouton-rond" id="cloche" aria-label="Notifications">${icone('cloche', 20)}
-        ${recentes.length || nouvelles.length || programmesNouveaux.length ? '<span class="pastille"></span>' : ''}</button>
+        ${recentes.length || nouvelles.length || programmesNouveaux.length || retoursNouveaux.length ? '<span class="pastille"></span>' : ''}</button>
     </div>
+    ${retoursNouveaux.length ? `<a href="#/progres" class="carte carte-training nouveau">
+      <span class="icone-training">${icone('chat', 24, 'var(--accent)')}</span>
+      <span class="carte-nouveaute-texte"><span class="surtitre-carte">NOUVEAU · RETOUR DE TA COACH</span>
+        <strong>Ta coach a répondu à ton bilan du ${dateCourte(retoursNouveaux[retoursNouveaux.length - 1].date)}</strong>
+        <span class="petit">Voir son retour</span></span>
+      ${icone('chevron', 18, 'var(--doux)')}</a>` : ''}
     ${programme ? `<a href="#/training" class="carte carte-training${programmesNouveaux.length ? ' nouveau' : ''}">
       <span class="icone-training">${icone('doc', 24, 'var(--accent)')}</span>
       <span class="carte-nouveaute-texte"><span class="surtitre-carte">${programmesNouveaux.length ? 'NOUVEAU · ' : ''}MON TRAINING</span>
@@ -104,6 +112,8 @@ async function accueil(racine, profil) {
   chargerMiniatures(racine);
   racine.querySelector('#cloche').addEventListener('click', () => {
     const notifs = [
+      ...retoursNouveaux.map((b) => ({ date: b.retour_le, html: `<a class="notif" href="#/progres" data-fermer><strong>Ta coach a répondu à ton bilan du ${dateCourte(b.date)}</strong>
+          <span class="petit">Retour reçu le ${dateCourte(b.retour_le)}</span></a>` })),
       ...programmesNouveaux.map((p) => ({ date: p.created_at, html: `<a class="notif" href="#/training" data-fermer><strong>Nouveau programme : ${esc(p.titre)}</strong>
           <span class="petit">Training · ajouté le ${dateCourte(p.created_at)}</span></a>` })),
       ...nouvelles.map((v) => ({ date: v.created_at, html: `<a class="notif" href="#/videotheque" data-fermer><strong>Nouvelle vidéo : ${esc(v.titre)}</strong>
@@ -331,6 +341,16 @@ async function progres(racine, profil) {
       ${courbe(bilans.map((b) => ({ valeur: b.poids })))}
     </section>
     <div class="grille-3">${mesure('taille', 'Taille')}${mesure('hanches', 'Hanches')}${mesure('cuisse', 'Cuisse')}</div>
+    <section class="carte">
+      <div class="surtitre-carte">MES BILANS</div>
+      <div class="liste-bilans">${bilans.map((b, i) => ({ b, avant: bilans[i - 1] })).reverse().map(({ b, avant }, i) => `
+        <details class="bilan-eleve"${i === 0 || retourEstNouveau(b, profil.id) ? ' open' : ''}>
+          <summary><strong>Bilan du ${dateCourte(b.date)}</strong>
+            <span class="petit">${b.poids != null ? `${nombre(b.poids)} kg${avant?.poids != null ? ` (${ecart(b.poids - avant.poids)} kg)` : ''}` : ''}</span>
+            ${b.retour_le ? `<span class="badge-nouveau${retourEstNouveau(b, profil.id) ? '' : ' discret'}">${retourEstNouveau(b, profil.id) ? 'NOUVEAU RETOUR' : 'RETOUR'}</span>` : ''}</summary>
+          ${retourBilanHtml(b) || '<p class="petit">En attente du retour de ta coach.</p>'}
+        </details>`).join('')}</div>
+    </section>
     <div id="charges"></div>
     <section class="carte">
       <div class="ligne-entre"><div class="surtitre-carte">AVANT / APRÈS</div><span class="petit">Face</span></div>
@@ -344,6 +364,11 @@ async function progres(racine, profil) {
     <a href="#/bilan" class="bouton-principal">${icone('plus', 18)}NOUVEAU BILAN DE LA SEMAINE</a>
   `);
   afficherPhotos(racine);
+  brancherRetours(racine);
+  if (bilans.some((b) => retourEstNouveau(b, profil.id))) {
+    marquerRetoursVus(profil.id);
+    document.dispatchEvent(new CustomEvent('messages-lus'));
+  }
   await blocCharges(racine.querySelector('#charges'), profil.id, true);
 }
 

@@ -10,7 +10,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v5';
+const CLE_DEMO = 'bootyflow-demo-v6';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -59,7 +59,9 @@ function donneesDemo() {
     [71.6, 69.5, 97.5, 56.5, -20], [71.3, 69, 98, 56.5, -13], [71.0, 68, 98, 57, -6]
   ].map(([poids, taille, hanches, cuisse, j], i) => ({
     id: `b${i}`, eleve_id: 'sarah', date: dansJours(j), poids, taille, hanches, cuisse,
-    ressenti: '', lu: i < 5, photo_face: null, photo_profil: null, photo_dos: null
+    ressenti: '', lu: i < 5, photo_face: null, photo_profil: null, photo_dos: null,
+    retour: i === 4 ? 'Super régularité Sarah ! La taille continue de baisser et les cuisses se dessinent. On garde le même plan cette semaine.' : null,
+    retour_audio: null, retour_audio_duree: null, retour_photos: [], retour_le: i === 4 ? dansJours(-12) + 'T18:00:00.000Z' : null
   }));
   const competitions = {
     chloe: {
@@ -213,6 +215,19 @@ const demo = {
   async markBilanLu(bid) {
     const d = lireDemo();
     d.bilans.find((b) => b.id === bid).lu = true;
+    ecrireDemo(d);
+  },
+  // Retour de la coach : texte, vocal (fichier) et photos (fichiers ajoutés + chemins conservés)
+  async repondreBilan(bid, eleveId, { texte, audio, duree, photos = [], photosGardees = [], supprimerAudio = false }) {
+    const d = lireDemo();
+    const b = d.bilans.find((x) => x.id === bid);
+    Object.assign(b, {
+      retour: texte || null,
+      retour_photos: [...photosGardees, ...photos.map(garderFichier)],
+      retour_le: new Date().toISOString(), lu: true
+    });
+    if (audio) Object.assign(b, { retour_audio: garderFichier(audio), retour_audio_duree: duree || null });
+    else if (supprimerAudio) Object.assign(b, { retour_audio: null, retour_audio_duree: null });
     ecrireDemo(d);
   },
 
@@ -415,6 +430,14 @@ const reel = {
   },
   async markBilanLu(bid) {
     verifier(await (await client()).from('bilans').update({ lu: true }).eq('id', bid));
+  },
+  async repondreBilan(bid, eleveId, { texte, audio, duree, photos = [], photosGardees = [], supprimerAudio = false }) {
+    const nouvelles = [];
+    for (const photo of photos) nouvelles.push(await envoyerFichier(eleveId, 'bilans-retours', photo));
+    const maj = { retour: texte || null, retour_photos: [...photosGardees, ...nouvelles], retour_le: new Date().toISOString(), lu: true };
+    if (audio) Object.assign(maj, { retour_audio: await envoyerFichier(eleveId, 'bilans-retours', audio), retour_audio_duree: duree || null });
+    else if (supprimerAudio) Object.assign(maj, { retour_audio: null, retour_audio_duree: null });
+    verifier(await (await client()).from('bilans').update(maj).eq('id', bid));
   },
 
   async getCompetition(uid) {

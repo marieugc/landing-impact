@@ -164,6 +164,8 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 - **Fiche élève** : suivi, plan nutrition, vidéos, bilans (avec photos et écarts), charges de musculation, compétition
 - **Vidéos à corriger** : toutes les vidéos en attente, avec un retour écrit et/ou une vidéo de correction
 - **Bilans**, **Compétitrices**, **Plans nutrition** : vues d'ensemble
+- **Répondre à un bilan** : sur chaque bilan, bouton « Répondre au bilan » pour envoyer un message écrit, un vocal et des photos (avant / après, comparaisons). L'élève le voit dans Progrès › Mes bilans, avec une notification
+- **Nutrition › PDF** : en choisissant un PDF (texte, pas un scan), l'app lit les calories et macros et remplit les cases ; les calories se recalculent aussi d'après les macros (4/4/9)
 - **Fiche élève › Training** : dépose le programme de chaque élève (fichier, lien Google Drive ou consignes écrites). Le dernier ajouté devient son « programme en cours » et elle voit un badge « Nouveau »
 - **Vidéothèque** : ajoute, modifie ou supprime tes vidéos d'explication (fichier de 50 Mo max, ou lien YouTube / Vimeo). Tes élèves voient un badge « Nouveau », une pastille sur l'onglet Mouvement et une notification dans l'app. Pour renommer cette partie, change `NOM_VIDEOTHEQUE` dans `app/js/config.js`
 - **Messages** : une conversation par élève (texte et vocaux), avec le nombre de messages non lus dans le menu ; bouton « Écrire » sur chaque fiche élève
