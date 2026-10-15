@@ -28,3 +28,12 @@ auto-diagnostic, 4 règles de l'hypertrophie, séance complète (séries à coch
 progression sur 4 semaines, transformations, présentation de Marie et appel à l'action coaching (Calendly + Instagram).
 Les exercices se modifient en haut du `<script>` de `seance-fessiers/index.html` (tableau `EXERCICES`).
 Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/seance-fessiers/`
+
+## Formation coach « GluteLab » 🍑⚡
+
+Formation interactive pour coachs (hypertrophie des fessiers, evidence-based), en un seul fichier :
+[`formation-coach-fessiers/index.html`](formation-coach-fessiers/index.html). 7 modules + règles d'or, bibliothèque
+d'exercices filtrable, techniques d'intensité, périodisation (graphique Chart.js), programmes complets, calculateur
+de volume, générateur de séance, quiz et checklist. Progression sauvegardée dans le navigateur, version imprimable (PDF).
+Toutes les données (exercices, techniques, repères de volume, programmes, quiz) sont dans le premier `<script>` du fichier.
+Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/formation-coach-fessiers/`
