@@ -58,6 +58,8 @@ export function FoodsPage() {
           ciqual.anses.fr
         </a>{' '}
         et adapte-les aux marques que tes élèves utilisent (étiquettes). Les kcal sont toujours recalculées avec 4 / 4 / 9.
+        Les féculents restent saisis pour 100 g <strong>crus</strong> : le coefficient de cuisson (ex. riz × 2,6) sert à afficher les quantités
+        en poids cuit dans les diètes. Ces coefficients sont des moyennes, à vérifier aussi.
       </div>
 
       {edit && <FoodEditor food={edit} onCancel={() => setEdit(null)} onSave={save} />}
@@ -105,6 +107,7 @@ export function FoodsPage() {
                   <td>
                     {f.name}
                     {f.unitWeight && <span className="small faint"> · 1 {f.unitLabel} = {f.unitWeight} g</span>}
+                    {f.cooked && <span className="small faint"> · cuit = cru × {fmt1(f.cooked)}</span>}
                     {f.custom && <span className="pill neon" style={{ marginLeft: 6 }}>perso</span>}
                   </td>
                   <td className="small muted">{CATEGORY_LABELS[f.category]}</td>
@@ -185,11 +188,21 @@ function FoodEditor({ food, onSave, onCancel }: { food: Food; onSave: (f: Food) 
           </label>
         )}
         <label className="field">
-          Quantité min ({f.unitWeight ? 'unités' : 'g'})
+          Coefficient cuisson (poids cuit / poids cru)
+          <input
+            type="number"
+            step="0.1"
+            value={f.cooked ?? ''}
+            placeholder="vide = pesé cru / sec"
+            onChange={(e) => setF({ ...f, cooked: e.target.value === '' ? undefined : num(e.target.value) })}
+          />
+        </label>
+        <label className="field">
+          Quantité min ({f.unitWeight ? 'unités' : f.cooked ? 'g cuits' : 'g'})
           <input type="number" value={f.min ?? ''} placeholder="auto" onChange={(e) => setF({ ...f, min: e.target.value === '' ? undefined : Number(e.target.value) })} />
         </label>
         <label className="field">
-          Quantité max ({f.unitWeight ? 'unités' : 'g'})
+          Quantité max ({f.unitWeight ? 'unités' : f.cooked ? 'g cuits' : 'g'})
           <input type="number" value={f.max ?? ''} placeholder="auto" onChange={(e) => setF({ ...f, max: e.target.value === '' ? undefined : Number(e.target.value) })} />
         </label>
       </div>

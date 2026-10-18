@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { equivalences } from '../src/engine/equivalences';
+import { defaultRefGrams, equivalences } from '../src/engine/equivalences';
 import { isAllowed } from '../src/engine/filters';
 import { DEFAULT_FOODS } from '../src/engine/foods';
 import {
@@ -12,7 +12,7 @@ import {
   selectVariant,
   type GenContext,
 } from '../src/engine/generator';
-import { foodMacros, kcalOf, stepOf, variantMacros } from '../src/engine/nutrition';
+import { foodMacros, formatQty, gramsOf, kcalOf, stepOf, variantMacros, withCookedMode } from '../src/engine/nutrition';
 import { createRng } from '../src/engine/random';
 import { DEFAULT_SETTINGS } from '../src/engine/settings';
 import { shoppingList } from '../src/engine/shopping';
@@ -22,8 +22,10 @@ import { EMPTY_OPTIONS, type DayPlan, type DietOptions, type Food, type Phase } 
 
 const S = DEFAULT_SETTINGS;
 const byId = (id: string) => DEFAULT_FOODS.find((f) => f.id === id) as Food;
-const ctx = (seed: number, o: Partial<DietOptions> = {}): GenContext => ({
-  foods: DEFAULT_FOODS,
+// mode par défaut de l'application : féculents et légumineuses en poids cuit
+const COOKED = withCookedMode(DEFAULT_FOODS, true);
+const ctx = (seed: number, o: Partial<DietOptions> = {}, foods = COOKED): GenContext => ({
+  foods,
   options: { ...EMPTY_OPTIONS, ...o },
   settings: S,
   rng: createRng(seed),
@@ -324,5 +326,59 @@ describe('équivalences et liste de courses', () => {
     const restWhey = re.meals.flatMap((m) => m.variants[m.selected].items).filter((i) => i.food.id === 'whey');
     const total = expected + restWhey.reduce((s, i) => s + i.qty, 0) * 3;
     expect(whey.grams).toBe(Math.ceil(total / 10) * 10);
+  });
+});
+
+describe('féculents en poids cuit', () => {
+  const cooked = (id: string) => COOKED.find((f) => f.id === id) as Food;
+
+  it('260 g de riz basmati cuit = 100 g de riz cru', () => {
+    const rice = cooked('riz_basmati');
+    expect(rice.weighedCooked).toBe(true);
+    expect(gramsOf(rice, 260)).toBeCloseTo(100, 6);
+    expect(foodMacros(rice, 260).c).toBeCloseTo(78, 6);
+    expect(formatQty({ food: rice, qty: 260 })).toBe('260 g cuit');
+  });
+
+  it('crème de riz, flocons, viandes restent pesés crus / secs', () => {
+    for (const id of ['creme_riz', 'flocons', 'poulet', 'banane']) expect(cooked(id).weighedCooked).toBeFalsy();
+  });
+
+  it('les diètes générées donnent les féculents en poids cuit, dans la tolérance', () => {
+    const t = computeTargets(baseInput, S);
+    const days = generateDays(ctx(31), t, '18:00');
+    days.forEach(checkDay);
+    const starches = days.flatMap((d) => d.meals.flatMap((m) => m.variants.flatMap((v) => v.items))).filter((i) => i.food.roles.includes('fec_repas'));
+    expect(starches.length).toBeGreaterThan(0);
+    for (const it of starches) expect(it.food.weighedCooked).toBe(true);
+  });
+
+  it('réglage désactivé : retour au poids cru', () => {
+    const raw = withCookedMode(COOKED, false);
+    const rice = raw.find((f) => f.id === 'riz_basmati')!;
+    expect(rice.weighedCooked).toBeFalsy();
+    expect(gramsOf(rice, 80)).toBe(80);
+    const t = computeTargets(baseInput, S);
+    generateDays(ctx(32, {}, raw), t, '18:00').forEach(checkDay);
+  });
+
+  it('liste de courses en poids sec à acheter', () => {
+    const t = computeTargets(baseInput, S);
+    const [tr] = generateDays(ctx(33), t, '18:00');
+    const items = tr.meals.flatMap((m) => m.variants[m.selected].items).filter((i) => i.food.weighedCooked);
+    const first = items[0];
+    const cookedTotal = items.filter((i) => i.food.id === first.food.id).reduce((s, i) => s + i.qty, 0);
+    const line = shoppingList([{ day: tr, count: 1 }])
+      .flatMap((g) => g.lines)
+      .find((l) => l.food.id === first.food.id)!;
+    expect(line.grams).toBe(Math.ceil(cookedTotal / first.food.cooked! / 10) * 10);
+  });
+
+  it('équivalences en poids cuit : 80 g de riz cru = 210 g cuit', () => {
+    const rice = cooked('riz_basmati');
+    expect(defaultRefGrams(rice, 80)).toBe(210);
+    const pasta = equivalences(rice, 208, 'c', [cooked('pates')])[0];
+    // 208 g cuit de riz = 80 g cru = 62,4 g de glucides = 87,9 g de pâtes crues = 202 g cuites -> 200 g
+    expect(pasta.grams).toBe(200);
   });
 });

@@ -1,7 +1,7 @@
 // Vérifie la tolérance sur de nombreuses graines et combinaisons d'options.
 import { DEFAULT_FOODS } from '../src/engine/foods';
 import { dayTotals, generateDays, maxMacroGap } from '../src/engine/generator';
-import { variantMacros } from '../src/engine/nutrition';
+import { variantMacros, withCookedMode } from '../src/engine/nutrition';
 import { createRng } from '../src/engine/random';
 import { DEFAULT_SETTINGS } from '../src/engine/settings';
 import { computeTargets } from '../src/engine/targets';
@@ -21,7 +21,7 @@ let total = 0, fails = 0, attempts = 0, meals = 0, few = 0, badVar = 0;
 const t0 = Date.now();
 for (const ph of phases) for (const o of optionSets) for (const pr of profiles) for (let seed = 1; seed <= 4; seed++) {
   const targets = computeTargets({ weight: pr.w, height: pr.h, objective: 'perte_de_gras', phase: ph, useAdjustedWeight: pr.w > 90, kcalTraining: pr.kt, kcalRest: pr.kr }, DEFAULT_SETTINGS);
-  const days = generateDays({ foods: DEFAULT_FOODS, options: { ...EMPTY_OPTIONS, ...o }, settings: DEFAULT_SETTINGS, rng: createRng(seed) }, targets, '18:00');
+  const days = generateDays({ foods: withCookedMode(DEFAULT_FOODS, true), options: { ...EMPTY_OPTIONS, ...o }, settings: DEFAULT_SETTINGS, rng: createRng(seed) }, targets, '18:00');
   for (const d of days) {
     total++; attempts += d.attempts;
     for (const m of d.meals) {

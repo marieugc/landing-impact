@@ -34,7 +34,7 @@ export function ShoppingPanel({ diet, onChange }: { diet: Diet; onChange: (train
           Jours repos
           <input className="num-input" type="number" min={0} max={7} value={diet.restDaysPerWeek} onChange={(e) => onChange(diet.trainingDaysPerWeek, Number(e.target.value))} />
         </label>
-        <span className="small faint">{plan.map((p) => `${p.count} × ${DAY_LABELS[p.day.dayType].toLowerCase()}`).join(' · ')} (variantes sélectionnées)</span>
+        <span className="small faint">{plan.map((p) => `${p.count} × ${DAY_LABELS[p.day.dayType].toLowerCase()}`).join(' · ')} (variantes sélectionnées). Féculents en poids sec à acheter.</span>
       </div>
       {groups.length === 0 && <p className="muted">Génère d'abord la diète.</p>}
       <div className="grid grid-3">
@@ -45,7 +45,10 @@ export function ShoppingPanel({ diet, onChange }: { diet: Diet; onChange: (train
             </div>
             {g.lines.map((l) => (
               <div key={l.food.id + l.food.name} className="row small" style={{ justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                <span>☐ {l.food.name}</span>
+                <span>
+                  ☐ {l.food.name}
+                  {l.food.weighedCooked && <span className="faint"> (poids sec)</span>}
+                </span>
                 <span className="muted" style={{ whiteSpace: 'nowrap' }}>
                   {l.units ? `${l.units} (${l.grams} g)` : l.grams >= 1000 ? `${(l.grams / 1000).toLocaleString('fr-FR')} kg` : `${l.grams} g`}
                 </span>

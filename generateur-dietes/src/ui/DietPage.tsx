@@ -5,7 +5,7 @@ import { estimatedMaintenance, DAY_LABELS, OBJECTIVE_LABELS, PHASE_LABELS } from
 import type { DayType, Diet, Objective, Phase, Student } from '../engine/types';
 import type { PdfOptions } from '../pdf/exportPdf';
 import { DayRecap } from './DayRecap';
-import { applyTargets, clone, generateAll, makeCtx, mealActions, regenerateOneDay, targetsFor } from './dietOps';
+import { applyTargets, clone, foodsForGeneration, generateAll, makeCtx, mealActions, regenerateOneDay, targetsFor } from './dietOps';
 import { EquivalencesPanel } from './EquivalencesPanel';
 import { fmt0, fmt1, formatDate, signed, useFoods, useSettings } from './hooks';
 import { MealCard } from './MealCard';
@@ -35,7 +35,10 @@ export function DietPage({ studentId, dietId }: { studentId: number; dietId: num
   }, [studentId, dietId]);
 
   const targets = useMemo(() => (diet && student && settings ? targetsFor(diet, student, settings) : null), [diet, student, settings]);
-  const allowedFoods = useMemo(() => (foods && diet ? compatibleFoods(foods, diet.options) : []), [foods, diet]);
+  const allowedFoods = useMemo(
+    () => (foods && diet && settings ? compatibleFoods(foodsForGeneration(foods, settings), diet.options) : []),
+    [foods, diet, settings],
+  );
 
   if (missing) return <p className="muted">Diète introuvable.</p>;
   if (!diet || !student || !settings || !foods || !targets) return <p className="muted">Chargement…</p>;

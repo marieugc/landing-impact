@@ -12,6 +12,8 @@ export interface Settings {
   refeedCarbPct: number;
   ketoCarbs: number;
   vegQty: number;
+  /** riz, pâtes, quinoa, légumineuses… donnés en poids cuit (crème de riz et flocons restent secs) */
+  cookedStarches: boolean;
   preCarbPct: number;
   postProtein: number;
   postCarbPct: number;
@@ -34,6 +36,7 @@ export const DEFAULT_SETTINGS: Settings = {
   refeedCarbPct: 30,
   ketoCarbs: 30,
   vegQty: 200,
+  cookedStarches: true,
   preCarbPct: 15,
   postProtein: 25,
   postCarbPct: 10,
@@ -44,20 +47,35 @@ export const DEFAULT_SETTINGS: Settings = {
   coachName: 'Coach Booty Flow',
   coachContact: '',
   pdfAdvice:
-    "Toutes les quantités sont pesées crues / sèches (riz, pâtes, flocons, crème de riz, viande, poisson). " +
     "Bois 2 à 3 L d'eau par jour. Les légumes peuvent être variés librement. " +
     'Tu peux échanger un repas contre une de ses variantes : les macros restent équivalentes.',
 };
 
+/** Ancien texte par défaut (qui annonçait tout en poids cru) : remplacé automatiquement. */
+const LEGACY_PDF_ADVICE =
+  "Toutes les quantités sont pesées crues / sèches (riz, pâtes, flocons, crème de riz, viande, poisson). " +
+  "Bois 2 à 3 L d'eau par jour. Les légumes peuvent être variés librement. " +
+  'Tu peux échanger un repas contre une de ses variantes : les macros restent équivalentes.';
+
+/** Phrase de pesée imprimée dans le PDF, selon le réglage poids cuit / cru. */
+export function weighingAdvice(s: Settings): string {
+  return s.cookedStarches
+    ? 'Riz, pâtes, quinoa, semoule, pommes de terre et légumineuses : quantités pesées CUITES. ' +
+        'Viande, poisson, crème de riz et flocons d\u2019avoine : pesés crus / secs.'
+    : 'Toutes les quantités sont pesées crues / sèches (riz, pâtes, flocons, crème de riz, viande, poisson).';
+}
+
 export function mergeSettings(partial?: Partial<Settings> | null): Settings {
   if (!partial) return structuredCloneSafe(DEFAULT_SETTINGS);
-  return {
+  const merged = {
     ...structuredCloneSafe(DEFAULT_SETTINGS),
     ...partial,
     proteinGkg: { ...DEFAULT_SETTINGS.proteinGkg, ...(partial.proteinGkg ?? {}) },
     trainingSplit: partial.trainingSplit ?? { ...DEFAULT_SETTINGS.trainingSplit },
     restSplit: partial.restSplit ?? { ...DEFAULT_SETTINGS.restSplit },
   };
+  if (merged.pdfAdvice === LEGACY_PDF_ADVICE) merged.pdfAdvice = DEFAULT_SETTINGS.pdfAdvice;
+  return merged;
 }
 
 function structuredCloneSafe<T>(v: T): T {

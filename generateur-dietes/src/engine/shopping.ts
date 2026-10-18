@@ -4,6 +4,7 @@ import type { DayPlan, Food, FoodCategory } from './types';
 
 export interface ShoppingLine {
   food: Food;
+  /** grammes à acheter : poids cru / sec, même pour les féculents donnés cuits dans la diète */
   grams: number;
   units?: number;
 }

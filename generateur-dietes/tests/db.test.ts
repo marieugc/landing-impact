@@ -56,3 +56,32 @@ describe('stockage local', () => {
     expect(await d.students.count()).toBe(0);
   });
 });
+
+describe('mise à jour d’une ancienne base', () => {
+  it('ajoute le coefficient cuit / cru et renomme les aliments non modifiés', async () => {
+    const { upgradeFood } = await import('../src/db/db');
+    const old = { ...DEFAULT_FOODS.find((f) => f.id === 'riz_basmati')!, name: 'Riz basmati (cru)', cooked: undefined };
+    delete old.cooked;
+    const up = upgradeFood(old);
+    expect(up.cooked).toBe(2.6);
+    expect(up.name).toBe('Riz basmati');
+    const renamed = upgradeFood({ ...old, name: 'Mon riz' });
+    expect(renamed.name).toBe('Mon riz');
+  });
+});
+
+describe('migration Dexie v1 -> v2', () => {
+  it('une base créée avant la mise à jour reçoit les coefficients au prochain lancement', async () => {
+    const { default: Dexie } = await import('dexie');
+    const v1 = new Dexie('tmig');
+    v1.version(1).stores({ students: '++id, firstName, createdAt', diets: '++id, studentId, createdAt', weights: '++id, studentId, date', foods: 'id, name, category', settings: 'key' });
+    const rice = { ...DEFAULT_FOODS.find((f) => f.id === 'riz_basmati')!, name: 'Riz basmati (cru)' };
+    delete rice.cooked;
+    await v1.table('foods').put(rice);
+    v1.close();
+    const v2 = new BootyFlowDB('tmig');
+    const got = await v2.foods.get('riz_basmati');
+    expect(got?.cooked).toBe(2.6);
+    expect(got?.name).toBe('Riz basmati');
+  });
+});
