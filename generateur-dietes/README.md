@@ -54,7 +54,12 @@ Garde toujours le même navigateur (Chrome par exemple) et ne vide pas ses « do
 ## Règles de calcul appliquées
 
 - 4 kcal / g de protéines et de glucides, 9 kcal / g de lipides (les kcal sont toujours recalculées ainsi).
-- Quantités pesées crues / sèches, arrondies à 5 g (1 g pour huiles et oléagineux), unités entières pour œufs et fruits entiers.
+- **Féculents et légumineuses en poids cuit** (riz, pâtes, quinoa, semoule, pommes de terre, lentilles…), arrondis à 5 g.
+  Les valeurs nutritionnelles restent saisies pour 100 g crus ; un coefficient de cuisson par aliment (ex. riz × 2,6,
+  pâtes × 2,3, modifiable dans « Aliments ») fait la conversion. La **crème de riz et les flocons restent pesés secs**,
+  la viande et le poisson crus. La liste de courses donne les féculents en poids sec à acheter.
+  Pour revenir au tout-cru : « Réglages » → décocher « Féculents et légumineuses en poids cuit ».
+- Arrondis : 5 g (1 g pour huiles et oléagineux), unités entières pour œufs et fruits entiers.
 - Jour training : petit-déj, midi, pré-training (crème de riz + banane), post-training (compote + whey), collation, soir,
   placés selon l'heure d'entraînement. Jour repos : une collation libre (sans crème de riz ni whey) remplace pré et post.
 - Si la journée ne tombe pas à ±20 kcal et ±3 g par macro, l'algorithme recommence (jusqu'à 50 essais) avant d'afficher.

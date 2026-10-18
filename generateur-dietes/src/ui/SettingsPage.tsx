@@ -122,6 +122,13 @@ export function SettingsPage() {
             Durée de séance (min)
             <input type="number" value={s.trainingDuration} onChange={(e) => set({ trainingDuration: num(e.target.value) })} />
           </label>
+          <label className="check" style={{ gridColumn: 'span 2', alignSelf: 'end' }}>
+            <input type="checkbox" checked={s.cookedStarches} onChange={(e) => set({ cookedStarches: e.target.checked })} />
+            <span>
+              Féculents et légumineuses en <strong>poids cuit</strong>
+              <span className="faint small"> — riz, pâtes, quinoa, pommes de terre, lentilles… (crème de riz et flocons restent secs)</span>
+            </span>
+          </label>
           <label className="field">
             Légumes par repas (g)
             <input type="number" step="10" value={s.vegQty} onChange={(e) => set({ vegQty: num(e.target.value) })} />

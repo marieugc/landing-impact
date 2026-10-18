@@ -1,9 +1,9 @@
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { EQUIVALENCE_GROUPS, equivalences } from '../engine/equivalences';
+import { defaultRefGrams, EQUIVALENCE_GROUPS, equivalences } from '../engine/equivalences';
 import { dayTotals } from '../engine/generator';
 import { formatQty, itemMacros, macroPercents, variantMacros } from '../engine/nutrition';
-import type { Settings } from '../engine/settings';
+import { weighingAdvice, type Settings } from '../engine/settings';
 import type { ShoppingGroup } from '../engine/shopping';
 import { DAY_LABELS, OBJECTIVE_LABELS, PHASE_LABELS } from '../engine/targets';
 import type { Diet, Food, Student } from '../engine/types';
@@ -190,7 +190,7 @@ export function exportDietPdf(args: {
     columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' }, 4: { halign: 'right' } },
   });
   y = lastY() + 4;
-  para(settings.pdfAdvice, 9);
+  para(`${weighingAdvice(settings)} ${settings.pdfAdvice}`, 9);
 
   // ---------------------------------------------------------------- journées
   for (const day of diet.days) {
@@ -246,23 +246,24 @@ export function exportDietPdf(args: {
   if (options.equivalences) {
     newPage();
     title('Tableau d’équivalences', 17);
-    para('Pour varier : remplace un aliment par la quantité indiquée (même apport de la macro principale, pesé cru / sec).', 9);
+    para(`Pour varier : remplace un aliment par la quantité indiquée (même apport de la macro principale). ${weighingAdvice(settings)}`, 9);
     for (const g of EQUIVALENCE_GROUPS) {
       const pool = foods.filter((f) => f.roles.some((r) => g.roles.includes(r)));
       const ref = pool.find((f) => f.id === g.refId) ?? pool[0];
       if (!ref) continue;
-      const eq = equivalences(ref, g.refGrams, g.macro, pool);
+      const refQty = defaultRefGrams(ref, g.refGrams);
+      const eq = equivalences(ref, refQty, g.macro, pool);
       ensure(20);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(11);
       doc.setTextColor(...P.text);
-      doc.text(t(`${g.title} : ${g.refGrams} g de ${ref.name} =`), M, y + 3);
+      doc.text(t(`${g.title} : ${refQty} g${ref.weighedCooked ? ' cuits' : ''} de ${ref.name} =`), M, y + 3);
       y += 5;
       const half = Math.ceil(eq.length / 2);
       const rows = Array.from({ length: half }, (_, i) => {
         const a = eq[i];
         const b = eq[i + half];
-        const q = (e: typeof a) => (e.units ? `${e.units} (${e.grams} g)` : `${e.grams} g`);
+        const q = (e: typeof a) => (e.units ? `${e.units} (${e.grams} g)` : `${e.grams} g${e.food.weighedCooked ? ' cuit' : ''}`);
         return [t(a.food.name), q(a), b ? t(b.food.name) : '', b ? q(b) : ''];
       });
       autoTable(doc, {
@@ -279,7 +280,7 @@ export function exportDietPdf(args: {
   if (options.shopping && shopping.length) {
     newPage();
     title('Liste de courses de la semaine', 17);
-    para(`${diet.trainingDaysPerWeek} jour(s) training et ${diet.restDaysPerWeek} jour(s) repos, quantités crues arrondies à 10 g.`, 9);
+    para(`${diet.trainingDaysPerWeek} jour(s) training et ${diet.restDaysPerWeek} jour(s) repos, quantités à acheter en poids cru / sec (féculents compris), arrondies à 10 g.`, 9);
     autoTable(doc, {
       ...tableStyles,
       startY: y,
@@ -287,7 +288,7 @@ export function exportDietPdf(args: {
       body: shopping.flatMap((g) =>
         g.lines.map((l, i) => [
           i === 0 ? t(g.label) : '',
-          t(l.food.name),
+          t(l.food.name + (l.food.weighedCooked ? ' (poids sec)' : '')),
           l.units ? `${l.units} (${l.grams} g)` : l.grams >= 1000 ? `${(l.grams / 1000).toString().replace('.', ',')} kg` : `${l.grams} g`,
         ]),
       ),

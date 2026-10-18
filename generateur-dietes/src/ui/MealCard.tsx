@@ -117,7 +117,7 @@ export function MealCard({ meal, foods, cb }: { meal: MealPlan; foods: Food[]; c
                             onChange={(e) => cb.onQty(ii, Number(e.target.value))}
                           />
                           <span className="small muted" style={{ width: 70, textAlign: 'left' }}>
-                            {it.food.unitWeight ? `${it.food.unitLabel ?? 'unité'}(s)` : 'g'}
+                            {it.food.unitWeight ? `${it.food.unitLabel ?? 'unité'}(s)` : it.food.weighedCooked ? 'g cuit' : it.food.cooked ? 'g cru' : 'g'}
                           </span>
                         </span>
                       )}

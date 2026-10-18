@@ -1,7 +1,7 @@
 // Démo terminal : npm run demo
 import { DEFAULT_FOODS } from '../src/engine/foods';
 import { dayTotals, generateDays } from '../src/engine/generator';
-import { formatQty, itemMacros, macroPercents, variantMacros } from '../src/engine/nutrition';
+import { formatQty, itemMacros, macroPercents, variantMacros, withCookedMode } from '../src/engine/nutrition';
 import { createRng } from '../src/engine/random';
 import { DEFAULT_SETTINGS } from '../src/engine/settings';
 import { computeTargets, DAY_LABELS, estimatedMaintenance } from '../src/engine/targets';
@@ -13,7 +13,7 @@ const targets = computeTargets(
   { weight: eleve.weight, height: eleve.height, objective: 'perte_de_gras', phase: 'deficit', useAdjustedWeight: false, kcalTraining: 1900, kcalRest: 1650 },
   settings,
 );
-const ctx = { foods: DEFAULT_FOODS, options: { ...EMPTY_OPTIONS }, settings, rng: createRng(Number(process.argv[2] ?? 42)) };
+const ctx = { foods: withCookedMode(DEFAULT_FOODS, true), options: { ...EMPTY_OPTIONS }, settings, rng: createRng(Number(process.argv[2] ?? 42)) };
 const days = generateDays(ctx, targets, '18:00');
 
 const pad = (s: string | number, n: number) => String(s).padEnd(n);

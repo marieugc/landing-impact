@@ -5,7 +5,29 @@ import type { Food, FoodCategory, FoodRole, FoodTag } from './types';
  * Valeurs reprises de la table CIQUAL (ANSES) et arrondies : À VÉRIFIER par la coach
  * (https://ciqual.anses.fr) et à adapter aux marques utilisées (écran « Aliments »).
  * Les glucides sont les glucides disponibles (hors fibres).
+ * `cooked` : coefficient poids cuit / poids cru (riz, pâtes, légumineuses…) utilisé quand
+ * les féculents sont donnés en poids cuit (réglage). Coefficients moyens, À VÉRIFIER aussi.
  */
+
+/** Anciens noms (avant le passage en poids cuit), pour mettre à jour les bases déjà enregistrées. */
+export const LEGACY_NAMES: Record<string, string> = {
+  lentilles: 'Lentilles corail sèches',
+  lentilles_vertes: 'Lentilles vertes sèches',
+  pois_chiches: 'Pois chiches secs',
+  haricots_rouges: 'Haricots rouges secs',
+  riz_basmati: 'Riz basmati (cru)',
+  riz_complet: 'Riz complet (cru)',
+  pates: 'Pâtes blanches (sèches)',
+  pates_completes: 'Pâtes complètes (sèches)',
+  pates_sg: 'Pâtes sans gluten riz / maïs (sèches)',
+  quinoa: 'Quinoa (cru)',
+  semoule: 'Semoule de blé (sèche)',
+  boulgour: 'Boulgour (sec)',
+  sarrasin: 'Sarrasin décortiqué (cru)',
+  polenta: 'Polenta (sèche)',
+  pdt: 'Pomme de terre (crue)',
+  patate_douce: 'Patate douce (crue)',
+};
 function food(
   id: string,
   name: string,
@@ -84,24 +106,24 @@ export const DEFAULT_FOODS: Food[] = [
     min: 10,
     max: 60,
   }),
-  // ---- Légumineuses (pesées sèches)
-  food('lentilles', 'Lentilles corail sèches', 'legumineuse', 24.0, 48.0, 1.5, [], ['fec_repas']),
-  food('lentilles_vertes', 'Lentilles vertes sèches', 'legumineuse', 24.5, 46.0, 1.5, [], ['fec_repas']),
-  food('pois_chiches', 'Pois chiches secs', 'legumineuse', 20.5, 44.0, 5.5, [], ['fec_repas']),
-  food('haricots_rouges', 'Haricots rouges secs', 'legumineuse', 22.0, 43.0, 1.2, [], ['fec_repas']),
-  // ---- Féculents (pesés crus / secs)
-  food('riz_basmati', 'Riz basmati (cru)', 'feculent', 8.0, 78.0, 0.8, [], ['fec_repas']),
-  food('riz_complet', 'Riz complet (cru)', 'feculent', 8.0, 73.0, 2.5, [], ['fec_repas']),
-  food('pates', 'Pâtes blanches (sèches)', 'feculent', 12.5, 71.0, 1.5, ['gluten'], ['fec_repas']),
-  food('pates_completes', 'Pâtes complètes (sèches)', 'feculent', 13.0, 64.0, 2.5, ['gluten'], ['fec_repas']),
-  food('pates_sg', 'Pâtes sans gluten riz / maïs (sèches)', 'feculent', 7.5, 77.0, 1.5, [], ['fec_repas']),
-  food('quinoa', 'Quinoa (cru)', 'feculent', 13.5, 60.0, 6.0, [], ['fec_repas']),
-  food('semoule', 'Semoule de blé (sèche)', 'feculent', 12.0, 72.0, 1.5, ['gluten'], ['fec_repas']),
-  food('boulgour', 'Boulgour (sec)', 'feculent', 12.0, 69.0, 1.5, ['gluten'], ['fec_repas']),
-  food('sarrasin', 'Sarrasin décortiqué (cru)', 'feculent', 12.0, 70.0, 3.0, [], ['fec_repas']),
-  food('polenta', 'Polenta (sèche)', 'feculent', 8.0, 76.0, 1.5, [], ['fec_repas']),
-  food('pdt', 'Pomme de terre (crue)', 'feculent', 2.0, 16.5, 0.1, [], ['fec_repas'], { min: 80, max: 700 }),
-  food('patate_douce', 'Patate douce (crue)', 'feculent', 1.6, 17.0, 0.1, [AI], ['fec_repas'], { min: 80, max: 700 }),
+  // ---- Légumineuses (valeurs pour 100 g secs ; « cooked » = poids cuit / poids sec)
+  food('lentilles', 'Lentilles corail', 'legumineuse', 24.0, 48.0, 1.5, [], ['fec_repas'], { cooked: 2.3 }),
+  food('lentilles_vertes', 'Lentilles vertes', 'legumineuse', 24.5, 46.0, 1.5, [], ['fec_repas'], { cooked: 2.5 }),
+  food('pois_chiches', 'Pois chiches', 'legumineuse', 20.5, 44.0, 5.5, [], ['fec_repas'], { cooked: 2.2 }),
+  food('haricots_rouges', 'Haricots rouges', 'legumineuse', 22.0, 43.0, 1.2, [], ['fec_repas'], { cooked: 2.5 }),
+  // ---- Féculents (valeurs pour 100 g crus / secs ; « cooked » = poids cuit / poids cru, à vérifier)
+  food('riz_basmati', 'Riz basmati', 'feculent', 8.0, 78.0, 0.8, [], ['fec_repas'], { cooked: 2.6 }),
+  food('riz_complet', 'Riz complet', 'feculent', 8.0, 73.0, 2.5, [], ['fec_repas'], { cooked: 2.5 }),
+  food('pates', 'Pâtes blanches', 'feculent', 12.5, 71.0, 1.5, ['gluten'], ['fec_repas'], { cooked: 2.3 }),
+  food('pates_completes', 'Pâtes complètes', 'feculent', 13.0, 64.0, 2.5, ['gluten'], ['fec_repas'], { cooked: 2.3 }),
+  food('pates_sg', 'Pâtes sans gluten riz / maïs', 'feculent', 7.5, 77.0, 1.5, [], ['fec_repas'], { cooked: 2.3 }),
+  food('quinoa', 'Quinoa', 'feculent', 13.5, 60.0, 6.0, [], ['fec_repas'], { cooked: 2.7 }),
+  food('semoule', 'Semoule de blé', 'feculent', 12.0, 72.0, 1.5, ['gluten'], ['fec_repas'], { cooked: 2.3 }),
+  food('boulgour', 'Boulgour', 'feculent', 12.0, 69.0, 1.5, ['gluten'], ['fec_repas'], { cooked: 2.5 }),
+  food('sarrasin', 'Sarrasin décortiqué', 'feculent', 12.0, 70.0, 3.0, [], ['fec_repas'], { cooked: 2.5 }),
+  food('polenta', 'Polenta', 'feculent', 8.0, 76.0, 1.5, [], ['fec_repas'], { cooked: 4.0 }),
+  food('pdt', 'Pomme de terre', 'feculent', 2.0, 16.5, 0.1, [], ['fec_repas'], { min: 80, max: 700, cooked: 1.0 }),
+  food('patate_douce', 'Patate douce', 'feculent', 1.6, 17.0, 0.1, [AI], ['fec_repas'], { min: 80, max: 700, cooked: 1.0 }),
   food('flocons', "Flocons d'avoine", 'feculent', 13.5, 58.7, 7.0, ['gluten'], ['gluc_pdj', 'gluc_collation']),
   food('flocons_sg', "Flocons d'avoine sans gluten", 'feculent', 13.5, 58.7, 7.0, [], ['gluc_pdj', 'gluc_collation']),
   food('creme_riz', 'Crème de riz (sèche)', 'feculent', 7.0, 80.0, 1.0, [], ['pre_creme_riz', 'gluc_pdj'], { min: 10, max: 120 }),

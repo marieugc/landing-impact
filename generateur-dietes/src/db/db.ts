@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import { DEFAULT_FOODS } from '../engine/foods';
+import { DEFAULT_FOODS, LEGACY_NAMES } from '../engine/foods';
 import { mergeSettings, type Settings } from '../engine/settings';
 import type { Diet, Food, Student, WeightEntry } from '../engine/types';
 
@@ -20,7 +20,25 @@ export class BootyFlowDB extends Dexie {
       foods: 'id, name, category',
       settings: 'key',
     });
+    // v2 : féculents en poids cuit (coefficient cuit / cru ajouté aux aliments par défaut)
+    this.version(2)
+      .stores({})
+      .upgrade((tx) =>
+        tx
+          .table('foods')
+          .toCollection()
+          .modify((f: Food) => Object.assign(f, upgradeFood(f))),
+      );
   }
+}
+
+const DEFAULTS_BY_ID = new Map(DEFAULT_FOODS.map((f) => [f.id, f]));
+
+/** Ajoute le coefficient cuit / cru aux aliments par défaut d'une ancienne base (noms personnalisés conservés). */
+export function upgradeFood(f: Food): Food {
+  const def = DEFAULTS_BY_ID.get(f.id);
+  if (!def || f.custom || !def.cooked || f.cooked !== undefined) return f;
+  return { ...f, cooked: def.cooked, name: f.name === LEGACY_NAMES[f.id] ? def.name : f.name };
 }
 
 export const db = new BootyFlowDB();
@@ -106,7 +124,7 @@ export async function importBackup(data: unknown, d: BootyFlowDB = db): Promise<
     await d.students.bulkPut(b.students);
     await d.diets.bulkPut(b.diets);
     await d.weights.bulkPut(b.weights);
-    await d.foods.bulkPut(b.foods);
+    await d.foods.bulkPut(b.foods.map(upgradeFood));
     await d.settings.bulkPut(b.settings);
   });
 }

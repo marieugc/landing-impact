@@ -12,9 +12,32 @@ export function macros(p: number, c: number, f: number): Macros {
   return { p, c, f, kcal: kcalOf(p, c, f) };
 }
 
-/** Poids en grammes d'une quantité (unités converties pour les œufs / fruits entiers). */
-export function gramsOf(food: Food, qty: number): number {
+/** Coefficient poids cuit / poids cru actif (1 si l'aliment est pesé cru / sec). */
+export function cookFactor(food: Food): number {
+  return food.weighedCooked && food.cooked ? food.cooked : 1;
+}
+
+/** Poids affiché dans l'assiette : grammes cuits si pesé cuit, unités converties en grammes. */
+export function servedGramsOf(food: Food, qty: number): number {
   return food.unitWeight ? qty * food.unitWeight : qty;
+}
+
+/** Poids cru / sec équivalent (base des valeurs nutritionnelles et de la liste de courses). */
+export function gramsOf(food: Food, qty: number): number {
+  return servedGramsOf(food, qty) / cookFactor(food);
+}
+
+/** Quantité (dans l'unité de l'aliment) correspondant à un poids cru / sec. */
+export function qtyFromRawGrams(food: Food, rawGrams: number): number {
+  return food.unitWeight ? rawGrams / food.unitWeight : rawGrams * cookFactor(food);
+}
+
+/** Les féculents et légumineuses passent en poids cuit (la crème de riz et les flocons restent secs). */
+export function withCookedMode(foods: Food[], cookedMode: boolean): Food[] {
+  return foods.map((f) => {
+    const { weighedCooked: _ignored, ...rest } = f;
+    return cookedMode && f.cooked ? { ...rest, weighedCooked: true } : rest;
+  });
 }
 
 export function foodMacros(food: Food, qty: number): Macros {
@@ -60,7 +83,10 @@ export function roundToStep(food: Food, qty: number): number {
 
 /** Bornes de quantité d'un aliment (g, ou unités). */
 export function boundsOf(food: Food): { min: number; max: number; minUsed: number } {
-  const def = defaultBounds(food);
+  const raw = defaultBounds(food);
+  // bornes par défaut exprimées en cru : converties en poids cuit si besoin
+  const k = cookFactor(food);
+  const def = k === 1 ? raw : { min: Math.round((raw.min * k) / 5) * 5, max: Math.round((raw.max * k) / 5) * 5 };
   const min = food.min ?? def.min;
   return { min, max: food.max ?? def.max, minUsed: min > 0 ? min : minIfUsed(food) };
 }
@@ -117,8 +143,10 @@ export function formatQty(item: MealItem): string {
   if (f.unitWeight) {
     const label = f.unitLabel ?? 'unité';
     const plural = item.qty > 1 && !label.endsWith('s') ? label + 's' : label;
-    return `${item.qty} ${plural} (${Math.round(gramsOf(f, item.qty))} g)`;
+    return `${item.qty} ${plural} (${Math.round(servedGramsOf(f, item.qty))} g)`;
   }
+  if (f.weighedCooked) return `${Math.round(item.qty)} g cuit`;
+  if (f.cooked) return `${Math.round(item.qty)} g cru`;
   return `${Math.round(item.qty)} g`;
 }
 

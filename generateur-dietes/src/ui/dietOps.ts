@@ -1,5 +1,5 @@
 import { generateDays, isDayOk, regenerateMeal, rebalanceDay, selectVariant, type GenContext } from '../engine/generator';
-import { gramsOf, roundToStep, stepOf } from '../engine/nutrition';
+import { roundToStep, servedGramsOf, stepOf, withCookedMode } from '../engine/nutrition';
 import { createRng, randomSeed } from '../engine/random';
 import type { Settings } from '../engine/settings';
 import { computeTargets, type TargetResult } from '../engine/targets';
@@ -40,8 +40,13 @@ export function applyTargets(diet: Diet, targets: TargetResult): Diet {
   return diet;
 }
 
+/** Aliments tels que le générateur les utilise (féculents en poids cuit si le réglage est actif). */
+export function foodsForGeneration(foods: Food[], settings: Settings): Food[] {
+  return withCookedMode(foods, settings.cookedStarches);
+}
+
 export function makeCtx(diet: Diet, foods: Food[], settings: Settings): GenContext {
-  return { foods, options: diet.options, settings, rng: createRng(randomSeed()) };
+  return { foods: foodsForGeneration(foods, settings), options: diet.options, settings, rng: createRng(randomSeed()) };
 }
 
 export function generateAll(diet: Diet, targets: TargetResult, ctx: GenContext): Diet {
@@ -76,7 +81,8 @@ export const mealActions = {
   },
   setFood(day: DayPlan, mi: number, ii: number, food: Food) {
     const it = day.meals[mi].variants[day.meals[mi].selected].items[ii];
-    const grams = gramsOf(it.food, it.qty);
+    // on garde le poids dans l'assiette (ex. 200 g de riz cuit -> 200 g de pâtes cuites)
+    const grams = servedGramsOf(it.food, it.qty);
     it.food = { ...food };
     it.qty = food.unitWeight ? Math.max(1, Math.round(grams / food.unitWeight)) : Math.max(stepOf(food), roundToStep(food, grams));
     it.manual = true;

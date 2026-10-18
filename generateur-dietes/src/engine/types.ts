@@ -78,6 +78,10 @@ export interface Food {
   /** poids d'une unité (œuf, fruit entier) : la quantité est alors un nombre d'unités */
   unitWeight?: number;
   unitLabel?: string;
+  /** coefficient poids cuit / poids cru (riz, pâtes, légumineuses…) */
+  cooked?: number;
+  /** la quantité est exprimée en poids cuit (valeurs nutritionnelles toujours pour 100 g crus) */
+  weighedCooked?: boolean;
   /** bornes de quantité (en g, ou en unités si unitWeight) */
   min?: number;
   max?: number;
@@ -87,7 +91,7 @@ export interface Food {
 /** Ligne d'un repas. L'aliment est copié pour que l'historique ne change pas si la base est modifiée. */
 export interface MealItem {
   food: Food;
-  /** grammes, ou nombre d'unités si food.unitWeight */
+  /** grammes (cuits si food.weighedCooked), ou nombre d'unités si food.unitWeight */
   qty: number;
   /** modifié à la main : le rééquilibrage n'y touche pas */
   manual?: boolean;
