@@ -7,6 +7,6 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   base: './',
   plugins: [react()],
-  build: { outDir: '../dietes', emptyOutDir: true },
+  build: { outDir: '../dietes', emptyOutDir: true, chunkSizeWarningLimit: 900 },
   test: { environment: 'node' },
 });

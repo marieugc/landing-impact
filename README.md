@@ -43,3 +43,9 @@ Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/forma
 Outil Claude Code (commandes slash + prompts Markdown) qui transforme les transcriptions d'appels de closing en scripts
 de Reels / Shorts, dans [`booty-flow-contenu/`](booty-flow-contenu/). Mode d'emploi : [`booty-flow-contenu/CLAUDE.md`](booty-flow-contenu/CLAUDE.md).
 Les transcriptions et analyses réelles ne sont jamais versionnées (`.gitignore`).
+
+## Générateur de diètes « Booty Flow » 🥗💜
+
+Logiciel de création des plans alimentaires des élèves (macros calculées, 3 variantes par repas, verrouillage,
+liste de courses, export PDF, sauvegarde). Code source et mode d'emploi : [`generateur-dietes/`](generateur-dietes/README.md).
+Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/dietes/` (les données restent dans ton navigateur).
