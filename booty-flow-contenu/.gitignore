@@ -1,0 +1,9 @@
+# Données de vraies personnes : ne jamais les publier (ce dépôt est servi par GitHub Pages)
+transcripts/*
+!transcripts/.gitkeep
+!transcripts/exemple.txt
+
+# Les analyses contiennent les citations exactes des prospects
+analyses/*
+!analyses/.gitkeep
+!analyses/*-exemple.md
