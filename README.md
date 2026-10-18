@@ -37,3 +37,9 @@ d'exercices filtrable, techniques d'intensité, périodisation (graphique Chart.
 de volume, générateur de séance, quiz et checklist. Progression sauvegardée dans le navigateur, version imprimable (PDF).
 Toutes les données (exercices, techniques, repères de volume, programmes, quiz) sont dans le premier `<script>` du fichier.
 Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/formation-coach-fessiers/`
+
+## Générateur de contenu « Booty Flow » 🎬
+
+Outil Claude Code (commandes slash + prompts Markdown) qui transforme les transcriptions d'appels de closing en scripts
+de Reels / Shorts, dans [`booty-flow-contenu/`](booty-flow-contenu/). Mode d'emploi : [`booty-flow-contenu/CLAUDE.md`](booty-flow-contenu/CLAUDE.md).
+Les transcriptions et analyses réelles ne sont jamais versionnées (`.gitignore`).

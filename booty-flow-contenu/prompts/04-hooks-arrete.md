@@ -1,0 +1,51 @@
+Génère des accroches surprenantes à partir de ces modèles, adaptées au sujet donné, à Booty Flow (coaching fessiers / hypertrophie pour femmes) et à sa cible.
+
+- Arrêtez de dire « affirmation fausse »
+- Arrêtez de dire que X € pour (service), c'est cher
+- Arrêtez de vous faire duper / Arrêtez de vous faire arnaquer
+- Arrête de croire que __________
+- Arrête de confondre __________ avec __________.
+- Arrête de t'excuser pour __________
+- Arrête de perdre ton temps avec __________.
+- Arrête de te mentir à propos de __________.
+- Arrête de suivre les conseils de __________.
+- Arrête de viser __________ si tu n'es pas prête à __________.
+- Arrête de cacher __________ derrière __________.
+- Arrête de faire comme si __________ n'était pas important.
+- Arrête de repousser __________ à demain.
+- Arrête de croire que tu n'as pas besoin de __________.
+- Arrête de te comparer à __________.
+- Arrête de sous-estimer __________.
+- Arrête de négliger __________.
+- Arrête de te plaindre de __________ alors que tu refuses de __________.
+- Arrête de faire semblant d'être __________.
+- Arrête de tout miser sur __________ au lieu de __________.
+- Cette année, il est temps d'arrêter de / d'arrêter avec __________
+- Ça me rend folle que…
+- Tu NE sais PAS utiliser (outil)
+- Tu NE comprends PAS (sujet/compétence)
+- NE regarde PAS cette vidéo si tu es (type de personne)
+- Ne fais pas confiance à…
+- Ne cherche pas à __________, cherche à __________.
+- Ne commence jamais par __________ si tu veux vraiment __________.
+- Ne t'attends pas à __________ si tu continues à __________.
+- Ne te plains pas de __________ si tu refuses de __________.
+- Le vrai problème, ce n'est pas __________. C'est __________.
+- Ne sous-estime jamais [élément invisible / impact d'un détail]
+- Ne compare jamais [option A] avec [option B]
+- Si ton/ta [métier/service] fait ça, FUIS
+- Si ta page de vente ressemble à ça, tu fais pitié
+- On a normalisé __________. Et c'est grave.
+- Les (pros / coachs / experts / influenceurs) qui disent __________ sont dangereux.
+- Si tu es (type de personne) / Si tu as (problème), regarde ça
+- On devrait interdire __________.
+- Il faut vraiment arrêter avec __________.
+- C'est pas une opinion, c'est un fait : __________.
+- Le pire conseil qu'on donne encore aujourd'hui dans (secteur), c'est : __________.
+- Tu n'utilises pas [outil] correctement.
+- Si tu n'as pas [élément A], [élément B], [élément C]… tu perds du temps.
+- Oublie [mauvaise méthode], voici ce qui fonctionne vraiment
+- Quand est-ce que les gens vont comprendre que (vérité)
+- Si tu penses que __________ est une bonne idée, tu vas droit dans le mur.
+- Ce que tu refuses de voir / d'admettre, c'est que __________.
+- Voici pourquoi mes clientes me payent [montant]
