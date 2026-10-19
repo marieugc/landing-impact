@@ -233,7 +233,11 @@ async function majPastille() {
     const n = await nonLus(coach ? null : profil.id, coach);
     poserPastille(racine.querySelector(coach ? 'a[href="#/coach/messages"]' : '[data-onglet="chat"]'), n,
       (x) => `${pluriel(x, 'message')} non lu${x > 1 ? 's' : ''}`);
-    if (!coach) {
+    if (coach) {
+      const posings = await api.listVideos({ type: 'posing', statut: 'a_corriger' });
+      poserPastille(racine.querySelector('a[href="#/coach/competitrices"]'), posings.length,
+        (x) => `${pluriel(x, 'vidéo')} de posing à corriger`);
+    } else {
       const nouvelles = (await nouveautes(profil)).length;
       poserPastille(racine.querySelector('[data-onglet="mouvement"]'), nouvelles,
         (x) => `${pluriel(x, 'nouvelle vidéo')} dans la vidéothèque`);

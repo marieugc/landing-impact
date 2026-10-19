@@ -23,6 +23,13 @@ function duree(s) {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
+// Lecteur d'un vocal de la coach (retour de bilan ou correction vidéo), chargé par brancherRetours
+export function vocalRetour(chemin, secondes) {
+  if (!chemin) return '';
+  return `<div class="vocal">${icone('micro', 16)}<audio controls preload="metadata" data-audio-retour="${esc(chemin)}"></audio>
+      ${secondes ? `<small>${duree(secondes)}</small>` : ''}</div>`;
+}
+
 // Bloc « Retour de ta coach » sous un bilan
 export function retourBilanHtml(b, { pourCoach = false } = {}) {
   if (!b.retour_le) return '';
@@ -30,8 +37,7 @@ export function retourBilanHtml(b, { pourCoach = false } = {}) {
   return `<div class="retour-bilan">
     <div class="surtitre-carte">${pourCoach ? 'TON RETOUR' : 'RETOUR DE TA COACH'} · ${esc(dateCourte(b.retour_le).toUpperCase())}</div>
     ${b.retour ? `<p class="texte programme-texte">${esc(b.retour)}</p>` : ''}
-    ${b.retour_audio ? `<div class="vocal">${icone('micro', 16)}<audio controls preload="metadata" data-audio-retour="${esc(b.retour_audio)}"></audio>
-      ${b.retour_audio_duree ? `<small>${duree(b.retour_audio_duree)}</small>` : ''}</div>` : ''}
+    ${vocalRetour(b.retour_audio, b.retour_audio_duree)}
     ${photos.length ? `<div class="grille-photos-retour">${photos.map((c) =>
       `<button type="button" class="photo-cadre photo-retour" data-chemin="${esc(c)}" aria-label="Agrandir la photo">Photo</button>`).join('')}</div>` : ''}
   </div>`;

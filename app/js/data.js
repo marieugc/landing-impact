@@ -191,11 +191,13 @@ const demo = {
       statut: 'a_corriger', retour: null, created_at: new Date().toISOString() });
     ecrireDemo(d);
   },
-  async correctVideo(vid, retour, fichier) {
+  async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false } = {}) {
     const d = lireDemo();
     const v = d.videos.find((x) => x.id === vid);
     Object.assign(v, { retour, statut: 'corrige', corrige_le: new Date().toISOString() });
     if (fichier) v.retour_chemin = garderFichier(fichier);
+    if (audio) Object.assign(v, { retour_audio: garderFichier(audio), retour_audio_duree: duree || null });
+    else if (supprimerAudio) Object.assign(v, { retour_audio: null, retour_audio_duree: null });
     ecrireDemo(d);
   },
 
@@ -410,9 +412,11 @@ const reel = {
     verifier(await (await client()).from('videos').insert({ eleve_id: eleveId, type, exercice, chemin }));
   },
   // La vidéo de correction est rangée dans le dossier de l'élève pour qu'elle puisse la voir
-  async correctVideo(vid, retour, fichier, eleveId) {
+  async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false } = {}) {
     const maj = { retour, statut: 'corrige', corrige_le: new Date().toISOString() };
     if (fichier) maj.retour_chemin = await envoyerFichier(eleveId, 'corrections', fichier);
+    if (audio) Object.assign(maj, { retour_audio: await envoyerFichier(eleveId, 'corrections', audio), retour_audio_duree: duree || null });
+    else if (supprimerAudio) Object.assign(maj, { retour_audio: null, retour_audio_duree: null });
     verifier(await (await client()).from('videos').update(maj).eq('id', vid));
   },
 
