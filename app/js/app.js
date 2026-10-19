@@ -70,7 +70,23 @@ async function mettreAJour() {
   location.reload();
 }
 window.addEventListener('load', verifierMiseAJour);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) verifierMiseAJour(); });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) return;
+  verifierMiseAJour();
+  rafraichirProfil();
+});
+
+// Une app installée reste ouverte en arrière-plan : au retour, on recharge le profil pour voir
+// tout de suite ce que la coach a changé (onglet Posing, objectif, semaine…)
+async function rafraichirProfil() {
+  if (!profil) return;
+  try {
+    const frais = await api.getProfile(profil.id);
+    if (!frais || JSON.stringify(frais) === JSON.stringify(profil)) return;
+    profil = frais;
+    if (!document.querySelector('.fenetre')) afficher();
+  } catch (e) { /* hors ligne : on garde le profil actuel */ }
+}
 
 // ───────────── Écrans de connexion ─────────────
 function bandeauDemo() {
