@@ -4,7 +4,7 @@ import {
   esc, icone, VERSION_APP, dateCourte, joursAvant, bilanEnRetard, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe, compresserImage
 } from './ui.js';
-import { retourBilanHtml, brancherRetours } from './bilans.js';
+import { retourBilanHtml, brancherRetours, vocalRetour } from './bilans.js';
 import { enregistreurVocal } from './vocal.js';
 import { lireMacrosPdf, kcalDepuisMacros } from './macros.js';
 import { afficherPhotos, blocCharges } from './eleve.js';
@@ -51,7 +51,9 @@ function titre(texte, action = '') {
 }
 
 function statutEleve(e, aCorriger, bilans) {
-  if (aCorriger.some((v) => v.eleve_id === e.id)) return ['Vidéo à corriger', ORANGE];
+  const siennes = aCorriger.filter((v) => v.eleve_id === e.id);
+  if (siennes.some((v) => v.type !== 'posing')) return ['Vidéo à corriger', ORANGE];
+  if (siennes.length) return ['Posing à corriger', ORANGE];
   if (bilans.some((b) => b.eleve_id === e.id && !b.lu)) return ['Bilan reçu', VERT];
   if (e.prochain_bilan && bilanEnRetard(e.prochain_bilan, bilans.filter((b) => b.eleve_id === e.id))) return ['Bilan en retard', ORANGE];
   return ['À jour', GRIS];
@@ -67,6 +69,7 @@ async function tableau(racine, profil) {
     api.listEleves(), api.listVideos({ statut: 'a_corriger' }), api.listBilans()
   ]);
   const nonLus = bilans.filter((b) => !b.lu).length;
+  const posings = aCorriger.filter((v) => v.type === 'posing').length;
   const stat = (libelle, valeur, ic, lien) => `<a href="${lien}" class="carte stat">
     <div class="ligne-entre"><span class="petit">${libelle}</span>${icone(ic, 20, 'var(--accent)')}</div>
     <strong>${valeur}</strong></a>`;
@@ -86,9 +89,9 @@ async function tableau(racine, profil) {
     `<button class="bouton-principal compact" id="ajouter">${icone('plus', 18)}AJOUTER UNE ÉLÈVE</button>`) + `
     <div class="grille-stats">
       ${stat('Élèves actives', eleves.length, 'eleves', '#/coach')}
-      ${stat('Vidéos à corriger', aCorriger.length, 'video', '#/coach/videos')}
+      ${stat('Vidéos à corriger', aCorriger.length - posings, 'video', '#/coach/videos')}
       ${stat('Bilans reçus', nonLus, 'check', '#/coach/bilans')}
-      ${stat('Compétitrices', eleves.filter((e) => e.competitrice).length, 'etoile', '#/coach/competitrices')}
+      ${stat('Posing à corriger', posings, 'etoile', '#/coach/competitrices')}
     </div>
     <section class="carte tableau">
       <div class="tableau-tete"><span>ÉLÈVE</span><span>OBJECTIF</span><span>SEMAINE</span><span>STATUT</span><span></span></div>
@@ -280,7 +283,10 @@ function carteCorrection(v, avecPrenom) {
         ${corrige ? badge('Corrigé', VERT) : badge(v.type === 'posing' ? 'Posing à corriger' : 'À corriger', ORANGE)}</div>
       <div class="petit">Envoyée le ${dateCourte(v.created_at)}</div>
       <form class="formulaire-ligne" data-corriger="${esc(v.id)}">
-        <textarea name="retour" rows="2" placeholder="Ton retour : placement, amplitude, respiration…" aria-label="Ton retour">${esc(v.retour || '')}</textarea>
+        <textarea name="retour" rows="2" placeholder="${v.type === 'posing' ? 'Ton retour : transitions, sourire, angle, tenue de la pose…' : 'Ton retour : placement, amplitude, respiration…'}" aria-label="Ton retour">${esc(v.retour || '')}</textarea>
+        ${v.retour_audio ? `<div class="vocal-existant">${vocalRetour(v.retour_audio, v.retour_audio_duree)}
+          <label class="case petit"><input type="checkbox" name="suppr_audio"><span>Supprimer ce vocal</span></label></div>` : ''}
+        <div class="zone-vocal-correction" data-vocal-correction></div>
         <label class="choix-video">${icone('video', 18, 'var(--accent)')}<span>${v.retour_chemin ? 'Remplacer ma vidéo de correction' : 'Ajouter une vidéo de correction (facultatif)'}</span>
           <input type="file" name="fichier" accept="video/*"></label>
         <div class="actions-correction">
@@ -311,24 +317,32 @@ function brancherCorrections(zone, videos, apres) {
     entree.parentElement.classList.toggle('choisie', !!choisie);
     if (choisie) entree.previousElementSibling.textContent = choisie.name;
   }));
-  zone.querySelectorAll('[data-corriger]').forEach((f) => f.addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    const v = videos.find((x) => x.id === f.dataset.corriger);
-    const d = new FormData(f);
-    const retour = d.get('retour').trim();
-    const fichier = d.get('fichier')?.size ? d.get('fichier') : null;
-    if (!retour && !fichier && !v.retour_chemin) {
-      toast('Écris un retour ou ajoute une vidéo de correction.', true);
-      return;
-    }
-    if (fichier && fichier.size > 50 * 1024 * 1024) {
-      toast('Vidéo trop lourde (50 Mo max). Coupe-la ou réduis la qualité.', true);
-      return;
-    }
-    await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', () => api.correctVideo(v.id, retour, fichier, v.eleve_id));
-    toast('Correction envoyée.');
-    apres();
-  }));
+  brancherRetours(zone);
+  zone.querySelectorAll('[data-corriger]').forEach((f) => {
+    const vocal = enregistreurVocal(f.querySelector('[data-vocal-correction]'));
+    f.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const v = videos.find((x) => x.id === f.dataset.corriger);
+      const d = new FormData(f);
+      const retour = d.get('retour').trim();
+      const fichier = d.get('fichier')?.size ? d.get('fichier') : null;
+      const audio = vocal.fichier();
+      const supprimerAudio = d.get('suppr_audio') === 'on';
+      const gardeAudio = v.retour_audio && !supprimerAudio;
+      if (!retour && !fichier && !audio && !v.retour_chemin && !gardeAudio) {
+        toast('Écris un retour, enregistre un vocal ou ajoute une vidéo de correction.', true);
+        return;
+      }
+      if (fichier && fichier.size > 50 * 1024 * 1024) {
+        toast('Vidéo trop lourde (50 Mo max). Coupe-la ou réduis la qualité.', true);
+        return;
+      }
+      await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', () =>
+        api.correctVideo(v.id, retour, fichier, v.eleve_id, { audio, duree: vocal.duree(), supprimerAudio }));
+      toast('Correction envoyée.');
+      apres();
+    });
+  });
 }
 
 async function ficheVideos(zone, e, recharger) {
@@ -526,7 +540,8 @@ async function ficheCompetition(zone, e, recharger) {
 // ───────────── Pages du menu ─────────────
 let voirCorrigees = false;
 async function videos(racine, profil) {
-  const liste = await api.listVideos(voirCorrigees ? {} : { statut: 'a_corriger' });
+  // Les vidéos de posing se corrigent dans la page Compétitrices
+  const liste = await api.listVideos(voirCorrigees ? { type: 'mouvement' } : { type: 'mouvement', statut: 'a_corriger' });
   racine.innerHTML = page(profil, 'coach/videos', titre('Vidéos à corriger') + `
     <div class="filtres">
       <button class="filtre${voirCorrigees ? '' : ' actif'}" data-voir="non">À corriger</button>
@@ -551,9 +566,13 @@ async function bilans(racine, profil) {
   afficherPhotos(racine);
 }
 
+let voirPosingsCorriges = false;
 async function competitrices(racine, profil) {
   const eleves = (await api.listEleves()).filter((e) => e.competitrice);
-  const compets = await Promise.all(eleves.map((e) => api.getCompetition(e.id)));
+  const [compets, posings] = await Promise.all([
+    Promise.all(eleves.map((e) => api.getCompetition(e.id))),
+    api.listVideos(voirPosingsCorriges ? { type: 'posing' } : { type: 'posing', statut: 'a_corriger' })
+  ]);
   const cartes = eleves.map((e, i) => {
     const c = compets[i];
     const j = c?.date_compet ? joursAvant(c.date_compet) : null;
@@ -565,8 +584,20 @@ async function competitrices(racine, profil) {
       ${j !== null ? `<div class="compte-rebours"><div>${j >= 0 ? `J-${j}` : 'Fait'}</div><small>AVANT LA SCÈNE</small></div>` : ''}
     </a>`;
   }).join('');
-  racine.innerHTML = page(profil, 'coach/competitrices', titre('Compétitrices') +
-    `<div class="pile">${cartes || '<p class="vide">Aucune compétitrice. Coche « Compétitrice » dans la fiche d\'une élève.</p>'}</div>`);
+  racine.innerHTML = page(profil, 'coach/competitrices', titre('Compétitrices') + `
+    <h2 class="sous-titre-page">Posing à corriger</h2>
+    <div class="filtres">
+      <button class="filtre${voirPosingsCorriges ? '' : ' actif'}" data-voir="non">À corriger</button>
+      <button class="filtre${voirPosingsCorriges ? ' actif' : ''}" data-voir="oui">Toutes</button>
+    </div>
+    <div class="pile">${posings.map((v) => carteCorrection(v, true)).join('') || '<p class="vide">Aucune vidéo de posing à corriger.</p>'}</div>
+    <h2 class="sous-titre-page">Compétitions</h2>
+    <div class="pile">${cartes || '<p class="vide">Aucune compétitrice. Coche « Compétitrice » dans la fiche d\'une élève.</p>'}</div>`);
+  racine.querySelectorAll('[data-voir]').forEach((b) => b.addEventListener('click', () => {
+    voirPosingsCorriges = b.dataset.voir === 'oui';
+    competitrices(racine, profil);
+  }));
+  brancherCorrections(racine, posings, () => competitrices(racine, profil));
 }
 
 async function plansNutrition(racine, profil) {

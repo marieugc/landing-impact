@@ -523,3 +523,9 @@ button.carte-biblio:hover, .carte-biblio-media:hover .biblio-vignette { border-c
   .correction { flex-direction: column; }
   .correction .vignette { width: 100%; height: 64px; }
 }
+
+/* Compétitrices : sections « Posing à corriger » et « Compétitions » */
+.sous-titre-page { font-family: var(--titre); font-size: 18px; font-weight: 700; margin: 8px 0 -4px; }
+/* Vocal dans la zone de correction vidéo */
+.vocal-existant { display: flex; flex-direction: column; gap: 6px; }
+.zone-vocal-correction:empty { display: none; }

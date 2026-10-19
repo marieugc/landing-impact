@@ -69,6 +69,9 @@ create table if not exists public.videos (
 
 -- Vidéo de correction de la coach (ajoutée après la première version)
 alter table public.videos add column if not exists retour_chemin text;
+-- Vocal de correction de la coach (mouvement et posing)
+alter table public.videos add column if not exists retour_audio text;
+alter table public.videos add column if not exists retour_audio_duree int;
 
 -- 4. Bilans hebdomadaires
 create table if not exists public.bilans (

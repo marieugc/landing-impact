@@ -6,7 +6,7 @@ import {
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { conversation } from './chat.js';
-import { retourBilanHtml, brancherRetours, retourEstNouveau, marquerRetoursVus } from './bilans.js';
+import { retourBilanHtml, brancherRetours, retourEstNouveau, marquerRetoursVus, vocalRetour } from './bilans.js';
 import { carteProgramme, brancherFichiers, estNouveau, nouveauxProgrammes, marquerTrainingVu } from './programmes.js';
 import { CATEGORIES, nouveautes, estNouvelle, vignette, chargerMiniatures, ouvrirVideo } from './videotheque.js';
 
@@ -183,12 +183,14 @@ function carteVideo(v) {
       <div class="ligne-entre"><strong>${esc(v.exercice)}</strong>${corrige ? badge('Corrigé', VERT) : badge('À corriger', ORANGE)}</div>
       <div class="petit">Envoyée le ${dateCourte(v.created_at)}</div>
       ${corrige && v.retour ? `<p class="texte-video">« ${esc(v.retour)} »</p>` : ''}
+      ${corrige ? vocalRetour(v.retour_audio, v.retour_audio_duree) : ''}
       ${!corrige ? '<p class="texte-video">En attente du retour de ta coach.</p>' : ''}
       ${v.retour_chemin ? `<button class="bouton-contour compact" data-correction="${esc(v.id)}">${icone('lecture', 16)}Voir la correction vidéo</button>` : ''}
     </div></article>`;
 }
 
 function brancherLecture(racine, videos) {
+  brancherRetours(racine);
   racine.querySelectorAll('[data-correction]').forEach((b) => b.addEventListener('click', async () => {
     const v = videos.find((x) => x.id === b.dataset.correction);
     const url = await api.mediaUrl(v.retour_chemin);
