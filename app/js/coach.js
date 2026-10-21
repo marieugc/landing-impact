@@ -9,6 +9,7 @@ import { enregistreurVocal } from './vocal.js';
 import { lireMacrosPdf, kcalDepuisMacros } from './macros.js';
 import { afficherPhotos, blocCharges } from './eleve.js';
 import { conversation } from './chat.js';
+import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from './photos.js';
 import { NOM_VIDEOTHEQUE } from './config.js';
 import { carteProgramme, brancherFichiers } from './programmes.js';
 import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide } from './videotheque.js';
@@ -276,17 +277,27 @@ async function ficheNutrition(zone, e, recharger) {
 // Carte vidéo côté coach : lecture + zone de correction
 function carteCorrection(v, avecPrenom) {
   const corrige = v.statut === 'corrige';
+  const gardees = v.retour_photos || [];
   return `<article class="carte correction">
-    <button class="vignette" data-video="${esc(v.id)}" aria-label="Voir la vidéo ${esc(v.exercice)}">${icone('lecture', 20, '#E3C8FF', true)}</button>
+    ${v.chemin || !v.photos?.length
+    ? `<button class="vignette" data-video="${esc(v.id)}" aria-label="Voir la vidéo ${esc(v.exercice)}">${icone('lecture', 20, '#E3C8FF', true)}</button>`
+    : `<span class="vignette" aria-hidden="true">${icone('photo', 20, '#E3C8FF')}</span>`}
     <div class="correction-texte">
       <div class="ligne-entre"><strong>${avecPrenom ? `${esc(v.prenom || '')} · ` : ''}${esc(v.exercice)}</strong>
         ${corrige ? badge('Corrigé', VERT) : badge(v.type === 'posing' ? 'Posing à corriger' : 'À corriger', ORANGE)}</div>
-      <div class="petit">Envoyée le ${dateCourte(v.created_at)}</div>
+      <div class="petit">Envoyée le ${dateCourte(v.created_at)}${v.photos?.length ? ` · ${v.photos.length} photo${v.photos.length > 1 ? 's' : ''}` : ''}</div>
+      ${grillePhotos(v.photos)}
       <form class="formulaire-ligne" data-corriger="${esc(v.id)}">
         <textarea name="retour" rows="2" placeholder="${v.type === 'posing' ? 'Ton retour : transitions, sourire, angle, tenue de la pose…' : 'Ton retour : placement, amplitude, respiration…'}" aria-label="Ton retour">${esc(v.retour || '')}</textarea>
         ${v.retour_audio ? `<div class="vocal-existant">${vocalRetour(v.retour_audio, v.retour_audio_duree)}
           <label class="case petit"><input type="checkbox" name="suppr_audio"><span>Supprimer ce vocal</span></label></div>` : ''}
         <div class="zone-vocal-correction" data-vocal-correction></div>
+        ${gardees.length ? `<div class="petit">Tes photos envoyées</div>
+        <div class="grille-photos-retour" data-photos-gardees>${gardees.map((c) => `<span class="miniature-retour">
+          <span class="photo-cadre" data-chemin="${esc(c)}">Photo</span>
+          <button type="button" class="retirer" data-retirer="${esc(c)}" aria-label="Retirer cette photo">${icone('croix', 14)}</button></span>`).join('')}</div>` : ''}
+        <label class="choix-video">${icone('photo', 18, 'var(--accent)')}<span>Ajouter des photos (facultatif)</span>
+          <input type="file" name="photos" accept="image/*" multiple></label>
         <label class="choix-video">${icone('video', 18, 'var(--accent)')}<span>${v.retour_chemin ? 'Remplacer ma vidéo de correction' : 'Ajouter une vidéo de correction (facultatif)'}</span>
           <input type="file" name="fichier" accept="video/*"></label>
         <div class="actions-correction">
@@ -312,14 +323,28 @@ function brancherCorrections(zone, videos, apres) {
       ? `<video src="${esc(url)}" controls playsinline class="lecteur"></video>`
       : '<p class="vide">Vidéo indisponible.</p>');
   }));
-  zone.querySelectorAll('.choix-video input').forEach((entree) => entree.addEventListener('change', () => {
+  zone.querySelectorAll('.choix-video input[name=fichier]').forEach((entree) => entree.addEventListener('change', () => {
     const choisie = entree.files[0];
     entree.parentElement.classList.toggle('choisie', !!choisie);
     if (choisie) entree.previousElementSibling.textContent = choisie.name;
   }));
   brancherRetours(zone);
+  chargerPhotos(zone);
   zone.querySelectorAll('[data-corriger]').forEach((f) => {
     const vocal = enregistreurVocal(f.querySelector('[data-vocal-correction]'));
+    const entreePhotos = f.querySelector('[name=photos]');
+    suivreChoixPhotos(entreePhotos, 'Ajouter des photos (facultatif)');
+    let gardees = [...(videos.find((x) => x.id === f.dataset.corriger)?.retour_photos || [])];
+    const zoneGardees = f.querySelector('[data-photos-gardees]');
+    if (zoneGardees) {
+      afficherPhotos(zoneGardees);
+      zoneGardees.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-retirer]');
+        if (!btn) return;
+        gardees = gardees.filter((c) => c !== btn.dataset.retirer);
+        btn.parentElement.remove();
+      });
+    }
     f.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const v = videos.find((x) => x.id === f.dataset.corriger);
@@ -329,16 +354,19 @@ function brancherCorrections(zone, videos, apres) {
       const audio = vocal.fichier();
       const supprimerAudio = d.get('suppr_audio') === 'on';
       const gardeAudio = v.retour_audio && !supprimerAudio;
-      if (!retour && !fichier && !audio && !v.retour_chemin && !gardeAudio) {
-        toast('Écris un retour, enregistre un vocal ou ajoute une vidéo de correction.', true);
+      const choisies = [...entreePhotos.files];
+      if (!retour && !fichier && !audio && !v.retour_chemin && !gardeAudio && !choisies.length && !gardees.length) {
+        toast('Écris un retour, enregistre un vocal, ajoute des photos ou une vidéo de correction.', true);
         return;
       }
       if (fichier && fichier.size > 50 * 1024 * 1024) {
         toast('Vidéo trop lourde (50 Mo max). Coupe-la ou réduis la qualité.', true);
         return;
       }
-      await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', () =>
-        api.correctVideo(v.id, retour, fichier, v.eleve_id, { audio, duree: vocal.duree(), supprimerAudio }));
+      await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', async () =>
+        api.correctVideo(v.id, retour, fichier, v.eleve_id, {
+          audio, duree: vocal.duree(), supprimerAudio, photos: await preparerPhotos(choisies), photosGardees: gardees
+        }));
       toast('Correction envoyée.');
       apres();
     });

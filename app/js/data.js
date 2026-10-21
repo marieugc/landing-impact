@@ -185,16 +185,17 @@ const demo = {
       .map((v) => ({ ...v, prenom: d.profiles.find((p) => p.id === v.eleve_id)?.prenom }))
       .sort((a, b) => b.created_at.localeCompare(a.created_at));
   },
-  async addVideo({ eleveId, type, exercice, file }) {
+  async addVideo({ eleveId, type, exercice, file, photos = [] }) {
     const d = lireDemo();
-    d.videos.push({ id: id(), eleve_id: eleveId, type, exercice, chemin: garderFichier(file),
+    d.videos.push({ id: id(), eleve_id: eleveId, type, exercice, chemin: garderFichier(file), photos: photos.map(garderFichier),
       statut: 'a_corriger', retour: null, created_at: new Date().toISOString() });
     ecrireDemo(d);
   },
-  async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false } = {}) {
+  async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false, photos = [], photosGardees = [] } = {}) {
     const d = lireDemo();
     const v = d.videos.find((x) => x.id === vid);
-    Object.assign(v, { retour, statut: 'corrige', corrige_le: new Date().toISOString() });
+    Object.assign(v, { retour, statut: 'corrige', corrige_le: new Date().toISOString(),
+      retour_photos: [...photosGardees, ...photos.map(garderFichier)] });
     if (fichier) v.retour_chemin = garderFichier(fichier);
     if (audio) Object.assign(v, { retour_audio: garderFichier(audio), retour_audio_duree: duree || null });
     else if (supprimerAudio) Object.assign(v, { retour_audio: null, retour_audio_duree: null });
@@ -246,11 +247,12 @@ const demo = {
       .filter((m) => !eleveId || m.eleve_id === eleveId)
       .sort((a, b) => a.created_at.localeCompare(b.created_at));
   },
-  async sendMessage(eleveId, { deCoach, texte, audio, duree }) {
+  async sendMessage(eleveId, { deCoach, texte, audio, duree, photos = [] }) {
     const d = lireDemo();
     d.messages = d.messages || [];
     d.messages.push({ id: id(), eleve_id: eleveId, de_coach: deCoach, texte: texte || null,
-      audio_chemin: garderFichier(audio), duree: duree || null, lu: false, created_at: new Date().toISOString() });
+      audio_chemin: garderFichier(audio), duree: duree || null, photos: photos.map(garderFichier),
+      lu: false, created_at: new Date().toISOString() });
     ecrireDemo(d);
   },
   async markMessagesLus(eleveId, lecteurEstCoach) {
@@ -407,13 +409,17 @@ const reel = {
     if (statut) q = q.eq('statut', statut);
     return verifier(await q).map((v) => ({ ...v, prenom: v.profiles?.prenom }));
   },
-  async addVideo({ eleveId, type, exercice, file }) {
+  async addVideo({ eleveId, type, exercice, file, photos = [] }) {
     const chemin = await envoyerFichier(eleveId, type, file);
-    verifier(await (await client()).from('videos').insert({ eleve_id: eleveId, type, exercice, chemin }));
+    const cheminsPhotos = [];
+    for (const p of photos) cheminsPhotos.push(await envoyerFichier(eleveId, `${type}-photos`, p));
+    verifier(await (await client()).from('videos').insert({ eleve_id: eleveId, type, exercice, chemin, photos: cheminsPhotos }));
   },
   // La vidéo de correction est rangée dans le dossier de l'élève pour qu'elle puisse la voir
-  async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false } = {}) {
-    const maj = { retour, statut: 'corrige', corrige_le: new Date().toISOString() };
+  async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false, photos = [], photosGardees = [] } = {}) {
+    const nouvelles = [];
+    for (const p of photos) nouvelles.push(await envoyerFichier(eleveId, 'corrections', p));
+    const maj = { retour, statut: 'corrige', corrige_le: new Date().toISOString(), retour_photos: [...photosGardees, ...nouvelles] };
     if (fichier) maj.retour_chemin = await envoyerFichier(eleveId, 'corrections', fichier);
     if (audio) Object.assign(maj, { retour_audio: await envoyerFichier(eleveId, 'corrections', audio), retour_audio_duree: duree || null });
     else if (supprimerAudio) Object.assign(maj, { retour_audio: null, retour_audio_duree: null });
@@ -461,10 +467,12 @@ const reel = {
     if (eleveId) q = q.eq('eleve_id', eleveId);
     return verifier(await q);
   },
-  async sendMessage(eleveId, { deCoach, texte, audio, duree }) {
+  async sendMessage(eleveId, { deCoach, texte, audio, duree, photos = [] }) {
     const audio_chemin = await envoyerFichier(eleveId, 'vocaux', audio);
+    const cheminsPhotos = [];
+    for (const p of photos) cheminsPhotos.push(await envoyerFichier(eleveId, 'photos-messages', p));
     verifier(await (await client()).from('messages').insert({
-      eleve_id: eleveId, de_coach: deCoach, texte: texte || null, audio_chemin, duree: duree || null
+      eleve_id: eleveId, de_coach: deCoach, texte: texte || null, audio_chemin, duree: duree || null, photos: cheminsPhotos
     }));
   },
   async markMessagesLus(eleveId) {

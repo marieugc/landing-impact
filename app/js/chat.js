@@ -3,6 +3,7 @@
 import { api, MODE } from './data.js';
 import { esc, icone, toast, dateCourte } from './ui.js';
 import { formatAudio, versWav, extension } from './vocal.js';
+import { grillePhotos, chargerPhotos, preparerPhotos } from './photos.js';
 
 const RAFRAICHISSEMENT = 5000; // on regarde s'il y a de nouveaux messages toutes les 5 s
 const DUREE_MAX = 180; // un vocal dure 3 minutes maximum
@@ -26,6 +27,7 @@ function bulle(m, moiCoach) {
   return `<div class="bulle ${moi ? 'moi' : 'autre'}">
     ${m.audio_chemin ? `<div class="vocal">${icone('micro', 16)}<audio controls preload="metadata" data-audio="${esc(m.audio_chemin)}"></audio>
       ${m.duree ? `<small>${duree(m.duree)}</small>` : ''}</div>` : ''}
+    ${grillePhotos(m.photos)}
     ${m.texte ? `<p>${esc(m.texte)}</p>` : ''}
     <time>${heure(m.created_at)}${moi && m.lu ? ' · Vu' : ''}</time>
   </div>`;
@@ -58,6 +60,8 @@ export async function conversation(zone, { eleveId, moiCoach, titre, sousTitre =
     <form class="saisie" id="saisie">
       <div class="saisie-texte">
         <textarea name="texte" rows="1" placeholder="Écris ton message…" aria-label="Message"></textarea>
+        <label class="bouton-rond photo-chat" aria-label="Envoyer des photos">${icone('photo', 20)}
+          <input type="file" id="choix-photos" accept="image/*" multiple hidden></label>
         <button type="button" class="bouton-rond micro" id="micro" aria-label="Enregistrer un vocal">${icone('micro', 20)}</button>
         <button type="submit" class="bouton-rond envoyer" aria-label="Envoyer">${icone('avion', 18)}</button>
       </div>
@@ -86,6 +90,7 @@ export async function conversation(zone, { eleveId, moiCoach, titre, sousTitre =
       : `<p class="vide">${moiCoach ? 'Aucun message pour le moment. Écris le premier !' : 'Pose ici toutes tes questions à ta coach, par écrit ou en vocal.'}</p>`;
     await brancherAudios(fil);
     if (forcerBas || etaitEnBas) fil.scrollTop = fil.scrollHeight;
+    chargerPhotos(fil).then(() => { if (forcerBas || etaitEnBas) fil.scrollTop = fil.scrollHeight; });
     if (messages.some((m) => !m.lu && m.de_coach !== moiCoach)) {
       await api.markMessagesLus(eleveId, moiCoach);
       document.dispatchEvent(new CustomEvent('messages-lus'));
@@ -115,6 +120,27 @@ export async function conversation(zone, { eleveId, moiCoach, titre, sousTitre =
     champ.value = '';
     champ.style.height = 'auto';
     try { await envoyer({ texte }); } catch (err) { champ.value = texte; toast(err.message, true); }
+  });
+
+  // Photos : envoyées dès qu'elles sont choisies, avec le texte déjà écrit s'il y en a
+  const choixPhotos = form.querySelector('#choix-photos');
+  choixPhotos.addEventListener('change', async () => {
+    const fichiers = [...choixPhotos.files];
+    choixPhotos.value = '';
+    if (!fichiers.length) return;
+    const texte = champ.value.trim();
+    const bouton = form.querySelector('.photo-chat');
+    bouton.classList.add('envoi');
+    try {
+      const photos = await preparerPhotos(fichiers);
+      if (!photos.length) return;
+      await envoyer({ texte, photos });
+      if (texte) { champ.value = ''; champ.style.height = 'auto'; }
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      bouton.classList.remove('envoi');
+    }
   });
 
   // Vocal
