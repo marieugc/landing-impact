@@ -182,6 +182,13 @@ async function ficheNutrition(zone, e, recharger) {
   const n = (await api.getNutrition(e.id)) || { repas: [] };
   const nb = (nom, libelle, val) => `<label>${libelle}<input name="${nom}" type="number" min="0" value="${val ?? ''}"></label>`;
   zone.innerHTML = `<form class="formulaire carte large" id="form-nutri">
+    ${n.pdf_chemin ? `<div class="pdf-actuel">
+      <div>${icone('doc', 22, 'var(--accent)')}<span><strong>PDF actuel de ${esc(e.prenom)}</strong><span class="petit">Celui que ton élève voit dans son plan nutrition</span></span></div>
+      <div class="pdf-actions">
+        <a class="bouton-principal compact" data-ouvrir="${esc(n.pdf_chemin)}" target="_blank" rel="noopener" aria-disabled="true">${icone('doc', 16)}OUVRIR LE PDF</a>
+        <a class="bouton-contour compact" data-telecharger="${esc(n.pdf_chemin)}" data-nom="${esc(`plan-nutrition-${e.prenom || 'eleve'}.pdf`)}" aria-disabled="true">${icone('telecharger', 16)}Télécharger</a>
+      </div>
+    </div>` : ''}
     <label>Plan complet en PDF ${n.pdf_chemin ? '(un PDF est déjà en ligne, en choisir un autre le remplace)' : '(facultatif)'}<input name="pdf" type="file" accept="application/pdf"></label>
     <p class="petit">Quand tu choisis un PDF, l'app y cherche les calories et les macros et remplit les cases ci-dessous. Vérifie puis enregistre.</p>
     <div id="statut-pdf" class="statut-pdf" hidden></div>
@@ -219,6 +226,8 @@ async function ficheNutrition(zone, e, recharger) {
   }
   ['kcal', 'proteines', 'glucides', 'lipides'].forEach((nom) => champ(nom).addEventListener('input', majIndice));
   majIndice();
+
+  brancherFichiers(zone);
 
   // Lecture des macros dans le PDF choisi
   const statut = zone.querySelector('#statut-pdf');
@@ -635,7 +644,7 @@ async function plansNutrition(racine, profil) {
     const n = plans[i];
     return `<a href="#/coach/eleve/${esc(e.id)}/nutrition" class="tableau-ligne">
       <span class="cellule-nom">${initiale(e.prenom)}<strong>${esc(e.prenom)}</strong></span>
-      <span class="gris">${n ? `${nombre(n.kcal, 0)} kcal` : 'Pas de plan'}</span>
+      <span class="gris">${n ? `${nombre(n.kcal, 0)} kcal${n.pdf_chemin ? ' · PDF' : ''}` : 'Pas de plan'}</span>
       <span class="gris">${n ? `P ${nombre(n.proteines, 0)} · G ${nombre(n.glucides, 0)} · L ${nombre(n.lipides, 0)}` : ''}</span>
       <span class="gris">${n?.ajustement_date ? `Ajusté le ${dateCourte(n.ajustement_date)}` : ''}</span>
       <span class="gris" aria-hidden="true">${icone('chevron', 20)}</span>
