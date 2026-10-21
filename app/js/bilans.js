@@ -1,7 +1,7 @@
 // BILANS : retour de la coach (texte, vocal, photos avant / après), partagé par l'espace coach
 // (rédaction) et l'espace élève (lecture).
 import { api } from './data.js';
-import { esc, icone, dateCourte, fenetre } from './ui.js';
+import { esc, icone, dateCourte } from './ui.js';
 
 // « Nouveau retour » : retour reçu depuis la dernière visite de l'élève sur l'onglet Progrès (par appareil)
 const cleVu = (uid) => `bootyflow-retours-vu-${uid}`;
@@ -43,12 +43,8 @@ export function retourBilanHtml(b, { pourCoach = false } = {}) {
   </div>`;
 }
 
-// Charge les vocaux et rend les photos agrandissables (les photos elles-mêmes sont chargées par afficherPhotos)
+// Charge les vocaux (les photos sont chargées par afficherPhotos, l'agrandissement est géré par photos.js)
 export async function brancherRetours(zone) {
-  zone.querySelectorAll('.photo-retour').forEach((b) => b.addEventListener('click', () => {
-    const img = b.querySelector('img');
-    if (img) fenetre('Photo', `<img src="${esc(img.src)}" alt="" class="photo-agrandie">`);
-  }));
   for (const audio of zone.querySelectorAll('audio[data-audio-retour]')) {
     const url = await api.mediaUrl(audio.dataset.audioRetour);
     if (url) audio.src = url;

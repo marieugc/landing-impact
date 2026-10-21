@@ -6,6 +6,7 @@ import {
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { conversation } from './chat.js';
+import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from './photos.js';
 import { retourBilanHtml, brancherRetours, retourEstNouveau, marquerRetoursVus, vocalRetour } from './bilans.js';
 import { carteProgramme, brancherFichiers, estNouveau, nouveauxProgrammes, marquerTrainingVu } from './programmes.js';
 import { CATEGORIES, nouveautes, estNouvelle, vignette, chargerMiniatures, ouvrirVideo } from './videotheque.js';
@@ -178,12 +179,16 @@ async function training(racine, profil) {
 function carteVideo(v) {
   const corrige = v.statut === 'corrige';
   return `<article class="carte-video">
-    <button class="vignette" data-video="${esc(v.id)}" aria-label="Voir la vidéo ${esc(v.exercice)}">${icone('lecture', 20, '#E3C8FF', true)}</button>
+    ${v.chemin || !v.photos?.length
+    ? `<button class="vignette" data-video="${esc(v.id)}" aria-label="Voir la vidéo ${esc(v.exercice)}">${icone('lecture', 20, '#E3C8FF', true)}</button>`
+    : `<span class="vignette" aria-hidden="true">${icone('photo', 20, '#E3C8FF')}</span>`}
     <div class="carte-video-texte">
       <div class="ligne-entre"><strong>${esc(v.exercice)}</strong>${corrige ? badge('Corrigé', VERT) : badge('À corriger', ORANGE)}</div>
       <div class="petit">Envoyée le ${dateCourte(v.created_at)}</div>
+      ${grillePhotos(v.photos)}
       ${corrige && v.retour ? `<p class="texte-video">« ${esc(v.retour)} »</p>` : ''}
       ${corrige ? vocalRetour(v.retour_audio, v.retour_audio_duree) : ''}
+      ${corrige && v.retour_photos?.length ? `<div class="petit">Photos de ta coach</div>${grillePhotos(v.retour_photos)}` : ''}
       ${!corrige ? '<p class="texte-video">En attente du retour de ta coach.</p>' : ''}
       ${v.retour_chemin ? `<button class="bouton-contour compact" data-correction="${esc(v.id)}">${icone('lecture', 16)}Voir la correction vidéo</button>` : ''}
     </div></article>`;
@@ -191,6 +196,7 @@ function carteVideo(v) {
 
 function brancherLecture(racine, videos) {
   brancherRetours(racine);
+  chargerPhotos(racine);
   racine.querySelectorAll('[data-correction]').forEach((b) => b.addEventListener('click', async () => {
     const v = videos.find((x) => x.id === b.dataset.correction);
     const url = await api.mediaUrl(v.retour_chemin);
@@ -210,20 +216,28 @@ function brancherLecture(racine, videos) {
 function formulaireVideo(profil, type, titre, apres) {
   const f = fenetre(titre, `<form class="formulaire" id="form-video">
       <label>Exercice ou pose<input name="exercice" required placeholder="${type === 'posing' ? 'Ex. : Pose 3 · Dos' : 'Ex. : Hip thrust'}"></label>
-      <label>Ta vidéo<input name="fichier" type="file" accept="video/*" required></label>
-      <p class="petit">Astuce : filme-toi de profil, en entier, avec une bonne lumière.</p>
+      <label>Ta vidéo<input name="fichier" type="file" accept="video/*"></label>
+      <label class="choix-video">${icone('photo', 18, 'var(--accent)')}<span>Ajouter des photos (facultatif)</span>
+        <input type="file" name="photos" accept="image/*" multiple></label>
+      <p class="petit">Astuce : filme-toi de profil, en entier, avec une bonne lumière. Tu peux aussi envoyer seulement des photos.</p>
       <button class="bouton-principal" type="submit">${icone('envoi', 18)}ENVOYER</button>
     </form>`);
+  suivreChoixPhotos(f.querySelector('[name=photos]'), 'Ajouter des photos (facultatif)');
   f.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const donnees = new FormData(e.target);
-    const fichier = donnees.get('fichier');
-    if (fichier.size > 50 * 1024 * 1024) {
+    const fichier = donnees.get('fichier')?.size ? donnees.get('fichier') : null;
+    const choisies = e.target.querySelector('[name=photos]').files;
+    if (!fichier && !choisies.length) {
+      toast('Ajoute ta vidéo ou au moins une photo.', true);
+      return;
+    }
+    if (fichier && fichier.size > 50 * 1024 * 1024) {
       toast('Vidéo trop lourde (50 Mo max). Coupe-la ou réduis la qualité.', true);
       return;
     }
-    await pendant(e.submitter, 'Envoi en cours…', () =>
-      api.addVideo({ eleveId: profil.id, type, exercice: donnees.get('exercice').trim(), file: fichier }));
+    await pendant(e.submitter, 'Envoi en cours…', async () =>
+      api.addVideo({ eleveId: profil.id, type, exercice: donnees.get('exercice').trim(), file: fichier, photos: await preparerPhotos(choisies) }));
     fermerFenetre();
     toast('Vidéo envoyée à ta coach !');
     apres();

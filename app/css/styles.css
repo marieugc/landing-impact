@@ -529,3 +529,11 @@ button.carte-biblio:hover, .carte-biblio-media:hover .biblio-vignette { border-c
 /* Vocal dans la zone de correction vidéo */
 .vocal-existant { display: flex; flex-direction: column; gap: 6px; }
 .zone-vocal-correction:empty { display: none; }
+
+/* Photos dans le chat et les vidéos à corriger */
+.photo-chat { cursor: pointer; }
+.photo-chat.envoi { opacity: 0.5; pointer-events: none; }
+.bulle .grille-photos-retour { grid-template-columns: repeat(2, minmax(0, 120px)); }
+.bulle .photo-retour { aspect-ratio: 1; border-radius: 12px; }
+.carte-video-texte .grille-photos-retour, .correction-texte .grille-photos-retour { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); max-width: 420px; }
+span.vignette { cursor: default; }

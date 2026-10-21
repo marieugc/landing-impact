@@ -72,6 +72,9 @@ alter table public.videos add column if not exists retour_chemin text;
 -- Vocal de correction de la coach (mouvement et posing)
 alter table public.videos add column if not exists retour_audio text;
 alter table public.videos add column if not exists retour_audio_duree int;
+-- Photos jointes : par l'élève avec sa vidéo, par la coach avec sa correction
+alter table public.videos add column if not exists photos jsonb not null default '[]';
+alter table public.videos add column if not exists retour_photos jsonb not null default '[]';
 
 -- 4. Bilans hebdomadaires
 create table if not exists public.bilans (
@@ -135,6 +138,12 @@ create table if not exists public.messages (
   created_at timestamptz not null default now(),
   check (texte is not null or audio_chemin is not null)
 );
+
+-- Photos dans la messagerie : un message peut ne contenir que des photos
+alter table public.messages add column if not exists photos jsonb not null default '[]';
+alter table public.messages drop constraint if exists messages_check;
+alter table public.messages add constraint messages_check
+  check (texte is not null or audio_chemin is not null or jsonb_array_length(photos) > 0);
 create index if not exists messages_conversation on public.messages (eleve_id, created_at);
 
 -- 8. Vidéothèque : vidéos d'explication accessibles à toutes les élèves
