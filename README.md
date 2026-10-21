@@ -49,3 +49,11 @@ Les transcriptions et analyses réelles ne sont jamais versionnées (`.gitignore
 Logiciel de création des plans alimentaires des élèves (macros calculées, 3 variantes par repas, verrouillage,
 liste de courses, export PDF, sauvegarde). Code source et mode d'emploi : [`generateur-dietes/`](generateur-dietes/README.md).
 Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/dietes/` (les données restent dans ton navigateur).
+
+## Programme élève (éditeur + PDF) 💜
+
+Programme d'entraînement personnalisé au style Booty Flow (fond violet néon + logo), dans
+[`programme-eleve/index.html`](programme-eleve/index.html). Bouton « Modifier le programme » : clique sur un texte
+pour le changer, ajoute / supprime / déplace des exercices, supersets (5a + 5b) et séances. « Télécharger en PDF »
+ouvre l'impression (choisir « Enregistrer en PDF », arrière-plans activés). « Sauvegarder (fichier) » / « Ouvrir un
+programme » pour garder un programme par élève. Exemple généré : `programme-eleve/Programme-Anais-BootyFlow.pdf`.
