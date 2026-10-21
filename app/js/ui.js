@@ -2,7 +2,7 @@
 
 // Numéro affiché en bas de l'app : permet de vérifier que le téléphone a bien la dernière version.
 // À augmenter à chaque mise à jour, en même temps que version.json, VERSION dans sw.js et ?v= dans index.html.
-export const VERSION_APP = '20';
+export const VERSION_APP = '21';
 
 // Protège le texte saisi (évite qu'un nom ou un message casse la page)
 export function esc(v) {

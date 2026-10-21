@@ -319,6 +319,7 @@ input[type="date"] { color-scheme: dark; }
 .statut-pdf { padding: 10px 12px; border-radius: 12px; background: var(--carte-2); font-size: 13px; color: var(--texte); display: flex; gap: 8px; align-items: flex-start; }
 .statut-pdf.ok { border: 1px solid var(--vert); }
 .statut-pdf.attention { border: 1px solid var(--orange); }
+.statut-pdf[hidden] { display: none; }
 .rempli-auto { border-color: var(--vert) !important; }
 .indice-kcal { margin: -4px 0 0; }
 .indice-kcal:empty { display: none; }
@@ -537,3 +538,9 @@ button.carte-biblio:hover, .carte-biblio-media:hover .biblio-vignette { border-c
 .bulle .photo-retour { aspect-ratio: 1; border-radius: 12px; }
 .carte-video-texte .grille-photos-retour, .correction-texte .grille-photos-retour { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); max-width: 420px; }
 span.vignette { cursor: default; }
+
+/* Fiche nutrition : PDF actuel de l'élève */
+.pdf-actuel { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 14px; background: var(--carte-2); border: 1px solid var(--bord); }
+.pdf-actuel > div:first-child { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.pdf-actuel > div:first-child > span { display: flex; flex-direction: column; gap: 2px; }
+.pdf-actions { display: flex; flex-wrap: wrap; gap: 8px; }
