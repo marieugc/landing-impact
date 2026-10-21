@@ -153,6 +153,15 @@
     }
     tr.superset td.num span { background: color-mix(in srgb, var(--accent, var(--neon)) 30%, var(--carte-2)); }
     td.exo { font-weight: 700; color: var(--texte); min-width: 150px; }
+    .video {
+      display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; padding: 3px 10px 3px 4px; border-radius: 999px;
+      font-size: 11.5px; font-weight: 700; text-decoration: none; color: var(--texte);
+      background: color-mix(in srgb, var(--accent, var(--neon)) 22%, var(--nuit-2)); border: 1px solid var(--accent, var(--neon));
+    }
+    .video::before { content: "▶"; display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; font-size: 8px; background: var(--accent, var(--neon)); color: var(--nuit); }
+    .video:hover { box-shadow: 0 0 12px color-mix(in srgb, var(--accent, var(--neon)) 60%, transparent); }
+    body.edition .video { display: none; }
+    .lien-champ { margin-top: 6px; font-weight: 400; font-size: 12px; color: var(--neon-clair); word-break: break-all; }
     td.series { min-width: 110px; color: var(--texte); font-variant-numeric: tabular-nums; }
     td.tempo, td.repos { white-space: nowrap; font-variant-numeric: tabular-nums; }
     td.notes { min-width: 180px; font-size: 13px; }
@@ -382,6 +391,14 @@
     const val = chemin.split(".").reduce((o, k) => o?.[k], P);
     return `<${tag} class="${cls}" data-champ="${chemin}" data-vide="${esc(vide)}">${esc(val)}</${tag}>`;
   };
+  // Lien vidéo d'un exercice : accepte « www… » ou « instagram.com/… » sans https
+  function urlPropre(u) {
+    u = String(u || "").trim();
+    if (!u) return "";
+    if (!/^https?:\/\//i.test(u)) u = "https://" + u;
+    try { const x = new URL(u); return /\./.test(x.hostname) ? x.href : ""; } catch (e) { return ""; }
+  }
+  const lienVideo = u => { const h = urlPropre(u); return h ? `<br /><a class="video" href="${esc(h)}" target="_blank" rel="noopener">Voir la démo</a>` : ""; };
   const TYPES = { bas: "BAS", haut: "HAUT", repos: "REPOS" };
 
   function rendu() {
@@ -445,7 +462,7 @@
                 ${s.exercices.map((e, ei) => `
                   <tr class="${/[a-z]$/i.test(e.n) ? "superset" : ""}">
                     <td class="num"><span>${champ(`seances.${si}.exercices.${ei}.n`, "#")}</span></td>
-                    <td class="exo">${champ(`seances.${si}.exercices.${ei}.nom`, "Nom de l'exercice")}</td>
+                    <td class="exo">${champ(`seances.${si}.exercices.${ei}.nom`, "Nom de l'exercice")}${lienVideo(e.lien)}${edition ? `<div class="lien-champ">${champ(`seances.${si}.exercices.${ei}.lien`, "🔗 Coller le lien de la vidéo (Instagram, YouTube, Drive…)")}</div>` : ""}</td>
                     <td class="series">${champ(`seances.${si}.exercices.${ei}.series`, "3 × 10")}</td>
                     <td class="tempo">${champ(`seances.${si}.exercices.${ei}.tempo`, "—")}</td>
                     <td class="repos">${champ(`seances.${si}.exercices.${ei}.repos`, "—")}</td>
@@ -520,7 +537,7 @@
     if (el && /\.n$/.test(el.dataset.champ)) rendu();
   });
 
-  const nouvelExo = n => ({ n, nom: "", series: "3 × 10-12", tempo: "2 s", repos: "90 s", notes: "" });
+  const nouvelExo = n => ({ n, nom: "", lien: "", series: "3 × 10-12", tempo: "2 s", repos: "90 s", notes: "" });
   function numeroSuivant(liste) {
     const max = liste.reduce((m, e) => Math.max(m, parseInt(e.n, 10) || 0), 0);
     return max + 1;
@@ -597,7 +614,7 @@
     btnEd.textContent = edition ? "✅ Terminer les modifications" : "✏️ Modifier le programme";
     btnEd.classList.toggle("actif", edition);
     document.getElementById("astuce").textContent = edition
-      ? "Clique sur n'importe quel texte pour le modifier. Numérote « 5a » / « 5b » pour un superset."
+      ? "Clique sur n'importe quel texte pour le modifier. Colle un lien sous chaque exercice pour la vidéo de démo. Numérote « 5a » / « 5b » pour un superset."
       : "Les modifications sont enregistrées automatiquement dans ce navigateur.";
     rendu();
   };
