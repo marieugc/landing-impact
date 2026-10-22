@@ -1,7 +1,7 @@
 // Démarrage de l'app : connexion, choix élève/coach, navigation entre les écrans.
 import { api, MODE } from './data.js';
 import { esc, icone, toast, pendant, fenetre, VERSION_APP } from './ui.js';
-import { ecransEleve } from './eleve.js';
+import { ecransEleve, nouvellesVideosCoach } from './eleve.js';
 import { ecransCoach } from './coach.js';
 import { nonLus } from './chat.js';
 import { nouveautes } from './videotheque.js';
@@ -245,6 +245,10 @@ async function majPastille() {
         (x) => `${pluriel(x, 'nouveau programme')}`);
       poserPastille(racine.querySelector('[data-onglet="progres"]'), (await nouveauxRetours(profil.id)).length,
         (x) => `${pluriel(x, 'nouveau retour')} sur tes bilans`);
+      if (profil.competitrice) {
+        poserPastille(racine.querySelector('[data-onglet="posing"]'), (await nouvellesVideosCoach(profil.id)).length,
+          (x) => `${pluriel(x, 'nouvelle vidéo')} de ta coach`);
+      }
     }
   } catch (e) { /* hors ligne : on réessaiera */ }
 }
