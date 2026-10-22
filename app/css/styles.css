@@ -544,3 +544,6 @@ span.vignette { cursor: default; }
 .pdf-actuel > div:first-child { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .pdf-actuel > div:first-child > span { display: flex; flex-direction: column; gap: 2px; }
 .pdf-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Liens dans les messages */
+.bulle p a { color: inherit; text-decoration: underline; text-underline-offset: 2px; font-weight: 600; word-break: break-all; }

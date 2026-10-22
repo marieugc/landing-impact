@@ -22,13 +22,26 @@ function duree(s) {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
+// Rend les liens d'un message cliquables (https://…, http://… ou www.…), ouverts dans un nouvel onglet
+const LIEN = /((?:https?:\/\/|www\.)[^\s<]+)/gi;
+export function avecLiens(texte) {
+  return texte.split(LIEN).map((morceau, i) => {
+    if (i % 2 === 0) return esc(morceau);
+    // La ponctuation collée à la fin (point, virgule, parenthèse…) ne fait pas partie du lien
+    const fin = morceau.match(/[.,;:!?)\]»"']+$/)?.[0] || '';
+    const url = fin ? morceau.slice(0, -fin.length) : morceau;
+    const href = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+    return `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(url)}</a>${esc(fin)}`;
+  }).join('');
+}
+
 function bulle(m, moiCoach) {
   const moi = m.de_coach === moiCoach;
   return `<div class="bulle ${moi ? 'moi' : 'autre'}">
     ${m.audio_chemin ? `<div class="vocal">${icone('micro', 16)}<audio controls preload="metadata" data-audio="${esc(m.audio_chemin)}"></audio>
       ${m.duree ? `<small>${duree(m.duree)}</small>` : ''}</div>` : ''}
     ${grillePhotos(m.photos)}
-    ${m.texte ? `<p>${esc(m.texte)}</p>` : ''}
+    ${m.texte ? `<p>${avecLiens(m.texte)}</p>` : ''}
     <time>${heure(m.created_at)}${moi && m.lu ? ' · Vu' : ''}</time>
   </div>`;
 }
