@@ -4,6 +4,7 @@ import { compatibleFoods } from '../engine/filters';
 import { estimatedMaintenance, DAY_LABELS, OBJECTIVE_LABELS, PHASE_LABELS } from '../engine/targets';
 import type { DayType, Diet, Objective, Phase, Student } from '../engine/types';
 import type { PdfOptions } from '../pdf/exportPdf';
+import { CopyPanel } from './CopyPanel';
 import { DayRecap } from './DayRecap';
 import { applyTargets, clone, foodsForGeneration, generateAll, makeCtx, mealActions, regenerateOneDay, targetsFor } from './dietOps';
 import { EquivalencesPanel } from './EquivalencesPanel';
@@ -321,6 +322,8 @@ export function DietPage({ studentId, dietId }: { studentId: number; dietId: num
               />
             )}
           </div>
+
+          <CopyPanel diet={diet} student={student} settings={settings} />
 
           <div className="card glow">
             <h2>Export PDF pour l'élève</h2>
