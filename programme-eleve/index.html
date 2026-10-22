@@ -192,7 +192,7 @@
     body.edition .texte[data-champ], body.edition td [data-champ] { display: block; }
     body.edition [data-champ]:hover { outline-color: var(--neon); }
     body.edition [data-champ]:focus { outline: 2px solid var(--neon); background: rgba(180, 92, 255, .1); }
-    [data-champ]:empty::before { content: attr(data-vide); color: var(--texte-pale); font-style: italic; }
+    body.edition [data-champ]:empty::before { content: attr(data-vide); color: var(--texte-pale); font-style: italic; }
     .ajout-ligne { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
     .jour .changer-type { position: absolute; top: 6px; right: 6px; }
     .barre-seance { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -206,7 +206,18 @@
 
     .confirm { position: fixed; inset: 0; background: rgba(5, 1, 14, .7); display: grid; place-items: center; z-index: 60; padding: 16px; }
     .confirm .boite { max-width: 380px; background: var(--carte); border: 1px solid var(--neon); border-radius: 18px; padding: 22px; box-shadow: var(--lueur); display: grid; gap: 14px; }
-    .confirm .boite div { display: flex; gap: 8px; justify-content: flex-end; }
+    .confirm .boite > div { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+    .confirm .collage { max-width: 680px; width: 100%; max-height: 92vh; overflow: auto; }
+    .collage h2 { font-family: var(--titre); font-style: italic; font-size: 24px; margin: 0; }
+    .collage .aide { margin: 0; color: var(--texte-doux); }
+    .collage textarea {
+      width: 100%; min-height: 260px; resize: vertical; padding: 14px; border-radius: 12px;
+      background: var(--nuit); color: var(--texte); border: 1px solid var(--bord); font: 14px/1.5 var(--corps);
+    }
+    .collage textarea:focus { outline: 2px solid var(--neon); }
+    .collage .case { display: flex; gap: 8px; align-items: center; color: var(--texte-doux); font-size: 13.5px; }
+    .collage .erreur { margin: 0; color: #ff8fa8; font-size: 13.5px; }
+    .collage .erreur:empty { display: none; }
 
     @media (max-width: 860px) {
       .semaine { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -251,6 +262,7 @@
     <button class="btn principal" id="btn-pdf" type="button">📄 Télécharger en PDF</button>
     <button class="btn" id="btn-logo" type="button">🖼️ Changer le logo</button>
     <button class="btn" id="btn-export" type="button">💾 Sauvegarder (fichier)</button>
+    <button class="btn principal" id="btn-coller" type="button">📝 Coller un programme</button>
     <button class="btn" id="btn-pdf-import" type="button">📥 Importer un PDF</button>
     <button class="btn" id="btn-import" type="button">📂 Ouvrir une sauvegarde</button>
     <button class="btn danger" id="btn-reset" type="button">↺ Programme d'origine</button>
@@ -407,20 +419,25 @@
   const lienVideo = u => { const h = urlPropre(u); return h ? `<br /><a class="video" href="${esc(h)}" target="_blank" rel="noopener">Voir la démo</a>` : ""; };
   const TYPES = { bas: "BAS", haut: "HAUT", repos: "REPOS" };
 
+  const plein = v => String(v ?? "").trim() !== "";
+  const voir = cond => edition || cond;
   function rendu() {
     const d = document.getElementById("doc");
+    const semaineUtile = P.semaine.some(j => plein(j.seance) && j.seance !== "À définir");
+    const orga = ["structure", "notation", "echauffementBas", "echauffementHaut"];
+    const decharge = [P.decharge, P.alerte, P.pourquoi].some(plein) || P.regles.length > 0;
     d.innerHTML = `
       <header class="entete">
         <div>
           <div class="surtitre">${champ("coach", "Nom du coaching")}</div>
           <h1>${champ("titre", "Titre du programme")}</h1>
-          <p class="sous">${champ("sousTitre", "Sous-titre")}</p>
+          ${voir(plein(P.sousTitre)) ? `<p class="sous">${champ("sousTitre", "Sous-titre")}</p>` : ""}
           <div class="eleve"><span>Programme de</span><b>${champ("eleve", "Prénom")}</b></div>
         </div>
         <img class="logo" src="${logo}" alt="Logo Booty Flow Coaching" />
       </header>
 
-      <section class="bloc">
+      ${voir(semaineUtile) ? `<section class="bloc">
         <h2>Ta semaine type</h2>
         <div class="semaine">
           ${P.semaine.map((j, i) => `
@@ -431,17 +448,16 @@
               <span class="contenu">${champ(`semaine.${i}.seance`, "Séance")}</span>
             </div>`).join("")}
         </div>
-      </section>
+      </section>` : ""}
 
-      <section class="bloc">
+      ${voir(orga.some(k => plein(P[k]))) ? `<section class="bloc">
         <h2>Organisation des séances</h2>
         <div class="grille-2">
-          <div class="encart"><h3>Structure</h3>${champ("structure", "Texte", "p", "texte")}</div>
-          <div class="encart"><h3>Notation</h3>${champ("notation", "Texte", "p", "texte")}</div>
-          <div class="encart"><h3>Échauffement · jours bas (10 min)</h3>${champ("echauffementBas", "Texte", "p", "texte")}</div>
-          <div class="encart"><h3>Échauffement · jours haut (10 min)</h3>${champ("echauffementHaut", "Texte", "p", "texte")}</div>
+          ${[["structure", "Structure"], ["notation", "Notation"], ["echauffementBas", "Échauffement · jours bas"], ["echauffementHaut", "Échauffement · jours haut"]]
+            .filter(([k]) => voir(plein(P[k])))
+            .map(([k, t]) => `<div class="encart"><h3>${t}</h3>${champ(k, "Texte", "p", "texte")}</div>`).join("")}
         </div>
-      </section>
+      </section>` : ""}
 
       ${(P.extras || []).length || edition ? `
       <section class="bloc">
@@ -456,15 +472,15 @@
         <div class="ajout-ligne edition-seule"><button class="btn petit principal" type="button" data-action="ajout-extra">＋ Ajouter un encadré</button></div>
       </section>` : ""}
 
-      ${P.seances.map((s, si) => `
+      ${P.seances.map((s, si) => { const c = k => voir(s.exercices.some(e => plein(e[k]))); return `
         <section class="seance ${s.type} ${si === 0 ? "saut" : ""}">
           <div class="seance-tete">
             <div class="gauche">
               <div class="emoji">${champ(`seances.${si}.emoji`, "🍑")}</div>
               <div>
-                <div class="jour-etiquette">${champ(`seances.${si}.jour`, "Jour")}</div>
+                ${voir(plein(s.jour)) ? `<div class="jour-etiquette">${champ(`seances.${si}.jour`, "Jour")}</div>` : ""}
                 <h2>${champ(`seances.${si}.titre`, "Nom de la séance")}</h2>
-                <div class="focus">${champ(`seances.${si}.focus`, "Objectif")}</div>
+                ${voir(plein(s.focus)) ? `<div class="focus">${champ(`seances.${si}.focus`, "Objectif")}</div>` : ""}
               </div>
             </div>
             <div class="barre-seance edition-seule">
@@ -476,16 +492,16 @@
           </div>
           <div class="tableau-zone">
             <table>
-              <thead><tr><th>#</th><th>Exercice</th><th>Séries × reps</th><th>Tempo</th><th>Repos</th><th>Notes</th><th class="edition-seule"></th></tr></thead>
+              <thead><tr><th>#</th><th>Exercice</th><th>Séries × reps</th>${c("tempo") ? "<th>Tempo</th>" : ""}${c("repos") ? "<th>Repos</th>" : ""}${c("notes") ? "<th>Notes</th>" : ""}<th class="edition-seule"></th></tr></thead>
               <tbody>
                 ${s.exercices.map((e, ei) => `
                   <tr class="${/[a-z]$/i.test(e.n) ? "superset" : ""}">
                     <td class="num"><span>${champ(`seances.${si}.exercices.${ei}.n`, "#")}</span></td>
                     <td class="exo">${champ(`seances.${si}.exercices.${ei}.nom`, "Nom de l'exercice")}${lienVideo(e.lien)}${edition ? `<div class="lien-champ">${champ(`seances.${si}.exercices.${ei}.lien`, "🔗 Coller le lien de la vidéo (Instagram, YouTube, Drive…)")}</div>` : ""}</td>
                     <td class="series">${champ(`seances.${si}.exercices.${ei}.series`, "3 × 10")}</td>
-                    <td class="tempo">${champ(`seances.${si}.exercices.${ei}.tempo`, "—")}</td>
-                    <td class="repos">${champ(`seances.${si}.exercices.${ei}.repos`, "—")}</td>
-                    <td class="notes">${champ(`seances.${si}.exercices.${ei}.notes`, "")}</td>
+                    ${c("tempo") ? `<td class="tempo">${champ(`seances.${si}.exercices.${ei}.tempo`, "—")}</td>` : ""}
+                    ${c("repos") ? `<td class="repos">${champ(`seances.${si}.exercices.${ei}.repos`, "—")}</td>` : ""}
+                    ${c("notes") ? `<td class="notes">${champ(`seances.${si}.exercices.${ei}.notes`, "")}</td>` : ""}
                     <td class="actions edition-seule">
                       <button class="btn icone petit" type="button" data-action="monter" data-s="${si}" data-e="${ei}" title="Monter">↑</button>
                       <button class="btn icone petit" type="button" data-action="descendre" data-s="${si}" data-e="${ei}" title="Descendre">↓</button>
@@ -500,32 +516,32 @@
             <button class="btn petit principal" type="button" data-action="ajout" data-s="${si}">＋ Ajouter un exercice</button>
             <button class="btn petit" type="button" data-action="ajout-superset" data-s="${si}">＋ Ajouter un superset (a + b)</button>
           </div>
-        </section>`).join("")}
+        </section>`; }).join("")}
 
       <div class="ajout-ligne edition-seule" style="justify-content:center">
         <button class="btn principal" type="button" data-action="ajout-seance" data-type="bas">＋ Nouvelle séance bas</button>
         <button class="btn principal" type="button" data-action="ajout-seance" data-type="haut">＋ Nouvelle séance haut</button>
       </div>
 
-      <section class="bloc saut">
+      ${voir(plein(P.progression) || P.cycle.length) ? `<section class="bloc saut">
         <h2>Progression</h2>
         ${champ("progression", "Texte", "p", "texte")}
         <div class="cycle">
           ${P.cycle.map((c, i) => `
             <div class="etape"><b>${champ(`cycle.${i}.semaines`, "S1")}</b><span>${champ(`cycle.${i}.objectif`, "Objectif")}</span></div>`).join("")}
         </div>
-      </section>
+      </section>` : ""}
 
-      <section class="bloc">
-        <h2>🔄 Semaine de décharge (S8)</h2>
+      ${voir(decharge) ? `<section class="bloc">
+        <h2>🔄 Semaine de décharge</h2>
         ${champ("decharge", "Texte", "p", "texte")}
-        <div class="alerte">${champ("alerte", "Message important")}</div>
+        ${voir(plein(P.alerte)) ? `<div class="alerte">${champ("alerte", "Message important")}</div>` : ""}
         <div class="grille-2">
-          <div class="encart" style="grid-column:1/-1"><h3>Pourquoi une décharge ?</h3>${champ("pourquoi", "Texte", "p", "texte")}</div>
+          ${voir(plein(P.pourquoi)) ? `<div class="encart" style="grid-column:1/-1"><h3>Pourquoi une décharge ?</h3>${champ("pourquoi", "Texte", "p", "texte")}</div>` : ""}
           ${P.regles.map((r, i) => `
             <div class="encart"><h3>${champ(`regles.${i}.titre`, "Titre")}</h3>${champ(`regles.${i}.texte`, "Texte", "p", "texte")}</div>`).join("")}
         </div>
-      </section>
+      </section>` : ""}
 
       <footer class="pied"><b>${esc(P.coach)}</b><br />Programme personnalisé de ${esc(P.eleve)} · ne pas diffuser</footer>
       <div class="donnees-pdf" id="donnees-pdf" aria-hidden="true"></div>
@@ -1014,18 +1030,31 @@
     if (e) { emoji = e[1]; t = t.slice(e[0].length); }
     let jour = "";
     const j = t.match(/,?\s*\b(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\b\s*:?\s*/i);
-    if (j) { jour = majuscule(j[1].toLowerCase()); t = propre(t.slice(0, j.index) + (t.slice(0, j.index) ? " · " : "") + t.slice(j.index + j[0].length)); }
+    if (j) {
+      jour = majuscule(j[1].toLowerCase());
+      const avant = t.slice(0, j.index).replace(/[\s,:\-–—·|]+$/, ""), apres = t.slice(j.index + j[0].length).replace(/^[\s,:\-–—·|]+/, "");
+      t = propre(avant && apres ? `${avant} · ${apres}` : avant || apres);
+    }
+    t = t.replace(/^#+\s*/, "").replace(/\s*:\s*$/, "").replace(/\s+[-–—]\s+/g, " · ");
+    if (/[A-Z]/.test(t) && t === t.toUpperCase()) t = t.toLowerCase();
     let focus = "";
     const f = t.match(/\(([^)]*)\)\s*$/);
     if (f) { focus = majuscule(f[1]); t = t.slice(0, f.index).trim(); }
     const n = sansAccent(t);
-    const type = /^haut|dos|pec|epaule|bras|biceps|triceps|upper/.test(n) ? "haut" : /^bas|fessier|jambe|quadri|ischio|glute|cuisse|lower/.test(n) ? "bas" : "haut";
+    // Bas ou haut du corps : le premier mot-clé trouvé dans le titre décide
+    const iBas = n.search(/\b(bas|fessiers?|jambes?|quadri\w*|ischio\w*|glute\w*|cuisses?|lower|legs?|booty)\b/);
+    const iHaut = n.search(/\b(haut|dos|pecs?|pectoraux|epaules?|bras|biceps|triceps|upper|push|pull)\b/);
+    const type = iBas >= 0 && (iHaut < 0 || iBas < iHaut) ? "bas" : "haut";
     return { emoji: emoji || (type === "bas" ? "🍑" : "💪"), type, jour, titre: majuscule(t), focus };
   }
 
-  // Construit le programme final : ce qui n'est pas trouvé dans le PDF garde le texte standard
-  function programmeDepuisPdf(r) {
+  // Construit le programme final. Sans « garder », seuls les textes trouvés sont affichés.
+  function programmeDepuisPdf(r, garder = false) {
     const base = copie(PROGRAMME_DEFAUT);
+    if (!garder) {
+      for (const k of ["structure", "notation", "echauffementBas", "echauffementHaut", "progression", "decharge", "pourquoi", "alerte"]) base[k] = "";
+      base.cycle = []; base.regles = [];
+    }
     const p = Object.assign(base, {
       eleve: r.eleve || "Élève",
       titre: r.titre || "Programme d'entraînement",
@@ -1072,13 +1101,140 @@
     const nb = r.seances.reduce((n, s) => n + s.exercices.length, 0);
     demander(`PDF lu : ${r.seances.length} séances et ${nb} exercices trouvés. Remplacer le programme affiché ?`, () => {
       P = programmeDepuisPdf(r);
+      if (edition) document.getElementById("btn-edition").click(); else maj();
       maj();
-      if (!edition) document.getElementById("btn-edition").click();
       window.scrollTo({ top: 0, behavior: "smooth" });
-      toast("Programme importé : relis et corrige si besoin");
+      toast("Programme mis en page");
     });
   }
 
+
+  /* =================================================================
+     COLLER UN PROGRAMME ÉCRIT
+     Exemple de texte reconnu :
+       Séance 1 – Lundi : fessiers + ischios
+       1. Hip thrust 4x8-10 repos 2 min tempo 3-1-1 (pause en haut)
+       2. RDL haltères 3x10 90s
+       → dos bien droit
+     Une séance commence par une ligne comme « Séance… », « Jour… »,
+     « Lundi… », « Bas… », « Haut… » ou un titre suivi d'exercices.
+     ================================================================= */
+  const RE_SERIES = /(\d+)\s*(?:x|×|\*|s[ée]ries?\s*(?:de|x|×)?)\s*(\d+(?:\s*(?:-|à|a)\s*\d+)?|max)\s*(reps?\b|r[ée]p[ée]titions?|s\b|sec\b|secondes|min\b)?(\s*(?:\/|par)\s*(?:jambe|bras|c[ôo]t[ée]))?/i;
+  const RE_TITRE_SEANCE = /^(#+\s*|s[ée]ance\b|jour\s*\d|day\b|workout\b|entra[iî]nement\s+\w|(bas|haut)\s+(\d|du corps|[a-z]\b)|full\s*body|upper\b|lower\b|push\b|pull\b|legs?\b|(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\b)/i;
+
+  function lireTexte(brut) {
+    const lignes = brut.replace(/\r/g, "").split("\n").map(l => l.replace(/\t/g, " ").replace(/\s+/g, " ").trim());
+    const res = { seances: [], extras: [], textes: {} };
+    const intro = [];
+    let seance = null, exo = null, blanc = true;
+    const suivanteExo = i => { for (let k = i + 1; k < lignes.length; k++) if (lignes[k]) return RE_SERIES.test(lignes[k]); return false; };
+
+    lignes.forEach((l, i) => {
+      if (!l) { blanc = true; return; }
+      const debut = blanc; blanc = false;
+      // Titre du programme sur la première ligne
+      if (!res.titre && !seance && !intro.length && /programme|planning|plan d/i.test(l) && !RE_SERIES.test(l)) {
+        const nom = l.match(/(?:d['’]|de\s+|pour\s+)([A-ZÀ-Ý][\wÀ-ÿ-]+)/);
+        if (nom) res.eleve = nom[1];
+        res.titre = propre(l.replace(/\s*(?:d['’]|de\s+|pour\s+)[A-ZÀ-Ý][\wÀ-ÿ-]+\s*,?/, " ").replace(/^#+\s*/, "")).replace(/^programme\s*[–—:-]\s*/i, "") || "Programme d'entraînement";
+        return;
+      }
+      const series = l.match(RE_SERIES);
+      const titreSeance = !series && l.length <= 90 && (RE_TITRE_SEANCE.test(l) || (debut && suivanteExo(i) && (/:$/.test(l) || l === l.toUpperCase() || /^\p{Extended_Pictographic}/u.test(l))));
+      if (titreSeance) {
+        seance = Object.assign(lireTitreSeance(l), { exercices: [], note: "" });
+        res.seances.push(seance); exo = null;
+        return;
+      }
+      if (series) {
+        if (!seance) { seance = Object.assign(lireTitreSeance(`Séance ${res.seances.length + 1}`), { exercices: [], note: "" }); res.seances.push(seance); }
+        exo = lireExercice(l, series, seance.exercices.length + 1);
+        seance.exercices.push(exo);
+        return;
+      }
+      // Ligne de consigne : sous l'exercice si elle le suit, sinon note de la séance
+      const texte = l.replace(/^[-–•*→>]+\s*/, "");
+      if (exo && !debut) exo.notes = exo.notes ? `${exo.notes}. ${majuscule(texte)}` : majuscule(texte);
+      else if (exo && /^[-–•*→>]/.test(l)) exo.notes = exo.notes ? `${exo.notes}. ${majuscule(texte)}` : majuscule(texte);
+      else if (seance) { seance.note = seance.note ? `${seance.note}\n${texte}` : texte; exo = null; }
+      else intro.push(l);
+    });
+    if (intro.length) res.extras.push({ titre: "À savoir", texte: intro.join("\n") });
+    return res;
+  }
+
+  function lireExercice(ligne, m, rang) {
+    let l = ligne, n = "";
+    const num = l.match(/^(?:[-•*]\s*)?((?:[A-Z]\d|\d+[a-z]?|[a-z])(?=[\s.)\-:])|\d+[a-z]?)\s*[.)\-:]?\s+/);
+    if (num && num.index === 0 && !RE_SERIES.test(num[0] + "x")) { n = num[1]; l = l.slice(num[0].length); }
+    l = l.replace(/^[-•*]\s*/, "");
+    const m2 = l.match(RE_SERIES) || m;
+    let nom = l.slice(0, m2.index), reste = l.slice(m2.index + m2[0].length);
+    let series = `${m2[1]} × ${m2[2].replace(/(\d)\s*(?:à|a|-)\s*(\d)/, "$1-$2")}`;
+    const unite = (m2[3] || "").toLowerCase();
+    if (/^(s|sec|secondes)$/.test(unite)) series += " s"; else if (unite === "min") series += " min";
+    if (m2[4]) series += " / " + m2[4].replace(/.*(?:\/|par)\s*/i, "").trim();
+    let lien = "";
+    const url = l.match(/(https?:\/\/\S+|www\.\S+)/i);
+    if (url) { lien = url[1]; nom = nom.replace(url[1], ""); reste = reste.replace(url[1], ""); }
+    let repos = "", tempo = "", charge = "";
+    const r = reste.match(/(?:repos|r[ée]cup(?:[ée]ration)?|rest)\s*:?\s*(\d+\s*(?:min|mn|secondes|sec|s|m|'|’)?\s*\d*(?:\s*(?:sec|s)\b)?|aucun|0)/i)
+      || reste.match(/\b(\d+\s*(?:min|mn)\s*\d*|\d+\s*(?:s|sec|secondes)\b|\d+\s*['’]\s*\d*)/i);
+    if (r) { repos = r[1].trim().replace(/\s*(sec|secondes)$/i, " s").replace(/(\d)(s|min)$/i, "$1 $2"); reste = reste.replace(r[0], " "); }
+    const t = reste.match(/tempo\s*:?\s*(\d(?:\s*-\s*\d){2,3}|\d+\s*(?:s|sec)\b[^,;|)]*)/i) || reste.match(/\b(\d-\d-\d(?:-\d)?)\b/);
+    if (t) { tempo = t[1].trim().replace(/\s*sec\b/i, " s"); reste = reste.replace(t[0], " "); }
+    const c = reste.match(/(\d+(?:[.,]\d+)?\s*kg)/i);
+    if (c) { charge = c[1]; reste = reste.replace(c[0], " "); }
+    const nettoie = x => propre(x.replace(/[()]/g, " ").replace(/\s*[|;]\s*/g, ", ").replace(/^[\s,:\-–—]+|[\s,:\-–—]+$/g, ""));
+    nom = nettoie(nom); reste = nettoie(reste);
+    if (!nom) { nom = reste; reste = ""; }
+    const notes = [charge && `Charge : ${charge}`, majuscule(reste)].filter(Boolean).join(". ");
+    return { n: n || String(rang), nom: majuscule(nom), lien, series, tempo, repos, notes };
+  }
+
+  function ouvrirCollage() {
+    const f = document.createElement("div");
+    f.className = "confirm";
+    f.innerHTML = `
+      <div class="boite collage" role="dialog" aria-modal="true" aria-labelledby="titre-collage">
+        <h2 id="titre-collage">Coller un programme</h2>
+        <p class="aide">Colle le texte de l'entraînement tel que tu l'écris. Une séance par paragraphe, un exercice par ligne.</p>
+        <textarea id="texte-collage" rows="14" spellcheck="false" placeholder="Programme de Julie
+
+Séance 1 – Lundi : fessiers
+1. Hip thrust 4x8-10 repos 2 min tempo 3-1-1 (pause en haut)
+2. RDL haltères 3x10 90s
+→ dos bien droit
+3. Fentes bulgares 3x12 par jambe 1'30
+
+Séance 2 – Mercredi : haut du corps
+1. Tirage vertical 4x10-12 90s
+2. Élévations latérales 3x15 60s"></textarea>
+        <label class="case"><input type="checkbox" id="garder-collage" /> Ajouter mes textes standards (échauffement, progression, décharge)</label>
+        <p class="erreur" id="erreur-collage" role="alert"></p>
+        <div><button class="btn" type="button" data-r="non">Annuler</button><button class="btn principal" type="button" data-r="oui">✨ Mettre en page</button></div>
+      </div>`;
+    document.body.appendChild(f);
+    const zone = f.querySelector("textarea");
+    zone.focus();
+    f.querySelector('[data-r="non"]').onclick = () => f.remove();
+    f.querySelector('[data-r="oui"]').onclick = () => {
+      const r = lireTexte(zone.value);
+      const nb = r.seances.reduce((n, s) => n + s.exercices.length, 0);
+      if (!nb) {
+        f.querySelector(".erreur").textContent = "Aucun exercice trouvé. Écris les séries comme « 4x10 » ou « 3 séries de 12 » sur la ligne de chaque exercice.";
+        return;
+      }
+      P = programmeDepuisPdf(r, f.querySelector("#garder-collage").checked);
+      f.remove();
+      if (edition) document.getElementById("btn-edition").click();
+      maj();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast(`Programme mis en page : ${r.seances.length} séance${r.seances.length > 1 ? "s" : ""}, ${nb} exercices`);
+    };
+  }
+
+  document.getElementById("btn-coller").onclick = ouvrirCollage;
   document.getElementById("btn-pdf-import").onclick = () => document.getElementById("fichier-pdf").click();
   document.getElementById("fichier-pdf").onchange = e => {
     const f = e.target.files[0]; e.target.value = "";
