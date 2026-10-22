@@ -47,9 +47,12 @@ Garde toujours le même navigateur (Chrome par exemple) et ne vide pas ses « do
    (recalcul immédiat). Après une modification à la main, **⚖ Rééquilibrer la journée** ajuste les autres repas.
 5. En bas : **tableau d'équivalences**, **liste de courses** (nombre de jours training / repos), **export PDF**
    (fond clair pour l'impression ou violet néon).
-6. **Aliments** : vérifie les valeurs (reprises de la table CIQUAL, à contrôler), ajoute tes marques de whey, crème de riz, compote.
-7. **Réglages** : g/kg de protéines par objectif, lipides, refeed, cétogène, répartition entre les repas, nom affiché sur le PDF.
-8. **Sauvegarde** : télécharge un fichier `.json` avec tout, et réimporte-le si besoin.
+6. **Copier la diète (texte)** : choisis les journées et ce que tu veux inclure (macros, variantes, liste de courses),
+   clique sur **📋 Copier le texte** puis colle (Ctrl+V / Cmd+V) dans Canva, Word, Google Docs ou Notion pour la mettre
+   en page à ton image. Dans Word et Google Docs, les titres et tableaux sont conservés. Bouton **.txt** pour télécharger un fichier texte.
+7. **Aliments** : vérifie les valeurs (reprises de la table CIQUAL, à contrôler), ajoute tes marques de whey, crème de riz, compote.
+8. **Réglages** : g/kg de protéines par objectif, lipides, refeed, cétogène, répartition entre les repas, nom affiché sur le PDF.
+9. **Sauvegarde** : télécharge un fichier `.json` avec tout, et réimporte-le si besoin.
 
 ## Règles de calcul appliquées
 
