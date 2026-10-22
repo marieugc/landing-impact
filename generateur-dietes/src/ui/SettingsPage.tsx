@@ -4,6 +4,7 @@ import { DEFAULT_SETTINGS, type Settings } from '../engine/settings';
 import { OBJECTIVE_LABELS } from '../engine/targets';
 import { SLOT_LABELS } from '../engine/templates';
 import type { Objective, SlotKind } from '../engine/types';
+import { DEFAULT_LOGO_URL, fileToLogo } from '../pdf/brand';
 import { useSettings } from './hooks';
 
 export function SettingsPage() {
@@ -172,6 +173,40 @@ export function SettingsPage() {
             Contact (Instagram, e-mail…)
             <input value={s.coachContact} onChange={(e) => set({ coachContact: e.target.value })} placeholder="@bootyflow" />
           </label>
+        </div>
+        <div className="row" style={{ marginTop: 14, alignItems: 'flex-start' }}>
+          <img src={s.logo || DEFAULT_LOGO_URL} alt="Logo" style={{ width: 260, borderRadius: 12, boxShadow: 'var(--glow-soft)' }} />
+          <div>
+            <div style={{ fontWeight: 600 }}>Logo imprimé en haut des PDF</div>
+            <p className="small muted" style={{ margin: '4px 0 10px' }}>
+              Format paysage conseillé (PNG ou JPEG). N'oublie pas d'enregistrer.
+            </p>
+            <div className="row">
+              <label className="btn sm">
+                🖼️ Choisir une image
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={async (e) => {
+                    const f = e.target.files?.[0];
+                    e.target.value = '';
+                    if (!f) return;
+                    try {
+                      set({ logo: await fileToLogo(f) });
+                    } catch {
+                      alert("Cette image n'a pas pu être lue.");
+                    }
+                  }}
+                />
+              </label>
+              {s.logo && (
+                <button className="btn sm ghost" onClick={() => set({ logo: undefined })}>
+                  Remettre le logo Booty Flow
+                </button>
+              )}
+            </div>
+          </div>
         </div>
         <label className="field" style={{ marginTop: 12 }}>
           Conseils imprimés en première page

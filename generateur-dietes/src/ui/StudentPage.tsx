@@ -222,6 +222,9 @@ function DietHistory({ student }: { student: Student & { id: number } }) {
       <div className="row" style={{ marginBottom: 10 }}>
         <h2 style={{ margin: 0 }}>Diètes</h2>
         <div className="spacer" />
+        <a className="btn" href={`#/mise-en-page/${student.id}`}>
+          📝 Mettre en page une diète écrite
+        </a>
         <button className="btn primary" onClick={create}>
           ✨ Nouvelle diète
         </button>

@@ -50,9 +50,15 @@ Garde toujours le même navigateur (Chrome par exemple) et ne vide pas ses « do
 6. **Copier la diète (texte)** : choisis les journées et ce que tu veux inclure (macros, variantes, liste de courses),
    clique sur **📋 Copier le texte** puis colle (Ctrl+V / Cmd+V) dans Canva, Word, Google Docs ou Notion pour la mettre
    en page à ton image. Dans Word et Google Docs, les titres et tableaux sont conservés. Bouton **.txt** pour télécharger un fichier texte.
-7. **Aliments** : vérifie les valeurs (reprises de la table CIQUAL, à contrôler), ajoute tes marques de whey, crème de riz, compote.
-8. **Réglages** : g/kg de protéines par objectif, lipides, refeed, cétogène, répartition entre les repas, nom affiché sur le PDF.
-9. **Sauvegarde** : télécharge un fichier `.json` avec tout, et réimporte-le si besoin.
+7. **📝 Mettre en page une diète** (menu, ou bouton dans la fiche d'une élève) : colle le texte d'une diète que tu as
+   écrite toi-même (Notes, Word, WhatsApp…). Le logiciel reconnaît les journées (« Jour training », « Jour repos »…),
+   les repas (« Petit-déjeuner », « Collation », « Dîner (20h) »…), les aliments et leurs quantités (« 150 g de skyr »,
+   « riz 180 g cuit », « 2 œufs », « 40 g flocons + 1 banane »), les alternatives (« ou 120 g saumon ») et les conseils.
+   L'aperçu se met à jour pendant que tu tapes ; **⬇ Télécharger le PDF** le met en page avec ton logo
+   (fond clair ou violet néon). Ton logo se change dans « Réglages » → PDF.
+8. **Aliments** : vérifie les valeurs (reprises de la table CIQUAL, à contrôler), ajoute tes marques de whey, crème de riz, compote.
+9. **Réglages** : g/kg de protéines par objectif, lipides, refeed, cétogène, répartition entre les repas, nom affiché sur le PDF.
+10. **Sauvegarde** : télécharge un fichier `.json` avec tout, et réimporte-le si besoin.
 
 ## Règles de calcul appliquées
 
