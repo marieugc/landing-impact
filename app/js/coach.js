@@ -317,6 +317,62 @@ function carteCorrection(v, avecPrenom) {
     </div></article>`;
 }
 
+// Vidéo envoyée par la coach (démonstration de posing…) : pas de correction, suppression possible
+function carteVideoCoach(v, avecPrenom = true) {
+  return `<article class="carte correction">
+    <button class="vignette" data-video="${esc(v.id)}" aria-label="Voir la vidéo ${esc(v.exercice)}">${icone('lecture', 20, '#E3C8FF', true)}</button>
+    <div class="correction-texte">
+      <div class="ligne-entre"><strong>${avecPrenom ? `Pour ${esc(v.prenom || '')} · ` : ''}${esc(v.exercice)}</strong>${badge('Envoyée par toi')}</div>
+      <div class="petit">Envoyée le ${dateCourte(v.created_at)}</div>
+      ${v.retour ? `<p class="texte-video">« ${esc(v.retour)} »</p>` : ''}
+      <div class="actions-correction">
+        <button type="button" class="bouton-contour compact" data-supprimer-video="${esc(v.id)}">${icone('poubelle', 16)}Supprimer</button>
+      </div>
+    </div></article>`;
+}
+
+function brancherVideosCoach(zone, videos, apres) {
+  zone.querySelectorAll('[data-supprimer-video]').forEach((b) => b.addEventListener('click', async () => {
+    const v = videos.find((x) => x.id === b.dataset.supprimerVideo);
+    if (!confirm(`Supprimer « ${v.exercice} » ? ${v.prenom || 'Ton élève'} ne la verra plus.`)) return;
+    await pendant(b, 'Suppression…', () => api.supprimerVideo(v));
+    toast('Vidéo supprimée.');
+    apres();
+  }));
+}
+
+// Envoi d'une vidéo de posing par la coach à une compétitrice
+function formulaireVideoCoach(eleves, apres, eleveChoisie = '') {
+  if (!eleves.length) {
+    toast('Aucune compétitrice : coche « Compétitrice » dans la fiche d\'une élève.', true);
+    return;
+  }
+  const f = fenetre('Envoyer une vidéo de posing', `<form class="formulaire" id="form-video-coach">
+      <label>Pour<select name="eleve" required>${eleves.map((e) =>
+        `<option value="${esc(e.id)}"${e.id === eleveChoisie ? ' selected' : ''}>${esc(e.prenom)}</option>`).join('')}</select></label>
+      <label>Titre<input name="exercice" required placeholder="Ex. : Pose 3 · Dos, démonstration"></label>
+      <label>Ta vidéo<input name="fichier" type="file" accept="video/*" required></label>
+      <label>Message (facultatif)<textarea name="texte" rows="3" placeholder="Ex. : Regarde l'ouverture des dorsaux et la transition vers la pose suivante."></textarea></label>
+      <p class="petit">50 Mo maximum. Ta compétitrice la retrouve dans son onglet Posing.</p>
+      <button class="bouton-principal" type="submit">${icone('avion', 18)}ENVOYER</button>
+    </form>`);
+  f.querySelector('form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const d = new FormData(ev.target);
+    const fichier = d.get('fichier');
+    if (fichier.size > 50 * 1024 * 1024) {
+      toast('Vidéo trop lourde (50 Mo max). Coupe-la ou réduis la qualité.', true);
+      return;
+    }
+    await pendant(ev.submitter, 'Envoi de la vidéo…', () => api.envoyerVideoCoach({
+      eleveId: d.get('eleve'), type: 'posing', exercice: d.get('exercice').trim(), file: fichier, texte: d.get('texte').trim()
+    }));
+    fermerFenetre();
+    toast('Vidéo envoyée !');
+    apres();
+  });
+}
+
 function brancherCorrections(zone, videos, apres) {
   zone.querySelectorAll('[data-video]').forEach((b) => b.addEventListener('click', async () => {
     const v = videos.find((x) => x.id === b.dataset.video);
@@ -384,8 +440,11 @@ function brancherCorrections(zone, videos, apres) {
 
 async function ficheVideos(zone, e, recharger) {
   const videos = await api.listVideos({ eleveId: e.id });
-  zone.innerHTML = `<div class="pile">${videos.map((v) => carteCorrection(v, false)).join('') || '<p class="vide">Aucune vidéo envoyée.</p>'}</div>`;
+  zone.innerHTML = `${e.competitrice ? `<button class="bouton-contour compact" id="video-coach">${icone('video', 16)}Envoyer une vidéo de posing</button>` : ''}
+    <div class="pile">${videos.map((v) => (v.de_coach ? carteVideoCoach(v, false) : carteCorrection(v, false))).join('') || '<p class="vide">Aucune vidéo envoyée.</p>'}</div>`;
   brancherCorrections(zone, videos, recharger);
+  brancherVideosCoach(zone, videos, recharger);
+  zone.querySelector('#video-coach')?.addEventListener('click', () => formulaireVideoCoach([e], recharger, e.id));
 }
 
 function carteBilan(b, precedent) {
@@ -606,10 +665,12 @@ async function bilans(racine, profil) {
 let voirPosingsCorriges = false;
 async function competitrices(racine, profil) {
   const eleves = (await api.listEleves()).filter((e) => e.competitrice);
-  const [compets, posings] = await Promise.all([
+  const [compets, tous] = await Promise.all([
     Promise.all(eleves.map((e) => api.getCompetition(e.id))),
-    api.listVideos(voirPosingsCorriges ? { type: 'posing' } : { type: 'posing', statut: 'a_corriger' })
+    api.listVideos({ type: 'posing' })
   ]);
+  const posings = tous.filter((v) => !v.de_coach && (voirPosingsCorriges || v.statut === 'a_corriger'));
+  const envoyees = tous.filter((v) => v.de_coach);
   const cartes = eleves.map((e, i) => {
     const c = compets[i];
     const j = c?.date_compet ? joursAvant(c.date_compet) : null;
@@ -621,20 +682,26 @@ async function competitrices(racine, profil) {
       ${j !== null ? `<div class="compte-rebours"><div>${j >= 0 ? `J-${j}` : 'Fait'}</div><small>AVANT LA SCÈNE</small></div>` : ''}
     </a>`;
   }).join('');
-  racine.innerHTML = page(profil, 'coach/competitrices', titre('Compétitrices') + `
+  racine.innerHTML = page(profil, 'coach/competitrices', titre('Compétitrices',
+    `<button class="bouton-principal compact" id="video-coach">${icone('video', 18)}ENVOYER UNE VIDÉO DE POSING</button>`) + `
     <h2 class="sous-titre-page">Posing à corriger</h2>
     <div class="filtres">
       <button class="filtre${voirPosingsCorriges ? '' : ' actif'}" data-voir="non">À corriger</button>
       <button class="filtre${voirPosingsCorriges ? ' actif' : ''}" data-voir="oui">Toutes</button>
     </div>
     <div class="pile">${posings.map((v) => carteCorrection(v, true)).join('') || '<p class="vide">Aucune vidéo de posing à corriger.</p>'}</div>
+    <h2 class="sous-titre-page">Tes vidéos de posing envoyées</h2>
+    <div class="pile">${envoyees.map((v) => carteVideoCoach(v)).join('') || '<p class="vide">Tu n\'as pas encore envoyé de vidéo. Utilise « Envoyer une vidéo de posing » en haut de la page.</p>'}</div>
     <h2 class="sous-titre-page">Compétitions</h2>
     <div class="pile">${cartes || '<p class="vide">Aucune compétitrice. Coche « Compétitrice » dans la fiche d\'une élève.</p>'}</div>`);
   racine.querySelectorAll('[data-voir]').forEach((b) => b.addEventListener('click', () => {
     voirPosingsCorriges = b.dataset.voir === 'oui';
     competitrices(racine, profil);
   }));
-  brancherCorrections(racine, posings, () => competitrices(racine, profil));
+  const recharger = () => competitrices(racine, profil);
+  brancherCorrections(racine, [...posings, ...envoyees], recharger);
+  brancherVideosCoach(racine, envoyees, recharger);
+  racine.querySelector('#video-coach').addEventListener('click', () => formulaireVideoCoach(eleves, recharger));
 }
 
 async function plansNutrition(racine, profil) {

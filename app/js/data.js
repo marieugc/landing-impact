@@ -191,6 +191,18 @@ const demo = {
       statut: 'a_corriger', retour: null, created_at: new Date().toISOString() });
     ecrireDemo(d);
   },
+  async envoyerVideoCoach({ eleveId, type, exercice, file, texte }) {
+    const d = lireDemo();
+    const maintenant = new Date().toISOString();
+    d.videos.push({ id: id(), eleve_id: eleveId, type, exercice, chemin: garderFichier(file), photos: [], de_coach: true,
+      statut: 'corrige', retour: texte || null, corrige_le: maintenant, created_at: maintenant });
+    ecrireDemo(d);
+  },
+  async supprimerVideo(v) {
+    const d = lireDemo();
+    d.videos = d.videos.filter((x) => x.id !== v.id);
+    ecrireDemo(d);
+  },
   async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false, photos = [], photosGardees = [] } = {}) {
     const d = lireDemo();
     const v = d.videos.find((x) => x.id === vid);
@@ -414,6 +426,18 @@ const reel = {
     const cheminsPhotos = [];
     for (const p of photos) cheminsPhotos.push(await envoyerFichier(eleveId, `${type}-photos`, p));
     verifier(await (await client()).from('videos').insert({ eleve_id: eleveId, type, exercice, chemin, photos: cheminsPhotos }));
+  },
+  // Vidéo envoyée par la coach (rangée dans le dossier de l'élève pour qu'elle puisse la voir)
+  async envoyerVideoCoach({ eleveId, type, exercice, file, texte }) {
+    const chemin = await envoyerFichier(eleveId, `${type}-coach`, file);
+    const maintenant = new Date().toISOString();
+    verifier(await (await client()).from('videos').insert({
+      eleve_id: eleveId, type, exercice, chemin, de_coach: true, statut: 'corrige', retour: texte || null, corrige_le: maintenant
+    }));
+  },
+  async supprimerVideo(v) {
+    verifier(await (await client()).from('videos').delete().eq('id', v.id));
+    if (v.chemin) await (await client()).storage.from('medias').remove([v.chemin]);
   },
   // La vidéo de correction est rangée dans le dossier de l'élève pour qu'elle puisse la voir
   async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false, photos = [], photosGardees = [] } = {}) {

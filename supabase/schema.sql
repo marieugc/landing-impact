@@ -75,6 +75,8 @@ alter table public.videos add column if not exists retour_audio_duree int;
 -- Photos jointes : par l'élève avec sa vidéo, par la coach avec sa correction
 alter table public.videos add column if not exists photos jsonb not null default '[]';
 alter table public.videos add column if not exists retour_photos jsonb not null default '[]';
+-- Vidéos envoyées par la coach (ex. démonstration de posing), sans correction à faire
+alter table public.videos add column if not exists de_coach boolean not null default false;
 
 -- 4. Bilans hebdomadaires
 create table if not exists public.bilans (
@@ -199,7 +201,11 @@ create policy "nutrition coach" on public.nutrition for all using (public.est_co
 drop policy if exists "videos lecture" on public.videos;
 create policy "videos lecture" on public.videos for select using (eleve_id = auth.uid() or public.est_coach());
 drop policy if exists "videos envoi" on public.videos;
-create policy "videos envoi" on public.videos for insert with check (eleve_id = auth.uid() and statut = 'a_corriger');
+create policy "videos envoi" on public.videos for insert with check (eleve_id = auth.uid() and statut = 'a_corriger' and de_coach = false);
+drop policy if exists "videos envoi coach" on public.videos;
+create policy "videos envoi coach" on public.videos for insert with check (public.est_coach() and de_coach = true);
+drop policy if exists "videos suppression coach" on public.videos;
+create policy "videos suppression coach" on public.videos for delete using (public.est_coach());
 drop policy if exists "videos correction" on public.videos;
 create policy "videos correction" on public.videos for update using (public.est_coach());
 

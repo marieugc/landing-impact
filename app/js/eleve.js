@@ -176,6 +176,27 @@ async function training(racine, profil) {
 }
 
 // ───────────── Vidéos (partagé Mouvement / Posing) ─────────────
+// Vidéos de posing envoyées par la coach : pastille sur l'onglet Posing tant qu'elles n'ont pas été vues (par appareil)
+const cleVideosCoach = (uid) => `bootyflow-videos-coach-vu-${uid}`;
+function videosCoachVuesLe(uid) {
+  try { return localStorage.getItem(cleVideosCoach(uid)); } catch (e) { return null; }
+}
+export async function nouvellesVideosCoach(uid) {
+  const vu = videosCoachVuesLe(uid);
+  return (await api.listVideos({ eleveId: uid, type: 'posing' }))
+    .filter((v) => v.de_coach && (!vu || new Date(v.created_at) > new Date(vu)));
+}
+
+function carteVideoDeCoach(v, nouvelle) {
+  return `<article class="carte-video">
+    <button class="vignette" data-video="${esc(v.id)}" aria-label="Voir la vidéo ${esc(v.exercice)}">${icone('lecture', 20, '#E3C8FF', true)}</button>
+    <div class="carte-video-texte">
+      <div class="ligne-entre"><strong>${esc(v.exercice)}</strong>${nouvelle ? '<span class="badge-nouveau">NOUVEAU</span>' : badge('De ta coach')}</div>
+      <div class="petit">Reçue le ${dateCourte(v.created_at)}</div>
+      ${v.retour ? `<p class="texte-video">« ${esc(v.retour)} »</p>` : ''}
+    </div></article>`;
+}
+
 function carteVideo(v) {
   const corrige = v.statut === 'corrige';
   return `<article class="carte-video">
@@ -316,6 +337,9 @@ async function posing(racine, profil) {
   if (!profil.competitrice) { location.hash = '#/accueil'; return; }
   const [c, videos] = await Promise.all([api.getCompetition(profil.id), api.listVideos({ eleveId: profil.id, type: 'posing' })]);
   const j = c?.date_compet ? joursAvant(c.date_compet) : null;
+  const vu = videosCoachVuesLe(profil.id);
+  const deCoach = videos.filter((v) => v.de_coach);
+  const miennes = videos.filter((v) => !v.de_coach);
 
   racine.innerHTML = page(profil, 'posing', entete('ESPACE COMPÉTITRICE', 'Posing') + `
     <section class="carte carte-compet">
@@ -328,8 +352,11 @@ async function posing(racine, profil) {
       <div class="defile">${c.poses.map((p, i) => `<div class="pose">${icone('etoile', 22, 'var(--accent)')}<small>POSE ${i + 1}</small><strong>${esc(p.nom)}</strong></div>`).join('')}</div>` : ''}
     ${c?.checklist?.length ? `<section class="carte"><div class="surtitre-carte">PRÉPA JOUR J</div>
       ${c.checklist.map((t, i) => `<label class="case"><input type="checkbox" data-tache="${i}" ${t.fait ? 'checked' : ''}><span>${esc(t.label)}</span></label>`).join('')}</section>` : ''}
+    ${deCoach.length ? `<div class="surtitre-carte">VIDÉOS DE TA COACH</div>
+      <div class="pile">${deCoach.map((v) => carteVideoDeCoach(v, !vu || new Date(v.created_at) > new Date(vu))).join('')}</div>` : ''}
     <button class="bouton-principal" id="envoyer">${icone('video', 18)}ENVOYER MON POSING</button>
-    <div class="pile">${videos.map(carteVideo).join('')}</div>
+    ${miennes.length ? `<div class="surtitre-carte">MES POSINGS</div>` : ''}
+    <div class="pile">${miennes.map(carteVideo).join('')}</div>
   `);
 
   racine.querySelectorAll('[data-tache]').forEach((caseACocher) => caseACocher.addEventListener('change', async () => {
@@ -339,6 +366,11 @@ async function posing(racine, profil) {
   racine.querySelector('#envoyer').addEventListener('click', () =>
     formulaireVideo(profil, 'posing', 'Envoyer mon posing', () => posing(racine, profil)));
   brancherLecture(racine, videos);
+  // Les vidéos de la coach sont vues : le badge « Nouveau » reste jusqu'à la prochaine visite
+  if (deCoach.length) {
+    try { localStorage.setItem(cleVideosCoach(profil.id), new Date().toISOString()); } catch (e) { /* stockage indisponible */ }
+    document.dispatchEvent(new CustomEvent('messages-lus'));
+  }
 }
 
 // ───────────── Progression ─────────────
