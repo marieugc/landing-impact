@@ -180,6 +180,8 @@
     .alerte { margin: 14px 0; padding: 14px 16px; border-radius: 14px; background: rgba(226, 92, 255, .1); border: 1px solid rgba(226, 92, 255, .5); color: var(--texte); }
 
     .pied { text-align: center; color: var(--texte-pale); font-size: 12.5px; padding-top: 6px; }
+    /* Copie du programme cachée dans le PDF (pour le réimporter à l'identique) */
+    .donnees-pdf { display: none; }
     .pied b { font-family: var(--titre); font-style: italic; color: var(--neon-clair); font-size: 15px; }
 
     /* ---------- Mode édition ---------- */
@@ -239,6 +241,7 @@
       td.notes { font-size: 10.5px; }
       tr { break-inside: avoid; }
       .tableau-zone { overflow: visible; }
+      .donnees-pdf { display: block; font: 2px/1 monospace; color: var(--nuit); word-break: break-all; margin-top: 4px; user-select: none; }
     }
   </style>
 </head>
@@ -248,10 +251,12 @@
     <button class="btn principal" id="btn-pdf" type="button">📄 Télécharger en PDF</button>
     <button class="btn" id="btn-logo" type="button">🖼️ Changer le logo</button>
     <button class="btn" id="btn-export" type="button">💾 Sauvegarder (fichier)</button>
-    <button class="btn" id="btn-import" type="button">📂 Ouvrir un programme</button>
+    <button class="btn" id="btn-pdf-import" type="button">📥 Importer un PDF</button>
+    <button class="btn" id="btn-import" type="button">📂 Ouvrir une sauvegarde</button>
     <button class="btn danger" id="btn-reset" type="button">↺ Programme d'origine</button>
     <input type="file" id="fichier-logo" accept="image/*" hidden />
-    <input type="file" id="fichier-json" accept="application/json,.json" hidden />
+    <input type="file" id="fichier-json" accept="application/json,.json,application/pdf,.pdf" hidden />
+    <input type="file" id="fichier-pdf" accept="application/pdf,.pdf" hidden />
     <p class="astuce" id="astuce">Les modifications sont enregistrées automatiquement dans ce navigateur.</p>
   </div>
 
@@ -268,6 +273,7 @@
 
   const PROGRAMME_DEFAUT = {
     eleve: "Anaïs",
+    extras: [],
     titre: "Programme 5 séances par semaine",
     sousTitre: "3 séances bas du corps · 2 séances haut du corps · cycle de 8 semaines",
     coach: "Booty Flow Coaching",
@@ -437,6 +443,19 @@
         </div>
       </section>
 
+      ${(P.extras || []).length || edition ? `
+      <section class="bloc">
+        <h2>Informations complémentaires</h2>
+        <div class="grille-2">
+          ${(P.extras || []).map((x, i) => `
+            <div class="encart">
+              <h3>${champ(`extras.${i}.titre`, "Titre")}</h3>${champ(`extras.${i}.texte`, "Texte", "p", "texte")}
+              <div class="ajout-ligne edition-seule"><button class="btn petit danger" type="button" data-action="suppr-extra" data-i="${i}">🗑 Supprimer l'encadré</button></div>
+            </div>`).join("")}
+        </div>
+        <div class="ajout-ligne edition-seule"><button class="btn petit principal" type="button" data-action="ajout-extra">＋ Ajouter un encadré</button></div>
+      </section>` : ""}
+
       ${P.seances.map((s, si) => `
         <section class="seance ${s.type} ${si === 0 ? "saut" : ""}">
           <div class="seance-tete">
@@ -509,12 +528,22 @@
       </section>
 
       <footer class="pied"><b>${esc(P.coach)}</b><br />Programme personnalisé de ${esc(P.eleve)} · ne pas diffuser</footer>
+      <div class="donnees-pdf" id="donnees-pdf" aria-hidden="true"></div>
     `;
     document.body.classList.toggle("edition", edition);
+    remplirDonneesPdf();
     d.querySelectorAll("[data-champ]").forEach(el => {
       if (edition) { el.setAttribute("contenteditable", "plaintext-only"); if (el.contentEditable !== "plaintext-only") el.setAttribute("contenteditable", "true"); }
     });
   }
+
+  // Le PDF exporté contient une copie du programme : « 📥 Importer un PDF » le retrouve tel quel
+  const MARQUE = ["BFPROG[", "]BFPROG"];
+  function remplirDonneesPdf() {
+    const el = document.getElementById("donnees-pdf");
+    if (el) el.textContent = MARQUE[0] + btoa(unescape(encodeURIComponent(JSON.stringify(P)))) + MARQUE[1];
+  }
+  window.addEventListener("beforeprint", remplirDonneesPdf);
 
   // Saisie dans un champ
   document.getElementById("doc").addEventListener("input", e => {
@@ -571,6 +600,11 @@
         const t = b.dataset.type;
         P.seances.push({ emoji: t === "bas" ? "🍑" : "💪", type: t, jour: "Jour", titre: t === "bas" ? "Nouvelle séance bas" : "Nouvelle séance haut", focus: "", note: "", exercices: [nouvelExo("1")] });
         break;
+      }
+      case "ajout-extra": (P.extras = P.extras || []).push({ titre: "Nouvel encadré", texte: "" }); break;
+      case "suppr-extra": {
+        const i = +b.dataset.i;
+        return demander(`Supprimer l'encadré « ${P.extras[i].titre} » ?`, () => { P.extras.splice(i, 1); maj(); });
       }
       case "type-jour": {
         const j = P.semaine[+b.dataset.i], ordre = ["bas", "haut", "repos"];
@@ -645,6 +679,8 @@
   document.getElementById("btn-import").onclick = () => document.getElementById("fichier-json").click();
   document.getElementById("fichier-json").onchange = e => {
     const f = e.target.files[0]; if (!f) return;
+    e.target.value = "";
+    if (/\.pdf$/i.test(f.name) || f.type === "application/pdf") return importerPdf(f);
     f.text().then(t => {
       try {
         const d = JSON.parse(t);
@@ -660,6 +696,394 @@
       try { localStorage.removeItem(CLE); localStorage.removeItem(CLE_LOGO); } catch (e) {}
       rendu(); toast("Programme d'origine restauré");
     });
+
+  /* =================================================================
+     IMPORT D'UN PROGRAMME PDF
+     Lit le texte du PDF (avec sa position sur la page), repère les
+     tableaux d'exercices, le planning de la semaine et les paragraphes,
+     puis les range dans le programme. Les PDF scannés (images) ne
+     contiennent pas de texte et ne peuvent pas être lus.
+     ================================================================= */
+  const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  function chargerPdfJs() {
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    return new Promise((ok, ko) => {
+      const s = document.createElement("script");
+      s.src = PDFJS + "pdf.min.js";
+      s.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js"; ok(window.pdfjsLib); };
+      s.onerror = () => ko(new Error("reseau"));
+      document.head.appendChild(s);
+    });
+  }
+
+  // Extrait les morceaux de texte : { page, x, y (depuis le haut), w, taille, str }
+  async function lireTextePdf(buffer) {
+    const lib = await chargerPdfJs();
+    const pdf = await lib.getDocument({ data: buffer }).promise;
+    const morceaux = [];
+    let decalage = 0;
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const vue = page.getViewport({ scale: 1 });
+      const contenu = await page.getTextContent();
+      for (const it of contenu.items) {
+        if (!it.str || !it.str.trim()) continue;
+        morceaux.push({
+          page: i, largeurPage: vue.width,
+          x: it.transform[4], y: decalage + vue.height - it.transform[5],
+          w: it.width, taille: Math.round(Math.hypot(it.transform[0], it.transform[1])) || 12, str: it.str
+        });
+      }
+      decalage += vue.height;
+    }
+    return morceaux;
+  }
+
+  const sansAccent = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const JOURS = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
+  const majuscule = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  const propre = s => s.replace(/\s+/g, " ").replace(/\(\s+/g, "(").replace(/\s+([),.])/g, "$1").replace(/\s*,(\s*,)+/g, ",").trim();
+
+  // Colonnes reconnues dans l'en-tête d'un tableau
+  function typeColonne(t) {
+    const s = sansAccent(t).trim();
+    if (/^(#|n°|no|num|ordre)$/.test(s)) return "n";
+    if (/exercice|mouvement/.test(s)) return "nom";
+    if (/serie|reps|repetition/.test(s)) return "series";
+    if (/tempo/.test(s)) return "tempo";
+    if (/repos|recup/.test(s)) return "repos";
+    if (/note|consigne|remarque|conseil|comment/.test(s)) return "notes";
+    if (/charge|poids|kg|rir|rpe|intensite/.test(s)) return "charge";
+    if (/video|demo|lien/.test(s)) return "lien";
+    if (/^jours?$/.test(s)) return "jour";
+    if (/seance|entrainement|programme|muscle/.test(s)) return "seance";
+    if (/^semaines?$/.test(s)) return "semaines";
+    if (/objectif/.test(s)) return "objectif";
+    return null;
+  }
+
+  function lirePdf(morceaux) {
+    if (!morceaux.length) return null;
+    // 1. Regrouper les morceaux en lignes
+    morceaux.sort((a, b) => a.y - b.y || a.x - b.x);
+    const lignes = [];
+    for (const m of morceaux) {
+      const l = lignes[lignes.length - 1];
+      if (l && Math.abs(l.y - m.y) <= Math.max(3, m.taille * .3)) l.items.push(m);
+      else lignes.push({ y: m.y, page: m.page, largeurPage: m.largeurPage, items: [m] });
+    }
+    const tailles = {};
+    for (const l of lignes) {
+      l.items.sort((a, b) => a.x - b.x);
+      l.taille = Math.max(...l.items.map(i => i.taille));
+      l.x = l.items[0].x;
+      for (const i of l.items) tailles[i.taille] = (tailles[i.taille] || 0) + i.str.length;
+    }
+    const corps = +Object.entries(tailles).sort((a, b) => b[1] - a[1])[0][0];
+    const joindre = items => {
+      let s = "";
+      items.forEach((it, k) => {
+        const prec = items[k - 1];
+        if (prec && it.x - (prec.x + prec.w) > 1 && !/\s$/.test(s)) s += " ";
+        s += it.str;
+      });
+      return propre(s);
+    };
+    // Coupe une ligne en blocs séparés par un grand espace (colonnes côte à côte)
+    const blocs = l => {
+      const r = [];
+      for (const it of l.items) {
+        const b = r[r.length - 1];
+        if (b && it.x - (b.fin) < 30) { b.items.push(it); b.fin = it.x + it.w; }
+        else r.push({ x: it.x, fin: it.x + it.w, items: [it] });
+      }
+      return r.map(b => ({ x: b.x, texte: joindre(b.items), taille: Math.max(...b.items.map(i => i.taille)) }));
+    };
+
+    const estTitre = l => l.taille >= corps * 1.25 ||
+      (l.taille > corps * 1.05 && blocs(l).length === 1 && joindre(l.items).length <= 90);
+
+    // 2. Parcours : titres, tableaux et paragraphes
+    const sections = [];   // { titre, lignes: [] }
+    const tableaux = [];   // { cols, lignes: [], titre, apres: [] }
+    let titreEnAttente = null, section = null, tableau = null, precTitre = null, derniereLigne = null;
+
+    for (const l of lignes) {
+      const cols = [];
+      for (const it of l.items) { const t = it.str.trim().length <= 25 && typeColonne(it.str); if (t) cols.push({ type: t, x: it.x }); }
+      const types = cols.map(c => c.type);
+      const enTete = !estTitre(l) && cols.length >= 2 && cols.length >= l.items.length - 1 &&
+        (types.includes("nom") || (types.includes("jour") && types.includes("seance")) || (types.includes("semaines") && types.includes("objectif")));
+      if (enTete) {
+        const genre = types.includes("nom") ? "exo" : types.includes("jour") ? "semaine" : "cycle";
+        let titre = titreEnAttente;
+        // Titre de séance pas plus grand que le texte : la courte ligne juste au-dessus du tableau
+        if (!titre && genre === "exo" && derniereLigne && l.y - derniereLigne.y < l.taille * 4) {
+          const t = joindre(derniereLigne.items);
+          if (t.length <= 90 && blocs(derniereLigne).length === 1) {
+            const sec = sections.find(x => x.lignes.includes(derniereLigne));
+            if (sec) sec.lignes.splice(sec.lignes.indexOf(derniereLigne), 1);
+            titre = { titre: t, lignes: [] };
+          }
+        }
+        tableau = { genre, cols: cols.sort((a, b) => a.x - b.x), lignes: [], apres: [], titre, xMin: Math.min(...cols.map(c => c.x)), section, y: l.y, taille: l.taille };
+        tableaux.push(tableau);
+        titreEnAttente = null; precTitre = null;
+        continue;
+      }
+      if (tableau && !estTitre(l) && !tableau.apres.length) {
+        const precY = tableau.lignes.length ? tableau.lignes[tableau.lignes.length - 1].y : tableau.y;
+        const ecart = l.y - precY;
+        const decale = l.x < tableau.xMin - 8 && ecart > l.taille * 1.3;
+        if (blocs(l).length >= 2 || (ecart <= l.taille * 1.8 && !decale) || (!decale && ecart <= l.taille * 3.5 && tableau.lignes.length)) { tableau.lignes.push(l); continue; }
+      }
+      if (tableau && !estTitre(l)) { tableau.apres.push(l); continue; }
+      tableau = null;
+      if (estTitre(l)) {
+        const texte = joindre(l.items);
+        if (precTitre && l.taille === precTitre.taille && l.y - precTitre.y < l.taille * 2) {
+          section.titre = propre(section.titre + " " + texte);
+          if (titreEnAttente === precTitre.section) titreEnAttente = section;
+          precTitre = l;
+          continue;
+        }
+        section = { titre: texte, lignes: [], taille: l.taille };
+        sections.push(section);
+        titreEnAttente = section;
+        precTitre = l; precTitre.section = section;
+        continue;
+      }
+      precTitre = null; titreEnAttente = null; derniereLigne = l;
+      if (!section) { section = { titre: "", lignes: [] }; sections.push(section); }
+      section.lignes.push(l);
+    }
+
+    // Texte d'une suite de lignes (saut de paragraphe si grand espace)
+    const texteDe = ls => {
+      let s = "", prec = null;
+      for (const l of ls) {
+        const t = joindre(l.items);
+        if (prec) s += (l.y - prec.y > prec.taille * 1.9 || /^[•\-–]/.test(t)) ? "\n" : " ";
+        s += t; prec = l;
+      }
+      return s.split("\n").map(propre).filter(Boolean).join("\n");
+    };
+
+    // 3. Lecture des lignes d'un tableau selon les colonnes
+    function lignesTableau(t, debutLigne) {
+      if (!t.lignes.length) return [];
+      // Bord gauche de chaque colonne : les départs de texte des cellules si on en trouve
+      // autant que de colonnes (en-têtes centrés), sinon la position des en-têtes
+      const departs = [];
+      for (const l of t.lignes) for (const b of l.items) {
+        const d = departs.find(x => Math.abs(x.x - b.x) <= 8);
+        if (d) d.n++; else departs.push({ x: b.x, n: 1 });
+      }
+      departs.sort((a, b) => a.x - b.x);
+      const bords = departs.length === t.cols.length ? departs.map(d => d.x) : t.cols.map(c => c.x);
+      const colonne = x => { let k = 0; bords.forEach((b, i) => { if (x >= b - 6) k = i; }); return k; };
+      // Hauteur d'une ligne de texte dans une cellule (texte qui passe à la ligne)
+      let hauteur = Infinity;
+      for (let i = 1; i < t.lignes.length; i++) {
+        const a = t.lignes[i - 1], b = t.lignes[i], e = b.y - a.y;
+        if (e < b.taille * .8) continue;
+        const ca = new Set(a.items.map(it => colonne(it.x)));
+        if (b.items.some(it => ca.has(colonne(it.x)))) hauteur = Math.min(hauteur, e);
+      }
+      const taille = t.lignes[0].taille;
+      if (hauteur > taille * 1.65) hauteur = taille * 1.2;
+      const rangs = [];
+      let prec = null;
+      for (const l of t.lignes) {
+        const cellules = {};
+        for (const it of l.items) (cellules[colonne(it.x)] = cellules[colonne(it.x)] || []).push(it);
+        const textes = {};
+        for (const k in cellules) textes[t.cols[k].type + ":" + k] = joindre(cellules[k]);
+        const parType = {};
+        for (const k in textes) parType[k.split(":")[0]] = textes[k];
+        const r = rangs[rangs.length - 1];
+        if (!r || (prec && l.y - prec.y > hauteur * 1.35) || debutLigne(parType, r)) rangs.push({});
+        const cible = rangs[rangs.length - 1];
+        for (const k in textes) cible[k] = cible[k] ? propre(cible[k] + (/-$/.test(cible[k]) ? "" : " ") + textes[k]) : textes[k];
+        prec = l;
+      }
+      // Regroupe par type (deux colonnes « Séries » et « Reps » donnent « 4 × 8-10 »)
+      return rangs.map(r => {
+        const o = {};
+        for (const k of Object.keys(r).sort((a, b) => +a.split(":")[1] - +b.split(":")[1])) {
+          const type = k.split(":")[0], v = r[k];
+          if (!v || v === "—" || v === "-") continue;
+          o[type] = o[type] ? o[type] + (type === "series" ? " × " : type === "charge" ? ", " : " ") + v : v;
+        }
+        return o;
+      });
+    }
+
+    const res = { semaine: null, seances: [], cycle: null, textes: {}, extras: [] };
+
+    for (const t of tableaux) {
+      if (t.genre === "semaine") {
+        const rangs = lignesTableau(t, (x, r) => x.jour && r.jour !== undefined && JOURS.includes(sansAccent(x.jour).replace(/[^a-z]/g, "")));
+        res.semaine = rangs.filter(r => r.jour).map(r => {
+          const s = r.seance || "";
+          const n = sansAccent(s);
+          const type = !n || /repos|off|libre/.test(n) ? "repos" : /^bas|fessier|jambe|quadri|ischio|glute|cuisse/.test(n) ? "bas" : "haut";
+          return { jour: majuscule(r.jour), type, seance: s.replace(/^(bas|haut)\s*(\d+)\s*,\s*/i, (m, a, b) => `${majuscule(a)} ${b} · `) || "Repos" };
+        });
+      } else if (t.genre === "cycle") {
+        res.cycle = lignesTableau(t, (x, r) => x.semaines && Object.keys(r).some(k => k.startsWith("semaines"))).map(r => ({ semaines: r.semaines || "", objectif: r.objectif || "" }));
+        if (t.apres.length) res.textes.progressionSuite = texteDe(t.apres);
+      } else {
+        const aNum = t.cols.some(c => c.type === "n");
+        const rangs = lignesTableau(t, (x, r) => aNum && !!x.n && Object.keys(r).some(k => k.startsWith("n:")));
+        const exercices = rangs.filter(r => r.nom || r.series).map((r, k) => {
+          const notes = [r.charge && `Charge : ${r.charge}`, r.notes].filter(Boolean).join(". ");
+          if (r.series && /^\d+$/.test(r.series)) r.series += " séries";
+          return {
+            n: (r.n || String(k + 1)).replace(/[^\w]/g, ""), nom: majuscule(r.nom || ""),
+            lien: /^(https?:\/\/|www\.)/i.test(r.lien || "") ? r.lien : "",
+            series: (r.series || "").replace(/(\d)\s*[x×]\s*(\d)/gi, "$1 × $2"),
+            tempo: (r.tempo || "").replace(/(\d)\s*sec\b/gi, "$1 s").replace(/\(\s*/g, "("),
+            repos: r.repos || "", notes: majuscule(notes)
+          };
+        });
+        const note = texteDe(t.apres);
+        // Tableau coupé par un changement de page : on continue la séance précédente
+        const prec = res.seances[res.seances.length - 1];
+        if (!t.titre && prec) { prec.exercices.push(...exercices); if (note) prec.note = propre(prec.note + " " + note); continue; }
+        res.seances.push(Object.assign(lireTitreSeance(t.titre ? t.titre.titre : `Séance ${res.seances.length + 1}`), { exercices, note }));
+        if (t.titre) t.titre.utilisee = true;
+      }
+    }
+
+    // 4. Ranger les paragraphes selon leur titre
+    let premier = true;
+    for (const s of sections) {
+      if (s.utilisee) continue;
+      const titre = sansAccent(s.titre);
+      if (premier && s.titre) {
+        premier = false;
+        if (/programme|planning|plan |entrainement/.test(titre) || !s.lignes.length) {
+          const nom = s.titre.match(/(?:d['’]|de\s+|pour\s+)([A-ZÀ-Ý][\wÀ-ÿ-]+)/);
+          if (nom) res.eleve = nom[1];
+          let t = s.titre.replace(/\s*(?:d['’]|de\s+|pour\s+)[A-ZÀ-Ý][\wÀ-ÿ-]+\s*,?/, " ");
+          const par = t.match(/\(([^)]*)\)\s*$/);
+          if (par) { res.sousTitre = majuscule(par[1]); t = t.replace(/\(([^)]*)\)\s*$/, ""); }
+          res.titre = propre(t).replace(/^programme\s*[–—:-]\s*/i, "") || "Programme d'entraînement";
+          if (s.lignes.length) res.textes.intro = texteDe(s.lignes);
+          continue;
+        }
+      }
+      if (!s.lignes.length) continue;
+      const texte = texteDe(s.lignes.filter(l => !/^⚠/.test(joindre(l.items))));
+      const alerte = s.lignes.filter(l => /^⚠/.test(joindre(l.items)));
+      if (alerte.length) res.textes.alerte = texteDe(s.lignes.slice(s.lignes.indexOf(alerte[0])));
+      // Encadrés côte à côte avec un petit titre (ex. « Séries : −40 % »)
+      const aSousTitres = s.lignes.some(l => l.taille >= corps * 1.1);
+      if (aSousTitres && /concretement|semaine \d|regle|en pratique/.test(titre)) {
+        const cartes = [];
+        const derniere = [null, null];
+        for (const l of s.lignes) for (const b of blocs(l)) {
+          const col = b.x > l.largeurPage / 2 ? 1 : 0;
+          if (b.taille >= corps * 1.1) { derniere[col] = { titre: b.texte, texte: "", y: l.y, col }; cartes.push(derniere[col]); }
+          else if (derniere[col]) derniere[col].texte = propre(derniere[col].texte + " " + b.texte);
+        }
+        res.regles = cartes.sort((a, b) => a.y - b.y || a.col - b.col).map(c => ({ titre: c.titre, texte: c.texte }));
+        continue;
+      }
+      if (!texte) continue;
+      const cle =
+        /jours? bas|bas du corps/.test(titre) ? "echauffementBas" :
+        /jours? haut|haut du corps/.test(titre) ? "echauffementHaut" :
+        /structure|organisation|deroulement|duree/.test(titre) ? "structure" :
+        /notation|tempo|lecture/.test(titre) ? "notation" :
+        /progression|cycle/.test(titre) ? "progression" :
+        /pourquoi/.test(titre) ? "pourquoi" :
+        /decharge|deload/.test(titre) ? "decharge" : null;
+      if (cle) res.textes[cle] = res.textes[cle] ? res.textes[cle] + "\n" + texte : texte;
+      else res.extras.push({ titre: s.titre.replace(/\s*:\s*$/, ""), texte });
+    }
+    if (res.textes.progressionSuite) res.textes.progression = [res.textes.progression, res.textes.progressionSuite].filter(Boolean).join("\n");
+    return res;
+  }
+
+  // « 🍑 Bas 1, lundi : fessiers + ischios (force) » → emoji, jour, titre, objectif
+  function lireTitreSeance(brut) {
+    let t = brut.trim(), emoji = "";
+    const e = t.match(/^(\p{Extended_Pictographic}️?)\s*/u);
+    if (e) { emoji = e[1]; t = t.slice(e[0].length); }
+    let jour = "";
+    const j = t.match(/,?\s*\b(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\b\s*:?\s*/i);
+    if (j) { jour = majuscule(j[1].toLowerCase()); t = propre(t.slice(0, j.index) + (t.slice(0, j.index) ? " · " : "") + t.slice(j.index + j[0].length)); }
+    let focus = "";
+    const f = t.match(/\(([^)]*)\)\s*$/);
+    if (f) { focus = majuscule(f[1]); t = t.slice(0, f.index).trim(); }
+    const n = sansAccent(t);
+    const type = /^haut|dos|pec|epaule|bras|biceps|triceps|upper/.test(n) ? "haut" : /^bas|fessier|jambe|quadri|ischio|glute|cuisse|lower/.test(n) ? "bas" : "haut";
+    return { emoji: emoji || (type === "bas" ? "🍑" : "💪"), type, jour, titre: majuscule(t), focus };
+  }
+
+  // Construit le programme final : ce qui n'est pas trouvé dans le PDF garde le texte standard
+  function programmeDepuisPdf(r) {
+    const base = copie(PROGRAMME_DEFAUT);
+    const p = Object.assign(base, {
+      eleve: r.eleve || "Élève",
+      titre: r.titre || "Programme d'entraînement",
+      sousTitre: r.sousTitre || "",
+      seances: r.seances,
+      extras: r.extras
+    });
+    if (r.semaine && r.semaine.length) p.semaine = r.semaine;
+    else {
+      const avecJour = r.seances.some(x => x.jour);
+      p.semaine = JOURS.map(j => {
+        const s = r.seances.find(x => sansAccent(x.jour) === j);
+        return { jour: majuscule(j), type: s ? s.type : "repos", seance: s ? s.titre : avecJour ? "Repos" : "À définir" };
+      });
+    }
+    if (r.cycle && r.cycle.length) p.cycle = r.cycle;
+    if (r.regles && r.regles.length) p.regles = r.regles;
+    for (const k of ["structure", "notation", "echauffementBas", "echauffementHaut", "progression", "decharge", "pourquoi", "alerte"])
+      if (r.textes[k]) p[k] = r.textes[k];
+    if (r.textes.intro) p.extras.unshift({ titre: "À savoir", texte: r.textes.intro });
+    return p;
+  }
+
+  async function importerPdf(fichier) {
+    toast("Lecture du PDF…");
+    let morceaux;
+    try { morceaux = await lireTextePdf(await fichier.arrayBuffer()); }
+    catch (err) {
+      return toast(err.message === "reseau" ? "Connexion internet nécessaire pour lire un PDF" : "Ce PDF n'a pas pu être ouvert");
+    }
+    if (!morceaux.length) return toast("Ce PDF est une image (scan) : il ne contient pas de texte à lire");
+    const brut = morceaux.map(m => m.str).join("").replace(/\s+/g, "");
+    const i = brut.indexOf(MARQUE[0]), j = brut.indexOf(MARQUE[1], i);
+    if (i >= 0 && j > i) {
+      try {
+        const d = JSON.parse(decodeURIComponent(escape(atob(brut.slice(i + MARQUE[0].length, j)))));
+        if (Array.isArray(d.seances)) return demander(`PDF Booty Flow de ${d.eleve} reconnu. Remplacer le programme affiché ?`, () => {
+          P = Object.assign(copie(PROGRAMME_DEFAUT), d); maj(); toast(`Programme de ${P.eleve} ouvert`);
+        });
+      } catch (err) { /* copie illisible : on lit le PDF normalement */ }
+    }
+    const r = lirePdf(morceaux);
+    if (!r || !r.seances.length) return toast("Aucun tableau d'exercices trouvé dans ce PDF");
+    const nb = r.seances.reduce((n, s) => n + s.exercices.length, 0);
+    demander(`PDF lu : ${r.seances.length} séances et ${nb} exercices trouvés. Remplacer le programme affiché ?`, () => {
+      P = programmeDepuisPdf(r);
+      maj();
+      if (!edition) document.getElementById("btn-edition").click();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast("Programme importé : relis et corrige si besoin");
+    });
+  }
+
+  document.getElementById("btn-pdf-import").onclick = () => document.getElementById("fichier-pdf").click();
+  document.getElementById("fichier-pdf").onchange = e => {
+    const f = e.target.files[0]; e.target.value = "";
+    if (f) importerPdf(f);
+  };
 
   rendu();
   </script>

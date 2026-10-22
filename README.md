@@ -55,5 +55,6 @@ Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/diete
 Programme d'entraînement personnalisé au style Booty Flow (fond violet néon + logo), dans
 [`programme-eleve/index.html`](programme-eleve/index.html). Bouton « Modifier le programme » : clique sur un texte
 pour le changer, colle un lien vidéo de démo sous chaque exercice (bouton « ▶ Voir la démo », cliquable aussi dans le PDF), ajoute / supprime / déplace des exercices, supersets (5a + 5b) et séances. « Télécharger en PDF »
-ouvre l'impression (choisir « Enregistrer en PDF », arrière-plans activés). « Sauvegarder (fichier) » / « Ouvrir un
-programme » pour garder un programme par élève. Exemple généré : `programme-eleve/Programme-Anais-BootyFlow.pdf`.
+ouvre l'impression (choisir « Enregistrer en PDF », arrière-plans activés). « Sauvegarder (fichier) » / « Ouvrir une
+sauvegarde » pour garder un programme par élève. « Importer un PDF » lit un programme PDF existant (tableaux
+d'exercices, planning de la semaine, paragraphes) et le met en page ; un PDF exporté par l'outil est relu à l'identique. Exemple généré : `programme-eleve/Programme-Anais-BootyFlow.pdf`.
