@@ -349,8 +349,9 @@ export function DietPage({ studentId, dietId }: { studentId: number; dietId: num
                 onClick={async () => {
                   if (diet.days.some((d) => !d.ok) && !confirm('Une journée est hors tolérance. Exporter quand même ?')) return;
                   // module PDF chargé à la demande : l'application démarre plus vite
-                  const { exportDietPdf } = await import('../pdf/exportPdf');
-                  exportDietPdf({ diet, student, settings, foods: allowedFoods, shopping: shoppingForDiet(diet), options: pdf });
+                  const [{ exportDietPdf }, { loadLogo }] = await Promise.all([import('../pdf/exportPdf'), import('../pdf/brand')]);
+                  const logo = await loadLogo(settings);
+                  exportDietPdf({ diet, student, settings, foods: allowedFoods, shopping: shoppingForDiet(diet), options: pdf, logo });
                 }}
               >
                 ⬇ Télécharger le PDF

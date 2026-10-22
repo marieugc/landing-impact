@@ -7,79 +7,16 @@ import { weighingAdvice, type Settings } from '../engine/settings';
 import type { ShoppingGroup } from '../engine/shopping';
 import { DAY_LABELS, OBJECTIVE_LABELS, PHASE_LABELS } from '../engine/targets';
 import type { Diet, Food, Student } from '../engine/types';
+import { dateFr, drawFooters, drawLogoBanner, t, THEMES, type PdfLogo, type PdfTheme, type RGB } from './brand';
 
 export interface PdfOptions {
-  theme: 'clair' | 'neon';
+  theme: PdfTheme;
   equivalences: boolean;
   shopping: boolean;
 }
 
-type RGB = [number, number, number];
-
-interface Palette {
-  bg: RGB | null;
-  text: RGB;
-  muted: RGB;
-  accent: RGB;
-  accentSoft: RGB;
-  head: RGB;
-  headText: RGB;
-  row: RGB;
-  rowAlt: RGB;
-  total: RGB;
-  line: RGB;
-}
-
-const THEMES: Record<PdfOptions['theme'], Palette> = {
-  clair: {
-    bg: null,
-    text: [30, 18, 48],
-    muted: [110, 92, 135],
-    accent: [123, 44, 191],
-    accentSoft: [176, 38, 255],
-    head: [123, 44, 191],
-    headText: [255, 255, 255],
-    row: [255, 255, 255],
-    rowAlt: [248, 242, 255],
-    total: [236, 222, 255],
-    line: [220, 200, 245],
-  },
-  neon: {
-    bg: [13, 6, 23],
-    text: [243, 232, 255],
-    muted: [185, 166, 211],
-    accent: [199, 125, 255],
-    accentSoft: [176, 38, 255],
-    head: [176, 38, 255],
-    headText: [255, 255, 255],
-    row: [21, 11, 36],
-    rowAlt: [30, 16, 51],
-    total: [55, 25, 90],
-    line: [70, 40, 110],
-  },
-};
-
-/** Les polices standard du PDF ne couvrent pas tous les caractères : on remplace les rares cas. */
-function t(s: string): string {
-  return s
-    .replace(/œ/g, 'oe')
-    .replace(/Œ/g, 'Oe')
-    .replace(/[’‘]/g, "'")
-    .replace(/[«»]/g, '"')
-    .replace(/[—–]/g, '-')
-    .replace(/…/g, '...')
-    .replace(/≈/g, '~')
-    .replace(/−/g, '-')
-    .replace(/[^\x20-\x7E -ÿ\n]/g, '');
-}
-
 const n1 = (x: number) => (Math.round(x * 10) / 10).toFixed(1).replace('.', ',');
 const n0 = (x: number) => String(Math.round(x));
-
-function dateFr(iso: string): string {
-  const [y, m, d] = iso.slice(0, 10).split('-');
-  return `${d}/${m}/${y}`;
-}
 
 export function exportDietPdf(args: {
   diet: Diet;
@@ -88,8 +25,9 @@ export function exportDietPdf(args: {
   foods: Food[];
   shopping: ShoppingGroup[];
   options: PdfOptions;
+  logo: PdfLogo | null;
 }): void {
-  const { diet, student, settings, foods, shopping, options } = args;
+  const { diet, student, settings, foods, shopping, options, logo } = args;
   const P = THEMES[options.theme];
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const W = doc.internal.pageSize.getWidth();
@@ -106,7 +44,7 @@ export function exportDietPdf(args: {
   const newPage = () => {
     doc.addPage();
     paintBg();
-    y = 16;
+    y = 22;
   };
   const ensure = (h: number) => {
     if (y + h > H - 18) newPage();
@@ -138,7 +76,7 @@ export function exportDietPdf(args: {
 
   const tableStyles = {
     theme: 'grid' as const,
-    margin: { left: M, right: M, top: 16, bottom: 18 },
+    margin: { left: M, right: M, top: 22, bottom: 18 },
     styles: { font: 'helvetica', fontSize: 8.8, textColor: P.text, fillColor: P.row, lineColor: P.line, lineWidth: 0.15, cellPadding: 1.6 },
     headStyles: { fillColor: P.head, textColor: P.headText, fontStyle: 'bold' as const },
     alternateRowStyles: { fillColor: P.rowAlt },
@@ -148,26 +86,24 @@ export function exportDietPdf(args: {
     },
   };
 
-  // ---------------------------------------------------------------- en-tête
+  // ---------------------------------------------------------------- en-tête (logo)
   paintBg();
   doc.setFillColor(...P.accentSoft);
   doc.rect(0, 0, W, 2.5, 'F');
-  y = 20;
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(26);
-  if (options.theme === 'neon') {
-    doc.setTextColor(120, 30, 180);
-    doc.text('Booty Flow', M + 0.6, y + 0.6);
+  y = drawLogoBanner(doc, logo, 8);
+  if (!logo) {
+    y = 20;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(26);
+    doc.setTextColor(...P.accentSoft);
+    doc.text('Booty Flow', M, y);
+    y += 12;
   }
-  doc.setTextColor(...P.accentSoft);
-  doc.text('Booty Flow', M, y);
-  doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...P.muted);
-  doc.text(t('Plan alimentaire personnalisé'), M, y + 7);
   doc.setFontSize(10);
-  doc.text(t(`Le ${dateFr(diet.createdAt)}`), W - M, y, { align: 'right' });
-  y += 18;
+  doc.setTextColor(...P.muted);
+  doc.text(t(`Plan alimentaire personnalisé · le ${dateFr(diet.createdAt)}`), M, y);
+  y += 8;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(17);
   doc.setTextColor(...P.text);
@@ -199,7 +135,8 @@ export function exportDietPdf(args: {
     for (const meal of day.meals) {
       const v = meal.variants[meal.selected];
       if (!v) continue;
-      ensure(30);
+      // un petit tableau ne doit pas être coupé entre deux pages
+      ensure(14 + (v.items.length + 2) * 7);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(11.5);
       doc.setTextColor(...P.text);
@@ -216,6 +153,7 @@ export function exportDietPdf(args: {
         }),
         foot: [[t('Total du repas'), '', n1(tot.p), n1(tot.c), n1(tot.f), n0(tot.kcal)]],
         footStyles: { fillColor: P.total, textColor: P.text, fontStyle: 'bold' },
+        showFoot: 'lastPage',
         columnStyles: { 0: { cellWidth: 70 }, 1: { cellWidth: 36 }, 2: { halign: 'right' }, 3: { halign: 'right' }, 4: { halign: 'right' }, 5: { halign: 'right' } },
       });
       y = lastY() + 2;
@@ -297,18 +235,7 @@ export function exportDietPdf(args: {
   }
 
   // ---------------------------------------------------------------- pied de page
-  const pages = doc.getNumberOfPages();
-  for (let i = 1; i <= pages; i++) {
-    doc.setPage(i);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(...P.muted);
-    const sign = [settings.coachName, settings.coachContact].filter(Boolean).join(' · ');
-    doc.text(t(`Booty Flow · ${sign}`), M, H - 8);
-    doc.text(`${i} / ${pages}`, W - M, H - 8, { align: 'right' });
-    doc.setFillColor(...P.accentSoft);
-    doc.rect(M, H - 12, W - 2 * M, 0.3, 'F');
-  }
+  drawFooters(doc, P, settings, logo);
 
   const file = `BootyFlow_${student.firstName}_${diet.createdAt}.pdf`.replace(/\s+/g, '_');
   doc.save(t(file));

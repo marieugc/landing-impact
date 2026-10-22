@@ -3,6 +3,7 @@ import { ensureSeeded } from './db/db';
 import { BackupPage } from './ui/BackupPage';
 import { DietPage } from './ui/DietPage';
 import { FoodsPage } from './ui/FoodsPage';
+import { PastePage } from './ui/PastePage';
 import { go, useRoute } from './ui/router';
 import { SettingsPage } from './ui/SettingsPage';
 import { StudentPage } from './ui/StudentPage';
@@ -10,6 +11,7 @@ import { StudentsPage } from './ui/StudentsPage';
 
 const NAV = [
   { path: '', label: 'Mes élèves', icon: '💜' },
+  { path: 'mise-en-page', label: 'Mettre en page une diète', icon: '📝' },
   { path: 'aliments', label: 'Aliments', icon: '🥗' },
   { path: 'reglages', label: 'Réglages', icon: '⚙️' },
   { path: 'sauvegarde', label: 'Sauvegarde', icon: '💾' },
@@ -29,6 +31,7 @@ export function App() {
   let page: JSX.Element;
   if (route[0] === 'eleve' && route[2] === 'diete' && route[3]) page = <DietPage key={route[3]} studentId={Number(route[1])} dietId={Number(route[3])} />;
   else if (route[0] === 'eleve' && route[1]) page = <StudentPage key={route[1]} id={route[1] === 'nouvelle' ? null : Number(route[1])} />;
+  else if (route[0] === 'mise-en-page') page = <PastePage key={route[1] ?? ''} studentId={route[1] ? Number(route[1]) : null} />;
   else if (route[0] === 'aliments') page = <FoodsPage />;
   else if (route[0] === 'reglages') page = <SettingsPage />;
   else if (route[0] === 'sauvegarde') page = <BackupPage />;

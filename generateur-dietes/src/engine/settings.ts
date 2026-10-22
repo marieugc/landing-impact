@@ -23,6 +23,8 @@ export interface Settings {
   /** coefficients d'activité Mifflin : 0-1, 2-3, 4-5, 6+ séances / semaine */
   activityFactors: [number, number, number, number];
   coachName: string;
+  /** logo personnalisé (image en data URL) ; vide = logo Booty Flow Coaching */
+  logo?: string;
   coachContact: string;
   pdfAdvice: string;
 }
