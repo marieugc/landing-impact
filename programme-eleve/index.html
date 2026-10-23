@@ -398,7 +398,15 @@
   function lireStock(cle) { try { return localStorage.getItem(cle); } catch (e) { return null; } }
   function ecrireStock(cle, val) { try { localStorage.setItem(cle, val); } catch (e) {} }
   function charger() {
-    try { const s = lireStock(CLE); if (s) return JSON.parse(s); } catch (e) {}
+    try {
+      const s = lireStock(CLE);
+      if (s) {
+        const p = JSON.parse(s);
+        // Jours écrits avant la mise à jour : on recalcule leur badge
+        (p.semaine || []).forEach(j => { if (j.type === "repos") j.type = typeJour(j.seance, j.type); });
+        return p;
+      }
+    } catch (e) {}
     return copie(PROGRAMME_DEFAUT);
   }
   function sauver() { ecrireStock(CLE, JSON.stringify(P)); }
@@ -418,6 +426,19 @@
   }
   const lienVideo = u => { const h = urlPropre(u); return h ? `<br /><a class="video" href="${esc(h)}" target="_blank" rel="noopener">Voir la démo</a>` : ""; };
   const TYPES = { bas: "BAS", haut: "HAUT", repos: "REPOS" };
+  // Bas ou haut du corps : le premier mot-clé trouvé dans le texte décide (null si aucun)
+  function typeSeance(texte) {
+    const n = String(texte || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const iBas = n.search(/\b(bas|fessiers?|fessier|jambes?|quadri\w*|ischio\w*|glute\w*|cuisses?|mollets?|adducteurs?|abducteurs?|lower|legs?|booty)\b/);
+    const iHaut = n.search(/\b(haut|dos|pecs?|pectoraux|epaules?|bras|biceps|triceps|upper|push|pull|abdos?|gainage)\b/);
+    if (iBas < 0 && iHaut < 0) return null;
+    return iBas >= 0 && (iHaut < 0 || iBas < iHaut) ? "bas" : "haut";
+  }
+  function typeJour(texte, actuel) {
+    const n = String(texte || "").trim().toLowerCase();
+    if (!n || /^(repos|off|libre|r[ée]cup)/.test(n)) return "repos";
+    return typeSeance(n) || (actuel === "repos" ? "haut" : actuel);
+  }
 
   const plein = v => String(v ?? "").trim() !== "";
   const voir = cond => edition || cond;
@@ -569,6 +590,13 @@
     const der = cles.pop();
     const obj = cles.reduce((o, k) => o[k], P);
     obj[der] = el.innerText.replace(/\n$/, "");
+    // Jour de la semaine : le badge BAS / HAUT / REPOS suit ce qui est écrit
+    if (/^semaine\.\d+\.seance$/.test(el.dataset.champ)) {
+      obj.type = typeJour(obj[der], obj.type);
+      const carte = el.closest(".jour");
+      carte.className = `jour ${obj.type}`;
+      carte.querySelector(".pastille").textContent = TYPES[obj.type];
+    }
     sauver();
   });
   // Entrée = nouvelle ligne seulement dans les textes longs
@@ -1042,9 +1070,7 @@
     if (f) { focus = majuscule(f[1]); t = t.slice(0, f.index).trim(); }
     const n = sansAccent(t);
     // Bas ou haut du corps : le premier mot-clé trouvé dans le titre décide
-    const iBas = n.search(/\b(bas|fessiers?|jambes?|quadri\w*|ischio\w*|glute\w*|cuisses?|lower|legs?|booty)\b/);
-    const iHaut = n.search(/\b(haut|dos|pecs?|pectoraux|epaules?|bras|biceps|triceps|upper|push|pull)\b/);
-    const type = iBas >= 0 && (iHaut < 0 || iBas < iHaut) ? "bas" : "haut";
+    const type = typeSeance(n) || "haut";
     return { emoji: emoji || (type === "bas" ? "🍑" : "💪"), type, jour, titre: majuscule(t), focus };
   }
 
