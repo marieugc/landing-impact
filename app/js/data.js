@@ -191,10 +191,10 @@ const demo = {
       statut: 'a_corriger', retour: null, created_at: new Date().toISOString() });
     ecrireDemo(d);
   },
-  async envoyerVideoCoach({ eleveId, type, exercice, file, texte }) {
+  async envoyerVideoCoach({ eleveId, type, exercice, file, lien, texte }) {
     const d = lireDemo();
     const maintenant = new Date().toISOString();
-    d.videos.push({ id: id(), eleve_id: eleveId, type, exercice, chemin: garderFichier(file), photos: [], de_coach: true,
+    d.videos.push({ id: id(), eleve_id: eleveId, type, exercice, chemin: garderFichier(file), retour_lien: lien || null, photos: [], de_coach: true,
       statut: 'corrige', retour: texte || null, corrige_le: maintenant, created_at: maintenant });
     ecrireDemo(d);
   },
@@ -203,10 +203,10 @@ const demo = {
     d.videos = d.videos.filter((x) => x.id !== v.id);
     ecrireDemo(d);
   },
-  async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false, photos = [], photosGardees = [] } = {}) {
+  async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false, photos = [], photosGardees = [], lien = null } = {}) {
     const d = lireDemo();
     const v = d.videos.find((x) => x.id === vid);
-    Object.assign(v, { retour, statut: 'corrige', corrige_le: new Date().toISOString(),
+    Object.assign(v, { retour, statut: 'corrige', corrige_le: new Date().toISOString(), retour_lien: lien || null,
       retour_photos: [...photosGardees, ...photos.map(garderFichier)] });
     if (fichier) v.retour_chemin = garderFichier(fichier);
     if (audio) Object.assign(v, { retour_audio: garderFichier(audio), retour_audio_duree: duree || null });
@@ -428,11 +428,11 @@ const reel = {
     verifier(await (await client()).from('videos').insert({ eleve_id: eleveId, type, exercice, chemin, photos: cheminsPhotos }));
   },
   // Vidéo envoyée par la coach (rangée dans le dossier de l'élève pour qu'elle puisse la voir)
-  async envoyerVideoCoach({ eleveId, type, exercice, file, texte }) {
+  async envoyerVideoCoach({ eleveId, type, exercice, file, lien, texte }) {
     const chemin = await envoyerFichier(eleveId, `${type}-coach`, file);
     const maintenant = new Date().toISOString();
     verifier(await (await client()).from('videos').insert({
-      eleve_id: eleveId, type, exercice, chemin, de_coach: true, statut: 'corrige', retour: texte || null, corrige_le: maintenant
+      eleve_id: eleveId, type, exercice, chemin, retour_lien: lien || null, de_coach: true, statut: 'corrige', retour: texte || null, corrige_le: maintenant
     }));
   },
   async supprimerVideo(v) {
@@ -440,10 +440,10 @@ const reel = {
     if (v.chemin) await (await client()).storage.from('medias').remove([v.chemin]);
   },
   // La vidéo de correction est rangée dans le dossier de l'élève pour qu'elle puisse la voir
-  async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false, photos = [], photosGardees = [] } = {}) {
+  async correctVideo(vid, retour, fichier, eleveId, { audio, duree, supprimerAudio = false, photos = [], photosGardees = [], lien = null } = {}) {
     const nouvelles = [];
     for (const p of photos) nouvelles.push(await envoyerFichier(eleveId, 'corrections', p));
-    const maj = { retour, statut: 'corrige', corrige_le: new Date().toISOString(), retour_photos: [...photosGardees, ...nouvelles] };
+    const maj = { retour, statut: 'corrige', corrige_le: new Date().toISOString(), retour_photos: [...photosGardees, ...nouvelles], retour_lien: lien || null };
     if (fichier) maj.retour_chemin = await envoyerFichier(eleveId, 'corrections', fichier);
     if (audio) Object.assign(maj, { retour_audio: await envoyerFichier(eleveId, 'corrections', audio), retour_audio_duree: duree || null });
     else if (supprimerAudio) Object.assign(maj, { retour_audio: null, retour_audio_duree: null });

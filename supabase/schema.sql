@@ -77,6 +77,8 @@ alter table public.videos add column if not exists photos jsonb not null default
 alter table public.videos add column if not exists retour_photos jsonb not null default '[]';
 -- Vidéos envoyées par la coach (ex. démonstration de posing), sans correction à faire
 alter table public.videos add column if not exists de_coach boolean not null default false;
+-- Vidéo de la coach partagée par lien (YouTube non répertoriée…) quand le fichier est trop lourd
+alter table public.videos add column if not exists retour_lien text;
 
 -- 4. Bilans hebdomadaires
 create table if not exists public.bilans (
