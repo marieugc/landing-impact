@@ -64,6 +64,28 @@
       background: rgba(22, 8, 49, .88); backdrop-filter: blur(10px);
       border: 1px solid var(--bord); border-top: 0; border-radius: 0 0 16px 16px;
     }
+    .outils .programme-ouvert { flex-basis: 100%; text-align: center; margin: 2px 0 0; font-size: 13.5px; color: var(--texte-doux); }
+    .outils .programme-ouvert b { font-family: var(--titre); font-style: italic; color: var(--neon-clair); font-size: 15px; }
+    .seance-boutons { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .ajout-seance-texte { justify-content: center; }
+    .confirm .bibli { max-width: 720px; width: 100%; max-height: 90vh; overflow: auto; }
+    .bibli h2 { font-family: var(--titre); font-style: italic; font-size: 24px; margin: 0; }
+    .bibli input[type="search"] {
+      width: 100%; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--bord);
+      background: var(--nuit); color: var(--texte); font: 14px var(--corps);
+    }
+    .bibli .liste { display: grid; gap: 8px; }
+    .bibli .prog {
+      display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; justify-content: space-between;
+      padding: 12px 14px; border-radius: 14px; background: var(--nuit-2); border: 1px solid var(--bord);
+    }
+    .bibli .prog.actif { border-color: var(--vert); box-shadow: 0 0 14px rgba(91, 227, 165, .25); }
+    .bibli .infos { display: grid; gap: 2px; min-width: 0; }
+    .bibli .infos b { font-family: var(--titre); font-style: italic; font-size: 18px; color: var(--neon-clair); }
+    .bibli .infos span { color: var(--texte); font-size: 14px; }
+    .bibli .infos small { color: var(--texte-pale); font-size: 12px; }
+    .bibli .prog .actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .bibli .badge { font-size: 12px; font-weight: 700; color: #0b2a1c; background: var(--vert); padding: 4px 10px; border-radius: 999px; }
     .outils .astuce { flex-basis: 100%; text-align: center; color: var(--texte-pale); font-size: 12.5px; }
     .btn {
       appearance: none; border: 1px solid var(--bord); background: var(--carte);
@@ -234,7 +256,7 @@
     @page { size: A4; margin: 0; }
     @media print {
       body { padding: 10mm 10mm 6mm; font-size: 11.5px; background: var(--nuit); background-attachment: scroll; }
-      .outils, .toast, .confirm, .edition-seule, td.actions { display: none !important; }
+      .outils, .toast, .confirm, .edition-seule, td.actions, .ecran-seul { display: none !important; }
       [data-champ] { outline: none !important; background: none !important; }
       .doc { max-width: none; gap: 14px; }
       .entete { padding: 18px; gap: 18px; grid-template-columns: 1.1fr 1fr; }
@@ -258,17 +280,18 @@
 </head>
 <body>
   <div class="outils" id="outils">
+    <button class="btn principal" id="btn-bibli" type="button">📚 Mes programmes</button>
     <button class="btn" id="btn-edition" type="button">✏️ Modifier le programme</button>
     <button class="btn principal" id="btn-pdf" type="button">📄 Télécharger en PDF</button>
     <button class="btn" id="btn-logo" type="button">🖼️ Changer le logo</button>
     <button class="btn" id="btn-export" type="button">💾 Sauvegarder (fichier)</button>
-    <button class="btn principal" id="btn-coller" type="button">📝 Coller un programme</button>
+    <button class="btn" id="btn-coller" type="button">📝 Nouveau programme (coller un texte)</button>
     <button class="btn" id="btn-pdf-import" type="button">📥 Importer un PDF</button>
     <button class="btn" id="btn-import" type="button">📂 Ouvrir une sauvegarde</button>
-    <button class="btn danger" id="btn-reset" type="button">↺ Programme d'origine</button>
     <input type="file" id="fichier-logo" accept="image/*" hidden />
     <input type="file" id="fichier-json" accept="application/json,.json,application/pdf,.pdf" hidden />
     <input type="file" id="fichier-pdf" accept="application/pdf,.pdf" hidden />
+    <p class="programme-ouvert" id="programme-ouvert"></p>
     <p class="astuce" id="astuce">Les modifications sont enregistrées automatiquement dans ce navigateur.</p>
   </div>
 
@@ -391,25 +414,66 @@
   const CLE = "bootyflow-programme-v1";
   const CLE_LOGO = "bootyflow-programme-logo";
   const copie = o => JSON.parse(JSON.stringify(o));
-  let P = charger();
+  const CLE_BIB = "bootyflow-bibliotheque-v1";
+  const nouvelId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  let bib = chargerBib();
+  let P = entreeActive().data;
   let logo = lireStock(CLE_LOGO) || LOGO_DEFAUT;
   let edition = false;
 
   function lireStock(cle) { try { return localStorage.getItem(cle); } catch (e) { return null; } }
   function ecrireStock(cle, val) { try { localStorage.setItem(cle, val); } catch (e) {} }
+  // Jours écrits avant la mise à jour du badge : on le recalcule
+  function reparer(p) {
+    (p.semaine || []).forEach(j => { if (j.type === "repos") j.type = typeJour(j.seance, j.type); });
+    return p;
+  }
+  // Ancien stockage (un seul programme) : repris comme premier programme de la bibliothèque
   function charger() {
-    try {
-      const s = lireStock(CLE);
-      if (s) {
-        const p = JSON.parse(s);
-        // Jours écrits avant la mise à jour : on recalcule leur badge
-        (p.semaine || []).forEach(j => { if (j.type === "repos") j.type = typeJour(j.seance, j.type); });
-        return p;
-      }
-    } catch (e) {}
+    try { const s = lireStock(CLE); if (s) return reparer(JSON.parse(s)); } catch (e) {}
     return copie(PROGRAMME_DEFAUT);
   }
-  function sauver() { ecrireStock(CLE, JSON.stringify(P)); }
+  /* Mes programmes : { actif: id, programmes: [{ id, maj, data }] }
+     Enregistrés dans ce navigateur. « Sauvegarder (fichier) » garde une copie ailleurs. */
+  function chargerBib() {
+    try {
+      const b = JSON.parse(lireStock(CLE_BIB));
+      if (b && Array.isArray(b.programmes) && b.programmes.length) { b.programmes.forEach(x => reparer(x.data)); return b; }
+    } catch (e) {}
+    const id = nouvelId();
+    return { actif: id, programmes: [{ id, maj: Date.now(), data: charger() }] };
+  }
+  function entreeActive() {
+    const e = bib.programmes.find(x => x.id === bib.actif) || bib.programmes[0];
+    bib.actif = e.id;
+    return e;
+  }
+  function sauverBib() { ecrireStock(CLE_BIB, JSON.stringify(bib)); }
+  function sauver() {
+    const e = entreeActive();
+    e.data = P; e.maj = Date.now();
+    sauverBib();
+    ecrireStock(CLE, JSON.stringify(P));
+  }
+  function quitterEdition() { if (edition) document.getElementById("btn-edition").click(); }
+  // Ajoute un programme à « Mes programmes » et l'ouvre (le programme affiché avant reste enregistré)
+  function ajouterProgramme(p, message, modifier = false) {
+    const id = nouvelId();
+    bib.programmes.push({ id, maj: Date.now(), data: p });
+    bib.actif = id; P = p;
+    quitterEdition();
+    maj();
+    if (modifier) document.getElementById("btn-edition").click();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    toast(message);
+  }
+  function ouvrirProgramme(id) {
+    bib.actif = id; P = entreeActive().data;
+    quitterEdition();
+    sauverBib(); rendu();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    toast(`Programme de ${P.eleve || "l'élève"} ouvert`);
+  }
 
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   // Champ modifiable : chemin dans l'objet P, ex. "seances.0.exercices.2.nom"
@@ -504,11 +568,14 @@
                 ${voir(plein(s.focus)) ? `<div class="focus">${champ(`seances.${si}.focus`, "Objectif")}</div>` : ""}
               </div>
             </div>
+            <div class="seance-boutons">
+            <button class="btn petit principal ecran-seul" type="button" data-action="coller-seance" data-s="${si}">📝 Coller l'entraînement</button>
             <div class="barre-seance edition-seule">
               <button class="btn petit" type="button" data-action="type-seance" data-s="${si}">⇄ ${s.type === "bas" ? "Bas" : "Haut"}</button>
               <button class="btn icone petit" type="button" data-action="monter-seance" data-s="${si}" title="Monter la séance">↑</button>
               <button class="btn icone petit" type="button" data-action="descendre-seance" data-s="${si}" title="Descendre la séance">↓</button>
               <button class="btn icone petit danger" type="button" data-action="suppr-seance" data-s="${si}" title="Supprimer la séance">🗑</button>
+            </div>
             </div>
           </div>
           <div class="tableau-zone">
@@ -539,6 +606,9 @@
           </div>
         </section>`; }).join("")}
 
+      <div class="ajout-ligne ecran-seul ajout-seance-texte">
+        <button class="btn principal" type="button" data-action="coller-nouvelle">📝 Ajouter une séance (coller le texte)</button>
+      </div>
       <div class="ajout-ligne edition-seule" style="justify-content:center">
         <button class="btn principal" type="button" data-action="ajout-seance" data-type="bas">＋ Nouvelle séance bas</button>
         <button class="btn principal" type="button" data-action="ajout-seance" data-type="haut">＋ Nouvelle séance haut</button>
@@ -568,6 +638,8 @@
       <div class="donnees-pdf" id="donnees-pdf" aria-hidden="true"></div>
     `;
     document.body.classList.toggle("edition", edition);
+    document.getElementById("programme-ouvert").innerHTML =
+      `Programme ouvert : <b>${esc(P.eleve || "Sans prénom")}</b> · ${esc(P.titre || "")} · ${bib.programmes.length} programme${bib.programmes.length > 1 ? "s" : ""} enregistré${bib.programmes.length > 1 ? "s" : ""}`;
     remplirDonneesPdf();
     d.querySelectorAll("[data-champ]").forEach(el => {
       if (edition) { el.setAttribute("contenteditable", "plaintext-only"); if (el.contentEditable !== "plaintext-only") el.setAttribute("contenteditable", "true"); }
@@ -645,6 +717,8 @@
         P.seances.push({ emoji: t === "bas" ? "🍑" : "💪", type: t, jour: "Jour", titre: t === "bas" ? "Nouvelle séance bas" : "Nouvelle séance haut", focus: "", note: "", exercices: [nouvelExo("1")] });
         break;
       }
+      case "coller-seance": return ouvrirCollage({ si: s });
+      case "coller-nouvelle": return ouvrirCollage({ si: -1 });
       case "ajout-extra": (P.extras = P.extras || []).push({ titre: "Nouvel encadré", texte: "" }); break;
       case "suppr-extra": {
         const i = +b.dataset.i;
@@ -729,17 +803,11 @@
       try {
         const d = JSON.parse(t);
         if (!Array.isArray(d.seances)) throw new Error();
-        P = Object.assign(copie(PROGRAMME_DEFAUT), d); maj(); toast(`Programme de ${P.eleve} ouvert`);
+        ajouterProgramme(reparer(Object.assign(copie(PROGRAMME_DEFAUT), d)), `Programme de ${d.eleve} ajouté à Mes programmes`);
       } catch (err) { toast("Ce fichier n'est pas un programme Booty Flow"); }
     });
     e.target.value = "";
   };
-  document.getElementById("btn-reset").onclick = () =>
-    demander("Revenir au programme d'origine ? Tes modifications seront effacées.", () => {
-      P = copie(PROGRAMME_DEFAUT); logo = LOGO_DEFAUT;
-      try { localStorage.removeItem(CLE); localStorage.removeItem(CLE_LOGO); } catch (e) {}
-      rendu(); toast("Programme d'origine restauré");
-    });
 
   /* =================================================================
      IMPORT D'UN PROGRAMME PDF
@@ -1117,21 +1185,14 @@
     if (i >= 0 && j > i) {
       try {
         const d = JSON.parse(decodeURIComponent(escape(atob(brut.slice(i + MARQUE[0].length, j)))));
-        if (Array.isArray(d.seances)) return demander(`PDF Booty Flow de ${d.eleve} reconnu. Remplacer le programme affiché ?`, () => {
-          P = Object.assign(copie(PROGRAMME_DEFAUT), d); maj(); toast(`Programme de ${P.eleve} ouvert`);
-        });
+        if (Array.isArray(d.seances))
+          return ajouterProgramme(reparer(Object.assign(copie(PROGRAMME_DEFAUT), d)), `Programme de ${d.eleve} ajouté à Mes programmes`);
       } catch (err) { /* copie illisible : on lit le PDF normalement */ }
     }
     const r = lirePdf(morceaux);
     if (!r || !r.seances.length) return toast("Aucun tableau d'exercices trouvé dans ce PDF");
     const nb = r.seances.reduce((n, s) => n + s.exercices.length, 0);
-    demander(`PDF lu : ${r.seances.length} séances et ${nb} exercices trouvés. Remplacer le programme affiché ?`, () => {
-      P = programmeDepuisPdf(r);
-      if (edition) document.getElementById("btn-edition").click(); else maj();
-      maj();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      toast("Programme mis en page");
-    });
+    ajouterProgramme(programmeDepuisPdf(r), `PDF mis en page : ${r.seances.length} séances, ${nb} exercices`);
   }
 
 
@@ -1148,7 +1209,7 @@
   const RE_SERIES = /(\d+)\s*(?:x|×|\*|s[ée]ries?\s*(?:de|x|×)?)\s*(\d+(?:\s*(?:-|à|a)\s*\d+)?|max)\s*(reps?\b|r[ée]p[ée]titions?|s\b|sec\b|secondes|min\b)?(\s*(?:\/|par)\s*(?:jambe|bras|c[ôo]t[ée]))?/i;
   const RE_TITRE_SEANCE = /^(#+\s*|s[ée]ance\b|jour\s*\d|day\b|workout\b|entra[iî]nement\s+\w|(bas|haut)\s+(\d|du corps|[a-z]\b)|full\s*body|upper\b|lower\b|push\b|pull\b|legs?\b|(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\b)/i;
 
-  function lireTexte(brut) {
+  function lireTexte(brut, opts = {}) {
     const lignes = brut.replace(/\r/g, "").split("\n").map(l => l.replace(/\t/g, " ").replace(/\s+/g, " ").trim());
     const res = { seances: [], extras: [], textes: {} };
     const intro = [];
@@ -1159,10 +1220,15 @@
       if (!l) { blanc = true; return; }
       const debut = blanc; blanc = false;
       // Titre du programme sur la première ligne
+      if (opts.titre && !seance && !RE_SERIES.test(l)) {
+        seance = Object.assign(lireTitreSeance(l), { exercices: [], note: "" });
+        res.seances.push(seance); exo = null;
+        return;
+      }
       if (!res.titre && !seance && !intro.length && /programme|planning|plan d/i.test(l) && !RE_SERIES.test(l)) {
         const nom = l.match(/(?:d['’]|de\s+|pour\s+)([A-ZÀ-Ý][\wÀ-ÿ-]+)/);
         if (nom) res.eleve = nom[1];
-        res.titre = propre(l.replace(/\s*(?:d['’]|de\s+|pour\s+)[A-ZÀ-Ý][\wÀ-ÿ-]+\s*,?/, " ").replace(/^#+\s*/, "")).replace(/^programme\s*[–—:-]\s*/i, "") || "Programme d'entraînement";
+        res.titre = propre(l.replace(/\s*(?:d['’]|de\s+|pour\s+)[A-ZÀ-Ý][\wÀ-ÿ-]+\s*,?/, " ").replace(/^#+\s*/, "")).replace(/^programme\s*[–—:-]\s*/i, "").replace(/^programme$/i, "") || "Programme d'entraînement";
         return;
       }
       const series = l.match(RE_SERIES);
@@ -1208,7 +1274,11 @@
       || reste.match(/\b(\d+\s*(?:min|mn)\s*\d*|\d+\s*(?:s|sec|secondes)\b|\d+\s*['’]\s*\d*)/i);
     if (r) { repos = r[1].trim().replace(/\s*(sec|secondes)$/i, " s").replace(/(\d)(s|min)$/i, "$1 $2"); reste = reste.replace(r[0], " "); }
     const t = reste.match(/tempo\s*:?\s*(\d(?:\s*-\s*\d){2,3}|\d+\s*(?:s|sec)\b[^,;|)]*)/i) || reste.match(/\b(\d-\d-\d(?:-\d)?)\b/);
-    if (t) { tempo = t[1].trim().replace(/\s*sec\b/i, " s"); reste = reste.replace(t[0], " "); }
+    if (t) {
+      tempo = t[1].trim().replace(/\s*sec\b/i, " s");
+      if (/\(/.test(tempo) && !/\)/.test(tempo)) tempo += ")";
+      reste = reste.replace(t[0], " ").replace(/^\s*\)/, " ");
+    }
     const c = reste.match(/(\d+(?:[.,]\d+)?\s*kg)/i);
     if (c) { charge = c[1]; reste = reste.replace(c[0], " "); }
     const nettoie = x => propre(x.replace(/[()]/g, " ").replace(/\s*[|;]\s*/g, ", ").replace(/^[\s,:\-–—]+|[\s,:\-–—]+$/g, ""));
@@ -1218,14 +1288,37 @@
     return { n: n || String(rang), nom: majuscule(nom), lien, series, tempo, repos, notes };
   }
 
-  function ouvrirCollage() {
-    const f = document.createElement("div");
-    f.className = "confirm";
-    f.innerHTML = `
-      <div class="boite collage" role="dialog" aria-modal="true" aria-labelledby="titre-collage">
-        <h2 id="titre-collage">Coller un programme</h2>
-        <p class="aide">Colle le texte de l'entraînement tel que tu l'écris. Une séance par paragraphe, un exercice par ligne.</p>
-        <textarea id="texte-collage" rows="14" spellcheck="false" placeholder="Programme de Julie
+  // Texte d'une séance, dans le format que « Coller » sait relire
+  function texteSeance(x) {
+    const tete = [x.jour, x.titre].filter(Boolean).join(" : ") + (x.focus ? ` (${x.focus})` : "");
+    const lignes = [tete || "Séance"];
+    for (const e of x.exercices) {
+      const morceaux = [`${e.n}.`, e.nom, e.series];
+      if (e.repos) morceaux.push(/repos/i.test(e.repos) ? e.repos : `repos ${e.repos}`);
+      if (e.tempo && e.tempo !== "—") morceaux.push(`tempo ${e.tempo}`);
+      if (e.lien) morceaux.push(e.lien);
+      lignes.push(morceaux.filter(Boolean).join(" "));
+      if (e.notes) lignes.push(`→ ${e.notes}`);
+    }
+    if (x.note) lignes.push("", x.note);
+    return lignes.join("\n");
+  }
+
+  // La semaine type suit le jour de chaque séance collée
+  function majSemaine(x) {
+    if (!x.jour) return;
+    const j = P.semaine.find(d => sansAccent(d.jour) === sansAccent(x.jour));
+    if (j) { j.seance = x.titre; j.type = x.type; }
+  }
+
+  /* cible : rien = nouveau programme ; { si } = remplacer la séance si ; { si: -1 } = ajouter une séance */
+  function ouvrirCollage(cible) {
+    const seance = cible && cible.si >= 0 ? P.seances[cible.si] : null;
+    const titre = !cible ? "Nouveau programme" : seance ? `Séance : ${seance.titre}` : "Ajouter une séance";
+    const aide = !cible
+      ? "Colle le texte de l'entraînement tel que tu l'écris. Une séance par paragraphe, un exercice par ligne. Le programme est ajouté à « Mes programmes »."
+      : "Colle l'entraînement de cette séance : 1re ligne = le jour et le nom de la séance, puis un exercice par ligne. Il est remis en page automatiquement.";
+    const exemple = !cible ? `Programme de Julie
 
 Séance 1 – Lundi : fessiers
 1. Hip thrust 4x8-10 repos 2 min tempo 3-1-1 (pause en haut)
@@ -1235,32 +1328,128 @@ Séance 1 – Lundi : fessiers
 
 Séance 2 – Mercredi : haut du corps
 1. Tirage vertical 4x10-12 90s
-2. Élévations latérales 3x15 60s"></textarea>
-        <label class="case"><input type="checkbox" id="garder-collage" /> Ajouter mes textes standards (échauffement, progression, décharge)</label>
+2. Élévations latérales 3x15 60s` : `Jeudi : Ischios / fessiers
+1. Leg curl assis 3x10-12 repos 2 min tempo 4 s
+2. Hip thrust 4x8 2 min
+→ pause 1 s en haut
+3. Abduction machine 3x20 60s`;
+    const f = document.createElement("div");
+    f.className = "confirm";
+    f.innerHTML = `
+      <div class="boite collage" role="dialog" aria-modal="true" aria-labelledby="titre-collage">
+        <h2 id="titre-collage">${esc(titre)}</h2>
+        <p class="aide">${aide}</p>
+        <textarea id="texte-collage" rows="14" spellcheck="false" placeholder="${esc(exemple)}">${seance ? esc(texteSeance(seance)) : ""}</textarea>
+        ${!cible ? `<label class="case"><input type="checkbox" id="garder-collage" /> Ajouter mes textes standards (échauffement, progression, décharge)</label>` : ""}
         <p class="erreur" id="erreur-collage" role="alert"></p>
         <div><button class="btn" type="button" data-r="non">Annuler</button><button class="btn principal" type="button" data-r="oui">✨ Mettre en page</button></div>
       </div>`;
     document.body.appendChild(f);
     const zone = f.querySelector("textarea");
     zone.focus();
+    if (seance) zone.select();
     f.querySelector('[data-r="non"]').onclick = () => f.remove();
     f.querySelector('[data-r="oui"]').onclick = () => {
-      const r = lireTexte(zone.value);
-      const nb = r.seances.reduce((n, s) => n + s.exercices.length, 0);
+      const r = lireTexte(zone.value, { titre: !!cible });
+      const nb = r.seances.reduce((n, x) => n + x.exercices.length, 0);
       if (!nb) {
         f.querySelector(".erreur").textContent = "Aucun exercice trouvé. Écris les séries comme « 4x10 » ou « 3 séries de 12 » sur la ligne de chaque exercice.";
         return;
       }
-      P = programmeDepuisPdf(r, f.querySelector("#garder-collage").checked);
       f.remove();
-      if (edition) document.getElementById("btn-edition").click();
+      if (!cible) {
+        ajouterProgramme(programmeDepuisPdf(r, f.querySelector("#garder-collage").checked),
+          `Programme mis en page : ${r.seances.length} séance${r.seances.length > 1 ? "s" : ""}, ${nb} exercices`);
+        return;
+      }
+      const nouvelles = r.seances.filter(x => x.exercices.length);
+      // Texte collé sans ligne de titre : la séance garde son jour et son nom
+      const premiere = zone.value.split("\n").map(l => l.trim()).find(Boolean) || "";
+      if (seance && RE_SERIES.test(premiere)) Object.assign(nouvelles[0], { jour: seance.jour, titre: seance.titre, focus: seance.focus, type: seance.type });
+      if (seance) {
+        // Garde l'emoji et les liens vidéo déjà ajoutés
+        const liens = {};
+        seance.exercices.forEach(e => { if (e.lien) liens[sansAccent(e.nom)] = e.lien; });
+        nouvelles.forEach(x => x.exercices.forEach(e => { if (!e.lien && liens[sansAccent(e.nom)]) e.lien = liens[sansAccent(e.nom)]; }));
+        nouvelles[0].emoji = seance.emoji;
+        P.seances.splice(cible.si, 1, ...nouvelles);
+      } else P.seances.push(...nouvelles);
+      nouvelles.forEach(majSemaine);
       maj();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      toast(`Programme mis en page : ${r.seances.length} séance${r.seances.length > 1 ? "s" : ""}, ${nb} exercices`);
+      toast(`Séance mise en page : ${nb} exercices`);
     };
   }
 
-  document.getElementById("btn-coller").onclick = ouvrirCollage;
+  // Mes programmes : ouvrir, dupliquer, supprimer, créer
+  function ouvrirBibliotheque() {
+    const f = document.createElement("div");
+    f.className = "confirm";
+    f.innerHTML = `
+      <div class="boite bibli" role="dialog" aria-modal="true" aria-labelledby="titre-bibli">
+        <h2 id="titre-bibli">Mes programmes</h2>
+        <input type="search" id="recherche-bibli" placeholder="Rechercher une élève…" aria-label="Rechercher une élève" />
+        <div class="liste" id="liste-bibli"></div>
+        <div>
+          <button class="btn" type="button" data-r="vide">＋ Programme vide</button>
+          <button class="btn principal" type="button" data-r="coller">📝 Nouveau programme (coller un texte)</button>
+          <button class="btn" type="button" data-r="fermer">Fermer</button>
+        </div>
+      </div>`;
+    document.body.appendChild(f);
+    const liste = f.querySelector(".liste"), recherche = f.querySelector("input");
+    const date = t => new Date(t).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
+    const dessiner = () => {
+      const q = sansAccent(recherche.value.trim());
+      const items = [...bib.programmes].sort((a, b) => b.maj - a.maj)
+        .filter(x => sansAccent(`${x.data.eleve} ${x.data.titre}`).includes(q));
+      liste.innerHTML = items.map(x => {
+        const nbS = (x.data.seances || []).length;
+        return `<div class="prog ${x.id === bib.actif ? "actif" : ""}">
+          <div class="infos">
+            <b>${esc(x.data.eleve || "Sans prénom")}</b>
+            <span>${esc(x.data.titre || "")}</span>
+            <small>${nbS} séance${nbS > 1 ? "s" : ""} · modifié le ${date(x.maj)}</small>
+          </div>
+          <div class="actions">
+            ${x.id === bib.actif ? `<span class="badge">Ouvert</span>` : `<button class="btn petit principal" type="button" data-ouvrir="${x.id}">Ouvrir</button>`}
+            <button class="btn petit" type="button" data-dupliquer="${x.id}">⧉ Dupliquer</button>
+            <button class="btn icone petit danger" type="button" data-supprimer="${x.id}" title="Supprimer">🗑</button>
+          </div>
+        </div>`;
+      }).join("") || `<p class="aide">Aucun programme ne correspond à ta recherche.</p>`;
+    };
+    dessiner();
+    recherche.oninput = dessiner;
+    recherche.focus();
+    liste.onclick = e => {
+      const b = e.target.closest("button"); if (!b) return;
+      if (b.dataset.ouvrir) { f.remove(); ouvrirProgramme(b.dataset.ouvrir); }
+      else if (b.dataset.dupliquer) {
+        const src = bib.programmes.find(x => x.id === b.dataset.dupliquer).data;
+        const p = copie(src); p.titre = `${p.titre || "Programme"} (copie)`;
+        f.remove(); ajouterProgramme(p, "Copie créée : change le prénom et les séances", true);
+      } else if (b.dataset.supprimer) {
+        if (bib.programmes.length === 1) return toast("Garde au moins un programme");
+        const x = bib.programmes.find(y => y.id === b.dataset.supprimer);
+        demander(`Supprimer le programme de ${x.data.eleve || "cette élève"} (${x.data.titre || ""}) ?`, () => {
+          bib.programmes = bib.programmes.filter(y => y !== x);
+          if (bib.actif === x.id) { bib.actif = [...bib.programmes].sort((a, c) => c.maj - a.maj)[0].id; P = entreeActive().data; }
+          sauverBib(); rendu(); dessiner();
+          toast("Programme supprimé");
+        });
+      }
+    };
+    f.querySelector('[data-r="fermer"]').onclick = () => f.remove();
+    f.querySelector('[data-r="coller"]').onclick = () => { f.remove(); ouvrirCollage(); };
+    f.querySelector('[data-r="vide"]').onclick = () => {
+      f.remove();
+      const p = programmeDepuisPdf({ seances: [], extras: [], textes: {}, eleve: "Nouvelle élève", titre: "Programme d'entraînement" });
+      ajouterProgramme(p, "Programme vide créé : clique sur un texte pour le modifier", true);
+    };
+  }
+
+  document.getElementById("btn-coller").onclick = () => ouvrirCollage();
+  document.getElementById("btn-bibli").onclick = ouvrirBibliotheque;
   document.getElementById("btn-pdf-import").onclick = () => document.getElementById("fichier-pdf").click();
   document.getElementById("fichier-pdf").onchange = e => {
     const f = e.target.files[0]; e.target.value = "";
