@@ -547,3 +547,9 @@ span.vignette { cursor: default; }
 
 /* Liens dans les messages */
 .bulle p a { color: inherit; text-decoration: underline; text-underline-offset: 2px; font-weight: 600; word-break: break-all; }
+
+/* Vidéo partagée par lien (YouTube non répertoriée…) */
+.champ-lien { display: flex; align-items: center; gap: 8px; padding: 0 0 0 12px; border: 1px dashed var(--bord); border-radius: 12px; }
+.champ-lien input { flex: 1; min-width: 0; border: 0; background: transparent; }
+.carte-video .cadre-video, .correction .cadre-video { margin-top: 4px; }
+.carte-video-lien { display: block; }

@@ -162,7 +162,7 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 **Espace coach (ordinateur ou téléphone)**
 - **Mes élèves** : chiffres clés et liste avec statut automatique (vidéo à corriger, bilan reçu, bilan en retard, à jour)
 - **Fiche élève** : suivi, plan nutrition, vidéos, bilans (avec photos et écarts), charges de musculation, compétition
-- **Vidéos à corriger** : les vidéos de mouvement en attente (avec les photos jointes par l'élève), avec un retour écrit, un vocal, des photos et/ou une vidéo de correction
+- **Vidéos à corriger** : les vidéos de mouvement en attente (avec les photos jointes par l'élève), avec un retour écrit, un vocal, des photos et/ou une vidéo de correction (fichier de 50 Mo max, ou lien YouTube non répertoriée qui s'affiche directement chez l'élève)
 - **Compétitrices** : bouton « Envoyer une vidéo de posing » pour envoyer ta propre vidéo (démonstration…) à une compétitrice, qui la voit en haut de son onglet Posing avec une pastille ; les vidéos de **posing à corriger** (même réponse possible : écrit, vocal, vidéo ; pastille dans le menu quand il y en a), puis la compétition de chacune
 - **Bilans**, **Plans nutrition** : vues d'ensemble
 - **Répondre à un bilan** : sur chaque bilan, bouton « Répondre au bilan » pour envoyer un message écrit, un vocal et des photos (avant / après, comparaisons). L'élève le voit dans Progrès › Mes bilans, avec une notification

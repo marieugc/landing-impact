@@ -6,7 +6,7 @@ import { esc, icone, fenetre } from './ui.js';
 export const CATEGORIES = ['Fessiers', 'Jambes', 'Haut du corps', 'Abdos / gainage', 'Échauffement', 'Mobilité / étirements', 'Posing', 'Autre'];
 
 // Reconnaît un lien YouTube ou Vimeo pour l'afficher directement dans l'app
-function lienIntegre(lien) {
+export function lienIntegre(lien) {
   if (!lien) return null;
   try {
     const u = new URL(lien);
@@ -19,6 +19,18 @@ function lienIntegre(lien) {
     if (vimeo) return { type: 'vimeo', id: vimeo, url: `https://player.vimeo.com/video/${vimeo}` };
   } catch (e) { /* lien invalide */ }
   return null;
+}
+
+// Lecteur d'une vidéo partagée par lien (YouTube non répertoriée, Vimeo…) : intégré dans la page
+// quand c'est possible, sinon un bouton qui ouvre le lien
+export function lecteurLien(lien, titre = 'Vidéo') {
+  const integre = lienIntegre(lien);
+  if (integre) {
+    return `<div class="cadre-video"><iframe src="${esc(integre.url)}" title="${esc(titre)}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>`;
+  }
+  return lienValide(lien)
+    ? `<a class="bouton-contour compact" href="${esc(lien)}" target="_blank" rel="noopener">${icone('lecture', 16)}Ouvrir la vidéo</a>`
+    : '';
 }
 
 export function lienValide(lien) {

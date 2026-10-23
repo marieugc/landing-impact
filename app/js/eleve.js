@@ -9,7 +9,7 @@ import { conversation } from './chat.js';
 import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from './photos.js';
 import { retourBilanHtml, brancherRetours, retourEstNouveau, marquerRetoursVus, vocalRetour } from './bilans.js';
 import { carteProgramme, brancherFichiers, estNouveau, nouveauxProgrammes, marquerTrainingVu } from './programmes.js';
-import { CATEGORIES, nouveautes, estNouvelle, vignette, chargerMiniatures, ouvrirVideo } from './videotheque.js';
+import { CATEGORIES, nouveautes, estNouvelle, vignette, chargerMiniatures, ouvrirVideo, lecteurLien } from './videotheque.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -188,13 +188,15 @@ export async function nouvellesVideosCoach(uid) {
 }
 
 function carteVideoDeCoach(v, nouvelle) {
+  const parLien = !v.chemin && v.retour_lien;
+  const tete = `<div class="ligne-entre"><strong>${esc(v.exercice)}</strong>${nouvelle ? '<span class="badge-nouveau">NOUVEAU</span>' : badge('De ta coach')}</div>
+      <div class="petit">Reçue le ${dateCourte(v.created_at)}</div>
+      ${v.retour ? `<p class="texte-video">« ${esc(v.retour)} »</p>` : ''}`;
+  // Vidéo partagée par lien YouTube : le lecteur s'affiche directement dans la carte
+  if (parLien) return `<article class="carte-video carte-video-lien"><div class="carte-video-texte">${tete}${lecteurLien(v.retour_lien, v.exercice)}</div></article>`;
   return `<article class="carte-video">
     <button class="vignette" data-video="${esc(v.id)}" aria-label="Voir la vidéo ${esc(v.exercice)}">${icone('lecture', 20, '#E3C8FF', true)}</button>
-    <div class="carte-video-texte">
-      <div class="ligne-entre"><strong>${esc(v.exercice)}</strong>${nouvelle ? '<span class="badge-nouveau">NOUVEAU</span>' : badge('De ta coach')}</div>
-      <div class="petit">Reçue le ${dateCourte(v.created_at)}</div>
-      ${v.retour ? `<p class="texte-video">« ${esc(v.retour)} »</p>` : ''}
-    </div></article>`;
+    <div class="carte-video-texte">${tete}</div></article>`;
 }
 
 function carteVideo(v) {
@@ -212,6 +214,7 @@ function carteVideo(v) {
       ${corrige && v.retour_photos?.length ? `<div class="petit">Photos de ta coach</div>${grillePhotos(v.retour_photos)}` : ''}
       ${!corrige ? '<p class="texte-video">En attente du retour de ta coach.</p>' : ''}
       ${v.retour_chemin ? `<button class="bouton-contour compact" data-correction="${esc(v.id)}">${icone('lecture', 16)}Voir la correction vidéo</button>` : ''}
+      ${corrige && v.retour_lien ? `<div class="petit">Vidéo de correction de ta coach</div>${lecteurLien(v.retour_lien, `Correction · ${v.exercice}`)}` : ''}
     </div></article>`;
 }
 

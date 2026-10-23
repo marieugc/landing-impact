@@ -12,7 +12,7 @@ import { conversation } from './chat.js';
 import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from './photos.js';
 import { NOM_VIDEOTHEQUE } from './config.js';
 import { carteProgramme, brancherFichiers } from './programmes.js';
-import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide } from './videotheque.js';
+import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide, lecteurLien } from './videotheque.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -309,8 +309,10 @@ function carteCorrection(v, avecPrenom) {
           <input type="file" name="photos" accept="image/*" multiple></label>
         <label class="choix-video">${icone('video', 18, 'var(--accent)')}<span>${v.retour_chemin ? 'Remplacer ma vidéo de correction' : 'Ajouter une vidéo de correction (facultatif)'}</span>
           <input type="file" name="fichier" accept="video/*"></label>
+        <label class="champ-lien">${icone('lecture', 18, 'var(--accent)')}<input type="url" name="lien" inputmode="url" value="${esc(v.retour_lien || '')}"
+          placeholder="Ou colle un lien YouTube (vidéo non répertoriée)" aria-label="Lien de ta vidéo de correction"></label>
         <div class="actions-correction">
-          ${v.retour_chemin ? `<button type="button" class="bouton-contour compact" data-voir-correction="${esc(v.id)}">${icone('lecture', 16)}Voir ma vidéo</button>` : ''}
+          ${v.retour_chemin || v.retour_lien ? `<button type="button" class="bouton-contour compact" data-voir-correction="${esc(v.id)}">${icone('lecture', 16)}Voir ma vidéo</button>` : ''}
           <button class="bouton-principal compact" type="submit">${corrige ? 'MODIFIER' : 'ENVOYER LA CORRECTION'}</button>
         </div>
       </form>
@@ -351,21 +353,31 @@ function formulaireVideoCoach(eleves, apres, eleveChoisie = '') {
       <label>Pour<select name="eleve" required>${eleves.map((e) =>
         `<option value="${esc(e.id)}"${e.id === eleveChoisie ? ' selected' : ''}>${esc(e.prenom)}</option>`).join('')}</select></label>
       <label>Titre<input name="exercice" required placeholder="Ex. : Pose 3 · Dos, démonstration"></label>
-      <label>Ta vidéo<input name="fichier" type="file" accept="video/*" required></label>
+      <label>Ta vidéo (fichier de 50 Mo maximum)<input name="fichier" type="file" accept="video/*"></label>
+      <label>Ou un lien YouTube (vidéo non répertoriée)<input name="lien" type="url" inputmode="url" placeholder="https://youtu.be/…"></label>
       <label>Message (facultatif)<textarea name="texte" rows="3" placeholder="Ex. : Regarde l'ouverture des dorsaux et la transition vers la pose suivante."></textarea></label>
-      <p class="petit">50 Mo maximum. Ta compétitrice la retrouve dans son onglet Posing.</p>
+      <p class="petit">Vidéo trop lourde ? Mets-la sur YouTube en « non répertoriée » et colle le lien : elle s'affichera directement dans l'app. Ta compétitrice la retrouve dans son onglet Posing.</p>
       <button class="bouton-principal" type="submit">${icone('avion', 18)}ENVOYER</button>
     </form>`);
   f.querySelector('form').addEventListener('submit', async (ev) => {
     ev.preventDefault();
     const d = new FormData(ev.target);
-    const fichier = d.get('fichier');
-    if (fichier.size > 50 * 1024 * 1024) {
-      toast('Vidéo trop lourde (50 Mo max). Coupe-la ou réduis la qualité.', true);
+    const fichier = d.get('fichier')?.size ? d.get('fichier') : null;
+    const lien = d.get('lien').trim();
+    if (!fichier && !lien) {
+      toast('Ajoute ta vidéo ou colle un lien YouTube.', true);
       return;
     }
-    await pendant(ev.submitter, 'Envoi de la vidéo…', () => api.envoyerVideoCoach({
-      eleveId: d.get('eleve'), type: 'posing', exercice: d.get('exercice').trim(), file: fichier, texte: d.get('texte').trim()
+    if (lien && !lienValide(lien)) {
+      toast('Ce lien ne semble pas valide. Copie-le depuis YouTube avec « Partager » puis « Copier le lien ».', true);
+      return;
+    }
+    if (fichier && fichier.size > 50 * 1024 * 1024) {
+      toast('Vidéo trop lourde (50 Mo max). Mets-la sur YouTube en « non répertoriée » et colle le lien à la place.', true);
+      return;
+    }
+    await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', () => api.envoyerVideoCoach({
+      eleveId: d.get('eleve'), type: 'posing', exercice: d.get('exercice').trim(), file: fichier, lien: fichier ? null : lien, texte: d.get('texte').trim()
     }));
     fermerFenetre();
     toast('Vidéo envoyée !');
@@ -376,6 +388,7 @@ function formulaireVideoCoach(eleves, apres, eleveChoisie = '') {
 function brancherCorrections(zone, videos, apres) {
   zone.querySelectorAll('[data-video]').forEach((b) => b.addEventListener('click', async () => {
     const v = videos.find((x) => x.id === b.dataset.video);
+    if (!v.chemin && v.retour_lien) { fenetre(`${v.prenom || ''} · ${v.exercice}`, lecteurLien(v.retour_lien, v.exercice)); return; }
     const url = await api.mediaUrl(v.chemin);
     fenetre(`${v.prenom || ''} · ${v.exercice}`, url
       ? `<video src="${esc(url)}" controls playsinline class="lecteur"></video>`
@@ -383,6 +396,7 @@ function brancherCorrections(zone, videos, apres) {
   }));
   zone.querySelectorAll('[data-voir-correction]').forEach((b) => b.addEventListener('click', async () => {
     const v = videos.find((x) => x.id === b.dataset.voirCorrection);
+    if (v.retour_lien && !v.retour_chemin) { fenetre(`Ma correction · ${v.exercice}`, lecteurLien(v.retour_lien, v.exercice)); return; }
     const url = await api.mediaUrl(v.retour_chemin);
     fenetre(`Ma correction · ${v.exercice}`, url
       ? `<video src="${esc(url)}" controls playsinline class="lecteur"></video>`
@@ -420,17 +434,22 @@ function brancherCorrections(zone, videos, apres) {
       const supprimerAudio = d.get('suppr_audio') === 'on';
       const gardeAudio = v.retour_audio && !supprimerAudio;
       const choisies = [...entreePhotos.files];
-      if (!retour && !fichier && !audio && !v.retour_chemin && !gardeAudio && !choisies.length && !gardees.length) {
-        toast('Écris un retour, enregistre un vocal, ajoute des photos ou une vidéo de correction.', true);
+      const lien = d.get('lien').trim();
+      if (lien && !lienValide(lien)) {
+        toast('Ce lien ne semble pas valide. Copie-le depuis YouTube avec « Partager » puis « Copier le lien ».', true);
+        return;
+      }
+      if (!retour && !fichier && !lien && !audio && !v.retour_chemin && !gardeAudio && !choisies.length && !gardees.length) {
+        toast('Écris un retour, enregistre un vocal, ajoute des photos, une vidéo ou un lien.', true);
         return;
       }
       if (fichier && fichier.size > 50 * 1024 * 1024) {
-        toast('Vidéo trop lourde (50 Mo max). Coupe-la ou réduis la qualité.', true);
+        toast('Vidéo trop lourde (50 Mo max). Mets-la sur YouTube en « non répertoriée » et colle le lien à la place.', true);
         return;
       }
       await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', async () =>
         api.correctVideo(v.id, retour, fichier, v.eleve_id, {
-          audio, duree: vocal.duree(), supprimerAudio, photos: await preparerPhotos(choisies), photosGardees: gardees
+          audio, duree: vocal.duree(), supprimerAudio, photos: await preparerPhotos(choisies), photosGardees: gardees, lien
         }));
       toast('Correction envoyée.');
       apres();
