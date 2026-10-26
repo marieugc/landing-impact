@@ -29,6 +29,16 @@ progression sur 4 semaines, transformations, présentation de Marie et appel à 
 Les exercices se modifient en haut du `<script>` de `seance-fessiers/index.html` (tableau `EXERCICES`).
 Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/seance-fessiers/`
 
+## Ressource post-R1 « Tu avances à l'aveugle » 💜
+
+Page à envoyer aux prospects qui n'ont pas pris le R2 après le R1, dans [`a-l-aveugle/index.html`](a-l-aveugle/index.html).
+Ce n'est pas une séance de plus : elle brise les croyances. Test de précision (structure / ciblage / diète, 9 questions),
+compteur des séances déjà faites « sans boussole », 8 croyances à retourner (« ça brûle donc ça travaille », « healthy suffit »,
+« c'est génétique »…), comparaison « à l'aveugle / pilotée », objections post-appel et réservation du R2.
+Bouton « Copier mon résultat » : la prospect t'envoie son score en DM, ton R2 démarre de là.
+Lien personnalisé avec le prénom : `https://marieugc.github.io/landing-impact/a-l-aveugle/?p=Sarah`
+Liens (Calendly, Instagram), questions et croyances se modifient en haut du `<script>` (`CONFIG`, `QUESTIONS`, `CROYANCES`).
+
 ## Formation coach « GluteLab » 🍑⚡
 
 Formation interactive pour coachs (hypertrophie des fessiers, evidence-based), en un seul fichier :
