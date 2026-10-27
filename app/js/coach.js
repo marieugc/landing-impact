@@ -147,6 +147,7 @@ async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
 async function ficheSuivi(zone, e, recharger) {
   const depart = departBilans(e, await api.listBilans(e.id));
   const prochain = depart ? echeancesBilan(depart).prochaine : null;
+  const abonnements = await api.compterAbonnements(e.id).catch(() => null);
   zone.innerHTML = `<form class="formulaire carte large" id="form-suivi">
     <label>Prénom<input name="prenom" value="${esc(e.prenom)}" required></label>
     <label>Objectif<input name="objectif" value="${esc(e.objectif || '')}" placeholder="Ex. : Galber le bas du corps"></label>
@@ -156,7 +157,8 @@ async function ficheSuivi(zone, e, recharger) {
       <label>Jour de bilan (facultatif)<input name="prochain_bilan" type="date" value="${esc(e.prochain_bilan || '')}"></label>
     </div>
     <p class="petit">${e.prochain_bilan ? 'Les bilans reviennent automatiquement chaque semaine à partir de la date choisie.' : 'Les bilans reviennent automatiquement chaque week-end (à envoyer au plus tard le dimanche).'}
-      ${prochain ? `<br>Prochain bilan : <strong>${dateAvecJour(prochain)}</strong>` : ''}<br>Choisis une date seulement pour un autre jour que le dimanche, laisse vide pour revenir au week-end.</p>
+      ${prochain ? `<br>Prochain bilan : <strong>${dateAvecJour(prochain)}</strong>` : ''}
+      ${abonnements === null ? '' : `<br>Rappels sur son téléphone : <strong>${abonnements ? `activés${abonnements > 1 ? ` (${abonnements} appareils)` : ''}` : 'pas encore activés'}</strong>`}<br>Choisis une date seulement pour un autre jour que le dimanche, laisse vide pour revenir au week-end.</p>
     <label>Message du jour (affiché sur son accueil)<textarea name="message_coach" rows="4">${esc(e.message_coach || '')}</textarea></label>
     <label class="case"><input type="checkbox" name="competitrice" ${e.competitrice ? 'checked' : ''}><span>Compétitrice (active l'onglet Posing)</span></label>
     <button class="bouton-principal" type="submit">ENREGISTRER</button>

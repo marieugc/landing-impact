@@ -7,6 +7,7 @@ import {
 } from './ui.js';
 import { conversation } from './chat.js';
 import { curseursHtml, brancherCurseurs, lireCurseurs, etatHtml } from './etat.js';
+import { carteRappels } from './rappels.js';
 import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from './photos.js';
 import { retourBilanHtml, brancherRetours, retourEstNouveau, marquerRetoursVus, vocalRetour } from './bilans.js';
 import { carteProgramme, brancherFichiers, estNouveau, nouveauxProgrammes, marquerTrainingVu } from './programmes.js';
@@ -99,6 +100,7 @@ async function accueil(racine, profil) {
       <a href="#/mouvement" class="carte carte-mini">${icone('video', 22, 'var(--accent)')}
         <div><div class="petit">Vidéos corrigées</div><strong>${recentes.length ? `${recentes.length} nouvelle${recentes.length > 1 ? 's' : ''}` : 'À jour'}</strong></div></a>
     </div>
+    <div id="zone-rappels"></div>
     <section class="carte">
       <div class="ligne-auteur"><img src="img/coach.jpg" alt="" class="avatar-petit">
         <div><strong>Coach ${esc(NOM_COACH)}</strong><div class="petit">Message du jour</div></div></div>
@@ -127,6 +129,7 @@ async function accueil(racine, profil) {
     ].sort((a, b) => b.date.localeCompare(a.date));
     fenetre('Notifications', notifs.map((n) => n.html).join('') || '<p class="vide">Aucune nouvelle notification.</p>');
   });
+  carteRappels(racine.querySelector('#zone-rappels'), profil);
 }
 
 // ───────────── Nutrition ─────────────

@@ -270,6 +270,26 @@ create policy "programmes lecture" on public.programmes for select using (eleve_
 drop policy if exists "programmes coach" on public.programmes;
 create policy "programmes coach" on public.programmes for all using (public.est_coach()) with check (public.est_coach());
 
+-- ─── Notifications sur le téléphone (rappels de bilan) ───
+-- Un appareil = une ligne : l'adresse de notification donnée par le téléphone de l'élève
+create table if not exists public.abonnements_push (
+  id uuid primary key default gen_random_uuid(),
+  eleve_id uuid not null default auth.uid() references public.profiles on delete cascade,
+  endpoint text not null unique,
+  p256dh text not null,
+  auth text not null,
+  created_at timestamptz not null default now()
+);
+alter table public.abonnements_push enable row level security;
+drop policy if exists "push lecture" on public.abonnements_push;
+create policy "push lecture" on public.abonnements_push for select using (eleve_id = auth.uid() or public.est_coach());
+drop policy if exists "push ajout" on public.abonnements_push;
+create policy "push ajout" on public.abonnements_push for insert with check (eleve_id = auth.uid());
+drop policy if exists "push maj" on public.abonnements_push;
+create policy "push maj" on public.abonnements_push for update using (eleve_id = auth.uid()) with check (eleve_id = auth.uid());
+drop policy if exists "push suppression" on public.abonnements_push;
+create policy "push suppression" on public.abonnements_push for delete using (eleve_id = auth.uid());
+
 -- ─── Stockage des vidéos, photos et PDF ───
 insert into storage.buckets (id, name, public)
 values ('medias', 'medias', false)

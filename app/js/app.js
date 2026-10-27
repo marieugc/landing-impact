@@ -7,6 +7,7 @@ import { nonLus } from './chat.js';
 import { nouveautes } from './videotheque.js';
 import { nouveauxProgrammes } from './programmes.js';
 import { nouveauxRetours } from './bilans.js';
+import { synchroniserRappels } from './rappels.js';
 
 const racine = document.getElementById('app');
 let profil = null;
@@ -280,6 +281,7 @@ async function demarrer() {
     return;
   }
   afficher();
+  synchroniserRappels(profil);
 }
 
 api.onRecovery(ecranNouveauMotDePasse);
