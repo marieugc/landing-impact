@@ -6,6 +6,7 @@ import {
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { conversation } from './chat.js';
+import { curseursHtml, brancherCurseurs, lireCurseurs, etatHtml } from './etat.js';
 import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from './photos.js';
 import { retourBilanHtml, brancherRetours, retourEstNouveau, marquerRetoursVus, vocalRetour } from './bilans.js';
 import { carteProgramme, brancherFichiers, estNouveau, nouveauxProgrammes, marquerTrainingVu } from './programmes.js';
@@ -399,6 +400,7 @@ async function progres(racine, profil) {
           <summary><strong>Bilan du ${dateCourte(b.date)}</strong>
             <span class="petit">${b.poids != null ? `${nombre(b.poids)} kg${avant?.poids != null ? ` (${ecart(b.poids - avant.poids)} kg)` : ''}` : ''}</span>
             ${b.retour_le ? `<span class="badge-nouveau${retourEstNouveau(b, profil.id) ? '' : ' discret'}">${retourEstNouveau(b, profil.id) ? 'NOUVEAU RETOUR' : 'RETOUR'}</span>` : ''}</summary>
+          ${etatHtml(b, avant)}
           ${retourBilanHtml(b) || '<p class="petit">En attente du retour de ta coach.</p>'}
         </details>`).join('')}</div>
     </section>
@@ -566,8 +568,12 @@ async function bilan(racine, profil) {
       <section class="carte"><div class="surtitre-carte">PHOTOS</div>
         <div class="grille-3">${photo('face', 'Face')}${photo('profil', 'Profil')}${photo('dos', 'Dos')}</div>
       </section>
+      <section class="carte"><div class="surtitre-carte">MON ÉTAT DE LA SEMAINE</div>
+        <p class="petit">Glisse chaque curseur de 1 à 10 pour que ta coach sache comment tu te sens.</p>
+        ${curseursHtml()}
+      </section>
       <section class="carte"><div class="surtitre-carte">MON RESSENTI</div>
-        <textarea name="ressenti" rows="4" placeholder="Énergie, faim, sommeil, séances difficiles…"></textarea>
+        <textarea name="ressenti" rows="4" placeholder="Faim, digestion, séances difficiles, moral…"></textarea>
       </section>
       <button class="bouton-principal" type="submit">${icone('check', 18)}ENVOYER MON BILAN</button>
     </form>
@@ -576,6 +582,7 @@ async function bilan(racine, profil) {
   racine.querySelectorAll('.choix-photo input').forEach((entree) => entree.addEventListener('change', () => {
     entree.parentElement.classList.toggle('choisie', entree.files.length > 0);
   }));
+  brancherCurseurs(racine.querySelector('#form-bilan'));
 
   racine.querySelector('#form-bilan').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -584,7 +591,7 @@ async function bilan(racine, profil) {
     const fichier = (k) => (d.get(k)?.size ? d.get(k) : null);
     await pendant(e.submitter, 'Envoi en cours…', () => api.addBilan(profil.id, {
       poids: num('poids'), taille: num('taille'), hanches: num('hanches'), cuisse: num('cuisse'),
-      ressenti: d.get('ressenti').trim()
+      ressenti: d.get('ressenti').trim(), ...lireCurseurs(e.target)
     }, { face: fichier('face'), profil: fichier('profil'), dos: fichier('dos') }));
     toast('Bilan envoyé à ta coach, bravo !');
     location.hash = '#/progres';

@@ -9,6 +9,7 @@ import { enregistreurVocal } from './vocal.js';
 import { lireMacrosPdf, kcalDepuisMacros } from './macros.js';
 import { afficherPhotos, blocCharges } from './eleve.js';
 import { conversation } from './chat.js';
+import { etatHtml, formeGlobale, SEUIL_VIGILANCE } from './etat.js';
 import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from './photos.js';
 import { NOM_VIDEOTHEQUE } from './config.js';
 import { carteProgramme, brancherFichiers } from './programmes.js';
@@ -57,6 +58,9 @@ function statutEleve(e, aCorriger, bilans) {
   if (siennes.length) return ['Posing à corriger', ORANGE];
   if (bilans.some((b) => b.eleve_id === e.id && !b.lu)) return ['Bilan reçu', VERT];
   if (e.prochain_bilan && bilanEnRetard(e.prochain_bilan, bilans.filter((b) => b.eleve_id === e.id))) return ['Bilan en retard', ORANGE];
+  const dernier = bilans.filter((b) => b.eleve_id === e.id).sort((a, b) => a.date.localeCompare(b.date)).pop();
+  const forme = formeGlobale(dernier);
+  if (forme != null && forme <= SEUIL_VIGILANCE) return ['Forme basse', ORANGE];
   return ['À jour', GRIS];
 }
 
@@ -477,6 +481,7 @@ function carteBilan(b, precedent) {
       <span>Hanches <strong>${nombre(b.hanches)} cm</strong>${delta('hanches', 'cm')}</span>
       <span>Cuisse <strong>${nombre(b.cuisse)} cm</strong>${delta('cuisse', 'cm')}</span>
     </div>
+    ${etatHtml(b, precedent, { pourCoach: true })}
     ${b.ressenti ? `<p class="texte">« ${esc(b.ressenti)} »</p>` : ''}
     ${b.photo_face || b.photo_profil || b.photo_dos ? `<div class="grille-3">${['face', 'profil', 'dos'].map((c) =>
       `<figure class="photo"><div class="photo-cadre" data-chemin="${esc(b[`photo_${c}`] || '')}">—</div><figcaption>${c}</figcaption></figure>`).join('')}</div>` : ''}
@@ -552,7 +557,10 @@ function brancherLu(zone, apres) {
 async function ficheBilans(zone, e, recharger) {
   const bilans = await api.listBilans(e.id);
   const cartes = bilans.map((b, i) => carteBilan(b, bilans[i - 1])).reverse().join('');
+  const formes = bilans.map((b) => formeGlobale(b)).filter((v) => v != null);
   zone.innerHTML = `${bilans.length > 1 ? `<section class="carte large"><div class="surtitre-carte">POIDS</div>${courbe(bilans.map((b) => ({ valeur: b.poids })), { largeur: 640, hauteur: 140 })}</section>` : ''}
+    ${formes.length > 1 ? `<section class="carte large"><div class="ligne-entre"><div class="surtitre-carte">FORME GLOBALE (ÉNERGIE, RÉCUPÉRATION, SOMMEIL, MOTIVATION)</div><span class="petit">sur 10</span></div>
+      ${courbe(formes.map((v) => ({ valeur: v })), { largeur: 640, hauteur: 140, libelle: 'Évolution de la forme globale', unite: '/10' })}</section>` : ''}
     <div class="pile">${cartes || '<p class="vide">Aucun bilan pour le moment.</p>'}</div>`;
   brancherLu(zone, recharger);
   brancherReponses(zone, bilans, recharger);
