@@ -155,8 +155,8 @@ async function ficheSuivi(zone, e, recharger) {
       <label>Sur (semaines)<input name="semaines_total" type="number" min="1" value="${e.semaines_total}"></label>
       <label>Jour de bilan (facultatif)<input name="prochain_bilan" type="date" value="${esc(e.prochain_bilan || '')}"></label>
     </div>
-    <p class="petit">Les bilans reviennent automatiquement chaque semaine${e.prochain_bilan ? ' à partir de la date choisie' : ', le même jour que son premier bilan (ou une semaine après son inscription)'}.
-      ${prochain ? `<br>Prochain bilan : <strong>${dateAvecJour(prochain)}</strong>` : ''}<br>Choisis une date seulement pour changer de jour.</p>
+    <p class="petit">${e.prochain_bilan ? 'Les bilans reviennent automatiquement chaque semaine à partir de la date choisie.' : 'Les bilans reviennent automatiquement chaque week-end (à envoyer au plus tard le dimanche).'}
+      ${prochain ? `<br>Prochain bilan : <strong>${dateAvecJour(prochain)}</strong>` : ''}<br>Choisis une date seulement pour un autre jour que le dimanche, laisse vide pour revenir au week-end.</p>
     <label>Message du jour (affiché sur son accueil)<textarea name="message_coach" rows="4">${esc(e.message_coach || '')}</textarea></label>
     <label class="case"><input type="checkbox" name="competitrice" ${e.competitrice ? 'checked' : ''}><span>Compétitrice (active l'onglet Posing)</span></label>
     <button class="bouton-principal" type="submit">ENREGISTRER</button>

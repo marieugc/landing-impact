@@ -79,14 +79,20 @@ export function echeancesBilan(depart) {
   const derniere = plusJours(depart, Math.floor(-n / 7) * 7);
   return { derniere, prochaine: joursAvant(derniere) === 0 ? derniere : plusJours(derniere, 7) };
 }
-// Point de départ du rythme hebdomadaire : la date réglée par la coach, sinon le jour du premier bilan,
-// sinon 7 jours après l'inscription. La coach n'a donc rien à régler.
+// Premier dimanche à au moins `ecart` jours de la date donnée
+function dimancheApres(v, ecart = 0) {
+  const debut = plusJours(v, ecart);
+  return plusJours(debut, (7 - versDate(debut).getDay()) % 7);
+}
+// Point de départ du rythme hebdomadaire : la date réglée par la coach, sinon chaque week-end
+// (échéance le dimanche). Une nouvelle inscrite a au moins 4 jours avant son premier bilan.
+// La coach n'a donc rien à régler.
 export function departBilans(eleve, bilansEleve = []) {
   if (eleve?.prochain_bilan) return eleve.prochain_bilan;
   const premier = bilansEleve.map((b) => b.date).filter(Boolean).sort()[0];
-  if (premier) return premier;
-  if (eleve?.created_at) return plusJours(String(eleve.created_at).slice(0, 10), 7);
-  return null;
+  if (premier) return dimancheApres(premier);
+  const inscription = eleve?.created_at ? String(eleve.created_at).slice(0, 10) : plusJours(new Date().toISOString().slice(0, 10), 0);
+  return dimancheApres(inscription, 4);
 }
 // En retard : la dernière échéance est passée (pas le jour même) et aucun bilan n'a été envoyé
 // depuis 3 jours avant cette échéance (un bilan envoyé un peu en avance compte).
