@@ -1,7 +1,7 @@
 // ESPACE COACH — tableau de bord, fiches élèves, corrections vidéo, bilans, compétitrices.
 import { api, MODE } from './data.js';
 import {
-  esc, icone, VERSION_APP, dateCourte, joursAvant, bilanEnRetard, nombre, ecart, badge,
+  esc, icone, VERSION_APP, dateCourte, dateAvecJour, joursAvant, bilanEnRetard, departBilans, echeancesBilan, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe, compresserImage
 } from './ui.js';
 import { retourBilanHtml, brancherRetours, vocalRetour } from './bilans.js';
@@ -57,7 +57,8 @@ function statutEleve(e, aCorriger, bilans) {
   if (siennes.some((v) => v.type !== 'posing')) return ['Vidéo à corriger', ORANGE];
   if (siennes.length) return ['Posing à corriger', ORANGE];
   if (bilans.some((b) => b.eleve_id === e.id && !b.lu)) return ['Bilan reçu', VERT];
-  if (e.prochain_bilan && bilanEnRetard(e.prochain_bilan, bilans.filter((b) => b.eleve_id === e.id))) return ['Bilan en retard', ORANGE];
+  const depart = departBilans(e, bilans.filter((b) => b.eleve_id === e.id));
+  if (depart && bilanEnRetard(depart, bilans.filter((b) => b.eleve_id === e.id))) return ['Bilan en retard', ORANGE];
   const dernier = bilans.filter((b) => b.eleve_id === e.id).sort((a, b) => a.date.localeCompare(b.date)).pop();
   const forme = formeGlobale(dernier);
   if (forme != null && forme <= SEUIL_VIGILANCE) return ['Forme basse', ORANGE];
@@ -144,14 +145,18 @@ async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
 }
 
 async function ficheSuivi(zone, e, recharger) {
+  const depart = departBilans(e, await api.listBilans(e.id));
+  const prochain = depart ? echeancesBilan(depart).prochaine : null;
   zone.innerHTML = `<form class="formulaire carte large" id="form-suivi">
     <label>Prénom<input name="prenom" value="${esc(e.prenom)}" required></label>
     <label>Objectif<input name="objectif" value="${esc(e.objectif || '')}" placeholder="Ex. : Galber le bas du corps"></label>
     <div class="grille-3">
       <label>Semaine actuelle<input name="semaine" type="number" min="1" value="${e.semaine}"></label>
       <label>Sur (semaines)<input name="semaines_total" type="number" min="1" value="${e.semaines_total}"></label>
-      <label>Prochain bilan<input name="prochain_bilan" type="date" value="${esc(e.prochain_bilan || '')}"></label>
+      <label>Jour de bilan (facultatif)<input name="prochain_bilan" type="date" value="${esc(e.prochain_bilan || '')}"></label>
     </div>
+    <p class="petit">${e.prochain_bilan ? 'Les bilans reviennent automatiquement chaque semaine à partir de la date choisie.' : 'Les bilans reviennent automatiquement chaque week-end (à envoyer au plus tard le dimanche).'}
+      ${prochain ? `<br>Prochain bilan : <strong>${dateAvecJour(prochain)}</strong>` : ''}<br>Choisis une date seulement pour un autre jour que le dimanche, laisse vide pour revenir au week-end.</p>
     <label>Message du jour (affiché sur son accueil)<textarea name="message_coach" rows="4">${esc(e.message_coach || '')}</textarea></label>
     <label class="case"><input type="checkbox" name="competitrice" ${e.competitrice ? 'checked' : ''}><span>Compétitrice (active l'onglet Posing)</span></label>
     <button class="bouton-principal" type="submit">ENREGISTRER</button>

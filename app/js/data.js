@@ -151,7 +151,7 @@ const demo = {
     email = email.trim().toLowerCase();
     if (d.profiles.some((x) => x.email === email)) throw new Error('Un compte existe déjà avec cette adresse.');
     const p = { id: id(), email, prenom, role: 'eleve', objectif: '', semaine: 1, semaines_total: 12,
-      competitrice: false, message_coach: '', prochain_bilan: dansJours(7) };
+      competitrice: false, message_coach: '', prochain_bilan: null, created_at: new Date().toISOString() };
     d.profiles.push(p);
     ecrireDemo(d);
     localStorage.setItem(CLE_SESSION, p.id);
