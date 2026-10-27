@@ -1,12 +1,12 @@
 // Service worker : permet d'installer l'app et de l'ouvrir même avec une connexion faible.
 // Pense à changer le numéro de version à chaque mise à jour de l'app.
-const VERSION = 'bootyflow-v26';
+const VERSION = 'bootyflow-v28';
 
 const FICHIERS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/styles.css?v=26',
+  './css/styles.css?v=28',
   './js/config.js',
   './js/data.js',
   './js/ui.js',
@@ -20,7 +20,9 @@ const FICHIERS = [
   './js/macros.js',
   './js/photos.js',
   './js/etat.js',
-  './js/app.js?v=26',
+  './js/rappels.js',
+  './js/compression.js',
+  './js/app.js?v=28',
   './img/banniere.jpg',
   './img/coach.jpg',
   './icons/icon-192.png',
@@ -61,4 +63,28 @@ self.addEventListener('fetch', (event) => {
       })
       .catch(() => caches.match(event.request).then((r) => r || caches.match('./index.html')))
   );
+});
+
+// Notifications de rappel (bilan du week-end) envoyées par la fonction Supabase rappels-bilans
+self.addEventListener('push', (event) => {
+  let donnees = {};
+  try { donnees = event.data ? event.data.json() : {}; } catch (e) { donnees = { corps: event.data && event.data.text() }; }
+  event.waitUntil(self.registration.showNotification(donnees.titre || 'Booty Flow', {
+    body: donnees.corps || '',
+    icon: './icons/icon-192.png',
+    badge: './icons/icon-192.png',
+    tag: 'rappel-bilan',
+    data: { url: donnees.url || '#/accueil' }
+  }));
+});
+
+// Un toucher sur la notification ouvre l'app sur le bon écran
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const cible = new URL(`./${event.notification.data?.url || ''}`, self.registration.scope).href;
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((fenetres) => {
+    const ouverte = fenetres.find((c) => c.url.startsWith(self.registration.scope));
+    if (ouverte) return ouverte.navigate(cible).then((c) => (c || ouverte).focus()).catch(() => ouverte.focus());
+    return self.clients.openWindow(cible);
+  }));
 });

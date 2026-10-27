@@ -257,6 +257,22 @@ const demo = {
   },
   async saveChecklist(uid, checklist) { await demo.saveCompetition(uid, { checklist }); },
 
+  // Rappels sur le téléphone : en démo, l'abonnement est seulement retenu localement
+  async enregistrerAbonnement(eleveId, { endpoint, keys }) {
+    const d = lireDemo();
+    d.abonnements = (d.abonnements || []).filter((a) => a.endpoint !== endpoint);
+    d.abonnements.push({ id: id(), eleve_id: eleveId, endpoint, p256dh: keys.p256dh, auth: keys.auth });
+    ecrireDemo(d);
+  },
+  async supprimerAbonnement(endpoint) {
+    const d = lireDemo();
+    d.abonnements = (d.abonnements || []).filter((a) => a.endpoint !== endpoint);
+    ecrireDemo(d);
+  },
+  async compterAbonnements(eleveId) {
+    return (lireDemo().abonnements || []).filter((a) => a.eleve_id === eleveId).length;
+  },
+
   async listMessages(eleveId) {
     return (lireDemo().messages || [])
       .filter((m) => !eleveId || m.eleve_id === eleveId)
@@ -489,6 +505,20 @@ const reel = {
   },
 
   // Sans eleveId : tous les messages (la coach uniquement, grâce aux règles de sécurité)
+  async enregistrerAbonnement(eleveId, { endpoint, keys }) {
+    verifier(await (await client()).from('abonnements_push')
+      .upsert({ eleve_id: eleveId, endpoint, p256dh: keys.p256dh, auth: keys.auth }, { onConflict: 'endpoint' }));
+  },
+  async supprimerAbonnement(endpoint) {
+    verifier(await (await client()).from('abonnements_push').delete().eq('endpoint', endpoint));
+  },
+  async compterAbonnements(eleveId) {
+    const { count, error } = await (await client()).from('abonnements_push')
+      .select('id', { count: 'exact', head: true }).eq('eleve_id', eleveId);
+    if (error) return null;
+    return count;
+  },
+
   async listMessages(eleveId) {
     let q = (await client()).from('messages').select('*').order('created_at');
     if (eleveId) q = q.eq('eleve_id', eleveId);

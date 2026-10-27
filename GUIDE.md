@@ -148,6 +148,28 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 
 ---
 
+## Étape 6 : rappels de bilan sur le téléphone (notifications)
+
+Les élèves reçoivent une notification **le dimanche à 18 h** si leur bilan n'est pas encore envoyé,
+et **le lundi à 9 h** s'il n'est toujours pas arrivé. Chaque élève les active une fois avec le bouton
+« Activer les rappels » sur son accueil (sur iPhone : app installée sur l'écran d'accueil, iOS 16.4 ou plus).
+
+À faire une seule fois dans Supabase :
+
+1. **Table** : relance `supabase/schema.sql` dans SQL Editor (elle crée la table `abonnements_push`).
+2. **Secrets** : Edge Functions › Secrets › ajoute ces 4 secrets (les valeurs t'ont été données à part,
+   ne les mets jamais dans GitHub) : `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`
+   (`mailto:` suivi de ton adresse e-mail) et `RAPPELS_SECRET`.
+3. **Fonction** : Edge Functions › Deploy a new function › Via Editor. Nomme-la `rappels-bilans`,
+   crée deux fichiers en copiant `supabase/functions/rappels-bilans/index.ts` et `webpush.ts`, puis Deploy.
+   Dans les réglages de la fonction, **désactive « Verify JWT »** (elle est protégée par `RAPPELS_SECRET`).
+4. **Programmation** : copie `supabase/rappels.sql` dans SQL Editor, remplace `TON-SECRET-RAPPELS`
+   par la valeur de `RAPPELS_SECRET`, puis Run.
+5. **Essai** : active les rappels sur un téléphone (compte élève), puis lance la requête d'essai
+   en bas de `supabase/rappels.sql`. Une notification « Les rappels fonctionnent ! » doit arriver.
+
+Dans la fiche de chaque élève (onglet Suivi), tu vois si elle a activé les rappels.
+
 ## Ce que fait l'app
 
 **Espace élève (téléphone)**
@@ -175,6 +197,12 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 ---
 
 ## Questions fréquentes
+
+**Les vidéos rament ?** Depuis la version 28, chaque vidéo envoyée (par une élève ou par toi) est allégée
+automatiquement sur le téléphone avant l'envoi : 720p, environ 2 Mb/s, format qui démarre tout de suite.
+Une vidéo de 40 Mo passe en général sous 5 Mo. Les vidéos envoyées avant restent lourdes : demande de les renvoyer
+si besoin. L'option payante de Supabase donne plus d'espace, mais ne rend pas une vidéo trop lourde plus rapide à lire.
+
 
 **Combien ça coûte ?** GitHub Pages et Supabase sont gratuits. La formule gratuite de Supabase
 offre 1 Go de stockage : les vidéos sont limitées à 50 Mo chacune. Quand tu auras beaucoup

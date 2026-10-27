@@ -9,6 +9,7 @@ import { enregistreurVocal } from './vocal.js';
 import { lireMacrosPdf, kcalDepuisMacros } from './macros.js';
 import { afficherPhotos, blocCharges } from './eleve.js';
 import { conversation } from './chat.js';
+import { videoPrete } from './compression.js';
 import { etatHtml, formeGlobale, SEUIL_VIGILANCE } from './etat.js';
 import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from './photos.js';
 import { NOM_VIDEOTHEQUE } from './config.js';
@@ -147,6 +148,7 @@ async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
 async function ficheSuivi(zone, e, recharger) {
   const depart = departBilans(e, await api.listBilans(e.id));
   const prochain = depart ? echeancesBilan(depart).prochaine : null;
+  const abonnements = await api.compterAbonnements(e.id).catch(() => null);
   zone.innerHTML = `<form class="formulaire carte large" id="form-suivi">
     <label>Prénom<input name="prenom" value="${esc(e.prenom)}" required></label>
     <label>Objectif<input name="objectif" value="${esc(e.objectif || '')}" placeholder="Ex. : Galber le bas du corps"></label>
@@ -156,7 +158,8 @@ async function ficheSuivi(zone, e, recharger) {
       <label>Jour de bilan (facultatif)<input name="prochain_bilan" type="date" value="${esc(e.prochain_bilan || '')}"></label>
     </div>
     <p class="petit">${e.prochain_bilan ? 'Les bilans reviennent automatiquement chaque semaine à partir de la date choisie.' : 'Les bilans reviennent automatiquement chaque week-end (à envoyer au plus tard le dimanche).'}
-      ${prochain ? `<br>Prochain bilan : <strong>${dateAvecJour(prochain)}</strong>` : ''}<br>Choisis une date seulement pour un autre jour que le dimanche, laisse vide pour revenir au week-end.</p>
+      ${prochain ? `<br>Prochain bilan : <strong>${dateAvecJour(prochain)}</strong>` : ''}
+      ${abonnements === null ? '' : `<br>Rappels sur son téléphone : <strong>${abonnements ? `activés${abonnements > 1 ? ` (${abonnements} appareils)` : ''}` : 'pas encore activés'}</strong>`}<br>Choisis une date seulement pour un autre jour que le dimanche, laisse vide pour revenir au week-end.</p>
     <label>Message du jour (affiché sur son accueil)<textarea name="message_coach" rows="4">${esc(e.message_coach || '')}</textarea></label>
     <label class="case"><input type="checkbox" name="competitrice" ${e.competitrice ? 'checked' : ''}><span>Compétitrice (active l'onglet Posing)</span></label>
     <button class="bouton-principal" type="submit">ENREGISTRER</button>
@@ -381,12 +384,9 @@ function formulaireVideoCoach(eleves, apres, eleveChoisie = '') {
       toast('Ce lien ne semble pas valide. Copie-le depuis YouTube avec « Partager » puis « Copier le lien ».', true);
       return;
     }
-    if (fichier && fichier.size > 50 * 1024 * 1024) {
-      toast('Vidéo trop lourde (50 Mo max). Mets-la sur YouTube en « non répertoriée » et colle le lien à la place.', true);
-      return;
-    }
-    await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', () => api.envoyerVideoCoach({
-      eleveId: d.get('eleve'), type: 'posing', exercice: d.get('exercice').trim(), file: fichier, lien: fichier ? null : lien, texte: d.get('texte').trim()
+    await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', async () => api.envoyerVideoCoach({
+      eleveId: d.get('eleve'), type: 'posing', exercice: d.get('exercice').trim(), file: await videoPrete(fichier, ev.submitter),
+      lien: fichier ? null : lien, texte: d.get('texte').trim()
     }));
     fermerFenetre();
     toast('Vidéo envoyée !');
@@ -452,12 +452,8 @@ function brancherCorrections(zone, videos, apres) {
         toast('Écris un retour, enregistre un vocal, ajoute des photos, une vidéo ou un lien.', true);
         return;
       }
-      if (fichier && fichier.size > 50 * 1024 * 1024) {
-        toast('Vidéo trop lourde (50 Mo max). Mets-la sur YouTube en « non répertoriée » et colle le lien à la place.', true);
-        return;
-      }
       await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', async () =>
-        api.correctVideo(v.id, retour, fichier, v.eleve_id, {
+        api.correctVideo(v.id, retour, await videoPrete(fichier, ev.submitter), v.eleve_id, {
           audio, duree: vocal.duree(), supprimerAudio, photos: await preparerPhotos(choisies), photosGardees: gardees, lien
         }));
       toast('Correction envoyée.');
@@ -903,13 +899,9 @@ function formulaireBiblio(v, recharger) {
     const lien = d.get('lien').trim();
     if (!fichier && !lien && !v?.chemin) { toast('Choisis une vidéo ou colle un lien.', true); return; }
     if (lien && !lienValide(lien)) { toast('Le lien doit commencer par https://', true); return; }
-    if (fichier && fichier.size > 50 * 1024 * 1024) {
-      toast('Vidéo trop lourde (50 Mo max). Utilise plutôt un lien YouTube non répertorié.', true);
-      return;
-    }
-    await pendant(e.submitter, fichier ? 'Envoi de la vidéo…' : 'Enregistrement…', () => api.saveBibliotheque(v?.id, {
+    await pendant(e.submitter, fichier ? 'Envoi de la vidéo…' : 'Enregistrement…', async () => api.saveBibliotheque(v?.id, {
       titre: d.get('titre').trim(), categorie: d.get('categorie'), description: d.get('description').trim(), lien: lien || null
-    }, fichier));
+    }, await videoPrete(fichier, e.submitter)));
     fermerFenetre();
     toast(v ? 'Vidéo modifiée.' : 'Vidéo publiée ! Tes élèves vont la voir apparaître.');
     recharger();

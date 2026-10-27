@@ -597,3 +597,7 @@ span.vignette { cursor: default; }
 .forme-globale[data-niveau="bonne"] { border-color: var(--vert); color: var(--vert); }
 .alerte-forme { margin: 0; font-size: 13px; color: var(--orange); }
 @media (max-width: 420px) { .etat-ligne { grid-template-columns: 1fr 5.5em; } .etat-barre { grid-column: 1 / -1; grid-row: 2; } }
+
+/* Carte « Rappels de bilan » sur l'accueil élève */
+.carte-rappels { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.carte-rappels p { margin: 0; }

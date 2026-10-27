@@ -19,3 +19,7 @@ export const NOM_COACH = 'Marie';
 
 // Nom de la bibliothèque de vidéos d'explication (tu peux le changer ici)
 export const NOM_VIDEOTHEQUE = 'Vidéothèque';
+
+// Clé publique des notifications (rappels de bilan). Elle peut être visible ;
+// la clé privée qui va avec est rangée dans les secrets Supabase (VAPID_PRIVATE_KEY).
+export const VAPID_PUBLIC_KEY = 'BMvwomyF4FBLG7_SGkdeO7VcppuBAVG7G5c_yGLBQaVvPGdVNhXa2hVNsUWUKgAU7eqgipsM22EmfdfjA80GX1s';
