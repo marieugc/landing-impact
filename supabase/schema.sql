@@ -102,6 +102,12 @@ alter table public.bilans add column if not exists retour_audio text;
 alter table public.bilans add column if not exists retour_audio_duree int;
 alter table public.bilans add column if not exists retour_photos jsonb not null default '[]';
 alter table public.bilans add column if not exists retour_le timestamptz;
+-- État de la semaine noté par l'élève (curseurs de 1 à 10)
+alter table public.bilans add column if not exists difficulte smallint check (difficulte between 1 and 10);
+alter table public.bilans add column if not exists energie smallint check (energie between 1 and 10);
+alter table public.bilans add column if not exists recuperation smallint check (recuperation between 1 and 10);
+alter table public.bilans add column if not exists sommeil smallint check (sommeil between 1 and 10);
+alter table public.bilans add column if not exists motivation smallint check (motivation between 1 and 10);
 
 -- 5. Compétition (pour les compétitrices)
 create table if not exists public.competitions (

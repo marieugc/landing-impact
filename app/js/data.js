@@ -10,7 +10,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v6';
+const CLE_DEMO = 'bootyflow-demo-v7';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -59,6 +59,9 @@ function donneesDemo() {
     [71.6, 69.5, 97.5, 56.5, -20], [71.3, 69, 98, 56.5, -13], [71.0, 68, 98, 57, -6]
   ].map(([poids, taille, hanches, cuisse, j], i) => ({
     id: `b${i}`, eleve_id: 'sarah', date: dansJours(j), poids, taille, hanches, cuisse,
+    // État de la semaine (difficulté, énergie, récupération, sommeil, motivation) : baisse de forme sur le dernier bilan
+    ...(i >= 3 ? Object.fromEntries(['difficulte', 'energie', 'recuperation', 'sommeil', 'motivation']
+      .map((cle, k) => [cle, [[6, 7, 7, 8, 8], [7, 7, 6, 7, 8], [8, 4, 3, 4, 5]][i - 3][k]])) : {}),
     ressenti: '', lu: i < 5, photo_face: null, photo_profil: null, photo_dos: null,
     retour: i === 4 ? 'Super régularité Sarah ! La taille continue de baisser et les cuisses se dessinent. On garde le même plan cette semaine.' : null,
     retour_audio: null, retour_audio_duree: null, retour_photos: [], retour_le: i === 4 ? dansJours(-12) + 'T18:00:00.000Z' : null

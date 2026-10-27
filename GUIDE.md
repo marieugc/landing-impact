@@ -157,11 +157,11 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 - **Mouvement** : la **Vidéothèque** (tes vidéos d'explication, par catégorie, avec badge « Nouveau ») et **Mes corrections** (envoi de vidéos d'exercice et tes corrections)
 - **Posing** (compétitrices seulement) : compte à rebours, poses imposées, checklist jour J, envoi de posing
 - **Chat** : discussion privée avec la coach, en messages écrits ou vocaux (bouton micro)
-- **Progrès** : courbe de poids, mensurations, **suivi des charges par exercice** (courbe, record, historique), photos avant/après, formulaire de bilan hebdo
+- **Progrès** : courbe de poids, mensurations, **suivi des charges par exercice** (courbe, record, historique), photos avant/après, formulaire de bilan hebdo (avec 5 curseurs de 1 à 10 : difficulté des entraînements, énergie, récupération, sommeil, motivation)
 
 **Espace coach (ordinateur ou téléphone)**
 - **Mes élèves** : chiffres clés et liste avec statut automatique (vidéo à corriger, bilan reçu, bilan en retard, à jour)
-- **Fiche élève** : suivi, plan nutrition, vidéos, bilans (avec photos et écarts), charges de musculation, compétition
+- **Fiche élève** : suivi, plan nutrition, vidéos, bilans (avec photos, écarts, état de la semaine et courbe de forme globale), charges de musculation, compétition
 - **Vidéos à corriger** : les vidéos de mouvement en attente (avec les photos jointes par l'élève), avec un retour écrit, un vocal, des photos et/ou une vidéo de correction (fichier de 50 Mo max, ou lien YouTube non répertoriée qui s'affiche directement chez l'élève)
 - **Compétitrices** : bouton « Envoyer une vidéo de posing » pour envoyer ta propre vidéo (démonstration…) à une compétitrice, qui la voit en haut de son onglet Posing avec une pastille ; les vidéos de **posing à corriger** (même réponse possible : écrit, vocal, vidéo ; pastille dans le menu quand il y en a), puis la compétition de chacune
 - **Bilans**, **Plans nutrition** : vues d'ensemble
