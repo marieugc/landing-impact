@@ -2,7 +2,7 @@
 import { api, MODE } from './data.js';
 import { NOM_COACH, NOM_VIDEOTHEQUE } from './config.js';
 import {
-  esc, icone, VERSION_APP, dateCourte, dateAvecJour, joursAvant, echeancesBilan, nombre, ecart, badge,
+  esc, icone, VERSION_APP, dateCourte, dateAvecJour, joursAvant, echeancesBilan, departBilans, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { conversation } from './chat.js';
@@ -57,7 +57,9 @@ async function accueil(racine, profil) {
   const programmes = await api.listProgrammes(profil.id);
   const programme = programmes[0];
   const programmesNouveaux = programmes.filter((p) => estNouveau(p, profil.id));
-  const retoursNouveaux = (await api.listBilans(profil.id)).filter((b) => retourEstNouveau(b, profil.id));
+  const mesBilans = await api.listBilans(profil.id);
+  const retoursNouveaux = mesBilans.filter((b) => retourEstNouveau(b, profil.id));
+  const departBilan = departBilans(profil, mesBilans);
   const pct = Math.min(100, Math.round((profil.semaine / Math.max(1, profil.semaines_total)) * 100));
 
   racine.innerHTML = page(profil, 'accueil', `
@@ -93,7 +95,7 @@ async function accueil(racine, profil) {
     </section>
     <div class="grille-2">
       <a href="#/bilan" class="carte carte-mini">${icone('horloge', 22, 'var(--accent)')}
-        <div><div class="petit">Prochain bilan</div><strong>${profil.prochain_bilan ? dateAvecJour(echeancesBilan(profil.prochain_bilan).prochaine) : 'À définir'}</strong></div></a>
+        <div><div class="petit">Prochain bilan</div><strong>${departBilan ? dateAvecJour(echeancesBilan(departBilan).prochaine) : 'Dès cette semaine'}</strong></div></a>
       <a href="#/mouvement" class="carte carte-mini">${icone('video', 22, 'var(--accent)')}
         <div><div class="petit">Vidéos corrigées</div><strong>${recentes.length ? `${recentes.length} nouvelle${recentes.length > 1 ? 's' : ''}` : 'À jour'}</strong></div></a>
     </div>

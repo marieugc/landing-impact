@@ -130,7 +130,7 @@ par SMS, WhatsApp ou Instagram. Ton élève :
 2. clique sur **Créer mon compte**,
 3. apparaît automatiquement dans ta liste « Mes élèves ».
 
-Ensuite, clique sur son nom pour remplir sa fiche : objectif, semaines, date du prochain bilan,
+Ensuite, clique sur son nom pour remplir sa fiche : objectif, semaines, jour de bilan (facultatif : sans date, les bilans reviennent automatiquement chaque semaine, le jour de son premier bilan),
 message du jour, plan nutrition, et « Compétitrice » si elle prépare une compétition (ça active
 son onglet Posing).
 

@@ -2,7 +2,7 @@
 
 // Numéro affiché en bas de l'app : permet de vérifier que le téléphone a bien la dernière version.
 // À augmenter à chaque mise à jour, en même temps que version.json, VERSION dans sw.js et ?v= dans index.html.
-export const VERSION_APP = '25';
+export const VERSION_APP = '26';
 
 // Protège le texte saisi (évite qu'un nom ou un message casse la page)
 export function esc(v) {
@@ -78,6 +78,15 @@ export function echeancesBilan(depart) {
   if (n >= 0) return { derniere: n === 0 ? depart : null, prochaine: depart };
   const derniere = plusJours(depart, Math.floor(-n / 7) * 7);
   return { derniere, prochaine: joursAvant(derniere) === 0 ? derniere : plusJours(derniere, 7) };
+}
+// Point de départ du rythme hebdomadaire : la date réglée par la coach, sinon le jour du premier bilan,
+// sinon 7 jours après l'inscription. La coach n'a donc rien à régler.
+export function departBilans(eleve, bilansEleve = []) {
+  if (eleve?.prochain_bilan) return eleve.prochain_bilan;
+  const premier = bilansEleve.map((b) => b.date).filter(Boolean).sort()[0];
+  if (premier) return premier;
+  if (eleve?.created_at) return plusJours(String(eleve.created_at).slice(0, 10), 7);
+  return null;
 }
 // En retard : la dernière échéance est passée (pas le jour même) et aucun bilan n'a été envoyé
 // depuis 3 jours avant cette échéance (un bilan envoyé un peu en avance compte).
