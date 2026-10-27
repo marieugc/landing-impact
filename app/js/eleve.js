@@ -8,6 +8,7 @@ import {
 import { conversation } from './chat.js';
 import { curseursHtml, brancherCurseurs, lireCurseurs, etatHtml } from './etat.js';
 import { carteRappels } from './rappels.js';
+import { videoPrete } from './compression.js';
 import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from './photos.js';
 import { retourBilanHtml, brancherRetours, retourEstNouveau, marquerRetoursVus, vocalRetour } from './bilans.js';
 import { carteProgramme, brancherFichiers, estNouveau, nouveauxProgrammes, marquerTrainingVu } from './programmes.js';
@@ -249,7 +250,7 @@ function formulaireVideo(profil, type, titre, apres) {
       <label>Ta vidéo<input name="fichier" type="file" accept="video/*"></label>
       <label class="choix-video">${icone('photo', 18, 'var(--accent)')}<span>Ajouter des photos (facultatif)</span>
         <input type="file" name="photos" accept="image/*" multiple></label>
-      <p class="petit">Astuce : filme-toi de profil, en entier, avec une bonne lumière. Tu peux aussi envoyer seulement des photos.</p>
+      <p class="petit">Astuce : filme-toi de profil, en entier, avec une bonne lumière. Ta vidéo est allégée automatiquement avant l'envoi pour que ta coach la voie sans attendre. Tu peux aussi envoyer seulement des photos.</p>
       <button class="bouton-principal" type="submit">${icone('envoi', 18)}ENVOYER</button>
     </form>`);
   suivreChoixPhotos(f.querySelector('[name=photos]'), 'Ajouter des photos (facultatif)');
@@ -262,12 +263,10 @@ function formulaireVideo(profil, type, titre, apres) {
       toast('Ajoute ta vidéo ou au moins une photo.', true);
       return;
     }
-    if (fichier && fichier.size > 50 * 1024 * 1024) {
-      toast('Vidéo trop lourde (50 Mo max). Coupe-la ou réduis la qualité.', true);
-      return;
-    }
     await pendant(e.submitter, 'Envoi en cours…', async () =>
-      api.addVideo({ eleveId: profil.id, type, exercice: donnees.get('exercice').trim(), file: fichier, photos: await preparerPhotos(choisies) }));
+      api.addVideo({ eleveId: profil.id, type, exercice: donnees.get('exercice').trim(),
+        file: await videoPrete(fichier, e.submitter, 'Vidéo trop lourde, même allégée (50 Mo max). Coupe-la pour ne garder que le mouvement.'),
+        photos: await preparerPhotos(choisies) }));
     fermerFenetre();
     toast('Vidéo envoyée à ta coach !');
     apres();

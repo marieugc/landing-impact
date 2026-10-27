@@ -198,6 +198,12 @@ Dans la fiche de chaque élève (onglet Suivi), tu vois si elle a activé les ra
 
 ## Questions fréquentes
 
+**Les vidéos rament ?** Depuis la version 28, chaque vidéo envoyée (par une élève ou par toi) est allégée
+automatiquement sur le téléphone avant l'envoi : 720p, environ 2 Mb/s, format qui démarre tout de suite.
+Une vidéo de 40 Mo passe en général sous 5 Mo. Les vidéos envoyées avant restent lourdes : demande de les renvoyer
+si besoin. L'option payante de Supabase donne plus d'espace, mais ne rend pas une vidéo trop lourde plus rapide à lire.
+
+
 **Combien ça coûte ?** GitHub Pages et Supabase sont gratuits. La formule gratuite de Supabase
 offre 1 Go de stockage : les vidéos sont limitées à 50 Mo chacune. Quand tu auras beaucoup
 d'élèves, la formule Pro de Supabase (environ 25 $/mois) passe à 100 Go.

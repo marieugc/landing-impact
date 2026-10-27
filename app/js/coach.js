@@ -9,6 +9,7 @@ import { enregistreurVocal } from './vocal.js';
 import { lireMacrosPdf, kcalDepuisMacros } from './macros.js';
 import { afficherPhotos, blocCharges } from './eleve.js';
 import { conversation } from './chat.js';
+import { videoPrete } from './compression.js';
 import { etatHtml, formeGlobale, SEUIL_VIGILANCE } from './etat.js';
 import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from './photos.js';
 import { NOM_VIDEOTHEQUE } from './config.js';
@@ -383,12 +384,9 @@ function formulaireVideoCoach(eleves, apres, eleveChoisie = '') {
       toast('Ce lien ne semble pas valide. Copie-le depuis YouTube avec « Partager » puis « Copier le lien ».', true);
       return;
     }
-    if (fichier && fichier.size > 50 * 1024 * 1024) {
-      toast('Vidéo trop lourde (50 Mo max). Mets-la sur YouTube en « non répertoriée » et colle le lien à la place.', true);
-      return;
-    }
-    await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', () => api.envoyerVideoCoach({
-      eleveId: d.get('eleve'), type: 'posing', exercice: d.get('exercice').trim(), file: fichier, lien: fichier ? null : lien, texte: d.get('texte').trim()
+    await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', async () => api.envoyerVideoCoach({
+      eleveId: d.get('eleve'), type: 'posing', exercice: d.get('exercice').trim(), file: await videoPrete(fichier, ev.submitter),
+      lien: fichier ? null : lien, texte: d.get('texte').trim()
     }));
     fermerFenetre();
     toast('Vidéo envoyée !');
@@ -454,12 +452,8 @@ function brancherCorrections(zone, videos, apres) {
         toast('Écris un retour, enregistre un vocal, ajoute des photos, une vidéo ou un lien.', true);
         return;
       }
-      if (fichier && fichier.size > 50 * 1024 * 1024) {
-        toast('Vidéo trop lourde (50 Mo max). Mets-la sur YouTube en « non répertoriée » et colle le lien à la place.', true);
-        return;
-      }
       await pendant(ev.submitter, fichier ? 'Envoi de la vidéo…' : 'Envoi…', async () =>
-        api.correctVideo(v.id, retour, fichier, v.eleve_id, {
+        api.correctVideo(v.id, retour, await videoPrete(fichier, ev.submitter), v.eleve_id, {
           audio, duree: vocal.duree(), supprimerAudio, photos: await preparerPhotos(choisies), photosGardees: gardees, lien
         }));
       toast('Correction envoyée.');
@@ -905,13 +899,9 @@ function formulaireBiblio(v, recharger) {
     const lien = d.get('lien').trim();
     if (!fichier && !lien && !v?.chemin) { toast('Choisis une vidéo ou colle un lien.', true); return; }
     if (lien && !lienValide(lien)) { toast('Le lien doit commencer par https://', true); return; }
-    if (fichier && fichier.size > 50 * 1024 * 1024) {
-      toast('Vidéo trop lourde (50 Mo max). Utilise plutôt un lien YouTube non répertorié.', true);
-      return;
-    }
-    await pendant(e.submitter, fichier ? 'Envoi de la vidéo…' : 'Enregistrement…', () => api.saveBibliotheque(v?.id, {
+    await pendant(e.submitter, fichier ? 'Envoi de la vidéo…' : 'Enregistrement…', async () => api.saveBibliotheque(v?.id, {
       titre: d.get('titre').trim(), categorie: d.get('categorie'), description: d.get('description').trim(), lien: lien || null
-    }, fichier));
+    }, await videoPrete(fichier, e.submitter)));
     fermerFenetre();
     toast(v ? 'Vidéo modifiée.' : 'Vidéo publiée ! Tes élèves vont la voir apparaître.');
     recharger();

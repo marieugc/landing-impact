@@ -1,12 +1,12 @@
 // Service worker : permet d'installer l'app et de l'ouvrir même avec une connexion faible.
 // Pense à changer le numéro de version à chaque mise à jour de l'app.
-const VERSION = 'bootyflow-v27';
+const VERSION = 'bootyflow-v28';
 
 const FICHIERS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/styles.css?v=27',
+  './css/styles.css?v=28',
   './js/config.js',
   './js/data.js',
   './js/ui.js',
@@ -21,7 +21,8 @@ const FICHIERS = [
   './js/photos.js',
   './js/etat.js',
   './js/rappels.js',
-  './js/app.js?v=27',
+  './js/compression.js',
+  './js/app.js?v=28',
   './img/banniere.jpg',
   './img/coach.jpg',
   './icons/icon-192.png',
