@@ -118,6 +118,14 @@
   .macro small { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--texte-pale); }
   .macro b { font-family: var(--titre); font-size: 26px; font-variant-numeric: tabular-nums; }
   .macro span { font-size: 13.5px; color: var(--texte-doux); font-variant-numeric: tabular-nums; }
+  .macro.choix { font: inherit; text-align: left; color: var(--texte); border: 0; cursor: pointer; transition: box-shadow .2s var(--ease), background .2s; }
+  .macro.choix[aria-pressed="true"] { background: var(--carte-2); box-shadow: var(--lueur); }
+  .macro.choix[aria-pressed="true"] small { color: var(--neon-clair); }
+  .macro.choix:focus-visible, .btn-13:focus-visible { outline: 2px solid var(--neon-clair); outline-offset: 2px; }
+  .cardio-l { font-size: 15px; color: var(--texte); }
+  .cardio-l small { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--texte-pale); margin-right: 8px; }
+  .consigne { font-size: 14px; color: var(--texte-doux); }
+  .btn-13 { justify-self: start; font: inherit; font-weight: 700; font-size: 15px; color: #12052A; background: var(--neon); border: 0; border-radius: 999px; padding: 12px 22px; cursor: pointer; box-shadow: 0 0 18px rgba(180, 92, 255, .6); }
   .detail .action { padding: 14px 16px; border-radius: 14px; background: rgba(180, 92, 255, .1); color: var(--texte); }
   .detail .action b { color: var(--neon-clair); }
 
@@ -192,9 +200,9 @@
       <h2 id="t-cles">Tes chiffres <em>de la semaine 1</em></h2>
     </header>
     <div class="chiffres">
-      <div class="chiffre fort"><span class="val">1 690</span><span class="lib">kcal les jours d'entraînement</span></div>
-      <div class="chiffre"><span class="val">1 435</span><span class="lib">kcal les jours sans entraînement</span></div>
-      <div class="chiffre"><span class="val">≈ 195 g</span><span class="lib">de protéines les jours d'entraînement (2,5 g par kg), ≈ 165 g les jours de repos</span></div>
+      <div class="chiffre fort"><span class="val" id="k-on">1 700</span><span class="lib">kcal les jours d'entraînement</span></div>
+      <div class="chiffre"><span class="val" id="k-off">1 440</span><span class="lib">kcal les jours sans entraînement</span></div>
+      <div class="chiffre"><span class="val" id="k-prot">≈ 195 g</span><span class="lib" id="k-prot-lib">de protéines les jours d'entraînement</span></div>
       <div class="chiffre"><span class="val">−0,5 à −0,7</span><span class="lib">kg par semaine : le rythme visé</span></div>
     </div>
   </section>
@@ -218,7 +226,7 @@
     <header>
       <span class="surtitre">Le plan</span>
       <h2 id="t-frise">Tes <em>13 semaines</em></h2>
-      <p class="chapeau">Touche une semaine pour voir tes calories, ton cardio et ce qui change. Les ajustements sont prévus, mais ils ne s'appliquent que si ta perte ralentit (voir « Comment on décide » plus bas).</p>
+      <p class="chapeau">Touche une semaine : tu vois ce qui change, ton cardio, puis la diète exacte de chaque journée de cette semaine, repas par repas. Les totaux sont calculés à partir des aliments, ils correspondent toujours à la diète affichée.</p>
     </header>
     <div class="frise" id="frise" role="group" aria-label="Semaines du plan"></div>
     <div class="legende">
@@ -237,22 +245,6 @@
     <div class="courbe-carte">
       <div class="defil"><svg id="courbe" viewBox="0 0 720 260" role="img" aria-label="Poids attendu de 76,6 kg à environ 68,5 à 71 kg en semaine 13"></svg></div>
     </div>
-  </section>
-
-  <section class="bloc" aria-labelledby="t-menus">
-    <header>
-      <span class="surtitre">Ton assiette</span>
-      <h2 id="t-menus">Tes journées <em>types</em></h2>
-      <p class="chapeau">Viandes et poissons pesés crus, riz, pommes de terre et patate douce pesés cuits. Légumes verts au choix : haricots verts, brocoli, courgettes, épinards, asperges.</p>
-    </header>
-    <div class="onglets" role="group" aria-label="Type de journée" id="types">
-      <button type="button" data-type="on" aria-pressed="true">Jour d'entraînement</button>
-      <button type="button" data-type="off" aria-pressed="false">Jour de repos</button>
-      <button type="button" data-type="refeed" aria-pressed="false">Refeed</button>
-      <button type="button" data-type="bas" aria-pressed="false">Jour bas</button>
-      <button type="button" data-type="moyen" aria-pressed="false">Jour moyen</button>
-    </div>
-    <div class="menu" id="menu" aria-live="polite"></div>
   </section>
 
   <section class="bloc" aria-labelledby="t-decide">
@@ -281,14 +273,7 @@
       <h2 id="t-peak">La semaine <em>de compétition</em></h2>
       <p class="chapeau">Sur le modèle exact de ma propre préparation à la compétition : un jour très bas, deux jours de décharge, une recharge douce, une grosse recharge, puis le jour J. Le sel reste comme d'habitude toute la semaine. Si la décharge devient trop dure (vertiges, malaise), on la remplace tout de suite par le menu du lundi et tu me préviens.</p>
     </header>
-    <div class="onglets" role="group" aria-label="Jour de la semaine de compétition" id="peak-types">
-      <button type="button" data-peak="lun" aria-pressed="true">Lundi</button>
-      <button type="button" data-peak="dech" aria-pressed="false">Mardi et mercredi</button>
-      <button type="button" data-peak="jeu" aria-pressed="false">Jeudi</button>
-      <button type="button" data-peak="ven" aria-pressed="false">Vendredi</button>
-      <button type="button" data-peak="j" aria-pressed="false">Jour J</button>
-    </div>
-    <div class="menu" id="peak-menu" aria-live="polite"></div>
+    <button type="button" class="btn-13" id="voir-13">Voir la diète de la semaine 13, jour par jour</button>
     <p class="note">Si la date de compétition change, on décale cette semaine pour que le samedi tombe sur le jour J.</p>
   </section>
 
@@ -325,36 +310,248 @@
 
 <script>
 (function () {
-  const SEMAINES = [
-    { n: 1, dates: "2 – 8 nov.", titre: "Mise en place", type: "levier", on: [1690, 194, 129, 44], off: [1435, 165, 94, 44], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "On passe de ton plan à 2 200 kcal <b>au niveau où tu as toujours perdu</b> : ≈ 1 690 kcal les jours d'entraînement, ≈ 1 435 les jours de repos. <b>Cardio 30 min à jeun dès le premier jour.</b> Tout est pesé et noté, huile comprise." },
-    { n: 2, dates: "9 – 15 nov.", titre: "Mise en place", type: "stable", on: [1690, 194, 129, 44], off: [1435, 165, 94, 44], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "Premier bilan lundi 16 novembre : moyenne de poids, photos, mensurations." },
-    { n: 3, dates: "16 – 22 nov.", titre: "Levier 1 : riz du M3", type: "levier", on: [1655, 193, 120, 44], off: [1400, 164, 86, 44], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "<b>70 g de riz au M3 au lieu de 100 g.</b>" },
-    { n: 4, dates: "23 – 29 nov.", titre: "On consolide", type: "stable", on: [1655, 193, 120, 44], off: [1400, 164, 86, 44], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "On laisse agir. Mensurations lundi 30 novembre." },
-    { n: 5, dates: "30 nov. – 6 déc.", titre: "Levier 2 : cardio", type: "levier", on: [1655, 193, 120, 44], off: [1400, 164, 86, 44], cardio: "30 min d'escalier à jeun, 6 matins par semaine", action: "<b>Un matin de cardio en plus.</b> La durée reste à 30 min, l'assiette ne bouge pas." },
-    { n: 6, dates: "7 – 13 déc.", titre: "On consolide", type: "stable", on: [1655, 193, 120, 44], off: [1400, 164, 86, 44], cardio: "30 min d'escalier à jeun, 6 matins par semaine", action: "On laisse agir. Mensurations lundi 14 décembre." },
-    { n: 7, dates: "14 – 20 déc.", titre: "Levier 3 : flocons + refeed", type: "levier", on: [1615, 192, 114, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, 6 matins par semaine", action: "<b>30 g de flocons au lieu de 40</b> au M1. <b>Premier refeed samedi 19 décembre</b> (≈ 2 250 kcal)." },
-    { n: 8, dates: "21 – 27 déc.", titre: "Noël = refeed test", type: "stable", on: [1615, 192, 114, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, 6 matins par semaine", action: "<b>Le refeed tombe le 24 ou le 25 décembre</b> : on le fait sur le modèle du refeed, et tu prends des photos le lendemain matin. Point photo de la semaine 8." },
-    { n: 9, dates: "28 déc. – 3 jan.", titre: "Levier 4 : cardio + réveillon", type: "levier", on: [1615, 192, 114, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, tous les matins", action: "<b>Cardio tous les matins.</b> <b>Refeed le 31 décembre</b>, puis on reprend le plan normal dès le M1 le 1er janvier." },
-    { n: 10, dates: "4 – 10 jan.", titre: "Levier 5 : glucides loin de la séance", type: "levier", on: [1575, 191, 107, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, tous les matins", action: "Les jours d'entraînement : <b>50 g de riz au M3</b> et <b>40 g de compote</b> après la séance. Créatine à 3 g, tyrosine arrêtée." },
-    { n: 11, dates: "11 – 17 jan.", titre: "Levier 6 : alternance des jours", type: "levier", on: [1575, 191, 107, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, tous les matins", action: "<b>Mardi : refeed. Mercredi à vendredi : jours bas</b> (≈ 1 365 kcal). <b>Dimanche : jour moyen</b> (≈ 1 625 kcal). Lundi et samedi : jours normaux. Menus dans « Tes journées types »." },
-    { n: 12, dates: "18 – 24 jan.", titre: "Alternance des jours (suite)", type: "stable", on: [1575, 191, 107, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, tous les matins", action: "Même alternance que la semaine 11. Posing tous les jours." },
-    { n: 13, dates: "25 – 30 jan.", titre: "Semaine de compétition", type: "peak", on: [1575, 191, 107, 43], off: [1365, 163, 80, 43], cardio: "Pas de cardio lundi, 30 min mardi et mercredi, puis stop", action: "<b>Lundi jour très bas, mardi et mercredi décharge, jeudi recharge douce, vendredi grosse recharge, samedi compétition.</b> Tout le détail plus bas." }
+  /* ---------- Aliments : valeurs pour 100 g, ou par unité (u) ---------- */
+  const A = {
+    avoine: { p: 13, c: 60, f: 7 },
+    oeuf: { u: 1, p: 6.3, c: 0.35, f: 4.75 },
+    blanc: { u: 1, p: 3.6, c: 0.25, f: 0.05 },
+    iso: { p: 90, c: 2, f: 1 },
+    hydro: { p: 88, c: 3, f: 1 },
+    amandes: { p: 21, c: 7, f: 50 },
+    miel_cc: { u: 1, p: 0, c: 5.6, f: 0 },
+    miel_cs: { u: 1, p: 0, c: 12, f: 0 },
+    viande: { p: 21, c: 0, f: 5 },
+    poulet: { p: 23.3, c: 0, f: 1.2 },
+    poisson: { p: 18, c: 0, f: 0.8 },
+    saumon: { p: 20, c: 0, f: 13 },
+    riz: { p: 2.7, c: 28, f: 0.3 },
+    pdt: { p: 2, c: 17.5, f: 0.1 },
+    patate: { p: 1.6, c: 20, f: 0.1 },
+    legumes: { p: 2, c: 3, f: 0.25 },
+    asperges: { p: 1.8, c: 2.2, f: 0.1 },
+    huile_cc: { u: 1, p: 0, c: 0, f: 5 },
+    salade_avocat_huile: { u: 1, p: 1.7, c: 4.6, f: 10.3 },
+    salade_avocat: { u: 1, p: 1.7, c: 4.6, f: 5.3 },
+    salade: { u: 1, p: 1, c: 4, f: 0.2 },
+    creme_riz: { p: 7, c: 80, f: 0.8 },
+    banane: { p: 1.1, c: 20, f: 0.3 },
+    compote: { p: 0.3, c: 13, f: 0.1 },
+    aa: { p: 100, c: 0, f: 0 },
+    galette: { u: 1, p: 0.7, c: 7, f: 0.3 },
+    datte: { u: 1, p: 0.2, c: 5.4, f: 0 },
+    sirop_datte_cc: { u: 1, p: 0, c: 5, f: 0 },
+    ananas: { p: 0.5, c: 12, f: 0.1 },
+    pb_cc: { u: 1, p: 1.25, c: 0.6, f: 2.5 },
+    muffin: { u: 1, p: 4, c: 35, f: 14 },
+    chips: { p: 6.5, c: 50, f: 33 }
+  };
+  function macros(jour) {
+    let p = 0, c = 0, f = 0;
+    jour.repas.forEach(function (r) {
+      r[1].forEach(function (it) {
+        if (typeof it === "string") return;
+        const a = A[it[0]], k = a.u ? it[1] : it[1] / 100;
+        p += a.p * k; c += a.c * k; f += a.f * k;
+      });
+    });
+    const kcal = 4 * p + 4 * c + 9 * f;
+    return { kcal: Math.round(kcal / 5) * 5, p: Math.round(p), c: Math.round(c), f: Math.round(f) };
+  }
+  const nb = function (n) { return n.toLocaleString("fr-FR"); };
+
+  /* ---------- Construction des journées ---------- */
+  const SUPP = ["+ Zinc", "+ Vit D3", "+ Vit C 1 g"];
+  const SOIR = ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]];
+  function journee(o) {
+    const reveil = ["Un café"];
+    if (o.tyrosine) reveil.push("500 mg tyrosine");
+    reveil.push(["aa", 10, "10 g AA"], "Cardio 30 min escalier");
+    const m1 = [["avoine", o.avoine, o.avoine + " g de flocons d'avoine ou d'orge"], ["oeuf", 2, "2 œufs entiers"], ["iso", 20, "20 g ISO whey"], ["amandes", 10, "10 g d'amandes"]].concat(SUPP);
+    if (!o.entrainement) m1.push("+ " + o.crea + " g créatine");
+    const m2 = [["viande", 120, "120 g de viande rouge maigre"]];
+    if (!o.entrainement) m2.push(["pdt", 100, "100 g de pomme de terre ou patate douce (cuite)"]);
+    m2.push(["legumes", 200, "200 g de légumes verts"], ["huile_cc", 1, "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]);
+    const repas = [
+      ["✅ Au réveil", reveil],
+      ["🍴 M1", m1],
+      ["🍴 M2", m2],
+      ["🍴 M3", [["poulet", 110, "110 g de blanc de poulet ou cuisses de poulet sans peau"], ["riz", o.riz3, o.riz3 + " g de riz (cuit)"], ["legumes", 200, "200 g de légumes verts"]]],
+      ["🍴 M4", [["poulet", 100, "100 g de blanc de poulet ou cuisses de poulet sans peau"], ["legumes", 200, "200 g de légumes verts"]]],
+      ["🍴 M5", [["poisson", 140, "140 g de poisson blanc, crevettes ou fruits de mer"], ["salade_avocat_huile", 1, "Une salade : 1/4 d'avocat, salade, tomate, concombre, cornichons, avec 1 cuillère à café d'huile d'olive"]]]
+    ];
+    if (o.entrainement) {
+      repas.push(["💥 Avant entraînement", ["1 h avant 👉", ["creme_riz", 30, "30 g de crème de riz"], ["iso", 20, "20 g ISO whey"], ["banane", 100, "1 petite banane (≈ 100 g)"]]]);
+      repas.push(["💥 Après entraînement", ["Immédiatement :", ["aa", 10, "10 g AA"], o.crea + " g créatine", ["compote", o.compote, o.compote + " g de compote sans sucres ajoutés"]]]);
+    }
+    repas.push(SOIR);
+    return { repas: repas };
+  }
+  function refeed(crea) {
+    return { repas: [
+      ["✅ Au réveil", ["Un café", ["aa", 10, "10 g AA"], "Cardio 30 min escalier"]],
+      ["🍴 M1", [["avoine", 60, "60 g de flocons d'avoine ou d'orge"], ["oeuf", 2, "2 œufs entiers"], ["iso", 10, "10 g ISO whey"], ["miel_cs", 1, "1 cuillère à soupe de miel"]].concat(SUPP)],
+      ["🍴 M2", [["viande", 100, "100 g de viande rouge maigre"], ["pdt", 250, "250 g de pomme de terre ou patate douce (cuite)"]]],
+      ["🍴 M3", [["poulet", 100, "100 g de blanc de poulet"], ["riz", 200, "200 g de riz (cuit)"], ["datte", 2, "2 dattes"]]],
+      ["🍴 M4", [["poulet", 80, "80 g de blanc de poulet"], ["riz", 150, "150 g de riz (cuit)"], ["legumes", 200, "200 g de légumes verts"]]],
+      ["🍴 M5", [["poisson", 130, "130 g de poisson blanc"], ["patate", 200, "200 g de patate douce (cuite)"], ["salade", 1, "Une salade sans avocat ni huile : salade, tomate, concombre, cornichons"]]],
+      ["💥 Avant entraînement", ["1 h avant 👉", ["creme_riz", 40, "40 g de crème de riz"], ["iso", 20, "20 g ISO whey"], ["banane", 120, "1 banane"], ["miel_cc", 1, "1 cuillère à café de miel"]]],
+      ["💥 Après entraînement", ["Immédiatement :", ["aa", 10, "10 g AA"], crea + " g créatine", ["compote", 100, "100 g de compote sans sucres ajoutés"]]],
+      SOIR
+    ] };
+  }
+  function bas(moyen) {
+    const m2 = [["viande", 100, "100 g de viande rouge maigre"]];
+    if (moyen) m2.push(["riz", 100, "100 g de riz (cuit)"]);
+    m2.push(["legumes", 250, "250 g de légumes verts (haricots verts, épinards, concombre, courgettes)"], ["huile_cc", 1, "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]);
+    const m4 = [["poulet", 110, "110 g de blanc de poulet"]];
+    if (moyen) m4.push(["riz", 100, "100 g de riz (cuit)"]);
+    m4.push(["legumes", 250, "250 g de légumes verts"]);
+    return { repas: [
+      ["✅ Au réveil", ["Un café", ["aa", 10, "10 g AA"], "Cardio 30 min escalier"]],
+      ["🍴 M1", [["avoine", 30, "30 g de flocons d'avoine ou d'orge"], ["oeuf", 1, "1 œuf entier"], ["blanc", 4, "4 blancs d'œufs"], ["amandes", 10, "10 g d'amandes"]].concat(SUPP)],
+      ["🍴 M2", m2],
+      ["🍴 M3", [["poulet", 110, "110 g de blanc de poulet"], ["riz", 50, "50 g de riz (cuit)"], ["legumes", 150, "150 g de légumes verts"]]],
+      ["🍴 M4", m4],
+      ["🍴 M5", [["saumon", 110, "110 g de saumon"], ["salade_avocat", 1, "Une salade : 1/4 d'avocat, salade, tomate, concombre, cornichons"]]],
+      ["💥 Avant entraînement", ["1 h avant 👉", ["aa", 15, "15 g AA"]]],
+      ["💥 Après entraînement", ["Immédiatement :", ["hydro", 25, "25 g de whey hydrolysée"], "3 g créatine"]],
+      SOIR
+    ] };
+  }
+  const PEAK = {
+    lun: { repas: [
+      ["🛑 Consignes", ["Pas de cardio", "Salé et épicé comme d'habitude", "Eau : 4 L"]],
+      ["🍴 M1", [["avoine", 30, "30 g de flocons d'avoine ou d'orge"], ["oeuf", 1, "1 œuf entier"], ["blanc", 4, "4 blancs d'œufs"]].concat(SUPP)],
+      ["🍴 M2", [["poulet", 110, "110 g de blanc de poulet"], ["legumes", 250, "250 g de légumes verts (haricots verts, épinards, concombre, courgettes)"]]],
+      ["🍴 M3", [["poulet", 110, "110 g de blanc de poulet"], ["legumes", 150, "150 g de légumes verts"]]],
+      ["🍴 M4", [["poulet", 110, "110 g de blanc de poulet"], ["legumes", 250, "250 g de légumes verts"]]],
+      ["🍴 M5", [["poisson", 130, "130 g de poisson blanc"], ["asperges", 150, "150 g d'asperges"]]],
+      ["💥 Avant entraînement", [["aa", 15, "15 g AA"]]],
+      ["💥 Après entraînement", ["Immédiatement :", ["hydro", 25, "25 g de whey hydrolysée"]]],
+      SOIR
+    ] },
+    dech: { repas: [
+      ["✔️ Décharge totale", ["Salé et épicé comme d'habitude", "Boire 5 L, dont 1 L de St-Yorre pendant le cardio et 1 L pendant l'entraînement", "Cardio 30 min escalier"]],
+      ["🍴 M1", [["blanc", 5, "5 blancs d'œufs"], ["asperges", 150, "150 g d'asperges ou de concombre"], "+ Oméga 3", "+ Zinc", "+ Vit D3", "+ Vit C 500 mg"]],
+      ["🍴 M2", [["poisson", 120, "120 g de poisson blanc"], ["asperges", 150, "150 g d'asperges ou de concombre"]]],
+      ["🍴 M3", [["blanc", 5, "5 blancs d'œufs"], ["asperges", 150, "150 g d'asperges ou de concombre"]]],
+      ["🍴 M4", [["poisson", 120, "120 g de poisson blanc"], ["asperges", 150, "150 g d'asperges ou de concombre"]]],
+      ["🍴 M5", [["blanc", 5, "5 blancs d'œufs"], ["asperges", 150, "150 g d'asperges ou de concombre"]]],
+      ["💥 Avant entraînement", [["aa", 10, "10 g AA"]]],
+      ["💥 Après entraînement", [["aa", 10, "10 g AA"]]],
+      ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé complexe B"]]
+    ] },
+    jeu: { repas: [
+      ["🛑 Consignes", ["Salé et épicé comme d'habitude", "Boire 4 L d'eau de source", "Pas de cardio"]],
+      ["🍴 M1", [["blanc", 5, "5 blancs d'œufs"], ["galette", 2, "2 galettes de riz"], ["asperges", 100, "100 g d'asperges ou de concombre"], "+ Oméga 3", "+ Zinc", "+ Vit D3", "+ Vit C 500 mg"]],
+      ["🍴 M2", [["poisson", 120, "120 g de poisson blanc"], ["galette", 2, "2 galettes de riz"], ["asperges", 100, "100 g d'asperges ou de concombre"]]],
+      ["🍴 M3", [["blanc", 5, "5 blancs d'œufs"], ["riz", 100, "100 g de riz (cuit)"], ["asperges", 100, "100 g d'asperges ou de concombre"]]],
+      ["🍴 M4", [["poisson", 120, "120 g de poisson blanc"], ["riz", 100, "100 g de riz (cuit)"], ["asperges", 100, "100 g d'asperges ou de concombre"]]],
+      ["🍴 M5", [["blanc", 5, "5 blancs d'œufs"], ["riz", 100, "100 g de riz (cuit)"], ["asperges", 100, "100 g d'asperges ou de concombre"]]],
+      ["💥 Avant entraînement", [["aa", 10, "10 g AA"]]],
+      ["💥 Après entraînement", [["aa", 10, "10 g AA"]]],
+      ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé complexe B"]]
+    ] },
+    ven: { repas: [
+      ["🛑 Recharge", ["Salé comme d'habitude", "Eau : 3 L", "Photo le matin : si tu es plate, on garde tout ; si tu es lisse, on enlève les extras", "Vit B1, magnésium, oméga 3"]],
+      ["🍴 M1", [["creme_riz", 60, "60 g de crème de riz"], ["miel_cs", 1, "1 cuillère à soupe de miel"], ["oeuf", 2, "2 œufs entiers"], ["blanc", 3, "3 blancs d'œufs"]]],
+      ["🍴 M2", [["saumon", 120, "120 g de saumon"], ["riz", 200, "200 g de riz basmati (cuit)"], ["banane", 120, "1 banane"]]],
+      ["🍴 M3", [["viande", 100, "100 g de viande rouge"], ["patate", 200, "200 g de patate douce ou pomme de terre (cuite)"], ["ananas", 50, "50 g d'ananas"]]],
+      ["🍴 M4", [["poulet", 80, "80 g de blanc de poulet"], ["riz", 200, "200 g de riz basmati (cuit)"], ["galette", 1, "1 galette de riz"], ["sirop_datte_cc", 1, "1 cuillère à café de sirop de datte"]]],
+      ["🥞 Collation", [["blanc", 3, "Crêpe : 3 blancs d'œufs"], ["oeuf", 1, "1 œuf entier"], ["avoine", 40, "40 g de farine d'avoine"]]],
+      ["🍴 M5", [["saumon", 120, "120 g de saumon"], ["pdt", 200, "200 g de pomme de terre (cuite)"], ["banane", 120, "1 banane"]]],
+      ["➕ Extras de la journée", [["muffin", 1, "1 muffin, donut ou part de cake"], ["chips", 30, "1 petit paquet de chips (30 g)"]]]
+    ] },
+    j: { repas: [
+      ["🛑 Consignes", ["Un petit verre d'eau (200 ml) par repas, pas plus", "Pump léger aux élastiques avant de monter sur scène"]],
+      ["🍴 M1", [["galette", 2, "2 galettes de riz"], ["miel_cc", 1, "1 cuillère à café de miel"], ["pb_cc", 1, "1 cuillère à café de beurre de cacahuète"], "200 ml d'eau"]],
+      ["✅ M2", [["saumon", 110, "110 g de saumon"], ["riz", 150, "150 g de riz (cuit)"], ["banane", 120, "1 banane"], ["ananas", 50, "50 g d'ananas"], ["galette", 1, "1 galette de riz"], ["sirop_datte_cc", 1, "1 cuillère à café de sirop de datte"], "Vit B1", "200 ml d'eau"]],
+      ["✅ M3", [["viande", 90, "90 g de viande rouge"], ["patate", 150, "150 g de patate douce (cuite)"], ["banane", 120, "1 banane"], ["ananas", 50, "50 g d'ananas"], "200 ml d'eau"]],
+      ["✅ M4", [["saumon", 110, "110 g de saumon"], ["riz", 150, "150 g de riz (cuit)"], ["banane", 120, "1 banane"], ["ananas", 50, "50 g d'ananas"], ["galette", 1, "1 galette de riz"], ["sirop_datte_cc", 1, "1 cuillère à café de sirop de datte"], "Vit B1", "200 ml d'eau"]],
+      ["✅ M5", [["viande", 90, "90 g de viande rouge"], ["patate", 150, "150 g de patate douce (cuite)"], ["banane", 120, "1 banane"], ["ananas", 50, "50 g d'ananas"], "Vit C 500 mg", "Magnésium 200 mg", "200 ml d'eau"]]
+    ] }
+  };
+
+  /* ---------- Les diètes de chaque palier ---------- */
+  const D1 = { avoine: 40, riz3: 100, compote: 60, tyrosine: true, crea: 5 };
+  const D2 = Object.assign({}, D1, { riz3: 70 });
+  const D3 = Object.assign({}, D2, { avoine: 30 });
+  const D4on = Object.assign({}, D3, { riz3: 50, compote: 40, tyrosine: false, crea: 3 });
+  const D4off = Object.assign({}, D3, { tyrosine: false, crea: 3 });
+  function jours(on, off) {
+    return [
+      { id: "on", nom: "Jour d'entraînement", d: journee(Object.assign({ entrainement: true }, on)) },
+      { id: "off", nom: "Jour de repos", d: journee(Object.assign({ entrainement: false }, off)) }
+    ];
+  }
+  const P1 = jours(D1, D1), P2 = jours(D2, D2), P3 = jours(D3, D3), P4 = jours(D4on, D4off);
+  const RF5 = { id: "refeed", nom: "Refeed (1 jour par semaine)", d: refeed(5) };
+  const RF3 = { id: "refeed", nom: "Refeed (mardi)", d: refeed(3) };
+  const BAS = { id: "bas", nom: "Jour bas (mercredi à vendredi)", d: bas(false) };
+  const MOY = { id: "moyen", nom: "Jour moyen (dimanche)", d: bas(true) };
+  const SEM13 = [
+    { id: "lun", nom: "Lundi : jour très bas", d: PEAK.lun },
+    { id: "dech", nom: "Mardi et mercredi : décharge totale", d: PEAK.dech },
+    { id: "jeu", nom: "Jeudi : recharge douce", d: PEAK.jeu },
+    { id: "ven", nom: "Vendredi : grosse recharge", d: PEAK.ven },
+    { id: "j", nom: "Samedi : jour J", d: PEAK.j }
   ];
+  const C5 = "30 min d'escalier à jeun, 5 matins par semaine", C6 = "30 min d'escalier à jeun, 6 matins par semaine", C7 = "30 min d'escalier à jeun, tous les matins";
+  const SEMAINES = [
+    { n: 1, dates: "2 – 8 nov.", titre: "Mise en place", type: "levier", jours: P1, cardio: C5, action: "On passe de ton plan à 2 200 kcal <b>au niveau où tu as toujours perdu</b>. <b>Cardio 30 min à jeun dès le premier jour.</b> Tout est pesé et noté, huile comprise." },
+    { n: 2, dates: "9 – 15 nov.", titre: "Mise en place", type: "stable", jours: P1, cardio: C5, action: "Premier bilan lundi 16 novembre : moyenne de poids, photos, mensurations." },
+    { n: 3, dates: "16 – 22 nov.", titre: "Levier 1 : riz du M3", type: "levier", jours: P2, cardio: C5, action: "<b>70 g de riz au M3 au lieu de 100 g.</b>" },
+    { n: 4, dates: "23 – 29 nov.", titre: "On consolide", type: "stable", jours: P2, cardio: C5, action: "On laisse agir. Mensurations lundi 30 novembre." },
+    { n: 5, dates: "30 nov. – 6 déc.", titre: "Levier 2 : cardio", type: "levier", jours: P2, cardio: C6, action: "<b>Un matin de cardio en plus.</b> La durée reste à 30 min, l'assiette ne bouge pas." },
+    { n: 6, dates: "7 – 13 déc.", titre: "On consolide", type: "stable", jours: P2, cardio: C6, action: "On laisse agir. Mensurations lundi 14 décembre." },
+    { n: 7, dates: "14 – 20 déc.", titre: "Levier 3 : flocons + refeed", type: "levier", jours: P3.concat([RF5]), cardio: C6, action: "<b>30 g de flocons au lieu de 40</b> au M1. <b>Premier refeed samedi 19 décembre.</b>" },
+    { n: 8, dates: "21 – 27 déc.", titre: "Noël = refeed test", type: "stable", jours: P3.concat([RF5]), cardio: C6, action: "<b>Le refeed tombe le 24 ou le 25 décembre.</b> Photos le lendemain matin. Point photo de la semaine 8." },
+    { n: 9, dates: "28 déc. – 3 jan.", titre: "Levier 4 : cardio + réveillon", type: "levier", jours: P3.concat([RF5]), cardio: C7, action: "<b>Cardio tous les matins.</b> <b>Refeed le 31 décembre</b>, puis on reprend le plan normal dès le M1 le 1er janvier." },
+    { n: 10, dates: "4 – 10 jan.", titre: "Levier 5 : glucides loin de la séance", type: "levier", jours: P4.concat([RF3]), cardio: C7, action: "Les jours d'entraînement : <b>50 g de riz au M3</b> et <b>40 g de compote</b> après la séance. Créatine à 3 g, tyrosine arrêtée." },
+    { n: 11, dates: "11 – 17 jan.", titre: "Levier 6 : alternance des jours", type: "levier", jours: P4.concat([RF3, BAS, MOY]), cardio: C7, action: "<b>Mardi : refeed. Mercredi à vendredi : jours bas. Dimanche : jour moyen.</b> Lundi et samedi : jour d'entraînement ou de repos normal." },
+    { n: 12, dates: "18 – 24 jan.", titre: "Alternance des jours (suite)", type: "stable", jours: P4.concat([RF3, BAS, MOY]), cardio: C7, action: "Même alternance que la semaine 11. Posing tous les jours." },
+    { n: 13, dates: "25 – 30 jan.", titre: "Semaine de compétition", type: "peak", jours: SEM13, cardio: "Pas de cardio lundi, 30 min mardi et mercredi, puis stop", action: "<b>Lundi jour très bas, mardi et mercredi décharge totale, jeudi recharge douce, vendredi grosse recharge, samedi compétition.</b> Le sel reste comme d'habitude toute la semaine. Si la décharge donne des vertiges ou un malaise, on passe au menu du lundi et tu me préviens." }
+  ];
+
+  /* ---------- Chiffres clés de la semaine 1 ---------- */
+  const s1on = macros(P1[0].d), s1off = macros(P1[1].d);
+  document.getElementById("k-on").textContent = nb(s1on.kcal);
+  document.getElementById("k-off").textContent = nb(s1off.kcal);
+  document.getElementById("k-prot").textContent = "≈ " + s1on.p + " g";
+  document.getElementById("k-prot-lib").textContent = "de protéines les jours d'entraînement, " + s1off.p + " g les jours de repos";
+
+  /* ---------- Frise et détail ---------- */
   const frise = document.getElementById("frise");
   const detail = document.getElementById("detail");
   const boutons = [];
-  function bloc(lib, v) {
-    return '<div class="macro"><small>' + lib + '</small><b>' + v[0].toLocaleString("fr-FR") + ' kcal</b><span>P ' + v[1] + ' g · G ' + v[2] + ' g · L ' + v[3] + ' g</span></div>';
+  function htmlMenu(jour) {
+    const m = macros(jour.d);
+    return jour.d.repas.map(function (r) {
+      return '<div class="repas"><h4>' + r[0] + '</h4><ul>' + r[1].map(function (x) { return "<li>" + (typeof x === "string" ? x : x[2]) + "</li>"; }).join("") + '</ul></div>';
+    }).join("") + '<div class="total">' + jour.nom + ' : <b>' + nb(m.kcal) + ' kcal</b> · protéines ' + m.p + ' g · glucides ' + m.c + ' g · lipides ' + m.f + ' g</div>';
   }
   function afficher(i) {
     const s = SEMAINES[i];
     const pill = s.type === "levier" ? '<span class="pill">Nouveau levier</span>' : s.type === "peak" ? '<span class="pill peak">Semaine finale</span>' : '<span class="pill stable">On consolide</span>';
+    const boites = s.jours.map(function (j, k) {
+      const m = macros(j.d);
+      return '<button type="button" class="macro choix" data-k="' + k + '" aria-pressed="' + (k === 0) + '"><small>' + j.nom + '</small><b>' + nb(m.kcal) + ' kcal</b><span>P ' + m.p + ' g · G ' + m.c + ' g · L ' + m.f + ' g</span></button>';
+    }).join("");
     detail.innerHTML =
       '<div class="tete"><h3>Semaine ' + s.n + ' · ' + s.titre + '</h3><span class="dates">' + s.dates + '</span></div>' + pill +
-      '<div class="macros">' + bloc("Jour d'entraînement", s.on) + bloc("Jour de repos", s.off) +
-      (s.n >= 7 ? '<div class="macro"><small>Refeed, 1 jour par semaine</small><b>≈ 2 250 kcal</b><span>P 180 g · G 330 g · L 23 g</span></div>' : '') +
-      '<div class="macro"><small>Cardio</small><span style="font-size:15px;color:var(--texte)">' + s.cardio + '</span></div></div>' +
-      '<div class="action">' + s.action + '</div>';
+      '<div class="action">' + s.action + '</div>' +
+      '<div class="cardio-l"><small>Cardio</small> ' + s.cardio + '</div>' +
+      '<p class="consigne">Touche une journée pour voir la diète exacte de la semaine ' + s.n + ' :</p>' +
+      '<div class="macros">' + boites + '</div>' +
+      '<div class="menu" id="menu-sem"></div>' +
+      '<p class="note">Viandes et poissons pesés crus. Riz, pommes de terre et patate douce pesés cuits. Légumes verts au choix : haricots verts, brocoli, courgettes, épinards, asperges. Les totaux sont calculés avec du poisson blanc.</p>';
+    const choix = detail.querySelectorAll(".choix");
+    function voir(k) {
+      choix.forEach(function (b, x) { b.setAttribute("aria-pressed", x === k ? "true" : "false"); });
+      document.getElementById("menu-sem").innerHTML = htmlMenu(s.jours[k]);
+    }
+    choix.forEach(function (b) { b.addEventListener("click", function () { voir(+b.dataset.k); }); });
+    voir(0);
     boutons.forEach(function (b, j) { b.setAttribute("aria-pressed", j === i ? "true" : "false"); });
   }
   SEMAINES.forEach(function (s, i) {
@@ -368,7 +565,14 @@
     boutons.push(b);
   });
   afficher(0);
+  const voir13 = document.getElementById("voir-13");
+  if (voir13) voir13.addEventListener("click", function () { afficher(12); document.getElementById("t-frise").scrollIntoView({ behavior: "smooth" }); });
 
+  /* Contrôle pour la coach : planchers */
+  window.__plan = SEMAINES.map(function (s) { return { n: s.n, jours: s.jours.map(function (j) { const m = macros(j.d); return j.id + " " + m.kcal + " P" + m.p + " G" + m.c + " L" + m.f; }) }; });
+})();
+
+(function () {
   /* Courbe : poids attendu */
   const svg = document.getElementById("courbe");
   const NS = "http://www.w3.org/2000/svg";
@@ -396,161 +600,6 @@
   el("circle", { cx: X(0), cy: Y(76.6), r: 5, class: "pt" });
   el("text", { x: X(13) - 4, y: Y(68.8) - 18, "text-anchor": "end", style: "fill: var(--neon-clair); font-weight: 700; font-size: 13px" }, "≈ 68 à 70 kg");
 
-  /* Menus */
-  const MENUS = {
-    on: {
-      repas: [
-        ["✅ Au réveil", ["Un café", "500 mg tyrosine", "10 g AA", "Cardio 30 min escalier"]],
-        ["🍴 M1", ["40 g de flocons d'avoine ou d'orge", "2 œufs entiers", "20 g ISO whey", "10 g d'amandes", "+ Zinc", "+ Vit D3", "+ Vit C 1 g"]],
-        ["🍴 M2", ["120 g de viande rouge maigre", "200 g de légumes verts", "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]],
-        ["🍴 M3", ["110 g de blanc de poulet ou cuisses de poulet sans peau", "100 g de riz (cuit)", "200 g de légumes verts"]],
-        ["🍴 M4", ["100 g de blanc de poulet ou cuisses de poulet sans peau", "200 g de légumes verts"]],
-        ["🍴 M5", ["140 g de poisson blanc, crevettes ou fruits de mer (saumon 2 fois par semaine maximum)", "Une salade : 1/4 d'avocat, salade, tomate, concombre, cornichons, avec 1 cuillère à café d'huile d'olive"]],
-        ["💥 Avant entraînement", ["1 h avant 👉", "30 g de crème de riz", "20 g ISO whey", "1 petite banane (≈ 100 g)"]],
-        ["💥 Après entraînement", ["Immédiatement :", "10 g AA", "5 g créatine", "60 g de compote sans sucres ajoutés"]],
-        ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]]
-      ],
-      total: "Semaines 1 et 2 : <b>≈ 1 690 kcal</b> · protéines 194 g · glucides 129 g · lipides 44 g"
-    },
-    off: {
-      repas: [
-        ["✅ Au réveil", ["Un café", "500 mg tyrosine", "10 g AA", "Cardio 30 min escalier"]],
-        ["🍴 M1", ["40 g de flocons d'avoine ou d'orge", "2 œufs entiers", "20 g ISO whey", "10 g d'amandes", "+ Zinc", "+ Vit D3", "+ Vit C 1 g", "+ 5 g créatine"]],
-        ["🍴 M2", ["120 g de viande rouge maigre", "100 g de pomme de terre ou patate douce (cuite)", "200 g de légumes verts", "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]],
-        ["🍴 M3", ["110 g de blanc de poulet ou cuisses de poulet sans peau", "100 g de riz (cuit)", "200 g de légumes verts"]],
-        ["🍴 M4", ["100 g de blanc de poulet ou cuisses de poulet sans peau", "200 g de légumes verts"]],
-        ["🍴 M5", ["140 g de poisson blanc, crevettes ou fruits de mer (saumon 2 fois par semaine maximum)", "Une salade : 1/4 d'avocat, salade, tomate, concombre, cornichons, avec 1 cuillère à café d'huile d'olive"]],
-        ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]]
-      ],
-      total: "Semaines 1 et 2 : <b>≈ 1 435 kcal</b> · protéines 165 g · glucides 94 g · lipides 44 g"
-    },
-    bas: {
-      repas: [
-        ["✅ Au réveil", ["Un café", "10 g AA", "Cardio 30 min escalier"]],
-        ["🍴 M1", ["30 g de flocons d'avoine ou d'orge", "1 œuf entier", "4 blancs d'œufs", "10 g d'amandes", "+ 20 mg zinc", "+ Vit D3", "+ Vit C 1 g"]],
-        ["🍴 M2", ["100 g de viande rouge maigre", "250 g de légumes verts (haricots verts, épinards, concombre, courgettes)", "1 cuillère à café d'huile d'olive"]],
-        ["🍴 M3", ["110 g de blanc de poulet", "50 g de riz", "150 g de légumes verts"]],
-        ["🍴 M4", ["110 g de blanc de poulet", "250 g de légumes verts"]],
-        ["🍴 M5", ["110 g de saumon (de préférence), sinon poisson blanc", "Une salade (1/4 d'avocat, salade, tomate, cornichons, concombre…)"]],
-        ["💥 Avant entraînement", ["1 h avant 👉", "15 g AA"]],
-        ["💥 Après entraînement", ["Immédiatement :", "25 g de whey hydrolysée", "3 g créa"]],
-        ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]]
-      ],
-      total: "Semaines 11 et 12, du mercredi au vendredi : <b>≈ 1 365 kcal</b> · protéines 181 g · glucides 58 g · lipides 45 g"
-    },
-    moyen: {
-      repas: [
-        ["✅ Au réveil", ["Un café", "10 g AA", "Cardio 30 min escalier"]],
-        ["🍴 M1", ["30 g de flocons d'avoine ou d'orge", "1 œuf entier", "4 blancs d'œufs", "10 g d'amandes", "+ 20 mg zinc", "+ Vit D3", "+ Vit C 1 g"]],
-        ["🍴 M2", ["100 g de viande rouge maigre", "100 g de riz", "250 g de légumes verts", "1 cuillère à café d'huile d'olive"]],
-        ["🍴 M3", ["110 g de blanc de poulet", "50 g de riz", "150 g de légumes verts"]],
-        ["🍴 M4", ["110 g de blanc de poulet", "100 g de riz", "250 g de légumes verts"]],
-        ["🍴 M5", ["110 g de saumon (de préférence), sinon poisson blanc", "Une salade (1/4 d'avocat, salade, tomate, cornichons, concombre…)"]],
-        ["💥 Avant entraînement", ["1 h avant 👉", "15 g AA"]],
-        ["💥 Après entraînement", ["Immédiatement :", "25 g de whey hydrolysée", "3 g créa"]],
-        ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]]
-      ],
-      total: "Semaines 11 et 12, le dimanche : <b>≈ 1 625 kcal</b> · protéines 186 g · glucides 114 g · lipides 45 g"
-    },
-    refeed: {
-      repas: [
-        ["✅ Au réveil", ["Un café", "10 g AA", "Cardio escalier à jeun (maintenu)"]],
-        ["🍴 M1", ["60 g de flocons d'avoine ou d'orge", "2 œufs entiers", "10 g ISO whey", "1 cuillère à soupe de miel", "+ 20 mg zinc", "+ Vit D3", "+ Vit C 1 g"]],
-        ["🍴 M2", ["100 g de viande rouge maigre", "250 g de pomme de terre ou patate douce"]],
-        ["🍴 M3", ["100 g de blanc de poulet", "200 g de riz", "2 dattes"]],
-        ["🍴 M4", ["80 g de blanc de poulet", "150 g de riz", "Légumes verts"]],
-        ["🍴 M5", ["130 g de poisson blanc", "200 g de patate douce", "Une salade sans avocat (salade, tomate, cornichons, concombre…)"]],
-        ["💥 Avant entraînement", ["1 h avant 👉", "40 g de crème de riz", "20 g ISO whey", "Une banane", "1 cuillère à café de miel"]],
-        ["💥 Après entraînement", ["Immédiatement :", "10 g AA", "5 g créa", "100 g de compote"]],
-        ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]]
-      ],
-      total: "Dès la semaine 7, 1 jour par semaine : <b>≈ 2 250 kcal</b> · protéines 180 g · glucides 330 g · lipides 23 g. Pas d'avocat, pas d'amandes, pas d'huile : les glucides doublent, pas les graisses."
-    }
-  };
-  const menu = document.getElementById("menu");
-  function montrerMenu(t) {
-    const m = MENUS[t];
-    menu.innerHTML = m.repas.map(function (r) {
-      return '<div class="repas"><h4>' + r[0] + '</h4><ul>' + r[1].map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ul></div>';
-    }).join("") + '<div class="total">' + m.total + '</div><p class="note">Les quantités baissent selon le plan : semaine 3, 70 g de riz au M3 ; semaine 7, 30 g de flocons au M1 ; semaine 10, les jours d\'entraînement, 50 g de riz au M3 et 40 g de compote.</p>';
-  }
-  const tbtns = document.querySelectorAll("#types button");
-  tbtns.forEach(function (b) {
-    b.addEventListener("click", function () {
-      tbtns.forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
-      montrerMenu(b.dataset.type);
-    });
-  });
-  montrerMenu("on");
-
-  const PEAK = {
-    lun: { repas: [
-      ["🛑 Consignes", ["Pas de cardio", "Salé et épicé comme d'habitude", "Eau : 4 L"]],
-      ["🍴 M1", ["30 g de flocons d'avoine ou d'orge", "1 œuf entier", "4 blancs d'œufs", "+ 20 mg zinc", "+ Vit D3", "+ Vit C 1 g"]],
-      ["🍴 M2", ["110 g de blanc de poulet", "250 g de légumes verts (haricots verts, épinards, concombre, courgettes)"]],
-      ["🍴 M3", ["110 g de blanc de poulet", "150 g de légumes verts"]],
-      ["🍴 M4", ["110 g de blanc de poulet", "250 g de légumes verts"]],
-      ["🍴 M5", ["130 g de poisson blanc", "150 g d'asperges"]],
-      ["💥 Avant entraînement", ["15 g AA"]],
-      ["💥 Après entraînement", ["Immédiatement :", "25 g de whey hydrolysée"]],
-      ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]]
-    ], total: "<b>≈ 1 000 kcal</b> · protéines 176 g · glucides 42 g · lipides 14 g" },
-    dech: { repas: [
-      ["✔️ Décharge totale", ["Salé et épicé comme d'habitude", "Boire 5 L, dont 1 L de St-Yorre pendant le cardio et 1 L pendant l'entraînement", "Cardio 30 min escalier"]],
-      ["🍴 M1", ["5 blancs d'œufs", "150 g d'asperges ou de concombre", "+ Oméga 3", "+ 20 mg zinc", "+ Vit D3", "+ Vit C 500 mg"]],
-      ["🍴 M2", ["120 g de poisson blanc", "150 g d'asperges ou de concombre"]],
-      ["🍴 M3", ["5 blancs d'œufs", "150 g d'asperges ou de concombre"]],
-      ["🍴 M4", ["120 g de poisson blanc", "150 g d'asperges ou de concombre"]],
-      ["🍴 M5", ["5 blancs d'œufs", "150 g d'asperges ou de concombre"]],
-      ["💥 Avant entraînement", ["10 g AA"]],
-      ["💥 Après entraînement", ["10 g AA"]],
-      ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé complexe B"]]
-    ], total: "<b>≈ 600 kcal</b> · protéines 123 g · glucides 17 g · lipides 3 g" },
-    jeu: { repas: [
-      ["🛑 Consignes", ["Salé et épicé comme d'habitude", "Boire 4 L d'eau de source", "Pas de cardio"]],
-      ["🍴 M1", ["5 blancs d'œufs", "2 galettes de riz", "100 g d'asperges ou de concombre", "+ Oméga 3", "+ 20 mg zinc", "+ Vit D3", "+ Vit C 500 mg"]],
-      ["🍴 M2", ["120 g de poisson blanc", "2 galettes de riz", "100 g d'asperges ou de concombre"]],
-      ["🍴 M3", ["5 blancs d'œufs", "100 g de riz", "100 g d'asperges ou de concombre"]],
-      ["🍴 M4", ["120 g de poisson blanc", "100 g de riz", "100 g d'asperges ou de concombre"]],
-      ["🍴 M5", ["5 blancs d'œufs", "100 g de riz", "100 g d'asperges ou de concombre"]],
-      ["💥 Avant entraînement", ["10 g AA"]],
-      ["💥 Après entraînement", ["10 g AA"]],
-      ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé complexe B"]]
-    ], total: "<b>≈ 1 030 kcal</b> · protéines 125 g · glucides 120 g · lipides 5 g" },
-    ven: { repas: [
-      ["🛑 Recharge", ["Salé comme d'habitude", "Eau : 3 L", "Photo le matin : si tu es plate, on garde tout ; si tu es lisse, on enlève les extras", "Vit B1, magnésium, oméga 3"]],
-      ["🍴 M1", ["60 g de crème de riz", "1 cuillère à soupe de miel", "2 œufs entiers", "3 blancs d'œufs"]],
-      ["🍴 M2", ["120 g de saumon", "200 g de riz basmati", "1 banane"]],
-      ["🍴 M3", ["100 g de viande rouge", "200 g de patate douce ou pomme de terre", "50 g d'ananas"]],
-      ["🍴 M4", ["80 g de blanc de poulet", "200 g de riz basmati", "1 galette de riz avec 1 cuillère à café de sirop de datte"]],
-      ["🥞 Collation", ["Crêpe : 3 blancs d'œufs, 1 œuf entier et 40 g de farine d'avoine"]],
-      ["🍴 M5", ["120 g de saumon", "200 g de pomme de terre", "1 banane"]],
-      ["➕ Extras de la journée", ["1 muffin, donut ou part de cake", "1 petit paquet de chips (30 g)"]]
-    ], total: "<b>≈ 2 950 kcal</b> · protéines 165 g · glucides 400 g · lipides 80 g" },
-    j: { repas: [
-      ["🛑 Consignes", ["Un petit verre d'eau (200 ml) par repas, pas plus", "Pump léger aux élastiques avant de monter sur scène"]],
-      ["🍴 M1", ["2 galettes de riz", "1 cuillère à café de miel", "1 cuillère à café de beurre de cacahuète", "200 ml d'eau"]],
-      ["✅ M2", ["110 g de saumon", "150 g de riz", "1 banane", "50 g d'ananas", "1 galette de riz avec 1 cuillère à café de sirop de datte", "Vit B1", "200 ml d'eau"]],
-      ["✅ M3", ["90 g de viande rouge", "150 g de patate douce", "1 banane", "50 g d'ananas", "200 ml d'eau"]],
-      ["✅ M4", ["110 g de saumon", "150 g de riz", "1 banane", "50 g d'ananas", "1 galette de riz avec 1 cuillère à café de sirop de datte", "Vit B1", "200 ml d'eau"]],
-      ["✅ M5", ["90 g de viande rouge", "150 g de patate douce", "1 banane", "50 g d'ananas", "Vit C 500 mg", "Magnésium 200 mg", "200 ml d'eau"]]
-    ], total: "<b>≈ 2 030 kcal</b> · protéines 101 g · glucides 312 g · lipides 42 g · environ 1 L d'eau sur la journée" }
-  };
-  const peakMenu = document.getElementById("peak-menu");
-  function montrerPeak(t) {
-    const m = PEAK[t];
-    peakMenu.innerHTML = m.repas.map(function (r) {
-      return '<div class="repas"><h4>' + r[0] + '</h4><ul>' + r[1].map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ul></div>';
-    }).join("") + '<div class="total">' + m.total + '</div>';
-  }
-  const pbtns = document.querySelectorAll("#peak-types button");
-  pbtns.forEach(function (b) {
-    b.addEventListener("click", function () {
-      pbtns.forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
-      montrerPeak(b.dataset.peak);
-    });
-  });
-  montrerPeak("lun");
 })();
 </script>
 </body>
