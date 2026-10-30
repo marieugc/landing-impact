@@ -192,8 +192,8 @@
       <h2 id="t-cles">Tes chiffres <em>de la semaine 1</em></h2>
     </header>
     <div class="chiffres">
-      <div class="chiffre fort"><span class="val">2 190</span><span class="lib">kcal les jours d'entraînement</span></div>
-      <div class="chiffre"><span class="val">1 815</span><span class="lib">kcal les jours sans entraînement</span></div>
+      <div class="chiffre fort"><span class="val">1 690</span><span class="lib">kcal les jours d'entraînement</span></div>
+      <div class="chiffre"><span class="val">1 435</span><span class="lib">kcal les jours sans entraînement</span></div>
       <div class="chiffre"><span class="val">≈ 195 g</span><span class="lib">de protéines les jours d'entraînement (2,5 g par kg), ≈ 165 g les jours de repos</span></div>
       <div class="chiffre"><span class="val">−0,5 à −0,7</span><span class="lib">kg par semaine : le rythme visé</span></div>
     </div>
@@ -207,7 +207,7 @@
     <div class="regles">
       <div class="regle"><b>Protéines fixes</b><span>On ne les baisse jamais : environ 190 g les jours d'entraînement, 165 g les jours de repos. C'est ce qui protège tes fessiers.</span></div>
       <div class="regle"><b>Un seul levier à la fois</b><span>Soit le cardio, soit l'assiette, jamais les deux en même temps. Toutes les 2 à 3 semaines maximum.</span></div>
-      <div class="regle"><b>Toujours dans cet ordre</b><span>Le cardio dès le départ, puis les glucides du soir, puis un peu de lipides, puis les glucides loin de la séance. Une petite baisse toutes les 1 à 2 semaines.</span></div>
+      <div class="regle"><b>Toujours dans cet ordre</b><span>On démarre là où tu perds. Ensuite, un levier toutes les 2 semaines : une baisse de glucides loin de la séance, puis un matin de cardio en plus, en alternance.</span></div>
       <div class="regle"><b>La collation d'avant séance est sacrée</b><span>On n'y touche pas : c'est elle qui garde ta force sur les jambes.</span></div>
       <div class="regle"><b>Un refeed par semaine dès la semaine 7</b><span>Une journée riche en glucides pour recharger les muscles, le moral et le métabolisme.</span></div>
       <div class="regle"><b>Des planchers à ne jamais franchir</b><span>Pas moins de 43 g de lipides, pas moins de 1 350 kcal, pas plus de 30 min de cardio. Seule exception : la semaine de compétition.</span></div>
@@ -232,7 +232,7 @@
     <header>
       <span class="surtitre">Le cap</span>
       <h2 id="t-courbe">Ton poids <em>attendu</em></h2>
-      <p class="chapeau">La zone violette est la fourchette visée. On part de ton plan actuel, sur lequel ton poids est stable : la perte démarre doucement puis s'accélère au fil des leviers. On juge toujours la moyenne de la semaine.</p>
+      <p class="chapeau">La zone violette est la fourchette visée. On démarre directement au niveau de calories où tu as toujours perdu, puis on ajoute un levier toutes les 2 semaines. On juge toujours la moyenne de la semaine.</p>
     </header>
     <div class="courbe-carte">
       <div class="defil"><svg id="courbe" viewBox="0 0 720 260" role="img" aria-label="Poids attendu de 76,6 kg à environ 68,5 à 71 kg en semaine 13"></svg></div>
@@ -294,7 +294,7 @@
 
   <section class="avert">
     <span class="surtitre">À savoir avant de commencer</span>
-    <p>En 13 semaines, on vise environ 5 à 6 kg de moins, soit autour de 70 à 72 kg. À la semaine 8, on fera ensemble un point photo pour décider si la compétition de fin janvier est la bonne date ou si quelques semaines de plus te permettront de monter sur scène au top. Mieux vaut arriver prête que pressée.</p>
+    <p>En 13 semaines, on vise environ 7 à 9 kg de moins, soit autour de 68 à 70 kg. À la semaine 8, on fera ensemble un point photo pour décider si la compétition de fin janvier est la bonne date ou si quelques semaines de plus te permettront de monter sur scène au top. Mieux vaut arriver prête que pressée.</p>
   </section>
 
   <section class="bloc" aria-labelledby="t-supp">
@@ -326,19 +326,19 @@
 <script>
 (function () {
   const SEMAINES = [
-    { n: 1, dates: "2 – 8 nov.", titre: "Mise en place", type: "stable", on: [2190, 194, 219, 59], off: [1815, 167, 154, 59], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "Tu gardes ton plan actuel (≈ 2 200 kcal) les jours d'entraînement. <b>Les jours de repos, on enlève l'avant et l'après-entraînement</b> (≈ 1 815 kcal). <b>On ajoute le cardio.</b>" },
-    { n: 2, dates: "9 – 15 nov.", titre: "Mise en place", type: "stable", on: [2190, 194, 219, 59], off: [1815, 167, 154, 59], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "Premier bilan lundi 16 novembre : moyenne de poids, photos, mensurations." },
-    { n: 3, dates: "16 – 22 nov.", titre: "Levier 1 : glucides du soir", type: "levier", on: [2105, 192, 199, 59], off: [1730, 165, 134, 59], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "<b>On retire la patate douce du M5.</b>" },
-    { n: 4, dates: "23 – 29 nov.", titre: "Levier 2 : lipides", type: "levier", on: [2020, 191, 197, 50], off: [1645, 164, 132, 50], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "<b>10 g d'amandes au lieu de 15</b> au M1, <b>1/4 d'avocat au lieu d'1/3</b> au M5, <b>plus d'huile pour la cuisson du M4.</b>" },
-    { n: 5, dates: "30 nov. – 6 déc.", titre: "Levier 3 : riz du M4", type: "levier", on: [1955, 190, 183, 50], off: [1580, 163, 118, 50], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "<b>50 g de riz au M4 au lieu de 100 g.</b>" },
-    { n: 6, dates: "7 – 13 déc.", titre: "On consolide", type: "stable", on: [1955, 190, 183, 50], off: [1580, 163, 118, 50], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "On laisse agir. Mensurations lundi 14 décembre." },
-    { n: 7, dates: "14 – 20 déc.", titre: "Levier 4 : flocons + refeed", type: "levier", on: [1900, 188, 174, 49], off: [1525, 161, 109, 49], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "<b>35 g de flocons au lieu de 50</b> au M1. <b>Premier refeed samedi 19 décembre</b> (≈ 2 250 kcal)." },
-    { n: 8, dates: "21 – 27 déc.", titre: "Noël = refeed test", type: "stable", on: [1900, 188, 174, 49], off: [1525, 161, 109, 49], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "<b>Le refeed tombe le 24 ou le 25 décembre</b> : on le fait sur le modèle du refeed, et tu prends des photos le lendemain matin. Point photo pour valider la date de compétition." },
-    { n: 9, dates: "28 déc. – 3 jan.", titre: "Réveillon = refeed", type: "stable", on: [1900, 188, 174, 49], off: [1525, 161, 109, 49], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "<b>Refeed le 31 décembre.</b> Le 1er janvier, on reprend le plan normal dès le M1." },
-    { n: 10, dates: "4 – 10 jan.", titre: "Levier 5 : riz du M3", type: "levier", on: [1860, 187, 166, 49], off: [1485, 160, 101, 49], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "<b>70 g de riz au M3 au lieu de 100 g.</b> Créatine à 3 g, tyrosine arrêtée." },
-    { n: 11, dates: "11 – 17 jan.", titre: "Levier 6 : alternance des jours", type: "levier", on: [1860, 187, 166, 49], off: [1485, 160, 101, 49], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "<b>Mardi : refeed. Mercredi à vendredi : jours bas</b> (≈ 1 460 kcal). <b>Dimanche : jour moyen</b> (≈ 1 700 kcal). Lundi et samedi : jours normaux. Menus dans « Tes journées types »." },
-    { n: 12, dates: "18 – 24 jan.", titre: "Alternance des jours (suite)", type: "stable", on: [1860, 187, 166, 49], off: [1485, 160, 101, 49], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "Même alternance que la semaine 11. Posing tous les jours." },
-    { n: 13, dates: "25 – 30 jan.", titre: "Semaine de compétition", type: "peak", on: [1860, 187, 166, 49], off: [1485, 160, 101, 49], cardio: "Pas de cardio lundi, 30 min mardi et mercredi, puis stop", action: "<b>Lundi jour très bas, mardi et mercredi décharge, jeudi recharge douce, vendredi grosse recharge, samedi compétition.</b> Tout le détail plus bas." }
+    { n: 1, dates: "2 – 8 nov.", titre: "Mise en place", type: "levier", on: [1690, 194, 129, 44], off: [1435, 165, 94, 44], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "On passe de ton plan à 2 200 kcal <b>au niveau où tu as toujours perdu</b> : ≈ 1 690 kcal les jours d'entraînement, ≈ 1 435 les jours de repos. <b>Cardio 30 min à jeun dès le premier jour.</b> Tout est pesé et noté, huile comprise." },
+    { n: 2, dates: "9 – 15 nov.", titre: "Mise en place", type: "stable", on: [1690, 194, 129, 44], off: [1435, 165, 94, 44], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "Premier bilan lundi 16 novembre : moyenne de poids, photos, mensurations." },
+    { n: 3, dates: "16 – 22 nov.", titre: "Levier 1 : riz du M3", type: "levier", on: [1655, 193, 120, 44], off: [1400, 164, 86, 44], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "<b>70 g de riz au M3 au lieu de 100 g.</b>" },
+    { n: 4, dates: "23 – 29 nov.", titre: "On consolide", type: "stable", on: [1655, 193, 120, 44], off: [1400, 164, 86, 44], cardio: "30 min d'escalier à jeun, 5 matins par semaine", action: "On laisse agir. Mensurations lundi 30 novembre." },
+    { n: 5, dates: "30 nov. – 6 déc.", titre: "Levier 2 : cardio", type: "levier", on: [1655, 193, 120, 44], off: [1400, 164, 86, 44], cardio: "30 min d'escalier à jeun, 6 matins par semaine", action: "<b>Un matin de cardio en plus.</b> La durée reste à 30 min, l'assiette ne bouge pas." },
+    { n: 6, dates: "7 – 13 déc.", titre: "On consolide", type: "stable", on: [1655, 193, 120, 44], off: [1400, 164, 86, 44], cardio: "30 min d'escalier à jeun, 6 matins par semaine", action: "On laisse agir. Mensurations lundi 14 décembre." },
+    { n: 7, dates: "14 – 20 déc.", titre: "Levier 3 : flocons + refeed", type: "levier", on: [1615, 192, 114, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, 6 matins par semaine", action: "<b>30 g de flocons au lieu de 40</b> au M1. <b>Premier refeed samedi 19 décembre</b> (≈ 2 250 kcal)." },
+    { n: 8, dates: "21 – 27 déc.", titre: "Noël = refeed test", type: "stable", on: [1615, 192, 114, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, 6 matins par semaine", action: "<b>Le refeed tombe le 24 ou le 25 décembre</b> : on le fait sur le modèle du refeed, et tu prends des photos le lendemain matin. Point photo de la semaine 8." },
+    { n: 9, dates: "28 déc. – 3 jan.", titre: "Levier 4 : cardio + réveillon", type: "levier", on: [1615, 192, 114, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, tous les matins", action: "<b>Cardio tous les matins.</b> <b>Refeed le 31 décembre</b>, puis on reprend le plan normal dès le M1 le 1er janvier." },
+    { n: 10, dates: "4 – 10 jan.", titre: "Levier 5 : glucides loin de la séance", type: "levier", on: [1575, 191, 107, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, tous les matins", action: "Les jours d'entraînement : <b>50 g de riz au M3</b> et <b>40 g de compote</b> après la séance. Créatine à 3 g, tyrosine arrêtée." },
+    { n: 11, dates: "11 – 17 jan.", titre: "Levier 6 : alternance des jours", type: "levier", on: [1575, 191, 107, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, tous les matins", action: "<b>Mardi : refeed. Mercredi à vendredi : jours bas</b> (≈ 1 365 kcal). <b>Dimanche : jour moyen</b> (≈ 1 625 kcal). Lundi et samedi : jours normaux. Menus dans « Tes journées types »." },
+    { n: 12, dates: "18 – 24 jan.", titre: "Alternance des jours (suite)", type: "stable", on: [1575, 191, 107, 43], off: [1365, 163, 80, 43], cardio: "30 min d'escalier à jeun, tous les matins", action: "Même alternance que la semaine 11. Posing tous les jours." },
+    { n: 13, dates: "25 – 30 jan.", titre: "Semaine de compétition", type: "peak", on: [1575, 191, 107, 43], off: [1365, 163, 80, 43], cardio: "Pas de cardio lundi, 30 min mardi et mercredi, puis stop", action: "<b>Lundi jour très bas, mardi et mercredi décharge, jeudi recharge douce, vendredi grosse recharge, samedi compétition.</b> Tout le détail plus bas." }
   ];
   const frise = document.getElementById("frise");
   const detail = document.getElementById("detail");
@@ -381,76 +381,76 @@
     el("text", { x: G - 8, y: Y(v) + 4, "text-anchor": "end" }, v + " kg");
   });
   [0, 2, 4, 6, 8, 10, 13].forEach(function (s) { el("text", { x: X(s), y: H - 10, "text-anchor": "middle" }, s === 0 ? "départ" : "S" + s); });
-  // fourchette : -0,35 à -0,55 kg par semaine depuis le poids stable de départ
+  // fourchette : -0,5 à -0,7 kg par semaine
   const haut = [], bas = [];
   for (let s = 0; s <= 13; s++) {
-    const h = 76.6 - s * 0.35;
-    const b = 76.6 - s * 0.55;
+    const h = 76.6 - s * 0.5;
+    const b = 76.6 - s * 0.7;
     haut.push(X(s) + "," + Y(Math.max(h, 67)));
     bas.unshift(X(s) + "," + Y(Math.max(b, 67)));
   }
   el("polygon", { points: haut.concat(bas).join(" "), class: "zone" });
   const mil = [];
-  for (let s = 0; s <= 13; s++) mil.push(X(s) + "," + Y(76.6 - s * 0.45));
+  for (let s = 0; s <= 13; s++) mil.push(X(s) + "," + Y(76.6 - s * 0.6));
   el("polyline", { points: mil.join(" "), class: "ligne" });
   el("circle", { cx: X(0), cy: Y(76.6), r: 5, class: "pt" });
-  el("text", { x: X(13) - 4, y: Y(70.8) - 16, "text-anchor": "end", style: "fill: var(--neon-clair); font-weight: 700; font-size: 13px" }, "≈ 70 à 72 kg");
+  el("text", { x: X(13) - 4, y: Y(68.8) - 18, "text-anchor": "end", style: "fill: var(--neon-clair); font-weight: 700; font-size: 13px" }, "≈ 68 à 70 kg");
 
   /* Menus */
   const MENUS = {
     on: {
       repas: [
         ["✅ Au réveil", ["Un café", "500 mg tyrosine", "10 g AA", "Cardio 30 min escalier"]],
-        ["🍴 M1", ["50 g de flocons d'avoine ou d'orge", "2 œufs entiers", "25 g ISO whey", "15 g d'amandes", "1 cuillère à café de miel", "+ Zinc", "+ Vit D3", "+ Vit C 1 g"]],
-        ["🍴 M2", ["120 g de viande rouge maigre", "100 g de pomme de terre ou patate douce (cuite)", "200 g de légumes verts", "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]],
-        ["🍴 M3", ["110 g de blanc de poulet ou cuisses de poulet sans peau", "100 g de riz (cuit)", "200 g de légumes verts", "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]],
-        ["🍴 M4", ["100 g de blanc de poulet ou cuisses de poulet sans peau", "100 g de riz (cuit)", "200 g de légumes verts", "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]],
-        ["🍴 M5", ["140 g de poisson blanc, crevettes ou fruits de mer (saumon 2 fois par semaine maximum)", "100 g de patate douce (cuite)", "Une salade : 1/3 d'avocat, salade, tomate, concombre, cornichons, avec 1 cuillère à café d'huile d'olive"]],
-        ["💥 Avant entraînement", ["1 h avant 👉", "40 g de crème de riz", "15 g ISO whey", "1 petite banane (≈ 100 g)"]],
-        ["💥 Après entraînement", ["Immédiatement :", "10 g AA", "5 g créatine", "100 g de compote sans sucres ajoutés"]],
+        ["🍴 M1", ["40 g de flocons d'avoine ou d'orge", "2 œufs entiers", "20 g ISO whey", "10 g d'amandes", "+ Zinc", "+ Vit D3", "+ Vit C 1 g"]],
+        ["🍴 M2", ["120 g de viande rouge maigre", "200 g de légumes verts", "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]],
+        ["🍴 M3", ["110 g de blanc de poulet ou cuisses de poulet sans peau", "100 g de riz (cuit)", "200 g de légumes verts"]],
+        ["🍴 M4", ["100 g de blanc de poulet ou cuisses de poulet sans peau", "200 g de légumes verts"]],
+        ["🍴 M5", ["140 g de poisson blanc, crevettes ou fruits de mer (saumon 2 fois par semaine maximum)", "Une salade : 1/4 d'avocat, salade, tomate, concombre, cornichons, avec 1 cuillère à café d'huile d'olive"]],
+        ["💥 Avant entraînement", ["1 h avant 👉", "30 g de crème de riz", "20 g ISO whey", "1 petite banane (≈ 100 g)"]],
+        ["💥 Après entraînement", ["Immédiatement :", "10 g AA", "5 g créatine", "60 g de compote sans sucres ajoutés"]],
         ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]]
       ],
-      total: "Semaines 1 et 2 (ton plan actuel) : <b>≈ 2 190 kcal</b> · protéines 194 g · glucides 219 g · lipides 59 g"
+      total: "Semaines 1 et 2 : <b>≈ 1 690 kcal</b> · protéines 194 g · glucides 129 g · lipides 44 g"
     },
     off: {
       repas: [
         ["✅ Au réveil", ["Un café", "500 mg tyrosine", "10 g AA", "Cardio 30 min escalier"]],
-        ["🍴 M1", ["50 g de flocons d'avoine ou d'orge", "2 œufs entiers", "25 g ISO whey", "15 g d'amandes", "1 cuillère à café de miel", "+ Zinc", "+ Vit D3", "+ Vit C 1 g", "+ 5 g créatine"]],
+        ["🍴 M1", ["40 g de flocons d'avoine ou d'orge", "2 œufs entiers", "20 g ISO whey", "10 g d'amandes", "+ Zinc", "+ Vit D3", "+ Vit C 1 g", "+ 5 g créatine"]],
         ["🍴 M2", ["120 g de viande rouge maigre", "100 g de pomme de terre ou patate douce (cuite)", "200 g de légumes verts", "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]],
-        ["🍴 M3", ["110 g de blanc de poulet ou cuisses de poulet sans peau", "100 g de riz (cuit)", "200 g de légumes verts", "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]],
-        ["🍴 M4", ["100 g de blanc de poulet ou cuisses de poulet sans peau", "100 g de riz (cuit)", "200 g de légumes verts", "Cuisson : 1 cuillère à café d'huile d'olive ou MCT"]],
-        ["🍴 M5", ["140 g de poisson blanc, crevettes ou fruits de mer (saumon 2 fois par semaine maximum)", "100 g de patate douce (cuite)", "Une salade : 1/3 d'avocat, salade, tomate, concombre, cornichons, avec 1 cuillère à café d'huile d'olive"]],
+        ["🍴 M3", ["110 g de blanc de poulet ou cuisses de poulet sans peau", "100 g de riz (cuit)", "200 g de légumes verts"]],
+        ["🍴 M4", ["100 g de blanc de poulet ou cuisses de poulet sans peau", "200 g de légumes verts"]],
+        ["🍴 M5", ["140 g de poisson blanc, crevettes ou fruits de mer (saumon 2 fois par semaine maximum)", "Une salade : 1/4 d'avocat, salade, tomate, concombre, cornichons, avec 1 cuillère à café d'huile d'olive"]],
         ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]]
       ],
-      total: "Semaines 1 et 2, sans l'avant et l'après-entraînement : <b>≈ 1 815 kcal</b> · protéines 167 g · glucides 154 g · lipides 59 g"
+      total: "Semaines 1 et 2 : <b>≈ 1 435 kcal</b> · protéines 165 g · glucides 94 g · lipides 44 g"
     },
     bas: {
       repas: [
         ["✅ Au réveil", ["Un café", "10 g AA", "Cardio 30 min escalier"]],
         ["🍴 M1", ["30 g de flocons d'avoine ou d'orge", "1 œuf entier", "4 blancs d'œufs", "10 g d'amandes", "+ 20 mg zinc", "+ Vit D3", "+ Vit C 1 g"]],
         ["🍴 M2", ["100 g de viande rouge maigre", "250 g de légumes verts (haricots verts, épinards, concombre, courgettes)", "1 cuillère à café d'huile d'olive"]],
-        ["🍴 M3", ["110 g de blanc de poulet", "100 g de riz", "150 g de légumes verts"]],
+        ["🍴 M3", ["110 g de blanc de poulet", "50 g de riz", "150 g de légumes verts"]],
         ["🍴 M4", ["110 g de blanc de poulet", "250 g de légumes verts"]],
         ["🍴 M5", ["110 g de saumon (de préférence), sinon poisson blanc", "Une salade (1/4 d'avocat, salade, tomate, cornichons, concombre…)"]],
         ["💥 Avant entraînement", ["1 h avant 👉", "15 g AA"]],
-        ["💥 Après entraînement", ["Immédiatement :", "25 g de whey hydrolysée", "3 g créa", "60 g de compote"]],
+        ["💥 Après entraînement", ["Immédiatement :", "25 g de whey hydrolysée", "3 g créa"]],
         ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]]
       ],
-      total: "Semaines 11 et 12, du mercredi au vendredi : <b>≈ 1 460 kcal</b> · protéines 183 g · glucides 80 g · lipides 45 g"
+      total: "Semaines 11 et 12, du mercredi au vendredi : <b>≈ 1 365 kcal</b> · protéines 181 g · glucides 58 g · lipides 45 g"
     },
     moyen: {
       repas: [
         ["✅ Au réveil", ["Un café", "10 g AA", "Cardio 30 min escalier"]],
         ["🍴 M1", ["30 g de flocons d'avoine ou d'orge", "1 œuf entier", "4 blancs d'œufs", "10 g d'amandes", "+ 20 mg zinc", "+ Vit D3", "+ Vit C 1 g"]],
         ["🍴 M2", ["100 g de viande rouge maigre", "100 g de riz", "250 g de légumes verts", "1 cuillère à café d'huile d'olive"]],
-        ["🍴 M3", ["110 g de blanc de poulet", "100 g de riz", "150 g de légumes verts"]],
+        ["🍴 M3", ["110 g de blanc de poulet", "50 g de riz", "150 g de légumes verts"]],
         ["🍴 M4", ["110 g de blanc de poulet", "100 g de riz", "250 g de légumes verts"]],
         ["🍴 M5", ["110 g de saumon (de préférence), sinon poisson blanc", "Une salade (1/4 d'avocat, salade, tomate, cornichons, concombre…)"]],
         ["💥 Avant entraînement", ["1 h avant 👉", "15 g AA"]],
-        ["💥 Après entraînement", ["Immédiatement :", "25 g de whey hydrolysée", "3 g créa", "60 g de compote"]],
+        ["💥 Après entraînement", ["Immédiatement :", "25 g de whey hydrolysée", "3 g créa"]],
         ["💥 Le soir avant de dormir", ["200 mg magnésium et un comprimé vit B"]]
       ],
-      total: "Semaines 11 et 12, le dimanche : <b>≈ 1 700 kcal</b> · protéines 188 g · glucides 136 g · lipides 45 g"
+      total: "Semaines 11 et 12, le dimanche : <b>≈ 1 625 kcal</b> · protéines 186 g · glucides 114 g · lipides 45 g"
     },
     refeed: {
       repas: [
@@ -472,7 +472,7 @@
     const m = MENUS[t];
     menu.innerHTML = m.repas.map(function (r) {
       return '<div class="repas"><h4>' + r[0] + '</h4><ul>' + r[1].map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ul></div>';
-    }).join("") + '<div class="total">' + m.total + '</div><p class="note">Les quantités baissent selon le plan : semaine 3, plus de patate douce au M5 ; semaine 4, 10 g d\'amandes, 1/4 d\'avocat et plus d\'huile au M4 ; semaine 5, 50 g de riz au M4 ; semaine 7, 35 g de flocons au M1 ; semaine 10, 70 g de riz au M3.</p>';
+    }).join("") + '<div class="total">' + m.total + '</div><p class="note">Les quantités baissent selon le plan : semaine 3, 70 g de riz au M3 ; semaine 7, 30 g de flocons au M1 ; semaine 10, les jours d\'entraînement, 50 g de riz au M3 et 40 g de compote.</p>';
   }
   const tbtns = document.querySelectorAll("#types button");
   tbtns.forEach(function (b) {
