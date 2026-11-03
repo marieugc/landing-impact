@@ -29,6 +29,15 @@ progression sur 4 semaines, transformations, présentation de Marie et appel à 
 Les exercices se modifient en haut du `<script>` de `seance-fessiers/index.html` (tableau `EXERCICES`).
 Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/seance-fessiers/`
 
+## Guide « HIP THRUST » 🍑💜
+
+Guide offert envoyé en DM aux abonnées qui commentent **HIP THRUST** (reel « masseuses à leur compte qui sautent leur séance »),
+dans [`hip-thrust/index.html`](hip-thrust/index.html) : auto-diagnostic en 5 signes, 5 erreurs sur le hip thrust avec un test express
+pour chacune, séance 30 minutes pour les journées qui débordent, carnet de charge (enregistré sur le téléphone), mini-diagnostic noté sur 6,
+résultats clientes, accompagnement et réservation du diagnostic offert (Calendly). Bouton « Télécharger ce guide en PDF » en bas de page.
+Les liens (Calendly, Instagram, lien de ta vidéo sur les erreurs) se modifient en haut du `<script>` (`CONFIG`).
+Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/hip-thrust/`
+
 ## Ressource post-R1 « Tu avances à l'aveugle » 💜
 
 Page à envoyer aux prospects qui n'ont pas pris le R2 après le R1, dans [`a-l-aveugle/index.html`](a-l-aveugle/index.html).
