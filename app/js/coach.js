@@ -15,6 +15,7 @@ import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from '
 import { NOM_VIDEOTHEQUE } from './config.js';
 import { carteProgramme, brancherFichiers } from './programmes.js';
 import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide, lecteurLien } from './videotheque.js';
+import { carteRappels } from './rappels.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -100,6 +101,7 @@ async function tableau(racine, profil) {
       ${stat('Bilans reçus', nonLus, 'check', '#/coach/bilans')}
       ${stat('Posing à corriger', posings, 'etoile', '#/coach/competitrices')}
     </div>
+    <div id="zone-rappels"></div>
     <section class="carte tableau">
       <div class="tableau-tete"><span>ÉLÈVE</span><span>OBJECTIF</span><span>SEMAINE</span><span>STATUT</span><span></span></div>
       ${lignes || '<p class="vide">Aucune élève inscrite pour le moment. Clique sur « Ajouter une élève ».</p>'}
@@ -119,6 +121,7 @@ async function tableau(racine, profil) {
       catch (e) { f.querySelector('textarea').select(); toast('Sélectionne le texte et copie-le.'); }
     });
   });
+  carteRappels(racine.querySelector('#zone-rappels'), profil);
 }
 
 // ───────────── Fiche élève ─────────────

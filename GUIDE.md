@@ -166,9 +166,21 @@ et **le lundi à 9 h** s'il n'est toujours pas arrivé. Chaque élève les activ
 4. **Programmation** : copie `supabase/rappels.sql` dans SQL Editor, remplace `TON-SECRET-RAPPELS`
    par la valeur de `RAPPELS_SECRET`, puis Run.
 5. **Essai** : active les rappels sur un téléphone (compte élève), puis lance la requête d'essai
-   en bas de `supabase/rappels.sql`. Une notification « Les rappels fonctionnent ! » doit arriver.
+   en bas de `supabase/rappels.sql`. Une notification « Les notifications fonctionnent ! » doit arriver.
 
 Dans la fiche de chaque élève (onglet Suivi), tu vois si elle a activé les rappels.
+
+### Tes notifications de coach
+
+Tu reçois une notification à chaque **nouveau message**, **bilan**, **vidéo à corriger** (mouvement ou posing)
+et quand une élève **note ses charges** (une seule par séance). Un toucher ouvre le bon écran.
+
+1. Redéploie la fonction `rappels-bilans` avec la dernière version de `index.ts` (Edge Functions ›
+   rappels-bilans › Code : colle le nouveau fichier, puis Deploy).
+2. Copie `supabase/notifications-coach.sql` dans SQL Editor, remplace `TON-SECRET-RAPPELS`
+   par la valeur de `RAPPELS_SECRET`, puis Run.
+3. Sur ton tableau de bord coach, clique **« Activer les notifications »**, sur chaque appareil
+   où tu veux être prévenue (iPhone : app installée sur l'écran d'accueil ; Mac : Safari ou Chrome).
 
 ## Ce que fait l'app
 

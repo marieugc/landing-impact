@@ -1,12 +1,12 @@
 // Service worker : permet d'installer l'app et de l'ouvrir même avec une connexion faible.
 // Pense à changer le numéro de version à chaque mise à jour de l'app.
-const VERSION = 'bootyflow-v29';
+const VERSION = 'bootyflow-v30';
 
 const FICHIERS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/styles.css?v=29',
+  './css/styles.css?v=30',
   './js/config.js',
   './js/data.js',
   './js/ui.js',
@@ -22,7 +22,7 @@ const FICHIERS = [
   './js/etat.js',
   './js/rappels.js',
   './js/compression.js',
-  './js/app.js?v=29',
+  './js/app.js?v=30',
   './img/banniere.jpg',
   './img/coach.jpg',
   './icons/icon-192.png',
@@ -73,7 +73,8 @@ self.addEventListener('push', (event) => {
     body: donnees.corps || '',
     icon: './icons/icon-192.png',
     badge: './icons/icon-192.png',
-    tag: 'rappel-bilan',
+    tag: donnees.tag || 'rappel-bilan',
+    renotify: Boolean(donnees.tag),
     data: { url: donnees.url || '#/accueil' }
   }));
 });
