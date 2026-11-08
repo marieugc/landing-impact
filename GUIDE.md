@@ -182,6 +182,16 @@ et quand une élève **note ses charges** (une seule par séance). Un toucher ou
 3. Sur ton tableau de bord coach, clique **« Activer les notifications »**, sur chaque appareil
    où tu veux être prévenue (iPhone : app installée sur l'écran d'accueil ; Mac : Safari ou Chrome).
 
+### Les notifications de tes élèves quand tu leur réponds
+
+Tes élèves sont prévenues quand tu leur **écris**, **corriges une vidéo** (mouvement ou posing),
+leur **envoies une vidéo** ou **commentes leur bilan** (une seule fois par bilan ou par vidéo).
+Copie `supabase/notifications-eleves.sql` dans SQL Editor, puis Run (après `notifications-coach.sql`).
+Chaque élève active les notifications une fois depuis son accueil (même bouton que les rappels de bilan).
+
+Si ta fonction s'appelle autrement que `rappels-bilans` (par exemple `rappels-bilans-`), mets son
+adresse exacte dans les fichiers SQL avant de les lancer.
+
 ## Ce que fait l'app
 
 **Espace élève (téléphone)**
