@@ -3,6 +3,8 @@
 // - Lundi 9 h : relance des élèves dont le bilan de la semaine n'est pas arrivé.
 // Appelée toutes les heures le dimanche et le lundi par pg_cron (voir supabase/rappels.sql) : elle n'envoie
 // rien en dehors de ces deux créneaux. Corps { "moment": "test" } : notification d'essai à tous les appareils.
+// Corps { "moment": "coach", "table": ..., "ligne": {...} } : envoyé par la base (supabase/notifications-coach.sql)
+// quand une élève envoie un message, un bilan, une vidéo ou note ses charges → notification à la coach.
 //
 // Secrets à créer dans Supabase (Edge Functions › Secrets) : VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY,
 // VAPID_SUBJECT (ex. mailto:ton-adresse), RAPPELS_SECRET. SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY
@@ -71,8 +73,62 @@ const MESSAGES = {
     corps: `${prenom ? `${prenom}, ta` : 'Ta'} coach n'a pas reçu ton bilan du week-end. Tu peux encore l'envoyer aujourd'hui.`,
     url: '#/bilan'
   }),
-  test: () => ({ titre: 'Booty Flow', corps: 'Les rappels fonctionnent ! Tu seras prévenue pour tes bilans.', url: '#/accueil' })
+  test: () => ({ titre: 'Booty Flow', corps: 'Les notifications fonctionnent !', url: '#/accueil' })
 };
+
+// ── Notifications de la coach ──
+type Ligne = Record<string, unknown>;
+const court = (t: string, n = 120) => (t.length > n ? `${t.slice(0, n - 1)}…` : t);
+const kg = (v: unknown) => `${String(v).replace('.', ',')} kg`;
+export function messageCoach(table: string, l: Ligne, prenom: string) {
+  const qui = prenom || 'Une élève';
+  switch (table) {
+    case 'messages': {
+      const photos = Array.isArray(l.photos) ? l.photos.length : 0;
+      const corps = typeof l.texte === 'string' && l.texte.trim() ? court(l.texte.trim())
+        : l.audio_chemin ? '🎤 Message vocal' : photos > 1 ? `📷 ${photos} photos` : '📷 Photo';
+      return { titre: `Message de ${qui}`, corps, url: `#/coach/messages/${l.eleve_id}`, tag: `message-${l.eleve_id}` };
+    }
+    case 'bilans': {
+      const details = [l.poids != null ? kg(l.poids) : '', typeof l.ressenti === 'string' ? court(l.ressenti, 90) : ''].filter(Boolean).join(' · ');
+      return { titre: `Nouveau bilan de ${qui}`, corps: details || 'Bilan de la semaine reçu.', url: '#/coach/bilans', tag: `bilan-${l.id}` };
+    }
+    case 'videos': {
+      const posing = l.type === 'posing';
+      return {
+        titre: posing ? `Posing à corriger · ${qui}` : `Vidéo à corriger · ${qui}`,
+        corps: String(l.exercice ?? ''),
+        url: posing ? '#/coach/competitrices' : '#/coach/videos',
+        tag: `video-${l.id}`
+      };
+    }
+    case 'charges':
+      return {
+        titre: `${qui} a noté ses charges`,
+        corps: `${l.exercice} : ${kg(l.poids)}${l.series && l.reps ? ` · ${l.series}×${l.reps}` : ''}`,
+        url: '#/coach/charges',
+        tag: `charges-${l.eleve_id}`
+      };
+  }
+  return null;
+}
+
+async function envoyerA(abonnements: (Abonnement & { id: string })[], message: object) {
+  let envoyes = 0, supprimes = 0, erreurs = 0;
+  for (const a of abonnements) {
+    try {
+      const statut = await envoyerPush(a, message, vapid);
+      if (statut === 404 || statut === 410) {
+        await rest(`abonnements_push?id=eq.${a.id}`, { method: 'DELETE' });
+        supprimes += 1;
+      } else if (statut >= 200 && statut < 300) envoyes += 1;
+      else erreurs += 1;
+    } catch (_) {
+      erreurs += 1;
+    }
+  }
+  return { envoyes, supprimes, erreurs };
+}
 
 Deno.serve(async (req) => {
   if (req.headers.get('x-rappels-secret') !== Deno.env.get('RAPPELS_SECRET')) {
@@ -80,7 +136,21 @@ Deno.serve(async (req) => {
   }
   if (!vapid.publicKey || !vapid.privateKey) return new Response('Clés VAPID manquantes dans les secrets', { status: 500 });
 
-  const { moment: demande = 'auto' } = await req.json().catch(() => ({}));
+  const corpsRequete = await req.json().catch(() => ({}));
+  const { moment: demande = 'auto' } = corpsRequete;
+
+  if (demande === 'coach') {
+    const ligne: Ligne = corpsRequete.ligne ?? {};
+    const eleveId = String(ligne.eleve_id ?? '');
+    if (!/^[0-9a-f-]{36}$/i.test(eleveId)) return new Response('Élève inconnue', { status: 400 });
+    const [eleve] = await rest(`profiles?id=eq.${eleveId}&select=prenom`) as { prenom: string | null }[];
+    const message = messageCoach(String(corpsRequete.table), ligne, eleve?.prenom ?? '');
+    if (!message) return new Response('Table inconnue', { status: 400 });
+    const coachs = await rest('profiles?role=eq.coach&select=id') as { id: string }[];
+    if (!coachs.length) return Response.json({ moment: 'coach', envoyes: 0 });
+    const abonnements = await rest(`abonnements_push?eleve_id=in.(${coachs.map((c) => c.id).join(',')})&select=id,endpoint,p256dh,auth`);
+    return Response.json({ moment: 'coach', ...(await envoyerA(abonnements, message)) });
+  }
   const paris = heureDeParis();
   let moment = demande;
   if (demande === 'auto') {
@@ -106,22 +176,16 @@ Deno.serve(async (req) => {
     return moment === 'rappel' ? echeance === paris.date : echeance < paris.date;
   });
 
+  // Test : tous les appareils abonnés (élèves et coach)
+  if (moment === 'test') {
+    return Response.json({ moment, paris, ...(await envoyerA(abonnements, MESSAGES.test())) });
+  }
   let envoyes = 0, supprimes = 0, erreurs = 0;
   for (const e of cibles) {
-    const message = MESSAGES[moment as keyof typeof MESSAGES](e.prenom ?? '');
-    // Test : tous les appareils de l'élève ; sinon idem (une élève peut avoir téléphone + tablette)
-    for (const a of abonnements.filter((x) => x.eleve_id === e.id)) {
-      try {
-        const statut = await envoyerPush(a, message, vapid);
-        if (statut === 404 || statut === 410) {
-          await rest(`abonnements_push?id=eq.${a.id}`, { method: 'DELETE' });
-          supprimes += 1;
-        } else if (statut >= 200 && statut < 300) envoyes += 1;
-        else erreurs += 1;
-      } catch (_) {
-        erreurs += 1;
-      }
-    }
+    const message = MESSAGES[moment as 'rappel' | 'retard'](e.prenom ?? '');
+    // Tous les appareils de l'élève (une élève peut avoir téléphone + tablette)
+    const r = await envoyerA(abonnements.filter((x) => x.eleve_id === e.id), message);
+    envoyes += r.envoyes; supprimes += r.supprimes; erreurs += r.erreurs;
   }
   return Response.json({ moment, paris, eleves_concernees: cibles.length, envoyes, supprimes, erreurs });
 });

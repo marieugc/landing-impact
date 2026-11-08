@@ -75,6 +75,7 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) return;
   verifierMiseAJour();
   rafraichirProfil();
+  majPastille();
 });
 
 // Une app installée reste ouverte en arrière-plan : au retour, on recharge le profil pour voir
@@ -226,6 +227,14 @@ function poserPastille(lien, n, libelle) {
   pastille.textContent = n > 9 ? '9+' : n;
   pastille.setAttribute('aria-label', libelle(n));
 }
+// Total affiché sur l'icône de l'app (Mac, iPhone, Android), quand le système le permet
+function badgeIcone(total) {
+  try {
+    if (total > 0) navigator.setAppBadge?.(total)?.catch(() => {});
+    else navigator.clearAppBadge?.()?.catch(() => {});
+  } catch (e) { /* non pris en charge */ }
+}
+
 async function majPastille() {
   if (!profil) return;
   const coach = profil.role === 'coach';
@@ -235,10 +244,18 @@ async function majPastille() {
     poserPastille(racine.querySelector(coach ? 'a[href="#/coach/messages"]' : '[data-onglet="chat"]'), n,
       (x) => `${pluriel(x, 'message')} non lu${x > 1 ? 's' : ''}`);
     if (coach) {
-      const posings = await api.listVideos({ type: 'posing', statut: 'a_corriger' });
-      poserPastille(racine.querySelector('a[href="#/coach/competitrices"]'), posings.length,
+      const [bilans, mouvements, posings] = await Promise.all([
+        api.compterBilansNonLus(), api.compterVideosACorriger('mouvement'), api.compterVideosACorriger('posing')
+      ]);
+      poserPastille(racine.querySelector('a[href="#/coach/bilans"]'), bilans,
+        (x) => `${pluriel(x, 'bilan')} à lire`);
+      poserPastille(racine.querySelector('a[href="#/coach/videos"]'), mouvements,
+        (x) => `${pluriel(x, 'vidéo')} à corriger`);
+      poserPastille(racine.querySelector('a[href="#/coach/competitrices"]'), posings,
         (x) => `${pluriel(x, 'vidéo')} de posing à corriger`);
+      badgeIcone(n + bilans + mouvements + posings);
     } else {
+      badgeIcone(n);
       const nouvelles = (await nouveautes(profil)).length;
       poserPastille(racine.querySelector('[data-onglet="mouvement"]'), nouvelles,
         (x) => `${pluriel(x, 'nouvelle vidéo')} dans la vidéothèque`);
@@ -254,6 +271,13 @@ async function majPastille() {
   } catch (e) { /* hors ligne : on réessaiera */ }
 }
 document.addEventListener('messages-lus', majPastille);
+// Quand un écran se redessine tout seul (bilan marqué lu, correction envoyée…), le menu est recréé :
+// on remet les pastilles tout de suite au lieu d'attendre le prochain rafraîchissement
+let pastillesPrevues = null;
+new MutationObserver(() => {
+  clearTimeout(pastillesPrevues);
+  pastillesPrevues = setTimeout(majPastille, 150);
+}).observe(racine, { childList: true });
 setInterval(() => { if (!document.hidden) majPastille(); }, 30000);
 
 // Branché une seule fois sur toute l'app : ces boutons marchent même quand

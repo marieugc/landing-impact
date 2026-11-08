@@ -222,6 +222,5 @@ export async function conversation(zone, { eleveId, moiCoach, titre, sousTitre =
 
 // Nombre de messages non lus reçus (élève : ceux de la coach ; coach : ceux de toutes les élèves)
 export async function nonLus(eleveId, moiCoach) {
-  const messages = await api.listMessages(eleveId);
-  return messages.filter((m) => !m.lu && m.de_coach !== moiCoach).length;
+  return api.compterNonLus(eleveId, moiCoach);
 }

@@ -1,4 +1,5 @@
-// RAPPELS : notifications sur le téléphone de l'élève (bilan du week-end à envoyer, bilan en retard).
+// RAPPELS : notifications sur le téléphone de l'élève (bilan du week-end à envoyer, bilan en retard)
+// et sur les appareils de la coach (message, bilan, vidéo à corriger, charges : voir notifications-coach.sql).
 // L'élève active les rappels une fois ; le téléphone donne une adresse de notification que l'on
 // enregistre dans Supabase (table abonnements_push). L'envoi est fait par la fonction rappels-bilans.
 import { api, MODE } from './data.js';
@@ -40,17 +41,24 @@ export async function activerRappels(profil) {
 // À chaque ouverture : si les rappels sont autorisés, on renvoie l'adresse (elle peut changer avec le temps)
 export async function synchroniserRappels(profil) {
   try {
-    if (profil.role === 'coach' || !pushPossible() || Notification.permission !== 'granted') return;
+    if (!pushPossible() || Notification.permission !== 'granted') return;
     const abonnement = await abonnementActuel();
     if (abonnement) await api.enregistrerAbonnement(profil.id, abonnement.toJSON());
   } catch (e) { /* hors ligne : on réessaiera */ }
 }
 
-// Carte affichée sur l'accueil de l'élève tant que les rappels ne sont pas actifs
+// Carte affichée sur l'accueil (élève) ou le tableau de bord (coach) tant que les notifications ne sont pas actives
 export async function carteRappels(conteneur, profil) {
+  if (!conteneur) return;
   const etat = await etatRappels();
   if (etat === 'actif' || etat === 'impossible') { conteneur.innerHTML = ''; return; }
-  const textes = {
+  const coach = profil.role === 'coach';
+  const textes = coach ? {
+    inactif: ['Sois prévenue sur cet appareil à chaque nouveau message, bilan, vidéo à corriger ou suivi de charges. Active-les sur chaque appareil (téléphone, Mac…).',
+      `<button class="bouton-principal compact" id="activer-rappels">${icone('cloche', 16)}ACTIVER LES NOTIFICATIONS</button>`],
+    installer: ["Pour recevoir les notifications sur ton iPhone, installe d'abord l'app : bouton Partager de Safari, puis « Sur l'écran d'accueil ». Ouvre ensuite l'app depuis son icône.", ''],
+    refuse: ['Les notifications sont bloquées sur cet appareil. Autorise-les pour Booty Flow dans les réglages (téléphone : Réglages › Notifications ; Mac : Réglages Système › Notifications, ou les réglages du site dans ton navigateur).', '']
+  } : {
     inactif: ['Reçois un rappel sur ton téléphone le dimanche soir si ton bilan n\'est pas encore envoyé.',
       `<button class="bouton-principal compact" id="activer-rappels">${icone('cloche', 16)}ACTIVER LES RAPPELS</button>`],
     installer: ["Pour recevoir les rappels de bilan sur ton iPhone, installe d'abord l'app : bouton Partager de Safari, puis « Sur l'écran d'accueil ». Ouvre ensuite l'app depuis son icône.", ''],
@@ -58,13 +66,14 @@ export async function carteRappels(conteneur, profil) {
   };
   const [texte, bouton] = textes[etat];
   conteneur.innerHTML = `<section class="carte carte-rappels">
-    <div class="surtitre-carte">RAPPELS DE BILAN</div>
+    <div class="surtitre-carte">${coach ? 'NOTIFICATIONS' : 'RAPPELS DE BILAN'}</div>
     <p class="petit">${texte}</p>${bouton}
   </section>`;
   conteneur.querySelector('#activer-rappels')?.addEventListener('click', async (e) => {
     try {
       await pendant(e.currentTarget, 'Activation…', () => activerRappels(profil));
-      toast(MODE === 'demo' ? 'Rappels activés (démo : aucune notification réelle).' : 'Rappels activés ! Tu seras prévenue pour tes bilans.');
+      toast(MODE === 'demo' ? 'Notifications activées (démo : aucune notification réelle).'
+        : coach ? 'Notifications activées sur cet appareil !' : 'Rappels activés ! Tu seras prévenue pour tes bilans.');
       conteneur.innerHTML = '';
     } catch (err) {
       toast(err.message, true);

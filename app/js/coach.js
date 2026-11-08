@@ -15,6 +15,7 @@ import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from '
 import { NOM_VIDEOTHEQUE } from './config.js';
 import { carteProgramme, brancherFichiers } from './programmes.js';
 import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide, lecteurLien } from './videotheque.js';
+import { carteRappels } from './rappels.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -100,6 +101,7 @@ async function tableau(racine, profil) {
       ${stat('Bilans reçus', nonLus, 'check', '#/coach/bilans')}
       ${stat('Posing à corriger', posings, 'etoile', '#/coach/competitrices')}
     </div>
+    <div id="zone-rappels"></div>
     <section class="carte tableau">
       <div class="tableau-tete"><span>ÉLÈVE</span><span>OBJECTIF</span><span>SEMAINE</span><span>STATUT</span><span></span></div>
       ${lignes || '<p class="vide">Aucune élève inscrite pour le moment. Clique sur « Ajouter une élève ».</p>'}
@@ -119,6 +121,7 @@ async function tableau(racine, profil) {
       catch (e) { f.querySelector('textarea').select(); toast('Sélectionne le texte et copie-le.'); }
     });
   });
+  carteRappels(racine.querySelector('#zone-rappels'), profil);
 }
 
 // ───────────── Fiche élève ─────────────
@@ -799,16 +802,13 @@ async function suiviCharges(racine, profil) {
 function apercu(m) {
   if (!m) return 'Aucun message';
   const qui = m.de_coach ? 'Toi : ' : '';
-  return qui + (m.texte ? m.texte : 'Message vocal');
+  return qui + (m.texte ? m.texte : (m.photos?.length ? 'Photo' : 'Message vocal'));
 }
 
 async function messages(racine, profil, [eleveId]) {
   if (eleveId) return discussion(racine, profil, eleveId);
-  const [eleves, tous] = await Promise.all([api.listEleves(), api.listMessages()]);
-  const lignes = eleves.map((e) => {
-    const siens = tous.filter((m) => m.eleve_id === e.id);
-    return { e, dernier: siens[siens.length - 1], nonLus: siens.filter((m) => !m.de_coach && !m.lu).length };
-  }).sort((a, b) => (b.nonLus - a.nonLus) || (b.dernier?.created_at || '').localeCompare(a.dernier?.created_at || ''));
+  const [eleves, { derniers, nonLus: aLire }] = await Promise.all([api.listEleves(), api.apercuConversations()]);
+  const lignes = eleves.map((e) => ({ e, dernier: derniers[e.id], nonLus: aLire[e.id] || 0 })).sort((a, b) => (b.nonLus - a.nonLus) || (b.dernier?.created_at || '').localeCompare(a.dernier?.created_at || ''));
 
   racine.innerHTML = page(profil, 'coach/messages', titre('Messages') + `
     <section class="carte liste-conversations">
