@@ -799,16 +799,13 @@ async function suiviCharges(racine, profil) {
 function apercu(m) {
   if (!m) return 'Aucun message';
   const qui = m.de_coach ? 'Toi : ' : '';
-  return qui + (m.texte ? m.texte : 'Message vocal');
+  return qui + (m.texte ? m.texte : (m.photos?.length ? 'Photo' : 'Message vocal'));
 }
 
 async function messages(racine, profil, [eleveId]) {
   if (eleveId) return discussion(racine, profil, eleveId);
-  const [eleves, tous] = await Promise.all([api.listEleves(), api.listMessages()]);
-  const lignes = eleves.map((e) => {
-    const siens = tous.filter((m) => m.eleve_id === e.id);
-    return { e, dernier: siens[siens.length - 1], nonLus: siens.filter((m) => !m.de_coach && !m.lu).length };
-  }).sort((a, b) => (b.nonLus - a.nonLus) || (b.dernier?.created_at || '').localeCompare(a.dernier?.created_at || ''));
+  const [eleves, { derniers, nonLus: aLire }] = await Promise.all([api.listEleves(), api.apercuConversations()]);
+  const lignes = eleves.map((e) => ({ e, dernier: derniers[e.id], nonLus: aLire[e.id] || 0 })).sort((a, b) => (b.nonLus - a.nonLus) || (b.dernier?.created_at || '').localeCompare(a.dernier?.created_at || ''));
 
   racine.innerHTML = page(profil, 'coach/messages', titre('Messages') + `
     <section class="carte liste-conversations">

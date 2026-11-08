@@ -273,6 +273,26 @@ const demo = {
     return (lireDemo().abonnements || []).filter((a) => a.eleve_id === eleveId).length;
   },
 
+  // Compteurs pour les pastilles (sans télécharger tous les messages)
+  async compterNonLus(eleveId, lecteurEstCoach) {
+    return (lireDemo().messages || []).filter((m) => (!eleveId || m.eleve_id === eleveId) && !m.lu && m.de_coach !== lecteurEstCoach).length;
+  },
+  async compterBilansNonLus() {
+    return lireDemo().bilans.filter((b) => !b.lu).length;
+  },
+  async compterVideosACorriger(type) {
+    return lireDemo().videos.filter((v) => v.statut === 'a_corriger' && !v.de_coach && (!type || v.type === type)).length;
+  },
+  // Page Messages de la coach : dernier message et non-lus de chaque conversation
+  async apercuConversations() {
+    const tous = [...(lireDemo().messages || [])].sort((a, b) => b.created_at.localeCompare(a.created_at));
+    const derniers = {}, nonLus = {};
+    for (const m of tous) {
+      derniers[m.eleve_id] ??= m;
+      if (!m.lu && !m.de_coach) nonLus[m.eleve_id] = (nonLus[m.eleve_id] || 0) + 1;
+    }
+    return { derniers, nonLus };
+  },
   async listMessages(eleveId) {
     return (lireDemo().messages || [])
       .filter((m) => !eleveId || m.eleve_id === eleveId)
@@ -519,6 +539,41 @@ const reel = {
     return count;
   },
 
+  // Comptages directs : Supabase ne renvoie que 1 000 lignes par requête, il ne faut donc
+  // jamais compter en téléchargeant tous les messages
+  async compterNonLus(eleveId, lecteurEstCoach) {
+    let q = (await client()).from('messages').select('id', { count: 'exact', head: true })
+      .eq('lu', false).eq('de_coach', !lecteurEstCoach);
+    if (eleveId) q = q.eq('eleve_id', eleveId);
+    const { count, error } = await q;
+    if (error) throw new Error(traduire(error.message));
+    return count || 0;
+  },
+  async compterBilansNonLus() {
+    const { count, error } = await (await client()).from('bilans').select('id', { count: 'exact', head: true }).eq('lu', false);
+    if (error) throw new Error(traduire(error.message));
+    return count || 0;
+  },
+  async compterVideosACorriger(type) {
+    let q = (await client()).from('videos').select('id', { count: 'exact', head: true }).eq('statut', 'a_corriger').eq('de_coach', false);
+    if (type) q = q.eq('type', type);
+    const { count, error } = await q;
+    if (error) throw new Error(traduire(error.message));
+    return count || 0;
+  },
+  // Page Messages : les 1 000 messages les plus récents suffisent pour le dernier message de chaque élève ;
+  // les non-lus sont comptés à part
+  async apercuConversations() {
+    const c = await client();
+    const [recents, nonLusListe] = await Promise.all([
+      c.from('messages').select('eleve_id, de_coach, texte, audio_chemin, photos, created_at').order('created_at', { ascending: false }).limit(1000),
+      c.from('messages').select('eleve_id').eq('lu', false).eq('de_coach', false)
+    ]);
+    const derniers = {}, nonLus = {};
+    for (const m of verifier(recents)) derniers[m.eleve_id] ??= m;
+    for (const m of verifier(nonLusListe)) nonLus[m.eleve_id] = (nonLus[m.eleve_id] || 0) + 1;
+    return { derniers, nonLus };
+  },
   async listMessages(eleveId) {
     let q = (await client()).from('messages').select('*').order('created_at');
     if (eleveId) q = q.eq('eleve_id', eleveId);
