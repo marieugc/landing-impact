@@ -5,6 +5,8 @@
 // rien en dehors de ces deux créneaux. Corps { "moment": "test" } : notification d'essai à tous les appareils.
 // Corps { "moment": "coach", "table": ..., "ligne": {...} } : envoyé par la base (supabase/notifications-coach.sql)
 // quand une élève envoie un message, un bilan, une vidéo ou note ses charges → notification à la coach.
+// Corps { "moment": "eleve", "evenement": ..., "ligne": {...} } : envoyé par la base (supabase/notifications-eleves.sql)
+// quand la coach écrit, corrige une vidéo, envoie une vidéo ou commente un bilan → notification à l'élève.
 //
 // Secrets à créer dans Supabase (Edge Functions › Secrets) : VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY,
 // VAPID_SUBJECT (ex. mailto:ton-adresse), RAPPELS_SECRET. SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY
@@ -113,6 +115,37 @@ export function messageCoach(table: string, l: Ligne, prenom: string) {
   return null;
 }
 
+// ── Notifications de l'élève (réponses de la coach) ──
+export function messageEleve(evenement: string, l: Ligne, coach: string) {
+  const qui = coach || 'Ta coach';
+  const posing = l.type === 'posing';
+  switch (evenement) {
+    case 'message': {
+      const photos = Array.isArray(l.photos) ? l.photos.length : 0;
+      const corps = typeof l.texte === 'string' && l.texte.trim() ? court(l.texte.trim())
+        : l.audio_chemin ? '🎤 Message vocal' : photos > 1 ? `📷 ${photos} photos` : '📷 Photo';
+      return { titre: `Message de ${qui}`, corps, url: '#/chat', tag: 'message' };
+    }
+    case 'correction':
+      return {
+        titre: 'Ta correction est prête',
+        corps: `${l.exercice ? `${l.exercice} : ` : ''}${qui} t'a envoyé son retour.`,
+        url: posing ? '#/posing' : '#/mouvement',
+        tag: `video-${l.id}`
+      };
+    case 'video_coach':
+      return {
+        titre: `${qui} t'a envoyé une vidéo`,
+        corps: String(l.exercice ?? ''),
+        url: posing ? '#/posing' : '#/mouvement',
+        tag: `video-${l.id}`
+      };
+    case 'bilan':
+      return { titre: 'Retour sur ton bilan', corps: `${qui} a commenté ton bilan de la semaine.`, url: '#/progres', tag: `bilan-${l.id}` };
+  }
+  return null;
+}
+
 async function envoyerA(abonnements: (Abonnement & { id: string })[], message: object) {
   let envoyes = 0, supprimes = 0, erreurs = 0;
   for (const a of abonnements) {
@@ -150,6 +183,17 @@ Deno.serve(async (req) => {
     if (!coachs.length) return Response.json({ moment: 'coach', envoyes: 0 });
     const abonnements = await rest(`abonnements_push?eleve_id=in.(${coachs.map((c) => c.id).join(',')})&select=id,endpoint,p256dh,auth`);
     return Response.json({ moment: 'coach', ...(await envoyerA(abonnements, message)) });
+  }
+
+  if (demande === 'eleve') {
+    const ligne: Ligne = corpsRequete.ligne ?? {};
+    const eleveId = String(ligne.eleve_id ?? '');
+    if (!/^[0-9a-f-]{36}$/i.test(eleveId)) return new Response('Élève inconnue', { status: 400 });
+    const [coach] = await rest('profiles?role=eq.coach&select=prenom&limit=1') as { prenom: string | null }[];
+    const message = messageEleve(String(corpsRequete.evenement), ligne, coach?.prenom ?? '');
+    if (!message) return new Response('Événement inconnu', { status: 400 });
+    const abonnements = await rest(`abonnements_push?eleve_id=eq.${eleveId}&select=id,endpoint,p256dh,auth`);
+    return Response.json({ moment: 'eleve', ...(await envoyerA(abonnements, message)) });
   }
   const paris = heureDeParis();
   let moment = demande;
