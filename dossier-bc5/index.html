@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>Dossier BC5 Jamet Sporting Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout : en-tête collant avec onglets par partie du dossier, une partie visible à la fois, colonne de lecture ~70ch, tableaux et schémas en pleine largeur */
+:root{
+  --bg:#f4f5f8; --surface:#ffffff; --ink:#18213a; --muted:#5a6378; --line:#dde1ea;
+  --accent:#2346a8; --accent-soft:#e6ebf8; --mat:#2f7d5b; --mat-soft:#e3f1ea;
+  --warn:#b4561f; --warn-soft:#fbeadc; --todo:#fff1b8; --todo-ink:#5c4700;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10141f; --surface:#181e2d; --ink:#e7eaf2; --muted:#a2aabd; --line:#2b3346;
+  --accent:#8aa6ff; --accent-soft:#1f2a4a; --mat:#6fcf9f; --mat-soft:#173226;
+  --warn:#f0a070; --warn-soft:#3a2416; --todo:#4a3d0a; --todo-ink:#ffe48a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10141f; --surface:#181e2d; --ink:#e7eaf2; --muted:#a2aabd; --line:#2b3346;
+  --accent:#8aa6ff; --accent-soft:#1f2a4a; --mat:#6fcf9f; --mat-soft:#173226;
+  --warn:#f0a070; --warn-soft:#3a2416; --todo:#4a3d0a; --todo-ink:#ffe48a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 16px;padding-block:12px 4px}
+.brand b{font-family:var(--display);font-size:1.35rem;letter-spacing:.02em;text-transform:uppercase}
+.brand span{color:var(--muted);font-size:.9rem}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;padding-block:6px 0;scrollbar-width:thin}
+nav.tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-family:var(--display);font-weight:600;font-size:1.02rem;letter-spacing:.03em;text-transform:uppercase;padding:8px 12px 10px;border-bottom:3px solid transparent}
+nav.tabs a .n{color:var(--accent);margin-right:6px}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.tabs a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:28px 64px}
+section.part{display:grid;gap:22px}
+.eyebrow{font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;font-size:.95rem}
+h1,h2,h3{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,5vw,3rem);font-weight:700;text-transform:uppercase}
+h2{font-size:1.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.01em}
+h3{font-size:1.25rem;font-weight:600;margin-bottom:8px}
+p{margin:0;max-width:70ch}
+.lead{font-size:1.12rem;max-width:68ch}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+.block{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:grid;gap:12px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+mark.todo{background:var(--todo);color:var(--todo-ink);padding:1px 5px;border-radius:4px;font-size:.92em}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.94rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--line)}
+th{font-family:var(--display);text-transform:uppercase;letter-spacing:.05em;font-size:.88rem;color:var(--muted);font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.kpi b{display:block;font-family:var(--display);font-size:2rem;line-height:1;color:var(--accent)}
+.kpi span{font-size:.88rem;color:var(--muted)}
+.pill{display:inline-block;font-size:.78rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);letter-spacing:.02em}
+.pill.mat{background:var(--mat-soft);color:var(--mat)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 12px}
+button[aria-pressed="true"],button.on{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+/* planning */
+.week{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:8px;min-width:760px}
+.day h4{margin:0 0 6px;font-family:var(--display);text-transform:uppercase;font-size:1rem;letter-spacing:.05em}
+.slot{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:4px;padding:6px 8px;margin-bottom:6px;font-size:.86rem;line-height:1.3}
+.slot.mat{border-color:var(--mat);background:var(--mat-soft)}
+.slot.vac{border-style:dashed;opacity:.85}
+.slot b{display:block;font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.85rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+/* calculator */
+.calc{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px}
+@media (max-width:720px){.calc{grid-template-columns:1fr}}
+.calc label{display:flex;gap:8px;align-items:flex-start;font-size:.95rem}
+.calc select{font:inherit;padding:7px 8px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.total{background:var(--accent);color:var(--surface);border-radius:10px;padding:18px;display:grid;gap:6px;align-content:start}
+.total .big{font-family:var(--display);font-size:2.8rem;line-height:1;font-variant-numeric:tabular-nums}
+.total ul{margin:0;padding-left:18px;font-size:.9rem}
+/* org */
+.org{display:grid;gap:14px;justify-items:center;min-width:620px;padding-block:6px}
+.node{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;text-align:center;font-size:.88rem;line-height:1.3;max-width:220px}
+.node b{display:block;font-size:.95rem}
+.node.lead{border:2px solid var(--accent)}
+.node.me{border:2px dashed var(--warn)}
+.orgrow{display:flex;gap:10px;justify-content:center;flex-wrap:nowrap;position:relative;padding-top:14px}
+.orgrow::before{content:"";position:absolute;top:0;left:8%;right:8%;border-top:2px solid var(--line)}
+.vline{width:2px;height:14px;background:var(--line);margin:-14px auto 0}
+/* zone */
+.zone{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:center}
+@media (max-width:720px){.zone{grid-template-columns:1fr}}
+.zone svg{width:100%;max-width:380px;height:auto;justify-self:center}
+.ring{cursor:pointer;transition:opacity .2s}
+.ring:focus-visible{outline:none;stroke:var(--ink);stroke-width:3}
+/* swot */
+.swot{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px}
+.swot .ax{font-family:var(--display);text-transform:uppercase;font-size:.85rem;color:var(--muted);letter-spacing:.06em;align-self:center;text-align:center}
+.swot .ax.v{writing-mode:vertical-rl;transform:rotate(180deg)}
+.q{border-radius:10px;padding:14px 16px;border:1px solid var(--line);background:var(--surface);min-width:0}
+.q h3{font-size:1.15rem}
+.q ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.93rem}
+.q.s{border-top:4px solid var(--mat)} .q.w{border-top:4px solid var(--warn)}
+.q.o{border-top:4px solid var(--accent)} .q.t{border-top:4px solid var(--muted)}
+.q li.key{transition:background .2s;border-radius:4px}
+.swot.cross li:not(.key){opacity:.35}
+.swot.cross li.key{background:var(--todo);color:var(--todo-ink);padding:0 4px}
+@media (max-width:640px){.swot{grid-template-columns:1fr}.swot .ax{display:none}}
+/* SMART */
+.smart{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.smart button{font-family:var(--display);font-size:1.6rem;font-weight:700;padding:10px 0}
+.smart-out{min-height:3.2em}
+/* objections */
+details{border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+details+details{margin-top:8px}
+summary{cursor:pointer;padding:12px 14px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--accent);font-weight:700}
+details[open] summary::after{content:"–"}
+details>div{padding:0 14px 14px;display:grid;gap:8px}
+.cap{display:grid;grid-template-columns:28px 1fr;gap:4px 8px;font-size:.94rem}
+.cap b{font-family:var(--display);color:var(--accent);font-size:1.1rem}
+/* checklist */
+.check{display:grid;gap:6px}
+.check label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--line)}
+.check input{margin-top:5px;accent-color:var(--accent)}
+.check label.done span{text-decoration:line-through;color:var(--muted)}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--mat);width:0;transition:width .3s}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px}
+.pager a{color:var(--accent);font-weight:600;text-decoration:none}
+a{color:var(--accent)}
+ol.q10{margin:0;padding-left:22px;display:grid;gap:4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* version complète (PDF) */
+.printonly{display:none}
+nav.tabs a.pdf{color:var(--accent);margin-left:auto}
+.pdfbar{display:none;background:var(--accent-soft);border:1px solid var(--line);border-radius:10px;padding:14px 16px;gap:6px}
+body.all .pdfbar{display:grid}
+body.all .printonly{display:block}
+body.all .pager,body.all .seg,body.all .noprint{display:none}
+body.all section.part{border-top:2px solid var(--line);padding-top:28px}
+body.all section.part:first-of-type{border-top:0;padding-top:0}
+body.all main{display:grid;gap:40px}
+.toc{margin:0;padding-left:20px;columns:2;column-gap:24px}
+.toc a{text-decoration:none}
+@media print{
+  :root{--bg:#fff;--surface:#fff}
+  body::before{display:none}
+  header.top{position:static;border:0}
+  nav.tabs,.pager,.seg,.noprint,.pdfbar{display:none!important}
+  section.part[hidden]{display:grid!important}
+  section.part{break-before:page}
+  section.part:first-of-type{break-before:auto}
+  .printonly{display:block!important}
+  .block,.kpi,.q,tr,details{break-inside:avoid}
+  .scroll{overflow:visible}
+  .week{min-width:0;grid-template-columns:repeat(3,1fr)}
+  .org{min-width:0}
+  .orgrow{flex-wrap:wrap}
+  a{color:var(--ink)}
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><b>Dossier BC5 · Jamet Sporting Club</b><span>CQP Instructeur Fitness · INSED · Marie <mark class="todo">NOM</mark></span></div>
+    <nav class="tabs" id="tabs" aria-label="Parties du dossier">
+      <a href="#intro"><span class="n">0</span>Intro</a>
+      <a href="#structure"><span class="n">1</span>Structure</a>
+      <a href="#concurrence"><span class="n">2</span>Concurrence</a>
+      <a href="#cibles"><span class="n">3</span>Cibles</a>
+      <a href="#prospection"><span class="n">4</span>Prospection</a>
+      <a href="#fidelisation"><span class="n">5</span>Fidélisation</a>
+      <a href="#vente"><span class="n">6</span>Vente</a>
+      <a href="#bilan"><span class="n">7</span>Bilan</a>
+      <a href="#complet" class="pdf">Tout afficher · PDF</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+<div class="pdfbar">
+  <strong>Version complète, prête pour le PDF</strong>
+  <span class="small">Toutes les parties sont affichées à la suite, les éléments interactifs sont dépliés. Le sommaire ci-dessous reste cliquable dans le PDF.</span>
+  <div><button type="button" id="printBtn">Télécharger en PDF</button></div>
+  <ol class="toc small">
+    <li><a href="#p-structure">État des lieux de la structure</a></li>
+    <li><a href="#p-concurrence">Analyse de la concurrence</a></li>
+    <li><a href="#p-cibles">Choix des cibles</a></li>
+    <li><a href="#p-prospection">Actions de prospection</a></li>
+    <li><a href="#p-fidelisation">Actions de fidélisation</a></li>
+    <li><a href="#p-vente">Techniques de vente</a></li>
+    <li><a href="#p-bilan">Bilan personnel</a></li>
+  </ol>
+</div>
+
+<!-- 0 INTRO -->
+<section class="part" id="intro" data-part>
+  <div class="eyebrow">Bloc de compétences 5 · Stratégie commerciale</div>
+  <h1>Comment un club associatif de quartier attire et garde ses adhérents</h1>
+  <p class="lead">Ce dossier analyse la stratégie commerciale du Jamet Sporting Club Bellevue (Nantes), où j'ai fait mon stage, puis présente les actions de prospection et de fidélisation auxquelles j'ai participé.</p>
+  <div class="kpis">
+    <div class="kpi"><b>411</b><span>adhérents en 2025/2026</span></div>
+    <div class="kpi"><b>≈ 25 €</b><span>par mois (Jamet-Fit, 299 € / an)</span></div>
+    <div class="kpi"><b>2 320 m²</b><span>complexe neuf, ouvert en 2024</span></div>
+    <div class="kpi"><b>4,9 / 5</b><span>note Google (60 avis)</span></div>
+  </div>
+  <div class="block">
+    <h3>Le fil rouge du dossier</h3>
+    <p>Dans un quartier à faible pouvoir d'achat, entouré de salles low-cost, le club se démarque par son <strong>prix associatif</strong>, l'<strong>encadrement humain</strong> et la <strong>proximité</strong>. Toute sa stratégie commerciale découle de ce constat.</p>
+  </div>
+  <div class="grid2">
+    <div class="block">
+      <h3>Mon stage</h3>
+      <div class="scroll"><table><tbody>
+        <tr><th>Structure</th><td>Jamet Sporting Club Bellevue, Complexe sportif Daniel Praud, Nantes</td></tr>
+        <tr><th>Tuteur</th><td><mark class="todo">Nom et fonction</mark></td></tr>
+        <tr><th>Période</th><td><mark class="todo">Dates du stage</mark></td></tr>
+        <tr><th>Missions</th><td><mark class="todo">ex. animation des cours collectifs, accueil des séances d'essai, aide à la communication</mark></td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="block">
+      <h3>Comment j'ai recueilli les informations</h3>
+      <ul style="margin:0;padding-left:18px;display:grid;gap:4px">
+        <li>Échanges avec la direction (Benjamin Azika-Eros) <mark class="todo">nombre et dates</mark></li>
+        <li>Observation pendant les cours</li>
+        <li>Site, réseaux sociaux et grille tarifaire du club</li>
+        <li>Données publiques (Insee, Ville de Nantes)</li>
+        <li>Étude des concurrents et questionnaire de satisfaction</li>
+      </ul>
+    </div>
+  </div>
+  <div class="block noprint">
+    <h3>Reste à compléter avant le dépôt</h3>
+    <p class="small muted">Les passages surlignés <mark class="todo">comme ceci</mark> sont à remplir. Cochez au fur et à mesure (enregistré dans ce navigateur).</p>
+    <div class="bar" aria-hidden="true"><i id="progress"></i></div>
+    <p class="small" id="progressText"></p>
+    <div class="check" id="checklist"></div>
+  </div>
+  <div class="pager"><span></span><a href="#structure">1. État des lieux →</a></div>
+</section>
+
+<!-- 1 STRUCTURE -->
+<section class="part" id="structure" data-part hidden>
+  <div class="eyebrow">Partie 1</div>
+  <h2 id="p-structure">État des lieux de la structure</h2>
+  <p class="lead">Une association loi 1901 de 411 adhérents, installée dans un équipement municipal neuf, avec deux pôles : arts martiaux (judo, jiu-jitsu brésilien) et fitness / bien-être.</p>
+
+  <div class="grid2">
+    <div class="block">
+      <h3>1.1 Type de structure</h3>
+      <div class="scroll"><table><tbody>
+        <tr><th>Forme</th><td>Association loi 1901, but non lucratif</td></tr>
+        <tr><th>Identifiants</th><td>SIRET 821 669 934 00019 · RNA W442017102</td></tr>
+        <tr><th>Historique</th><td>Club présenté comme fondé en 1969 ; association actuelle enregistrée en 2016</td></tr>
+        <tr><th>Locaux</th><td>Complexe Daniel Praud, Ville de Nantes, ouvert en sept. 2024 (6,25 M€)</td></tr>
+        <tr><th>Affiliations</th><td>France Judo, France JuJitsu, CFJJB, IBJJF</td></tr>
+      </tbody></table></div>
+      <p class="small muted">Conséquence : le club vise l'équilibre, pas le profit. Il dépend en partie des créneaux municipaux et des aides, d'où ses tarifs bas.</p>
+    </div>
+    <div class="block">
+      <h3>1.2 Localisation</h3>
+      <p><strong>21 boulevard Émile Romanet, 44100 Nantes</strong>, quartier Bellevue, à la limite de Saint-Herblain.</p>
+      <p>Tram ligne 1, arrêt <strong>Jamet</strong>, devant le complexe (médiathèque Lisa Bresner). Liaison directe avec le centre de Nantes.</p>
+      <p class="small muted">Pas d'accès libre : on vient sur les créneaux de cours.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>1.2 Planning hebdomadaire 2026/2027</h3>
+    <div class="seg" role="group" aria-label="Filtrer le planning">
+      <button type="button" data-plan="all" aria-pressed="true">Tout</button>
+      <button type="button" data-plan="fit" aria-pressed="false">Fitness</button>
+      <button type="button" data-plan="mat" aria-pressed="false">Dojo</button>
+      <button type="button" data-plan="novac" aria-pressed="false">Hors vacances</button>
+    </div>
+    <div class="scroll"><div class="week" id="week"></div></div>
+    <div class="legend"><span><i style="background:var(--accent)"></i>Fitness / bien-être</span><span><i style="background:var(--mat)"></i>Dojo (judo, JJB, prépa physique)</span><span><i style="border:2px dashed var(--muted)"></i>Vacances scolaires seulement</span></div>
+    <p class="small"><strong>À retenir :</strong> hors vacances, un seul cours fitness en journée (Pilates, mardi 12h30). C'est un frein pour toucher les personnes disponibles en journée.</p>
+  </div>
+
+  <div class="block">
+    <h3>1.3 Gamme tarifaire : simulateur</h3>
+    <p class="small muted">Prix de la grille officielle 2026/2027. Choisissez une formule et les réductions pour voir le prix final, comme lors d'un entretien de vente.</p>
+    <div class="calc">
+      <div style="display:grid;gap:10px">
+        <label for="formule" style="display:grid;gap:4px">Formule
+          <select id="formule">
+            <option value="299|12|Jamet-Fit">Jamet-Fit, cours collectifs fitness illimités · 299 € / saison</option>
+            <option value="299|12|Jamet-Moka 441">Jamet-Moka 441, judo, JJB et prépa physique (14 ans +) · 299 €</option>
+            <option value="264|12|Jamet-Kids">Jamet-Kids, 5–13 ans, Yoga Kids inclus · 264 €</option>
+            <option value="269|12|Members Days novembre">Réabonnement Members Days, novembre 2026 · 269 €</option>
+            <option value="279|12|Members Days décembre">Réabonnement Members Days, décembre 2026 · 279 €</option>
+            <option value="45|1|Flex 1 mois">Jamet-Fit Flex sans engagement · 1 mois · 45 €</option>
+            <option value="125|3|Flex 3 mois">Jamet-Fit Flex · 3 mois · 125 €</option>
+            <option value="225|6|Flex 6 mois">Jamet-Fit Flex · 6 mois · 225 €</option>
+          </select>
+        </label>
+        <label for="famille" style="display:grid;gap:4px">Rang dans la famille (pacte « Tribu »)
+          <select id="famille">
+            <option value="0">1er membre inscrit</option>
+            <option value="10">2e membre · -10 %</option>
+            <option value="20">3e membre · -20 %</option>
+            <option value="40">4e membre et plus · -40 %</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="etudiant"> <span>Étudiant ou apprenti · -20 %</span></label>
+        <label><input type="checkbox" id="carte"> <span>Carte Blanche Nantes (attestation CCAS) · -150 €</span></label>
+        <label><input type="checkbox" id="passsport"> <span>Pass'Sport (6–17 ans ou boursier &lt; 28 ans) · -50 €</span></label>
+        <label><input type="checkbox" id="muscu"> <span>Option musculation BAF · +110 € (au lieu de 220 €)</span></label>
+        <label><input type="checkbox" id="trois"> <span>Paiement en 3 fois (GoCardless, +2 % de frais)</span></label>
+      </div>
+      <div class="total" aria-live="polite">
+        <span class="small" id="tName">Jamet-Fit</span>
+        <span class="big" id="tPrice">299 €</span>
+        <span id="tMonth">soit 24,92 € par mois</span>
+        <ul id="tDetail"></ul>
+      </div>
+    </div>
+    <p class="small muted">Ordre de calcul retenu : remises en % puis aides en €. L'application des remises aux formules Flex est <mark class="todo">à vérifier dans les CGA</mark>. Comparaison : Basic-Fit à partir de 24,99 € / mois, sans coach.</p>
+  </div>
+
+  <div class="block">
+    <h3>1.4 Espaces et matériels</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Espace</th><th>Surface</th><th>Usage et matériel</th></tr></thead>
+      <tbody>
+        <tr><td>Dojo</td><td>400 m²</td><td>Tatamis · judo, JJB, Functional Training, Hybrid Fit</td></tr>
+        <tr><td>Salle de boxe</td><td>280 m²</td><td>Partagée avec d'autres associations</td></tr>
+        <tr><td>Salles de danse (×2)</td><td>150 m²</td><td>Afro Zumba, sono</td></tr>
+        <tr><td>Musculation BAF</td><td>130 m²</td><td>Machines guidées, poids libres, tapis, vélos, elliptiques</td></tr>
+        <tr><td>Salle de cours collectifs</td><td>70 m²</td><td>Pilates, yoga, Core Training · <mark class="todo">petit matériel</mark></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block">
+    <h3>1.5 Organigramme</h3>
+    <div class="scroll">
+      <div class="org">
+        <div class="node">Bureau de l'association<br><mark class="todo">président(e), trésorier(e), secrétaire</mark></div>
+        <div class="vline" style="margin:0 auto"></div>
+        <div class="node lead"><b>Benjamin Azika-Eros</b>Fondateur, directeur sportif et technique · DESJEPS, 3e dan</div>
+        <div class="orgrow">
+          <div class="node"><b>Youness Bennouali</b>Judo / JJB · diplômé d'État</div>
+          <div class="node"><b>Éponine Canart</b>Pilates · BPJEPS</div>
+          <div class="node"><b>Ambre Dufay Leonard</b>Yoga · Yoga Kids</div>
+          <div class="node"><b>SLA</b>Afro Zumba</div>
+          <div class="node me"><b>Moi, stagiaire CQP</b><mark class="todo">sous la responsabilité de…</mark></div>
+        </div>
+      </div>
+    </div>
+    <p class="small muted">Le site annonce selon les pages 6, 4 ou 2 coachs diplômés d'État : <mark class="todo">à confirmer avec le tuteur</mark>.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="block">
+      <h3>1.6 Étude de la clientèle</h3>
+      <div class="scroll"><table>
+        <thead><tr><th>Critère</th><th>Donnée</th></tr></thead>
+        <tbody>
+          <tr><td>Adhérents</td><td>411 (2025/2026)</td></tr>
+          <tr><td>Par pôle</td><td><mark class="todo">arts martiaux / fitness</mark></td></tr>
+          <tr><td>Hommes / femmes</td><td><mark class="todo">x % / y %</mark></td></tr>
+          <tr><td>Âges</td><td><mark class="todo">5–13, 14–25, 26–50, 50 +</mark></td></tr>
+          <tr><td>CSP</td><td><mark class="todo">via questionnaire</mark></td></tr>
+          <tr><td>Provenance</td><td><mark class="todo">codes postaux</mark></td></tr>
+          <tr><td>Participation</td><td><mark class="todo">cours les plus suivis, moyenne par cours</mark></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="block">
+      <h3>1.7 Questionnaire de satisfaction</h3>
+      <p class="small">Google Forms, 10 questions, diffusé sur WhatsApp et en fin de cours, validé par la direction. Résultats : <mark class="todo">x réponses sur 411</mark>.</p>
+      <ol class="q10 small">
+        <li>Sexe</li><li>Tranche d'âge</li><li>Situation (élève, salarié, sans emploi, retraité…)</li>
+        <li>Code postal et moyen de transport</li><li>Ancienneté au club</li><li>Cours suivis et fréquence</li>
+        <li>Comment avez-vous connu le club ?</li><li>Satisfaction de 1 à 5 : accueil, coachs, planning, propreté, prix</li>
+        <li>Créneaux ou cours souhaités</li><li>Réinscription et recommandation</li>
+      </ol>
+    </div>
+  </div>
+  <div class="pager"><a href="#intro">← Intro</a><a href="#concurrence">2. Concurrence →</a></div>
+</section>
+
+<!-- 2 CONCURRENCE -->
+<section class="part" id="concurrence" data-part hidden>
+  <div class="eyebrow">Partie 2</div>
+  <h2 id="p-concurrence">Analyse de la concurrence</h2>
+  <p class="lead">Le club ne gagne ni sur les horaires ni sur la surface de musculation. Il gagne sur la proximité à pied, le prix associatif, des coachs diplômés et la variété des activités sous un même toit.</p>
+
+  <div class="block">
+    <h3>2.1 Zone de chalandise</h3>
+    <div class="zone">
+      <svg viewBox="0 0 320 320" role="img" aria-label="Zones de chalandise concentriques">
+        <circle class="ring" data-z="3" tabindex="0" cx="160" cy="160" r="150" fill="var(--accent-soft)" stroke="var(--line)" stroke-width="2"/>
+        <circle class="ring" data-z="2" tabindex="0" cx="160" cy="160" r="105" fill="var(--surface)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="5 4"/>
+        <circle class="ring" data-z="1" tabindex="0" cx="160" cy="160" r="62" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="160" y="156" text-anchor="middle" fill="var(--surface)" font-family="Barlow Condensed, sans-serif" font-size="15" font-weight="700" pointer-events="none">JAMET SC</text>
+        <text x="160" y="174" text-anchor="middle" fill="var(--surface)" font-size="11" pointer-events="none">0–10 min</text>
+        <text x="160" y="80" text-anchor="middle" fill="var(--accent)" font-size="12" font-weight="600" pointer-events="none">10–20 min</text>
+        <text x="160" y="32" text-anchor="middle" fill="var(--muted)" font-size="12" font-weight="600" pointer-events="none">20–30 min</text>
+      </svg>
+      <div id="zoneInfo" class="noprint" aria-live="polite" style="display:grid;gap:8px"></div><div class="printonly" id="zoneAll"></div>
+    </div>
+    <p class="small muted">Cliquez sur une zone. Parts estimées, <mark class="todo">à confirmer avec les codes postaux</mark>. <mark class="todo">Ajouter une carte d'isochrones (Smappen)</mark>.</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><b>≈ 17 000</b><span>habitants au Grand Bellevue</span></div>
+    <div class="kpi"><b>898 €</b><span>revenu médian / mois / UC (Nantes : 1 796 €)</span></div>
+    <div class="kpi"><b>45,2 %</b><span>taux d'emploi des femmes 15–64 ans</span></div>
+    <div class="kpi"><b>≈ 40 %</b><span>de moins de 25 ans</span></div>
+  </div>
+  <p class="small muted">Source : Insee, fiche quartier prioritaire Bellevue. Le prix est le premier critère de choix ; beaucoup de femmes sont disponibles en journée.</p>
+
+  <div class="block">
+    <h3>2.2 Concurrents de la zone</h3>
+    <div class="seg" role="group" aria-label="Filtrer les concurrents">
+      <button type="button" data-comp="all" aria-pressed="true">Tous</button>
+      <button type="button" data-comp="direct" aria-pressed="false">Directs</button>
+      <button type="button" data-comp="indirect" aria-pressed="false">Indirects</button>
+    </div>
+    <div class="scroll"><table>
+      <thead><tr><th>Structure</th><th>Type</th><th>Distance</th><th>Offre et prix</th><th>Face au Jamet SC</th></tr></thead>
+      <tbody id="compBody">
+        <tr data-t="indirect"><td><strong>Basic-Fit Atlantis</strong></td><td><span class="pill warn">Indirect</span> low-cost</td><td>2–3 km</td><td>Dès 24,99 € / mois, 6h–22h30</td><td>+ horaires, grand plateau · – peu de coaching · = prix proche</td></tr>
+        <tr data-t="indirect"><td><strong>Basic-Fit route de Vannes</strong></td><td><span class="pill warn">Indirect</span> 24h/24</td><td>3–4 km</td><td>Ouvert 24h/24</td><td>+ amplitude · – accès voiture, pas de coach</td></tr>
+        <tr data-t="indirect"><td><strong>Fitness Park Le Sillon</strong></td><td><span class="pill warn">Indirect</span> gamme moyenne</td><td>4–5 km</td><td>Grand plateau <mark class="todo">prix</mark></td><td>+ matériel · – loin, plus cher</td></tr>
+        <tr data-t="direct"><td><strong>Central Form Atlantis</strong></td><td><span class="pill">Direct</span> club fitness</td><td>2–3 km</td><td>Cours collectifs <mark class="todo">prix</mark></td><td>+ plus de cours · – plus cher, pas d'arts martiaux</td></tr>
+        <tr data-t="direct"><td><strong>Bellevue Athlétique Forme</strong></td><td><span class="pill mat">Partenaire</span></td><td>Sur place</td><td>Musculation, boxe</td><td>Musculation à -50 % pour nos adhérents</td></tr>
+        <tr data-t="direct"><td><strong>« Envie de sport » St-Herblain</strong></td><td><span class="pill">Direct</span> municipal</td><td>1–3 km</td><td>Tarifs selon revenus</td><td>+ très bon marché · – offre limitée, pas de suivi</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block">
+    <h3>2.3 Veille des tendances du fitness</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Tendance</th><th>Au Jamet SC</th><th>Adaptation proposée</th></tr></thead>
+      <tbody>
+        <tr><td>Entraînement hybride type Hyrox</td><td><span class="pill mat">Présent</span> Hybrid Fit, lundi 19h</td><td>Le mettre en avant auprès des 15–35 ans</td></tr>
+        <tr><td>Pilates et yoga</td><td><span class="pill mat">Présent</span> Pilates, Ashtanga, Vinyasa</td><td>Un créneau en journée pour les femmes du quartier</td></tr>
+        <tr><td>Small group training</td><td><span class="pill mat">Présent</span> HIIT 8 pers. max</td><td>L'étendre hors vacances</td></tr>
+        <tr><td>Sport-santé, seniors</td><td><span class="pill warn">Partiel</span></td><td>Créneau avec le CCAS ou un médecin</td></tr>
+        <tr><td>Objets connectés, applis</td><td><span class="pill">Absent</span></td><td>Peu prioritaire vu le budget de la clientèle</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small"><mark class="todo">Source à citer avec l'année (ex. classement ACSM 2026) — exigé par la grille</mark></p>
+  </div>
+
+  <div class="block">
+    <h3>2.4 Analyse SWOT</h3>
+    <div class="seg"><button type="button" id="crossBtn" aria-pressed="false">Mettre en évidence la lecture croisée</button></div>
+    <div class="swot" id="swot">
+      <span></span><span class="ax">Favorable</span><span class="ax">Défavorable</span>
+      <span class="ax v">Interne</span>
+      <div class="q s"><h3>Forces</h3><ul>
+        <li>Équipement neuf (2024), 2 320 m² multi-activités</li>
+        <li>Tram 1 devant la porte</li>
+        <li class="key">Prix associatif (≈ 25 € / mois) et nombreuses aides</li>
+        <li class="key">Coachs diplômés d'État, champion du monde AJP 2023</li>
+        <li>Note Google 4,9 / 5, communication digitale riche</li></ul></div>
+      <div class="q w"><h3>Faiblesses</h3><ul>
+        <li>Petite salle de musculation (130 m²)</li>
+        <li class="key">Un seul cours fitness en journée hors vacances</li>
+        <li>Image de quartier prioritaire pour l'extérieur</li>
+        <li>Petite équipe, moyens marketing réduits</li>
+        <li>Pas de suivi chiffré de la conversion ni de la satisfaction</li></ul></div>
+      <span class="ax v">Externe</span>
+      <div class="q o"><h3>Opportunités</h3><ul>
+        <li>Renouvellement urbain : nouveaux habitants</li>
+        <li class="key">Femmes peu pratiquantes, disponibles en journée</li>
+        <li>Sport-santé, partenariats CCAS et centres sociaux</li>
+        <li>Urban Sports Club pour la clientèle extérieure</li>
+        <li>Succès des formats hybrides et du Pilates</li></ul></div>
+      <div class="q t"><h3>Menaces</h3><ul>
+        <li class="key">Low-cost à 24,99 € / mois à 2–3 km, sans coach</li>
+        <li>Faible pouvoir d'achat, forte rotation des ménages</li>
+        <li>Dépendance aux subventions et créneaux municipaux</li>
+        <li>Applis et sport à domicile</li></ul></div>
+    </div>
+    <p id="crossText" class="small"><strong>Lecture :</strong> s'appuyer sur le prix associatif et l'encadrement humain (forces) pour toucher les femmes peu pratiquantes du quartier (opportunité), face à des low-cost sans coach (menace). À corriger d'abord : le manque de créneaux en journée.</p>
+  </div>
+  <div class="pager"><a href="#structure">← 1. Structure</a><a href="#cibles">3. Cibles →</a></div>
+</section>
+
+<!-- 3 CIBLES -->
+<section class="part" id="cibles" data-part hidden>
+  <div class="eyebrow">Partie 3</div>
+  <h2 id="p-cibles">Choix des cibles</h2>
+  <p class="lead">Deux cibles issues de l'analyse : les adultes débutants du quartier, surtout les femmes, pour la prospection ; les adhérents fitness actuels pour la fidélisation. Choix discuté avec <mark class="todo">la direction, le [date]</mark>.</p>
+  <div class="grid2">
+    <div class="block" style="border-top:4px solid var(--accent)">
+      <span class="pill">Prospection · nouveaux clients</span>
+      <h3>Adultes débutants du Grand Bellevue, en priorité les femmes</h3>
+      <div class="scroll"><table><tbody>
+        <tr><th>Profil</th><td>Budget limité, peu habitués aux salles, peur de « ne pas avoir le niveau »</td></tr>
+        <tr><th>Achat</th><td>Paiement fractionné, aides (Pass'Sport, Carte Blanche), choix par proximité et bouche-à-oreille</td></tr>
+        <tr><th>Produits</th><td>Séance d'essai gratuite → Flex 1 mois (45 €) → Jamet-Fit</td></tr>
+        <tr><th>Pourquoi</th><td>Plus de la moitié des femmes de 15–64 ans du quartier sans emploi : public disponible et peu servi</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="block" style="border-top:4px solid var(--mat)">
+      <span class="pill mat">Fidélisation · clients actuels</span>
+      <h3>Adhérents du pôle fitness (cours collectifs)</h3>
+      <div class="scroll"><table><tbody>
+        <tr><th>Profil</th><td>Déjà convaincus mais tentés par les low-cost d'Atlantis à l'échéance</td></tr>
+        <tr><th>Achat</th><td>Adhésion annuelle, souvent en famille, renouvellement en fin de contrat</td></tr>
+        <tr><th>Produits</th><td>Members Days, option musculation BAF, Little Yogi pour les enfants</td></tr>
+        <tr><th>Pourquoi</th><td>La population tourne vite : garder un adhérent coûte moins cher que d'en recruter un</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+  <p class="small muted">Autres publics du club, non retenus ici : enfants (judo, Yoga Kids), étudiants et apprentis, candidats aux concours Armée, Police, Pompiers.</p>
+  <div class="pager"><a href="#concurrence">← 2. Concurrence</a><a href="#prospection">4. Prospection →</a></div>
+</section>
+
+<!-- 4 PROSPECTION -->
+<section class="part" id="prospection" data-part hidden>
+  <div class="eyebrow">Partie 4</div>
+  <h2 id="p-prospection">Actions de prospection</h2>
+  <p class="lead">Lever les deux freins du quartier : le prix et la peur de commencer. Je n'ai pas créé ces actions mais j'y ai participé.</p>
+  <div class="block">
+    <h3>4.1 Actions menées et ma participation</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Action</th><th>Détail</th><th>Mon rôle</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Mois découverte</strong></td><td>Cours fitness gratuits du 7 au 30 sept. 2026, sur réservation</td><td><mark class="todo">accueil, présentation, animation</mark></td></tr>
+        <tr><td><strong>Séance d'essai offerte</strong></td><td>Toute l'année, réservation en ligne</td><td><mark class="todo">accueil, appel de suivi</mark></td></tr>
+        <tr><td><strong>Porte ouverte</strong></td><td>Samedi 12 sept. 2026, 11h–12h</td><td><mark class="todo">à compléter</mark></td></tr>
+        <tr><td><strong>Conférences de rentrée</strong></td><td>2 et 3 sept. 2026, replays YouTube</td><td><mark class="todo">à compléter</mark></td></tr>
+        <tr><td><strong>Aides mises en avant</strong></td><td>Pass'Sport, Carte Blanche, Saint-Herblain, Département</td><td><mark class="todo">aide aux justificatifs</mark></td></tr>
+        <tr><td><strong>Urban Sports Club</strong></td><td>Clients extérieurs au quartier</td><td>—</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small"><strong>Handicap :</strong> complexe neuf accessible <mark class="todo">vérifier ascenseur et vestiaires</mark>. Pistes : préciser dans les messages que les cours sont adaptables, proposer un appel préalable, orienter vers Pilates ou yoga.</p>
+  </div>
+  <div class="block">
+    <h3>4.2 Objectif SMART</h3>
+    <div class="smart" data-smart="p"></div>
+    <p class="smart-out noprint" data-smart-out="p"></p><div class="printonly" data-smart-all="p"></div>
+  </div>
+  <div class="block">
+    <h3>4.3 Outils de communication</h3>
+    <p class="small muted">Campagne préparée dès juin, avec la grille tarifaire et l'annonce du mois découverte <mark class="todo">date à vérifier</mark>.</p>
+    <div class="grid2">
+      <div><span class="pill">Digital</span><p class="small" style="margin-top:6px">Site et réservation en ligne, Instagram, Facebook, LinkedIn, YouTube, avis Google, chaîne WhatsApp, agenda Nantes Métropole, Urban Sports Club</p></div>
+      <div><span class="pill mat">Traditionnel</span><p class="small" style="margin-top:6px">Bouche-à-oreille, accueil au club, réseau associatif et centres sociaux <mark class="todo">flyers, affiches ?</mark></p></div>
+    </div>
+  </div>
+  <div class="block">
+    <h3>4.4 Analyse et résultats</h3>
+    <p><strong>Résultats :</strong> <mark class="todo">x essais, y inscriptions, soit z % (objectif 30 %)</mark></p>
+    <div class="grid3">
+      <div><span class="pill mat">Ce qui marche</span><p class="small" style="margin-top:6px">L'offre gratuite et les aides répondent au faible pouvoir d'achat. Communication digitale riche.</p></div>
+      <div><span class="pill warn">Limites</span><p class="small" style="margin-top:6px">Planning surtout le soir, peu adapté aux femmes disponibles en journée. Conversion des essais non suivie.</p></div>
+      <div><span class="pill">Pistes</span><p class="small" style="margin-top:6px">Créneau découverte à 10h pour débutantes, fichier de suivi des essais, relance WhatsApp 48 h après l'essai.</p></div>
+    </div>
+  </div>
+  <div class="pager"><a href="#cibles">← 3. Cibles</a><a href="#fidelisation">5. Fidélisation →</a></div>
+</section>
+
+<!-- 5 FIDELISATION -->
+<section class="part" id="fidelisation" data-part hidden>
+  <div class="eyebrow">Partie 5</div>
+  <h2 id="p-fidelisation">Actions de fidélisation</h2>
+  <p class="lead">Engagement annuel, esprit de communauté et avantages adhérents. L'action phare de la saison : le réabonnement « Members Days ».</p>
+  <div class="block">
+    <h3>Members Days : une remise qui fond avec le temps</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Période</th><th>Prix Jamet-Fit 2027</th><th>Économie</th></tr></thead>
+      <tbody>
+        <tr><td>Novembre 2026</td><td><strong>269 €</strong></td><td>-30 €</td></tr>
+        <tr><td>Décembre 2026</td><td><strong>279 €</strong></td><td>-20 €</td></tr>
+        <tr><td>À partir du 1er janvier 2027</td><td>299 €</td><td>—</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small muted">Réservé aux adhérents dont le contrat finit le 31/12/2026 ; code envoyé par WhatsApp.</p>
+  </div>
+  <div class="block">
+    <h3>5.1 Autres actions et ma participation</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Action</th><th>Détail</th><th>Mon rôle</th></tr></thead>
+      <tbody>
+        <tr><td>Pacte familial « Tribu »</td><td>-10 % (2e), -20 % (3e), -40 % (4e et +)</td><td><mark class="todo">—</mark></td></tr>
+        <tr><td>Musculation BAF -50 %</td><td>110 € au lieu de 220 €</td><td><mark class="todo">—</mark></td></tr>
+        <tr><td>Ateliers thématiques</td><td>Nutrition, mobilité, yoga</td><td><mark class="todo">—</mark></td></tr>
+        <tr><td>Challenges solidaires</td><td>Animés par les coachs</td><td><mark class="todo">—</mark></td></tr>
+        <tr><td>Encadrement personnalisé</td><td>Variantes selon le niveau</td><td><mark class="todo">corrections, variantes dans mes cours</mark></td></tr>
+        <tr><td>Questionnaire de satisfaction</td><td>Voir partie 1.7</td><td><mark class="todo">conçu et analysé</mark></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="block">
+    <h3>5.2 Objectif SMART</h3>
+    <div class="smart" data-smart="f"></div>
+    <p class="smart-out noprint" data-smart-out="f"></p><div class="printonly" data-smart-all="f"></div>
+  </div>
+  <div class="grid2">
+    <div class="block">
+      <h3>5.3 Outils de communication</h3>
+      <ul class="small" style="margin:0;padding-left:18px;display:grid;gap:4px">
+        <li><strong>WhatsApp « Jamet au Quotidien »</strong> : contact direct, code Members Days</li>
+        <li><strong>Instagram, Facebook, blog</strong> : vie du club, résultats, ateliers</li>
+        <li><strong>YouTube</strong> : replays des conférences</li>
+        <li><strong>À l'oral en fin de cours</strong> : rappel des échéances</li>
+        <li><strong>Avis Google</strong> (4,9 / 5)</li>
+      </ul>
+    </div>
+    <div class="block">
+      <h3>5.4 Analyse et résultats</h3>
+      <p class="small"><strong>Résultats :</strong> <mark class="todo">x réabonnements sur y, soit z % (objectif 70 %)</mark></p>
+      <p class="small"><span class="pill mat">Marche</span> Adhésion familiale, ancrage associatif, urgence créée par la remise dégressive.</p>
+      <p class="small"><span class="pill warn">Limites</span> Pas de parrainage, ni bilan de progression, ni enquête régulière.</p>
+      <p class="small"><span class="pill">Pistes</span> Questionnaire en milieu de saison, bilan trimestriel, parrainage avec un mois offert.</p>
+    </div>
+  </div>
+  <div class="pager"><a href="#prospection">← 4. Prospection</a><a href="#vente">6. Techniques de vente →</a></div>
+</section>
+
+<!-- 6 VENTE -->
+<section class="part" id="vente" data-part hidden>
+  <div class="eyebrow">Partie 6</div>
+  <h2 id="p-vente">Techniques de vente</h2>
+  <p class="lead">Faire essayer, écouter le besoin, puis lever l'objection du prix avec les aides.</p>
+  <div class="grid2">
+    <div class="block">
+      <h3>6.1 Créer un climat favorable</h3>
+      <p class="small">Accueil par le prénom, présentation du coach avant le cours, visite des espaces. Après un essai, on demande d'abord le ressenti, sans pression. Les codes promotionnels du moment (Members Days, remises famille et étudiants) sont rappelés dans le discours.</p>
+    </div>
+    <div class="block">
+      <h3>6.2 Guide d'entretien</h3>
+      <ol class="q10 small">
+        <li>Qu'est-ce qui vous amène au club ?</li>
+        <li>Avez-vous déjà fait du sport ? Quand avez-vous arrêté ?</li>
+        <li>Votre objectif : forme, poids, bien-être, se défouler, voir du monde ?</li>
+        <li>Quels jours et heures vous conviennent ?</li>
+        <li>Douleurs, pathologie ou handicap à prendre en compte ?</li>
+        <li>Quel budget ? Connaissez-vous les aides ?</li>
+      </ol>
+      <p class="small muted">Handicap : mouvements possibles, accompagnant, accès nécessaire ; proposer un essai en petit groupe.</p>
+    </div>
+  </div>
+  <div class="block">
+    <h3>6.3 Argumentaires (méthode CAP)</h3>
+    <div class="seg" role="group" aria-label="Choisir un argumentaire">
+      <button type="button" data-cap="0" aria-pressed="true">Prospection · Jamet-Fit</button>
+      <button type="button" data-cap="1" aria-pressed="false">Fidélisation · Members Days</button>
+      <button type="button" data-cap="2" aria-pressed="false">Handicap · Pilates / yoga</button>
+    </div>
+    <div class="cap noprint" id="capOut" aria-live="polite"></div><div class="printonly" id="capAll"></div>
+  </div>
+  <div class="block">
+    <h3>6.4 Réponses aux objections</h3>
+    <p class="small muted">Ouvrez une objection pour voir la réponse. Validées avec <mark class="todo">la direction</mark>.</p>
+    <div>
+      <details><summary>« C'est trop cher. »</summary><div><p>25 € par mois avec un coach, paiement en 3 fois, et jusqu'à 150 € d'aide avec la Carte Blanche. (Montrez le simulateur, partie 1.3.)</p></div></details>
+      <details><summary>« Basic-Fit est au même prix et ouvert tout le temps. »</summary><div><p>Ici chaque séance est encadrée : vous progressez sans vous blesser, et c'est à 5 minutes à pied.</p></div></details>
+      <details><summary>« Je n'ai pas le niveau. »</summary><div><p>Les cours accueillent tous les niveaux, la coach propose des variantes. Venez essayer gratuitement.</p></div></details>
+      <details><summary>« Je n'ai pas le temps. »</summary><div><p>Les cours durent 45 minutes à 1 heure, en soirée ou le mardi midi.</p></div></details>
+      <details><summary>« Je ne veux pas m'engager à l'année. »</summary><div><p>La formule Flex est sans engagement : 45 € pour un mois.</p></div></details>
+    </div>
+  </div>
+  <div class="block">
+    <h3>6.5 Évaluation quantitative</h3>
+    <p class="small"><mark class="todo">Nombre d'entretiens ou d'essais menés, inscriptions obtenues, taux de transformation</mark></p>
+  </div>
+  <div class="pager"><a href="#fidelisation">← 5. Fidélisation</a><a href="#bilan">7. Bilan →</a></div>
+</section>
+
+<!-- 7 BILAN -->
+<section class="part" id="bilan" data-part hidden>
+  <div class="eyebrow">Partie 7</div>
+  <h2 id="p-bilan">Bilan personnel</h2>
+  <div class="block">
+    <p><mark class="todo">10 à 15 lignes à la première personne : ce que j'ai appris sur la stratégie commerciale d'une association, ce qui m'a semblé le plus efficace, mes difficultés (aborder un prospect, obtenir des chiffres), ce que je réutiliserai comme coach.</mark></p>
+  </div>
+  <div class="block">
+    <h3>Sources</h3>
+    <ul class="small" style="margin:0;padding-left:18px;display:grid;gap:4px">
+      <li><a href="https://gymnase-jamet.fr/" target="_blank" rel="noopener">Site du Jamet Sporting Club</a>, <a href="https://gymnase-jamet.fr/jamet-inscriptions-pricing.html" target="_blank" rel="noopener">grille tarifaire 2026/2027</a>, <a href="https://gymnase-jamet.fr/mentions-legales.html" target="_blank" rel="noopener">mentions légales</a>, <a href="https://fitness.gymnase-jamet.fr/" target="_blank" rel="noopener">pôle fitness</a>, <a href="https://dojo.gymnase-jamet.fr/" target="_blank" rel="noopener">dojo</a> — consultés le 9 novembre 2026</li>
+      <li>Mon étude « Zone de chalandise, Complexe sportif Daniel Praud » (20 octobre 2026) : Insee (fiche QP Bellevue ; Insee Flash Pays de la Loire n° 149, 2024), Banatic, Ville de Saint-Herblain, Nantes Métropole, Basic-Fit, MaSalleDeSport</li>
+      <li>INSED Fitness School, « Rédaction des dossiers BC 3/4/5 »</li>
+    </ul>
+  </div>
+  <div class="pager"><a href="#vente">← 6. Vente</a><a href="#intro">Retour à l'intro</a></div>
+</section>
+</main>
+
+<script>
+(function(){
+  /* ---------- navigation par hash ---------- */
+  var parts=[].slice.call(document.querySelectorAll('[data-part]'));
+  var links=[].slice.call(document.querySelectorAll('#tabs a'));
+  function openAll(v){document.querySelectorAll('details').forEach(function(d){d.open=v})}
+  function show(){
+    var id=(location.hash||'#intro').slice(1);
+    var all=id==='complet'||id.indexOf('p-')===0;
+    document.body.classList.toggle('all',all);
+    if(all){
+      parts.forEach(function(p){p.hidden=false});
+      openAll(true);
+      links.forEach(function(a){if(a.getAttribute('href')==='#complet')a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+      var t=id.indexOf('p-')===0&&document.getElementById(id);
+      if(t)t.scrollIntoView();else window.scrollTo(0,0);
+      return;
+    }
+    if(!document.getElementById(id)||!document.getElementById(id).hasAttribute('data-part')) id='intro';
+    parts.forEach(function(p){p.hidden=p.id!==id});
+    links.forEach(function(a){
+      var on=a.getAttribute('href')==='#'+id;
+      if(on){a.setAttribute('aria-current','page');a.scrollIntoView({block:'nearest',inline:'nearest'})}
+      else a.removeAttribute('aria-current');
+    });
+    window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',show);
+  window.addEventListener('beforeprint',function(){openAll(true)});
+  var pb=document.getElementById('printBtn'); if(pb) pb.addEventListener('click',function(){openAll(true);window.print()});
+
+  function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+
+  /* ---------- checklist ---------- */
+  var items=["Nom, tuteur, dates et missions du stage","Dates des échanges avec la direction","Composition du bureau et place du stagiaire dans l'organigramme","Petit matériel de la salle de cours","Chiffres clientèle : pôles, H/F, âges, CSP, provenance","Résultats du questionnaire de satisfaction (graphiques + analyse)","Carte des isochrones et confirmation des parts par zone","Tarifs de Central Form et Fitness Park","Source et année des tendances fitness","Mon rôle dans chaque action de prospection","Accessibilité handicap vérifiée (ascenseur, vestiaires)","Résultats du mois découverte (essais, inscriptions)","Mon rôle dans les actions de fidélisation","Taux de réabonnement Members Days","Évaluation quantitative de mes ventes","Bilan personnel rédigé","Vérifier le nombre de coachs diplômés avec le tuteur"];
+  var saved=store('bc5-check')||{};
+  var box=document.getElementById('checklist');
+  items.forEach(function(t,i){
+    var l=document.createElement('label'); var c=document.createElement('input');
+    c.type='checkbox'; c.id='chk'+i; c.checked=!!saved[i];
+    var s=document.createElement('span'); s.textContent=t;
+    l.appendChild(c); l.appendChild(s); box.appendChild(l);
+    c.addEventListener('change',function(){saved[i]=c.checked;store('bc5-check',saved);prog()});
+  });
+  function prog(){
+    var n=0; box.querySelectorAll('input').forEach(function(c){c.parentNode.classList.toggle('done',c.checked); if(c.checked)n++});
+    document.getElementById('progress').style.width=(n/items.length*100)+'%';
+    document.getElementById('progressText').textContent=n+' sur '+items.length+' éléments complétés';
+  }
+  prog();
+
+  /* ---------- planning ---------- */
+  var plan={
+    Lundi:[["12h30","Yoga Slow Vinyasa","fit",1],["17h00","Judo/JJB Kids 6–7 ans","mat"],["18h00","Cardio Training","fit",1],["19h00","Hybrid Fit Training","fit"],["20h00","JJB 14 ans +","mat"]],
+    Mardi:[["12h30","Pilates","fit"],["17h00","Judo/JJB Kids 8–11 ans","mat"],["18h15","Core Training","fit"],["19h00","Judo Technique 12 ans +","mat"]],
+    Mercredi:[["14h00","Éveil Judo 5 ans","mat"],["15h00","Judo/JJB 6–7 ans","mat"],["16h00","Judo/JJB 8–9 ans","mat"],["17h00","Judo/JJB 10–13 ans","mat"],["18h30","Functional Training","fit"],["19h45","Judo & JJB 14 ans +","mat"]],
+    Jeudi:[["17h15","Judo/JJB 10–13 ans","mat"],["18h15","Functional Training","fit"],["19h00","Yoga Ashtanga","fit"]],
+    Vendredi:[["12h30","Small Group HIIT (8 max)","fit",1],["17h00","Judo/JJB 6–7 ans","mat"],["18h00","Judo/JJB 8–9 ans","mat"],["19h00","Afro Zumba","fit"]],
+    Samedi:[["10h00","Yoga Slow Vinyasa (1 sur 2)","fit"],["11h00","Yoga Kids 8–13 ans (1 sur 2)","fit"],["12h00","Open Mat 14 ans +","mat"]]
+  };
+  var week=document.getElementById('week');
+  function drawPlan(f){
+    week.innerHTML='';
+    Object.keys(plan).forEach(function(d){
+      var col=document.createElement('div'); col.className='day';
+      col.innerHTML='<h4>'+d+'</h4>';
+      plan[d].forEach(function(s){
+        if(f==='fit'&&s[2]!=='fit')return; if(f==='mat'&&s[2]!=='mat')return; if(f==='novac'&&s[3])return;
+        var el=document.createElement('div'); el.className='slot'+(s[2]==='mat'?' mat':'')+(s[3]?' vac':'');
+        el.innerHTML='<b>'+s[0]+'</b>'+s[1]+(s[3]?' <span class="muted small">· vacances</span>':''); col.appendChild(el);
+      });
+      week.appendChild(col);
+    });
+  }
+  group('[data-plan]',function(b){drawPlan(b.dataset.plan)}); drawPlan('all');
+
+  function group(sel,fn){
+    var bs=[].slice.call(document.querySelectorAll(sel));
+    bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});fn(b)})});
+  }
+
+  /* ---------- simulateur ---------- */
+  var ids=['formule','famille','etudiant','carte','passsport','muscu','trois'];
+  function eur(n){return n.toLocaleString('fr-FR',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2})+' €'}
+  function calc(){
+    var f=document.getElementById('formule').value.split('|');
+    var base=+f[0], months=+f[1], p=base, d=[];
+    d.push('Prix de base : '+eur(base));
+    var fam=+document.getElementById('famille').value;
+    if(document.getElementById('etudiant').checked){p*=0.8;d.push('Étudiant / apprenti : -20 %')}
+    if(fam){p*=(1-fam/100);d.push('Pacte Tribu : -'+fam+' %')}
+    if(document.getElementById('carte').checked){p-=150;d.push('Carte Blanche : -150 €')}
+    if(document.getElementById('passsport').checked){p-=50;d.push("Pass'Sport : -50 €")}
+    p=Math.max(0,p);
+    if(document.getElementById('muscu').checked){p+=110;d.push('Musculation BAF : +110 €')}
+    if(document.getElementById('trois').checked){p*=1.02;d.push('3 fois : +2 %, soit 3 × '+eur(Math.round(p/3*100)/100))}
+    p=Math.round(p*100)/100;
+    document.getElementById('tName').textContent=f[2];
+    document.getElementById('tPrice').textContent=eur(p);
+    document.getElementById('tMonth').textContent='soit '+eur(Math.round(p/months*100)/100)+' par mois';
+    document.getElementById('tDetail').innerHTML=d.map(function(x){return '<li>'+x+'</li>'}).join('');
+  }
+  ids.forEach(function(i){document.getElementById(i).addEventListener('change',calc)}); calc();
+
+  /* ---------- zone ---------- */
+  var zones={
+    1:["Zone primaire","0–10 min à pied, 5 min en tram","Bellevue côté Nantes (Jamet, Mendès-France, Lauriers) et côté Saint-Herblain (Grand Bellevue, Harlière)","60–70 %","Marketing local et fidélisation : bouche-à-oreille, centres sociaux, accueil au club."],
+    2:["Zone secondaire","10–20 min à pied, vélo ou tram","Chantenay, Dervallières, Sainte-Anne, Saint-Herblain centre, Preux","20–30 %","Promotions et partenariats locaux : mois découverte, associations de quartier."],
+    3:["Zone tertiaire","20–30 min en tram ou voiture","Centre de Nantes (tram 1 direct), Atlantis, Indre, Couëron","5–10 %","Publicités ciblées et offres attractives : Urban Sports Club, réseaux sociaux."]
+  };
+  var zi=document.getElementById('zoneInfo'), rings=[].slice.call(document.querySelectorAll('.ring'));
+  function zone(z){
+    var Z=zones[z];
+    rings.forEach(function(r){r.style.opacity=(r.dataset.z==z||+r.dataset.z>+z)?1:.45});
+    zi.innerHTML='<span class="pill">'+Z[0]+'</span><p><strong>'+Z[1]+'</strong></p><p class="small">'+Z[2]+'</p><p><span style="font-family:var(--display);font-size:2rem;color:var(--accent)">'+Z[3]+'</span> <span class="small muted">des adhérents (estimation)</span></p><p class="small"><strong>Stratégie :</strong> '+Z[4]+'</p>';
+  }
+  rings.forEach(function(r){
+    r.addEventListener('click',function(e){e.stopPropagation();zone(r.dataset.z)});
+    r.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();zone(r.dataset.z)}});
+  });
+  zone(1);
+
+  /* ---------- concurrents ---------- */
+  group('[data-comp]',function(b){
+    document.querySelectorAll('#compBody tr').forEach(function(tr){tr.hidden=b.dataset.comp!=='all'&&tr.dataset.t!==b.dataset.comp});
+  });
+
+  /* ---------- SWOT ---------- */
+  var cb=document.getElementById('crossBtn');
+  cb.addEventListener('click',function(){
+    var on=cb.getAttribute('aria-pressed')!=='true';
+    cb.setAttribute('aria-pressed',on);
+    cb.textContent=on?'Masquer la lecture croisée':'Afficher la lecture croisée';
+    document.getElementById('swot').classList.toggle('cross',on);
+    document.getElementById('crossText').hidden=!on;
+  });
+
+  /* ---------- SMART ---------- */
+  var smart={
+    p:[["Spécifique","Convertir les participants du mois découverte en adhérents du pôle fitness."],["Mesurable","30 % des personnes venues à l'essai inscrites (objectif à valider avec la direction)."],["Atteignable","Essai gratuit sans engagement, aides financières cumulables."],["Réaliste","Cours déjà existants, aucun coût supplémentaire pour le club."],["Temporellement défini","Essais du 7 au 30 septembre 2026, inscriptions avant le 15 octobre 2026."]],
+    f:[["Spécifique","Faire réadhérer les adhérents Jamet-Fit dont le contrat finit au 31/12/2026."],["Mesurable","70 % de réabonnements (taux de la saison passée à demander)."],["Atteignable","Remise de 20 à 30 €, paiement en 3 fois, contact direct par WhatsApp."],["Réaliste","Aucun nouveau moyen humain, offre déjà prête."],["Temporellement défini","Du 1er novembre au 31 décembre 2026."]]
+  };
+  Object.keys(smart).forEach(function(k){
+    var wrap=document.querySelector('[data-smart="'+k+'"]'), out=document.querySelector('[data-smart-out="'+k+'"]');
+    "SMART".split('').forEach(function(L,i){
+      var b=document.createElement('button'); b.type='button'; b.textContent=L; b.title=smart[k][i][0];
+      b.setAttribute('aria-pressed',i===0?'true':'false');
+      b.addEventListener('click',function(){wrap.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});out.innerHTML='<strong>'+smart[k][i][0]+' :</strong> '+smart[k][i][1]});
+      wrap.appendChild(b);
+    });
+    out.innerHTML='<strong>'+smart[k][0][0]+' :</strong> '+smart[k][0][1];
+  });
+
+  /* ---------- CAP ---------- */
+  var caps=[
+    ["Tous les cours collectifs en illimité, sans réservation.","Environ 25 € par mois avec un vrai coach diplômé d'État à chaque séance.","4,9 / 5 sur Google, et l'essai est gratuit."],
+    ["Votre saison 2027 à 30 € de moins si vous réadhérez en novembre.","Vous gardez votre groupe et vos coachs.","Le prix repasse à 299 € au 1er janvier."],
+    ["Cours en petit effectif, exercices au sol.","Chaque mouvement est adapté par la coach.","Une séance d'essai gratuite pour vérifier."]
+  ];
+  function cap(i){document.getElementById('capOut').innerHTML='<b>C</b><span><strong>Caractéristique :</strong> '+caps[i][0]+'</span><b>A</b><span><strong>Avantage :</strong> '+caps[i][1]+'</span><b>P</b><span><strong>Preuve :</strong> '+caps[i][2]+'</span>'}
+  group('[data-cap]',function(b){cap(+b.dataset.cap)}); cap(0);
+  var names=['Prospection · Jamet-Fit','Fidélisation · Members Days','Handicap · Pilates / yoga'];
+  document.getElementById('capAll').innerHTML=caps.map(function(c,i){return '<p style="margin:8px 0 4px"><strong>'+names[i]+'</strong></p><div class="cap"><b>C</b><span>'+c[0]+'</span><b>A</b><span>'+c[1]+'</span><b>P</b><span>'+c[2]+'</span></div>'}).join('');
+  Object.keys(smart).forEach(function(k){
+    document.querySelector('[data-smart-all="'+k+'"]').innerHTML='<div class="scroll"><table><tbody>'+smart[k].map(function(r){return '<tr><th>'+r[0]+'</th><td>'+r[1]+'</td></tr>'}).join('')+'</tbody></table></div>';
+  });
+  document.getElementById('zoneAll').innerHTML='<div class="scroll"><table><thead><tr><th>Zone</th><th>Accès</th><th>Périmètre</th><th>Part</th><th>Stratégie</th></tr></thead><tbody>'+[1,2,3].map(function(z){var Z=zones[z];return '<tr><td>'+Z[0]+'</td><td>'+Z[1]+'</td><td>'+Z[2]+'</td><td>'+Z[3]+'</td><td>'+Z[4]+'</td></tr>'}).join('')+'</tbody></table></div>';
+  show();
+})();
+</script>
+
+</html>
