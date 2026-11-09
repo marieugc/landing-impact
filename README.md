@@ -77,3 +77,10 @@ pour le changer, colle un lien vidéo de démo sous chaque exercice (bouton « �
 ouvre l'impression (choisir « Enregistrer en PDF », arrière-plans activés). « Sauvegarder (fichier) » / « Ouvrir une
 sauvegarde » pour garder un programme par élève. « Mes programmes » : retrouve, ouvre, duplique ou supprime chaque programme créé (enregistrés dans le navigateur). « 📝 Coller l'entraînement » sur chaque séance : colle le texte du jour, la séance et la semaine type sont remises en page. « Nouveau programme (coller un texte) » : colle le texte de l'entraînement tel qu'il est écrit (une séance par paragraphe, un exercice par ligne avec « 4x10 », repos, tempo…) et il est mis en page proprement. « Importer un PDF » lit un programme PDF existant (tableaux
 d'exercices, planning de la semaine, paragraphes) et le met en page ; un PDF exporté par l'outil est relu à l'identique. Exemple généré : `programme-eleve/Programme-Anais-BootyFlow.pdf`.
+
+## Dossier BC5 CQP · Jamet Sporting Club 📊
+
+Dossier BC5 (stratégie commerciale) du stage au Jamet Sporting Club, mis en page de façon interactive :
+planning filtrable, simulateur de tarifs, zone de chalandise, SWOT, objectifs SMART, argumentaires et objections.
+Bouton « Tout afficher · PDF » puis « Télécharger en PDF » pour la version à rendre. Fichier : [`dossier-bc5/index.html`](dossier-bc5/index.html).
+Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/dossier-bc5/`
