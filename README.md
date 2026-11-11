@@ -91,7 +91,7 @@ Document interactif à envoyer à chaque nouvelle élève, dans [`bilan-postural
 installation du téléphone (schéma), 4 photos de posture (face, dos, 2 profils) et 9 tests de mobilité expliqués pas à pas
 avec un schéma chacun (squat bras tendus, flexion avant + test d'Adams, genou au mur, test de Thomas, rotations de hanche,
 bras dos au mur, mains dans le dos, squat sur une jambe, pont fessier une jambe) + auto-test diastasis facultatif,
-carte du corps cliquable pour les douleurs, questionnaire (quotidien, sport, grossesse, blessures).
+carte du corps cliquable pour les douleurs.
 Sous chaque test, l'élève dépose ses photos / vidéos (allégées automatiquement) et note son ressenti et ses mesures.
 Tout reste enregistré sur son téléphone tant qu'elle n'a pas envoyé. Si l'envoi échoue : « Plan B » (partage WhatsApp / DM + récap écrit).
 
