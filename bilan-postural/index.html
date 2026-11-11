@@ -360,30 +360,6 @@
             <svg viewBox="0 0 240 250" role="img" aria-label="Installation : le téléphone posé à hauteur du nombril, à 2,5 à 3 mètres, filme le corps entier" id="schema-installation"></svg>
             <figcaption>Le téléphone est posé (pas tenu), à hauteur du nombril, ton corps entier dans le cadre.</figcaption>
           </figure>
-          <ul class="coches">
-            <li><span class="ico">👙</span><span><b>Tenue près du corps</b>Brassière + short ou legging court, pieds nus, cheveux attachés. Je dois voir tes genoux, ton bassin et tes omoplates.</span></li>
-            <li><span class="ico">💡</span><span><b>Fond uni, bonne lumière</b>Un mur clair, la lumière face à toi (pas de fenêtre dans ton dos), sol dégagé.</span></li>
-            <li><span class="ico">📱</span><span><b>Téléphone posé et droit</b>Sur une chaise, une étagère ou un trépied, à hauteur du nombril, à 2,5–3 m. Format vertical, corps entier, de la tête aux pieds.</span></li>
-            <li><span class="ico">⏱️</span><span><b>Retardateur ou vidéo</b>Retardateur 10 s pour les photos. Encore plus simple : lance une vidéo et fais tout devant, j'en extrais les images.</span></li>
-            <li><span class="ico">✖️</span><span><b>Un repère au sol</b>Une croix de scotch : tes pieds restent dessus pour les 4 photos de posture, tu tournes juste d'un quart de tour.</span></li>
-            <li><span class="ico">🧰</span><span><b>Matériel</b>Un mur, un mètre ruban (ou une règle), un lit ferme ou une table solide, un manche à balai si tu en as un.</span></li>
-          </ul>
-          <div class="encadre orange">
-            <span class="etiquette">Important</span>
-            <p>Ce bilan n'est pas un diagnostic médical. Tu ne forces jamais : un étirement qui tire, c'est normal ; une <strong>douleur vive, un pincement ou un engourdissement</strong>, tu arrêtes le test et tu me le notes. Enceinte ou en post-partum de moins de 6 semaines : fais seulement les photos et le questionnaire.</p>
-          </div>
-          <div class="encadre">
-            <span class="etiquette">Toi d'abord</span>
-            <div class="ligne-2" style="margin-top:6px">
-              <label class="champ" style="margin-top:0"><span>Prénom</span><input type="text" id="prenom" autocomplete="given-name" data-champ="profil.prenom" /></label>
-              <label class="champ" style="margin-top:0"><span>Âge</span><input type="number" inputmode="numeric" min="14" max="99" data-champ="profil.age" /></label>
-            </div>
-            <div class="ligne-2">
-              <label class="champ"><span>Taille <small>(cm)</small></span><input type="number" inputmode="numeric" min="120" max="220" data-champ="profil.taille" /></label>
-              <label class="champ"><span>Instagram <small>(facultatif)</small></span><input type="text" autocomplete="off" placeholder="@" data-champ="profil.instagram" /></label>
-            </div>
-            <label class="champ"><span>E-mail <small>(pour te répondre)</small></span><input type="email" autocomplete="email" data-champ="profil.email" /></label>
-          </div>
         </div>
       </section>
 
@@ -1211,8 +1187,7 @@ function majTest(id) {
 function majAvancement() {
   const obligatoires = TESTS.filter(x => !x.optionnel);
   const faits = obligatoires.filter(testComplet).length;
-  const profil = etat.profil.prenom ? 1 : 0;
-  const pct = Math.round(((faits + profil) / (obligatoires.length + 1)) * 100);
+  const pct = Math.round((faits / obligatoires.length) * 100);
   $('#txt-avancement').textContent = `${pct} %`;
   $('#anneau').style.strokeDashoffset = 94.25 * (1 - pct / 100);
   rendreRecap();
@@ -1295,7 +1270,6 @@ function rendreRecap() {
     const etatTxt = ok ? '<span class="ok">✓</span>' : tst.optionnel ? '<span class="doux">facultatif</span>' : '<span class="manque">à compléter</span>';
     return `<li><b>${tst.titre}</b>${etatTxt}</li>`;
   });
-  lignes.unshift(`<li><b>Prénom</b>${etat.profil.prenom ? '<span class="ok">✓</span>' : '<span class="manque">à compléter</span>'}</li>`);
   const nbZones = Object.keys(etat.douleurs).length;
   lignes.push(`<li><b>Zones douloureuses</b><span class="doux">${nbZones || 'aucune'}</span></li>`);
   $('#recap').innerHTML = lignes.join('');
@@ -1344,9 +1318,9 @@ const extension = (f) => (f.name.match(/\.([a-z0-9]{2,5})$/i)?.[1] || (f.type.sp
 
 async function envoyer() {
   if (!etat.profil.prenom?.trim()) {
-    toast('Indique ton prénom en haut du bilan 💜');
-    $('#prenom').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('#prenom').focus({ preventScroll: true });
-    return;
+    const p = (prompt('Ton prénom, pour que Marie sache que ce bilan est le tien :') || '').trim();
+    if (!p) return;
+    etat.profil.prenom = p.slice(0, 80); sauver();
   }
   const manquants = TESTS.filter(x => !x.optionnel && !testComplet(x));
   if (manquants.length && !confirm(`Il manque encore ${manquants.length} test${manquants.length > 1 ? 's' : ''} (${manquants.map(x => x.titre).join(', ')}).\n\nEnvoyer quand même ?`)) return;
