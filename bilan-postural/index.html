@@ -415,10 +415,11 @@
             <div id="plan-b" hidden>
               <div class="encadre orange">
                 <span class="etiquette">Plan B</span>
-                <p>L'envoi direct n'a pas marché (connexion ou fichier trop lourd). Pas de panique : envoie-moi tes fichiers et ton récap par message.</p>
+                <p>Tout n'est pas parti. Réessaie d'abord avec « Envoyer » (idéalement en wifi) : ce qui est déjà envoyé ne repart pas. Si un fichier bloque encore, envoie le reste sans lui et transmets-le-moi par message.</p>
               </div>
               <div class="actions">
-                <button class="btn" id="btn-partager" type="button">Partager mes fichiers</button>
+                <button class="btn" id="btn-sans-echecs" type="button" hidden>Envoyer sans les fichiers bloqués</button>
+                <button class="btn btn-fantome" id="btn-partager" type="button">Partager mes fichiers</button>
                 <button class="btn btn-fantome" id="btn-copier" type="button">Copier mon récap écrit</button>
               </div>
             </div>
@@ -1307,68 +1308,133 @@ function texteRecap() {
 const journal = (txt) => $('#journal').textContent = txt;
 const jauge = (p) => { $('#jauge').hidden = false; $('#jauge span').style.width = `${Math.round(p * 100)}%`; };
 
+let CFG = null;
 async function clientSupabase(persist = false) {
-  const cfg = await import('../app/js/config.js');
-  if (!cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY) throw new Error('Supabase non configuré');
+  CFG = await import('../app/js/config.js');
+  if (!CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY) throw new Error('Supabase non configuré');
   const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-  return createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY, { auth: { persistSession: persist, autoRefreshToken: persist } });
+  return createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, { auth: { persistSession: persist, autoRefreshToken: persist } });
 }
 
 const extension = (f) => (f.name.match(/\.([a-z0-9]{2,5})$/i)?.[1] || (f.type.split('/')[1] || 'bin')).toLowerCase();
+const attendre = (ms) => new Promise(r => setTimeout(r, ms));
+const signature = (f) => `${f.name}|${f.size}|${f.lastModified || 0}`;
+const typeMime = (f) => f.type || ({ jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', heic: 'image/heic', heif: 'image/heif', mov: 'video/quicktime', mp4: 'video/mp4' })[extension(f)] || 'application/octet-stream';
+const existeDeja = (msg) => /exist|duplicate|409/i.test(msg || '');
 
-async function envoyer() {
+// Gros fichiers (vidéos) : envoi « reprenable » par morceaux de 6 Mo (protocole TUS de Supabase).
+// Une coupure de réseau ne fait pas tout recommencer : l'envoi reprend là où il s'était arrêté.
+async function envoiMorceaux(chemin, f, onProgress) {
+  const { Upload } = await import('https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/+esm');
+  return new Promise((ok, ko) => {
+    const up = new Upload(f, {
+      endpoint: `${CFG.SUPABASE_URL}/storage/v1/upload/resumable`,
+      retryDelays: [0, 2000, 5000, 10000, 20000, 30000],
+      headers: { authorization: `Bearer ${CFG.SUPABASE_ANON_KEY}`, apikey: CFG.SUPABASE_ANON_KEY, 'x-upsert': 'false' },
+      uploadDataDuringCreation: true,
+      removeFingerprintOnSuccess: true,
+      chunkSize: 6 * 1024 * 1024,
+      metadata: { bucketName: CONFIG.bucket, objectName: chemin, contentType: typeMime(f), cacheControl: '3600' },
+      onProgress: (envoye, total) => onProgress(total ? envoye / total : 0),
+      onSuccess: () => ok(),
+      onError: (e) => existeDeja(e?.message) ? ok() : ko(e)
+    });
+    up.findPreviousUploads().then(prec => { if (prec.length) up.resumeFromPreviousUpload(prec[0]); up.start(); });
+  });
+}
+
+async function envoiFichier(sb, chemin, f, onProgress) {
+  if (f.size > 5 * 1024 * 1024) {
+    try { return await envoiMorceaux(chemin, f, onProgress); }
+    catch (e) { console.warn('Envoi par morceaux impossible, envoi classique', e); }
+  }
+  let derniere;
+  for (const delai of [0, 2000, 5000]) {
+    if (delai) await attendre(delai);
+    const { error } = await sb.storage.from(CONFIG.bucket).upload(chemin, f, { contentType: typeMime(f), upsert: false });
+    if (!error || existeDeja(error.message)) return;
+    derniere = error;
+  }
+  throw derniere;
+}
+
+function raisonLisible(err) {
+  const msg = err?.message || String(err || '');
+  if (/too large|exceed|maximum|413/i.test(msg)) return 'fichier trop lourd';
+  if (/mime|type/i.test(msg)) return 'format de fichier refusé';
+  if (/failed to fetch|network|timeout|abort|connexion/i.test(msg)) return 'connexion coupée';
+  return msg.slice(0, 120) || 'erreur inconnue';
+}
+
+/* Envoi : chaque fichier envoyé est mémorisé. Si ça coupe, un nouvel appui reprend où ça s'était arrêté. */
+async function envoyer(sansLesEchecs = false) {
   if (!etat.profil.prenom?.trim()) {
     const p = (prompt('Ton prénom, pour que Marie sache que ce bilan est le tien :') || '').trim();
     if (!p) return;
     etat.profil.prenom = p.slice(0, 80); sauver();
   }
-  const manquants = TESTS.filter(x => !x.optionnel && !testComplet(x));
-  if (manquants.length && !confirm(`Il manque encore ${manquants.length} test${manquants.length > 1 ? 's' : ''} (${manquants.map(x => x.titre).join(', ')}).\n\nEnvoyer quand même ?`)) return;
+  if (!sansLesEchecs) {
+    const manquants = TESTS.filter(x => !x.optionnel && !testComplet(x));
+    if (manquants.length && !confirm(`Il manque encore ${manquants.length} test${manquants.length > 1 ? 's' : ''} (${manquants.map(x => x.titre).join(', ')}).\n\nEnvoyer quand même ?`)) return;
+  }
 
-  const btn = $('#btn-envoyer'); btn.disabled = true; $('#plan-b').hidden = true;
-  const id = crypto.randomUUID();
+  const btn = $('#btn-envoyer'); btn.disabled = true; $('#plan-b').hidden = true; $('#btn-sans-echecs').hidden = true;
+  etat.envoi ??= { id: crypto.randomUUID(), faits: {} };
+  const { id, faits } = etat.envoi;
   const liste = TOUS_SLOTS.filter(s => fichiers.has(s.id));
-  const envoyes = [];
+  const echecs = [];
   try {
     journal('Connexion…');
     const sb = await clientSupabase();
     let compression = null;
     try { compression = await import('../app/js/compression.js'); } catch {}
-    for (let i = 0; i < liste.length; i++) {
+
+    if (!sansLesEchecs) for (let i = 0; i < liste.length; i++) {
       const s = liste[i];
-      let f = fichiers.get(s.id);
+      const original = fichiers.get(s.id);
+      const nom = `${s.test.titre} · ${s.label}`;
       const pas = (frac) => jauge((i + frac) / (liste.length + 1));
-      if (f.type.startsWith('video/') && compression) {
-        journal(`Allègement de la vidéo « ${s.test.titre} · ${s.label} »…`);
-        f = await compression.compresserVideo(f, { onProgress: (p) => { pas(p * .6); journal(`Allègement « ${s.label} »… ${Math.round(p * 100)} %`); } });
+      if (faits[s.id]?.sig === signature(original)) { pas(1); continue; } // déjà envoyé
+      try {
+        let f = original;
+        if (f.type.startsWith('video/') && compression) {
+          journal(`Allègement de la vidéo « ${nom} »…`);
+          f = await compression.compresserVideo(f, { onProgress: (p) => { pas(p * .4); journal(`Allègement « ${nom} »… ${Math.round(p * 100)} %`); } });
+        }
+        if (f.size > CONFIG.tailleMax) throw new Error(`trop lourde (${mo(f.size)}, 50 Mo max)`);
+        const chemin = `${id}/${s.id}-${Date.now().toString(36)}.${extension(f)}`;
+        journal(`Envoi ${i + 1}/${liste.length} : ${nom}`);
+        await envoiFichier(sb, chemin, f, (p) => { pas(.4 + p * .6); journal(`Envoi ${i + 1}/${liste.length} : ${nom}… ${Math.round(p * 100)} %`); });
+        faits[s.id] = { sig: signature(original), slot: s.id, test: s.test.id, label: nom, chemin, type: typeMime(f) };
+        sauver();
+      } catch (e) {
+        console.warn(nom, e);
+        echecs.push(`${nom} (${/trop lourde/.test(e?.message) ? e.message : raisonLisible(e)})`);
       }
-      if (f.size > CONFIG.tailleMax) throw new Error(`« ${s.test.titre} · ${s.label} » fait ${mo(f.size)} (50 Mo max). Refilme-la plus courte.`);
-      journal(`Envoi ${i + 1}/${liste.length} : ${s.test.titre} · ${s.label}`);
-      pas(.6);
-      const chemin = `${id}/${s.id}.${extension(f)}`;
-      let { error } = await sb.storage.from(CONFIG.bucket).upload(chemin, f, { contentType: f.type || undefined, upsert: false });
-      if (error) ({ error } = await sb.storage.from(CONFIG.bucket).upload(chemin, f, { contentType: f.type || undefined, upsert: false }));
-      if (error && !/exists/i.test(error.message)) throw error;
-      envoyes.push({ slot: s.id, test: s.test.id, label: `${s.test.titre} · ${s.label}`, chemin, type: f.type });
       pas(1);
     }
+
+    if (echecs.length) {
+      journal(`${liste.length - echecs.length}/${liste.length} fichiers envoyés. Bloqués : ${echecs.join(' · ')}.`);
+      $('#plan-b').hidden = false; $('#btn-sans-echecs').hidden = false;
+      return;
+    }
+
     journal('Enregistrement de tes réponses…');
+    const envoyes = liste.filter(s => faits[s.id]).map(({ id: sid }) => { const { sig, ...reste } = faits[sid]; return reste; });
     const { error } = await sb.from(CONFIG.table).insert({
       id, prenom: etat.profil.prenom.trim().slice(0, 80), email: (etat.profil.email || '').slice(0, 200) || null,
-      reponses: { ...etat, recap: texteRecap(), version: 1 }, fichiers: envoyes
+      reponses: { ...etat, envoi: undefined, recap: texteRecap(), version: 1 }, fichiers: envoyes
     });
-    if (error) throw error;
+    if (error && !existeDeja(error.message) && !/23505/.test(error.code || '')) throw error;
     jauge(1);
-    etat.envoyeLe = new Date().toISOString(); sauver();
+    etat.envoyeLe = new Date().toISOString(); delete etat.envoi; sauver();
     $('#bloc-envoi').hidden = true; $('#bloc-bravo').hidden = false;
     $('#bravo-prenom').textContent = etat.profil.prenom.trim();
     $('#bloc-bravo').scrollIntoView({ behavior: 'smooth', block: 'center' });
   } catch (err) {
     console.warn(err);
-    const msg = err?.message || '';
-    journal(/fetch|network|load/i.test(msg) ? 'Oups : connexion impossible pour le moment.'
-      : /bucket|relation|not found|does not exist/i.test(msg) ? 'Oups : l\'espace d\'envoi n\'est pas encore prêt.'
-      : `Oups : ${msg || 'envoi impossible'}`);
+    journal(`Oups : ${raisonLisible(err)}. Vérifie ta connexion (le wifi c'est mieux) et appuie à nouveau sur « Envoyer » : ce qui est déjà parti ne sera pas renvoyé.`);
     $('#plan-b').hidden = false;
   } finally { btn.disabled = false; }
 }
@@ -1430,7 +1496,8 @@ async function demarrerEleve() {
   rendreCarteDouleurs(); brancherListeDouleurs();
   saluer(); majAvancement(); suivreEtapes();
 
-  $('#btn-envoyer').addEventListener('click', envoyer);
+  $('#btn-envoyer').addEventListener('click', () => envoyer());
+  $('#btn-sans-echecs').addEventListener('click', () => envoyer(true));
   $('#btn-partager').addEventListener('click', partager);
   $('#btn-copier').addEventListener('click', copierRecap);
   $('#btn-effacer').addEventListener('click', async () => {
