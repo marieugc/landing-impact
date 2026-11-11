@@ -84,3 +84,20 @@ Dossier BC5 (stratégie commerciale) du stage au Jamet Sporting Club, mis en pag
 planning filtrable, simulateur de tarifs, zone de chalandise, SWOT, objectifs SMART, argumentaires et objections.
 Bouton « Tout afficher · PDF » puis « Télécharger en PDF » pour la version à rendre. Fichier : [`dossier-bc5/index.html`](dossier-bc5/index.html).
 Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/dossier-bc5/`
+
+## Kit de démarrage « Bilan postural » 🧍‍♀️💜
+
+Document interactif à envoyer à chaque nouvelle élève, dans [`bilan-postural/index.html`](bilan-postural/index.html) :
+installation du téléphone (schéma), 4 photos de posture (face, dos, 2 profils) et 9 tests de mobilité expliqués pas à pas
+avec un schéma chacun (squat bras tendus, flexion avant + test d'Adams, genou au mur, test de Thomas, rotations de hanche,
+bras dos au mur, mains dans le dos, squat sur une jambe, pont fessier une jambe) + auto-test diastasis facultatif,
+carte du corps cliquable pour les douleurs, questionnaire (quotidien, sport, grossesse, blessures).
+Sous chaque test, l'élève dépose ses photos / vidéos (allégées automatiquement) et note son ressenti et ses mesures.
+Tout reste enregistré sur son téléphone tant qu'elle n'a pas envoyé. Si l'envoi échoue : « Plan B » (partage WhatsApp / DM + récap écrit).
+
+- **À faire une seule fois** : copier-coller [`supabase/bilan-postural.sql`](supabase/bilan-postural.sql) dans Supabase › SQL Editor › Run.
+  Les élèves n'ont pas besoin de compte pour envoyer ; seule la coach peut lire les bilans.
+- Lien élève (prénom pré-rempli) : `https://marieugc.github.io/landing-impact/bilan-postural/?p=Sarah`
+- **Espace coach** (connexion avec le compte coach de l'app) : `https://marieugc.github.io/landing-impact/bilan-postural/?coach`
+  → liste des bilans reçus, photos et vidéos, réponses, grille de lecture de chaque test, bouton « Copier le lien » pour une nouvelle élève.
+- Les tests (textes, consignes, repères, ce que tu observes) se modifient en haut du `<script>` (`TESTS`).

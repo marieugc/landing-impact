@@ -1,0 +1,1652 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Bilan postural · Booty Flow</title>
+  <meta name="description" content="Ton kit de démarrage Booty Flow : photos de posture et tests de mobilité, expliqués pas à pas, pour personnaliser ton programme." />
+  <meta name="theme-color" content="#0E0420" />
+  <meta name="robots" content="noindex" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:site_name" content="Booty Flow Coaching" />
+  <meta property="og:title" content="Ton bilan postural Booty Flow 💜" />
+  <meta property="og:description" content="4 photos, 9 tests de mobilité, 30 minutes : la base de ton programme personnalisé." />
+  <meta property="og:image" content="https://marieugc.github.io/landing-impact/bilan-postural/assets/og-image.jpg" />
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --nuit: #0E0420;
+      --carte: #1D0D3A;
+      --carte-2: #261148;
+      --bord: rgba(180, 92, 255, .28);
+      --violet: #7B2CE0;
+      --neon: #B45CFF;
+      --neon-clair: #D8A8FF;
+      --rose: #E25CFF;
+      --texte: #F3ECFF;
+      --texte-doux: #C2B2DE;
+      --texte-pale: #9786B5;
+      --vert: #5BE3A5;
+      --orange: #FFB86B;
+      --rouge: #FF7A9A;
+      --titre: "Playfair Display", Georgia, serif;
+      --corps: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --rayon: 22px;
+      --lueur: 0 0 0 1px rgba(180, 92, 255, .45), 0 0 22px rgba(180, 92, 255, .45), 0 0 60px -10px rgba(226, 92, 255, .45);
+      --ease: cubic-bezier(.22, .9, .32, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; overflow-x: hidden; scroll-padding-top: 120px; }
+    body {
+      margin: 0; font-family: var(--corps); font-size: 17px; line-height: 1.6; color: var(--texte);
+      background-color: var(--nuit);
+      background-image:
+        radial-gradient(80% 40% at 100% 0%, rgba(180, 92, 255, .22), transparent 60%),
+        radial-gradient(70% 35% at 0% 45%, rgba(123, 44, 224, .16), transparent 60%),
+        radial-gradient(80% 40% at 100% 100%, rgba(226, 92, 255, .14), transparent 60%);
+      background-attachment: fixed; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    }
+    @supports (overflow: clip) { html, body { overflow-x: clip; } }
+    img, video { max-width: 100%; display: block; }
+    h1, h2, h3, h4, p, ul, ol, figure { margin: 0; }
+    strong { color: #fff; }
+    a { color: var(--neon-clair); }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 3px solid var(--neon); outline-offset: 3px; border-radius: 8px; }
+    [hidden] { display: none !important; }
+
+    .conteneur { width: 100%; max-width: 780px; margin: 0 auto; padding: 0 16px; }
+    section { padding: 56px 0; }
+    .surtitre {
+      display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--neon-clair); margin-bottom: 14px;
+    }
+    h1 { font-family: var(--titre); font-size: clamp(36px, 9vw, 58px); line-height: 1.05; margin: 6px 0 18px; }
+    h2 { font-family: var(--titre); font-size: clamp(28px, 6.4vw, 40px); line-height: 1.12; margin-bottom: 16px; }
+    h3 { font-size: 19px; line-height: 1.3; }
+    h1 em, h2 em { font-style: italic; color: var(--neon-clair); text-shadow: 0 0 18px rgba(180, 92, 255, .8), 0 0 42px rgba(226, 92, 255, .5); }
+    .chapeau { color: var(--texte-doux); font-size: 18px; max-width: 62ch; }
+    p + p { margin-top: 12px; }
+    .doux { color: var(--texte-doux); }
+    .petit { font-size: 14px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-height: 54px; padding: 14px 26px; border: 0; border-radius: 999px;
+      font-weight: 700; font-size: 17px; text-decoration: none; text-align: center; line-height: 1.3; color: #fff;
+      background: linear-gradient(135deg, var(--violet), var(--rose)); box-shadow: var(--lueur);
+      transition: transform .2s var(--ease), opacity .2s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:disabled { opacity: .55; transform: none; cursor: wait; }
+    .btn-fantome { background: transparent; box-shadow: inset 0 0 0 2px var(--bord); color: var(--texte); }
+    .btn-petit { min-height: 42px; padding: 8px 18px; font-size: 15px; }
+    .actions { display: flex; flex-direction: column; gap: 12px; max-width: 460px; margin: 26px auto 0; }
+
+    /* En-tête */
+    .entete {
+      position: sticky; top: 0; z-index: 30; background: rgba(14, 4, 32, .86);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(180, 92, 255, .18); padding-top: env(safe-area-inset-top);
+    }
+    .entete .conteneur { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 60px; }
+    .entete img { height: 40px; width: auto; border-radius: 8px; }
+    .avancement { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; color: var(--neon-clair); }
+    .anneau { width: 38px; height: 38px; }
+    .anneau circle { fill: none; stroke-width: 4; }
+    .anneau .fond { stroke: rgba(180, 92, 255, .2); }
+    .anneau .plein { stroke: url(#gFig); stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset .5s var(--ease); }
+    .etapes { display: flex; gap: 6px; overflow-x: auto; padding: 0 16px 10px; max-width: 780px; margin: 0 auto; scrollbar-width: none; }
+    .etapes::-webkit-scrollbar { display: none; }
+    .etapes a {
+      flex: 0 0 auto; font-size: 13px; font-weight: 700; text-decoration: none; color: var(--texte-doux);
+      padding: 6px 12px; border-radius: 999px; background: rgba(180, 92, 255, .1); box-shadow: inset 0 0 0 1px var(--bord);
+    }
+    .etapes a.actif { color: #fff; background: linear-gradient(135deg, var(--violet), var(--rose)); box-shadow: none; }
+
+    /* Héros */
+    .heros { padding: 40px 0 48px; text-align: center; }
+    .heros .logo { width: min(86vw, 420px); height: auto; margin: 0 auto 26px; border-radius: 18px; box-shadow: var(--lueur); }
+    .pastille { padding: 7px 14px; border-radius: 999px; background: rgba(180, 92, 255, .12); box-shadow: inset 0 0 0 1px var(--bord); }
+    .heros .chapeau { margin: 0 auto; }
+    .resume { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 480px; margin: 28px auto 0; }
+    .resume div { padding: 14px 6px; border-radius: 16px; background: var(--carte); box-shadow: inset 0 0 0 1px var(--bord); }
+    .resume b { display: block; font-family: var(--titre); font-size: 30px; line-height: 1; color: var(--neon-clair); }
+    .resume span { font-size: 13px; color: var(--texte-doux); line-height: 1.3; display: block; margin-top: 6px; }
+
+    /* Cartes & encadrés */
+    .carte { background: var(--carte); border-radius: var(--rayon); box-shadow: inset 0 0 0 1px var(--bord); padding: 22px; }
+    .grille-2 { display: grid; gap: 14px; margin-top: 24px; }
+    @media (min-width: 640px) { .grille-2 { grid-template-columns: 1fr 1fr; } }
+    .impact h3 { font-size: 17px; margin-bottom: 6px; }
+    .impact .si { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
+    .impact .alors { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--vert); margin-top: 10px; display: block; }
+    .impact p { color: var(--texte-doux); font-size: 15px; margin-top: 4px; }
+
+    .encadre { margin-top: 18px; padding: 16px 18px; border-radius: 18px; border-left: 4px solid var(--neon); background: rgba(180, 92, 255, .1); }
+    .encadre .etiquette { display: block; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--neon-clair); margin-bottom: 6px; }
+    .encadre.vert { border-left-color: var(--vert); background: rgba(91, 227, 165, .08); }
+    .encadre.vert .etiquette { color: var(--vert); }
+    .encadre.orange { border-left-color: var(--orange); background: rgba(255, 184, 107, .08); }
+    .encadre.orange .etiquette { color: var(--orange); }
+    .encadre ul { margin: 0; padding-left: 20px; }
+    .encadre li + li { margin-top: 4px; }
+    .encadre li, .encadre p { font-size: 15px; color: var(--texte-doux); }
+
+    .coches { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; }
+    .coches li { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,.03); box-shadow: inset 0 0 0 1px var(--bord); font-size: 15px; color: var(--texte-doux); }
+    .coches li b { color: #fff; display: block; font-size: 16px; }
+    .coches .ico { flex: 0 0 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 18px; background: rgba(180, 92, 255, .16); }
+
+    /* Schémas */
+    .schema { background: radial-gradient(90% 80% at 50% 30%, rgba(123, 44, 224, .28), rgba(14, 4, 32, .6)); border-radius: 18px; box-shadow: inset 0 0 0 1px var(--bord); padding: 10px; }
+    .schema svg { width: 100%; height: auto; display: block; max-height: 330px; }
+    .schema figcaption { text-align: center; font-size: 13px; color: var(--texte-pale); padding: 4px 6px 2px; }
+    svg .m { fill: none; stroke: url(#gFig); stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+    svg .m.tr { stroke-width: 19; }
+    svg .m.loin { opacity: .38; }
+    svg .torse { fill: rgba(180, 92, 255, .22); stroke: url(#gFig); stroke-width: 8; stroke-linejoin: round; }
+    svg .tete { fill: url(#gFig); }
+    svg .art { fill: #fff; }
+    svg .plomb { stroke: var(--neon-clair); stroke-width: 1.6; stroke-dasharray: 4 5; fill: none; }
+    svg .ok { stroke: var(--vert); stroke-width: 2; stroke-dasharray: 5 5; fill: none; }
+    svg .ko { stroke: var(--orange); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; fill: none; opacity: .4; }
+    svg .sol { stroke: rgba(216, 168, 255, .35); stroke-width: 2; }
+    svg .meuble { fill: rgba(216, 168, 255, .12); stroke: rgba(216, 168, 255, .45); stroke-width: 1.5; }
+    svg .cote { stroke: #fff; stroke-width: 1.4; marker-start: url(#fl); marker-end: url(#fl); }
+    svg .fleche { stroke: var(--neon-clair); stroke-width: 2; fill: none; marker-end: url(#fl); }
+    svg text { font-family: var(--corps); font-size: 10.5px; fill: var(--texte-doux); }
+    svg text.t-ok { fill: var(--vert); font-weight: 700; }
+    svg text.t-ko { fill: var(--orange); font-weight: 700; }
+    svg text.t-fort { fill: #fff; font-weight: 700; }
+
+    /* Tests (accordéon) */
+    .tests { display: grid; gap: 14px; margin-top: 26px; }
+    .test { background: var(--carte); border-radius: var(--rayon); box-shadow: inset 0 0 0 1px var(--bord); overflow: hidden; transition: box-shadow .3s; }
+    .test.ouvert { box-shadow: inset 0 0 0 1px rgba(180, 92, 255, .6), 0 0 34px -12px rgba(180, 92, 255, .7); }
+    .test-tete { width: 100%; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border: 0; background: none; text-align: left; }
+    .num { flex: 0 0 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-family: var(--titre); font-size: 20px; color: #fff; background: linear-gradient(135deg, var(--violet), var(--rose)); }
+    .test.fait .num { background: var(--vert); color: var(--nuit); }
+    .test-tete .titres { flex: 1; min-width: 0; }
+    .test-tete h3 { font-size: 17px; }
+    .test-tete small { display: block; color: var(--texte-pale); font-size: 13px; margin-top: 2px; }
+    .statut { flex: 0 0 auto; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.06); color: var(--texte-pale); }
+    .test.fait .statut { background: rgba(91, 227, 165, .15); color: var(--vert); }
+    .chevron { flex: 0 0 auto; transition: transform .3s var(--ease); color: var(--neon-clair); }
+    .test.ouvert .chevron { transform: rotate(180deg); }
+    .test-corps { padding: 0 18px 22px; }
+    .test-intro { display: grid; gap: 16px; }
+    @media (min-width: 640px) { .test-intro { grid-template-columns: 250px 1fr; align-items: start; } }
+    .but { color: var(--texte-doux); font-size: 15px; }
+    .but b { color: #fff; }
+    .pas { counter-reset: pas; list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; }
+    .pas li { counter-increment: pas; position: relative; padding-left: 36px; font-size: 15px; color: var(--texte); }
+    .pas li::before { content: counter(pas); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 700; background: rgba(180, 92, 255, .25); color: var(--neon-clair); }
+    .camera { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.04); font-size: 14px; color: var(--texte-doux); }
+    .camera span:first-child { font-size: 20px; line-height: 1; }
+
+    /* Zone « À toi » */
+    .a-toi { margin-top: 20px; padding: 18px; border-radius: 18px; background: rgba(14, 4, 32, .55); box-shadow: inset 0 0 0 1px var(--bord); }
+    .a-toi > h4 { font-family: var(--titre); font-size: 20px; margin-bottom: 12px; }
+    .champ { display: grid; gap: 6px; margin-top: 14px; }
+    .champ > span, .legende { font-size: 14px; font-weight: 700; color: var(--texte); }
+    .legende small, .champ > span small { font-weight: 400; color: var(--texte-pale); }
+    input[type=text], input[type=email], input[type=number], input[type=tel], select, textarea {
+      width: 100%; min-height: 48px; padding: 11px 14px; border-radius: 14px; border: 0; outline: 0;
+      background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px var(--bord); font-size: 16px;
+    }
+    textarea { min-height: 84px; resize: vertical; }
+    select option { background: var(--carte); }
+    input:focus, select:focus, textarea:focus { box-shadow: inset 0 0 0 2px var(--neon); }
+    .ligne-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .choix { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .choix label { position: relative; }
+    .choix input { position: absolute; opacity: 0; pointer-events: none; }
+    .choix label span {
+      display: inline-block; padding: 9px 14px; border-radius: 999px; font-size: 14px; line-height: 1.3; cursor: pointer;
+      background: rgba(255,255,255,.05); box-shadow: inset 0 0 0 1px var(--bord); color: var(--texte-doux); transition: background .2s;
+    }
+    .choix input:checked + span { background: linear-gradient(135deg, var(--violet), var(--rose)); color: #fff; box-shadow: none; }
+    .choix input:focus-visible + span { outline: 3px solid var(--neon); outline-offset: 2px; }
+    .choix.niveaux label span::before { content: attr(data-pt); display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; background: var(--c, var(--neon)); }
+
+    .depots { display: grid; gap: 10px; margin-top: 16px; }
+    @media (min-width: 560px) { .depots { grid-template-columns: 1fr 1fr; } }
+    .depot { position: relative; border-radius: 16px; padding: 12px; background: rgba(180, 92, 255, .08); box-shadow: inset 0 0 0 1.5px rgba(180, 92, 255, .45); display: grid; gap: 10px; }
+    .depot.vide { border: 0; box-shadow: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%23B45CFF' stroke-width='2' stroke-dasharray='7 7'/%3E%3C/svg%3E"); }
+    .depot .quoi { font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; gap: 8px; }
+    .depot .quoi em { font-style: normal; font-weight: 500; color: var(--texte-pale); font-size: 12px; white-space: nowrap; }
+    .depot label.ajout { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; background: rgba(180, 92, 255, .16); color: var(--neon-clair); }
+    .depot input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .depot input[type=file]:focus-visible + label { outline: 3px solid var(--neon); outline-offset: 2px; }
+    .apercu { position: relative; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 4 / 3; }
+    .apercu img, .apercu video { width: 100%; height: 100%; object-fit: contain; }
+    .depot .infos { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; color: var(--texte-pale); }
+    .depot .infos button { border: 0; background: none; color: var(--rouge); font-size: 13px; font-weight: 700; padding: 6px; }
+    .depot .attente { font-size: 13px; color: var(--neon-clair); }
+
+    .suivant { display: flex; justify-content: flex-end; margin-top: 18px; }
+
+    /* Carte des douleurs */
+    .carte-corps { display: grid; gap: 14px; margin-top: 10px; }
+    .carte-corps svg { width: 100%; height: auto; max-height: 340px; }
+    .zone { cursor: pointer; }
+    .zone circle { fill: rgba(216, 168, 255, .16); stroke: rgba(216, 168, 255, .6); stroke-width: 1.5; transition: fill .2s; }
+    .zone:hover circle, .zone:focus circle { fill: rgba(216, 168, 255, .35); }
+    .zone[aria-pressed=true] circle { fill: var(--orange); stroke: #fff; filter: drop-shadow(0 0 6px rgba(255, 184, 107, .9)); }
+    .zone:focus { outline: none; }
+    .liste-douleurs { display: grid; gap: 10px; }
+    .douleur { padding: 12px 14px; border-radius: 14px; background: rgba(255, 184, 107, .08); box-shadow: inset 0 0 0 1px rgba(255, 184, 107, .35); }
+    .douleur .haut { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
+    .douleur .haut button { border: 0; background: none; color: var(--texte-pale); font-size: 13px; }
+    .douleur input[type=range] { width: 100%; accent-color: var(--orange); }
+    .douleur .reglages { display: grid; gap: 8px; margin-top: 8px; }
+    @media (min-width: 560px) { .douleur .reglages { grid-template-columns: 1fr 1fr; align-items: center; } }
+
+    /* Envoi */
+    .recap { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 6px; }
+    .recap li { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; padding: 9px 12px; border-radius: 12px; background: rgba(255,255,255,.04); }
+    .recap li b { font-weight: 700; }
+    .recap .ok { color: var(--vert); }
+    .recap .manque { color: var(--orange); }
+    .jauge { height: 10px; border-radius: 999px; background: rgba(180, 92, 255, .15); overflow: hidden; margin-top: 14px; }
+    .jauge span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--violet), var(--rose)); box-shadow: 0 0 12px var(--neon); transition: width .3s; }
+    .journal { font-size: 14px; color: var(--texte-doux); margin-top: 10px; min-height: 22px; }
+    .bravo { text-align: center; padding: 30px 20px; }
+    .bravo .gros { font-size: 54px; line-height: 1; }
+
+    .avertissement { font-size: 13px; color: var(--texte-pale); text-align: center; margin-top: 30px; }
+    footer { padding: 30px 0 50px; text-align: center; color: var(--texte-pale); font-size: 13px; }
+    footer img { height: 46px; width: auto; margin: 0 auto 12px; border-radius: 8px; opacity: .9; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 60;
+      max-width: calc(100% - 32px); padding: 12px 18px; border-radius: 14px; background: var(--carte-2); box-shadow: var(--lueur);
+      font-size: 15px; transition: transform .35s var(--ease), visibility .35s; visibility: hidden; transform: translate(-50%, calc(100% + 40px));
+    }
+    .toast.visible { transform: translate(-50%, 0); visibility: visible; }
+
+    /* Espace coach */
+    .coach-liste { display: grid; gap: 10px; margin-top: 18px; }
+    .coach-ligne { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 14px 16px; border: 0; border-radius: 16px; background: var(--carte); box-shadow: inset 0 0 0 1px var(--bord); }
+    .coach-ligne .nouveau { font-size: 12px; font-weight: 700; color: var(--nuit); background: var(--vert); padding: 3px 9px; border-radius: 999px; }
+    .coach-test { margin-top: 14px; }
+    .coach-test h3 { font-size: 17px; margin-bottom: 6px; }
+    .medias { display: grid; gap: 10px; margin-top: 10px; }
+    @media (min-width: 560px) { .medias { grid-template-columns: 1fr 1fr; } }
+    .medias figure { border-radius: 12px; overflow: hidden; background: #000; }
+    .medias figcaption { font-size: 12px; color: var(--texte-pale); padding: 6px 8px; background: var(--carte-2); }
+    .medias img, .medias video { width: 100%; max-height: 420px; object-fit: contain; }
+    .tableau { width: 100%; border-collapse: collapse; font-size: 15px; margin-top: 8px; }
+    .tableau td { padding: 6px 0; border-bottom: 1px solid rgba(180, 92, 255, .15); vertical-align: top; }
+    .tableau td:first-child { color: var(--texte-pale); width: 42%; padding-right: 10px; }
+    details.grille { margin-top: 10px; }
+    details.grille summary { cursor: pointer; font-size: 14px; font-weight: 700; color: var(--neon-clair); }
+
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
+    @media print {
+      .entete, .depots, .suivant, #envoi, .toast { display: none !important; }
+      body { background: #fff; color: #000; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Définitions partagées par tous les schémas -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="gFig" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="240" y2="250">
+        <stop offset="0" stop-color="#D8A8FF" />
+        <stop offset=".5" stop-color="#B45CFF" />
+        <stop offset="1" stop-color="#E25CFF" />
+      </linearGradient>
+      <marker id="fl" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" fill="#D8A8FF" />
+      </marker>
+    </defs>
+  </svg>
+
+  <!-- ============ ESPACE ÉLÈVE ============ -->
+  <div id="eleve">
+    <header class="entete">
+      <div class="conteneur">
+        <img src="assets/logo.webp" alt="Booty Flow Coaching" width="85" height="40" />
+        <div class="avancement" aria-live="polite">
+          <span id="txt-avancement">0 %</span>
+          <svg class="anneau" viewBox="0 0 38 38" aria-hidden="true">
+            <circle class="fond" cx="19" cy="19" r="15" />
+            <circle class="plein" id="anneau" cx="19" cy="19" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25" />
+          </svg>
+        </div>
+      </div>
+      <nav class="etapes" aria-label="Étapes du bilan">
+        <a href="#preparer">Préparer</a>
+        <a href="#photos">1 · Photos</a>
+        <a href="#mobilite">2 · Mobilité</a>
+        <a href="#ressentis">3 · Ressentis</a>
+        <a href="#envoi">Envoi</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="heros">
+        <div class="conteneur">
+          <img class="logo" src="assets/logo.webp" alt="Booty Flow Coaching" width="420" height="198" />
+          <span class="surtitre pastille">Kit de démarrage · Bilan postural</span>
+          <h1>Ton bilan <em>postural</em></h1>
+          <p class="chapeau" id="accueil">Bienvenue dans le coaching 💜 Avant d'écrire ton programme, j'ai besoin de voir comment ton corps se tient et comment il bouge. Tu suis les étapes, tu déposes tes photos et vidéos ici, et je personnalise tout à partir de là.</p>
+          <div class="resume">
+            <div><b>4</b><span>photos de posture</span></div>
+            <div><b>9</b><span>tests de mobilité</span></div>
+            <div><b>30'</b><span>environ, à ton rythme</span></div>
+          </div>
+          <p class="doux petit" style="margin-top:18px">Tes réponses et tes fichiers restent enregistrés sur ton téléphone : tu peux t'arrêter et reprendre plus tard.</p>
+        </div>
+      </section>
+
+      <section id="pourquoi" style="padding-top:10px">
+        <div class="conteneur">
+          <span class="surtitre">Pourquoi ce bilan</span>
+          <h2>Le même programme ne donne pas <em>les mêmes résultats</em></h2>
+          <p class="chapeau">Ta posture et ta mobilité décident de ce qui travaille vraiment pendant un exercice. Une cheville raide, un bassin qui bascule ou un genou qui rentre, et ce sont tes cuisses ou tes lombaires qui prennent le relais à la place de tes fessiers. Quelques exemples de ce que ton bilan change concrètement :</p>
+          <div class="grille-2">
+            <div class="carte impact">
+              <span class="si">Si je vois</span>
+              <h3>Un bassin basculé vers l'avant et des fléchisseurs de hanche raides</h3>
+              <span class="alors">Alors ton programme</span>
+              <p>Mobilité des fléchisseurs de hanche avant tes séances, hip thrust bassin « rentré », gainage anti-cambrure : tes fessiers bossent, pas ton bas du dos.</p>
+            </div>
+            <div class="carte impact">
+              <span class="si">Si je vois</span>
+              <h3>Des chevilles raides (talons qui décollent au squat)</h3>
+              <span class="alors">Alors ton programme</span>
+              <p>Talons surélevés au départ, travail de cheville ciblé, variantes adaptées (goblet squat, presse pieds hauts) le temps de gagner en amplitude.</p>
+            </div>
+            <div class="carte impact">
+              <span class="si">Si je vois</span>
+              <h3>Des genoux qui rentrent vers l'intérieur</h3>
+              <span class="alors">Alors ton programme</span>
+              <p>Renforcement du moyen fessier, tempo contrôlé sur les fentes, placement de pied revu : tes genoux sont protégés et tes fessiers mieux recrutés.</p>
+            </div>
+            <div class="carte impact">
+              <span class="si">Si je vois</span>
+              <h3>Des épaules enroulées et un haut du dos raide</h3>
+              <span class="alors">Alors ton programme</span>
+              <p>Plus de tirages que de poussées, mobilité thoracique, exercices au-dessus de la tête choisis avec soin tant que ça compense.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="preparer">
+        <div class="conteneur">
+          <span class="surtitre">Avant de commencer</span>
+          <h2>Prépare ton <em>espace</em></h2>
+          <p class="chapeau">De bonnes images, c'est 80 % d'un bon bilan. Prends 5 minutes pour t'installer, ça m'évitera de te redemander des photos.</p>
+          <figure class="schema" style="margin-top:22px">
+            <svg viewBox="0 0 240 250" role="img" aria-label="Installation : le téléphone posé à hauteur du nombril, à 2,5 à 3 mètres, filme le corps entier" id="schema-installation"></svg>
+            <figcaption>Le téléphone est posé (pas tenu), à hauteur du nombril, ton corps entier dans le cadre.</figcaption>
+          </figure>
+          <ul class="coches">
+            <li><span class="ico">👙</span><span><b>Tenue près du corps</b>Brassière + short ou legging court, pieds nus, cheveux attachés. Je dois voir tes genoux, ton bassin et tes omoplates.</span></li>
+            <li><span class="ico">💡</span><span><b>Fond uni, bonne lumière</b>Un mur clair, la lumière face à toi (pas de fenêtre dans ton dos), sol dégagé.</span></li>
+            <li><span class="ico">📱</span><span><b>Téléphone posé et droit</b>Sur une chaise, une étagère ou un trépied, à hauteur du nombril, à 2,5–3 m. Format vertical, corps entier, de la tête aux pieds.</span></li>
+            <li><span class="ico">⏱️</span><span><b>Retardateur ou vidéo</b>Retardateur 10 s pour les photos. Encore plus simple : lance une vidéo et fais tout devant, j'en extrais les images.</span></li>
+            <li><span class="ico">✖️</span><span><b>Un repère au sol</b>Une croix de scotch : tes pieds restent dessus pour les 4 photos de posture, tu tournes juste d'un quart de tour.</span></li>
+            <li><span class="ico">🧰</span><span><b>Matériel</b>Un mur, un mètre ruban (ou une règle), un lit ferme ou une table solide, un manche à balai si tu en as un.</span></li>
+          </ul>
+          <div class="encadre orange">
+            <span class="etiquette">Important</span>
+            <p>Ce bilan n'est pas un diagnostic médical. Tu ne forces jamais : un étirement qui tire, c'est normal ; une <strong>douleur vive, un pincement ou un engourdissement</strong>, tu arrêtes le test et tu me le notes. Enceinte ou en post-partum de moins de 6 semaines : fais seulement les photos et le questionnaire.</p>
+          </div>
+          <div class="encadre">
+            <span class="etiquette">Toi d'abord</span>
+            <div class="ligne-2" style="margin-top:6px">
+              <label class="champ" style="margin-top:0"><span>Prénom</span><input type="text" id="prenom" autocomplete="given-name" data-champ="profil.prenom" /></label>
+              <label class="champ" style="margin-top:0"><span>Âge</span><input type="number" inputmode="numeric" min="14" max="99" data-champ="profil.age" /></label>
+            </div>
+            <div class="ligne-2">
+              <label class="champ"><span>Taille <small>(cm)</small></span><input type="number" inputmode="numeric" min="120" max="220" data-champ="profil.taille" /></label>
+              <label class="champ"><span>Instagram <small>(facultatif)</small></span><input type="text" autocomplete="off" placeholder="@" data-champ="profil.instagram" /></label>
+            </div>
+            <label class="champ"><span>E-mail <small>(pour te répondre)</small></span><input type="email" autocomplete="email" data-champ="profil.email" /></label>
+          </div>
+        </div>
+      </section>
+
+      <section id="photos">
+        <div class="conteneur">
+          <span class="surtitre">Partie 1 · Posture statique</span>
+          <h2>Tes photos de <em>posture</em></h2>
+          <p class="chapeau">Tiens-toi comme tous les jours : ne te grandis pas, ne rentre pas le ventre. Prends deux respirations, relâche les épaules, puis déclenche. Je veux voir ta posture réelle, pas ta meilleure posture.</p>
+          <div class="tests" id="tests-photos"></div>
+        </div>
+      </section>
+
+      <section id="mobilite">
+        <div class="conteneur">
+          <span class="surtitre">Partie 2 · Mobilité et contrôle</span>
+          <h2>Tes tests en <em>mouvement</em></h2>
+          <p class="chapeau">Chaque test montre une articulation ou un muscle clé de ton entraînement. Fais-les à froid, sans échauffement poussé, et sans chercher à « réussir » : il n'y a pas de bonne note, seulement des infos pour moi.</p>
+          <div class="tests" id="tests-mobilite"></div>
+        </div>
+      </section>
+
+      <section id="ressentis">
+        <div class="conteneur">
+          <span class="surtitre">Partie 3 · Ton histoire</span>
+          <h2>Tes <em>ressentis</em></h2>
+          <p class="chapeau">Les images ne disent pas tout. Ce que tu ressens, ton quotidien et ton passé sportif comptent autant pour adapter ton programme.</p>
+
+          <div class="carte" style="margin-top:24px">
+            <h3>Où as-tu des douleurs ou des gênes ?</h3>
+            <p class="doux petit" style="margin-top:4px">Touche les zones concernées (de face à gauche, de dos à droite), puis précise l'intensité.</p>
+            <div class="carte-corps">
+              <svg viewBox="0 0 480 250" id="carte-douleurs" role="group" aria-label="Carte du corps, de face et de dos"></svg>
+              <div class="liste-douleurs" id="liste-douleurs"></div>
+              <p class="doux petit" id="aucune-douleur">Aucune zone sélectionnée : super, ou touche une zone si quelque chose te gêne.</p>
+            </div>
+          </div>
+
+          <div class="carte" style="margin-top:14px">
+            <h3>Ton quotidien</h3>
+            <label class="champ"><span>Ton métier</span><input type="text" data-champ="quotidien.metier" placeholder="ex. assistante dentaire, commerciale…" /></label>
+            <div class="champ"><span class="legende">Combien d'heures assise par jour ?</span><div class="choix" data-choix="quotidien.assise" data-options="Moins de 2 h|2 à 5 h|5 à 8 h|Plus de 8 h"></div></div>
+            <div class="champ"><span class="legende">Talons hauts</span><div class="choix" data-choix="quotidien.talons" data-options="Jamais|Parfois|Tous les jours"></div></div>
+            <div class="champ"><span class="legende">Tu portes souvent ton enfant ou un sac d'un seul côté ?</span><div class="choix" data-choix="quotidien.portage" data-options="Non|Oui, plutôt à gauche|Oui, plutôt à droite"></div></div>
+            <div class="champ"><span class="legende">Ton sommeil</span><div class="choix" data-choix="quotidien.sommeil" data-options="Moins de 6 h|6 à 7 h|7 h et plus"></div></div>
+          </div>
+
+          <div class="carte" style="margin-top:14px">
+            <h3>Ton entraînement aujourd'hui</h3>
+            <div class="champ"><span class="legende">Séances par semaine</span><div class="choix" data-choix="sport.frequence" data-options="Aucune|1 à 2|3 à 4|5 et plus"></div></div>
+            <div class="champ"><span class="legende">Ton niveau en musculation</span><div class="choix" data-choix="sport.niveau" data-options="Je débute|Moins d'un an|1 à 3 ans|Plus de 3 ans"></div></div>
+            <div class="champ"><span class="legende">Pendant tes séances… <small>(plusieurs choix possibles)</small></span><div class="choix" data-multi="sport.sensations" data-options="Je sens surtout mes cuisses au squat|Mes lombaires travaillent au hip thrust|Je ne sens pas mes fessiers|Crampes dans les ischios|Douleur aux genoux en fente ou squat|Épaules qui tirent au-dessus de la tête|Mal au bas du dos après le soulevé de terre|Je perds l'équilibre en fente"></div></div>
+          </div>
+
+          <div class="carte" style="margin-top:14px">
+            <h3>Ton historique</h3>
+            <div class="champ"><span class="legende">Grossesse</span><div class="choix" data-choix="historique.grossesse" data-options="Jamais|Oui, il y a plus de 2 ans|Oui, il y a moins de 2 ans|Enceinte actuellement"></div></div>
+            <div class="champ"><span class="legende">Déjà diagnostiqué <small>(plusieurs choix possibles)</small></span><div class="choix" data-multi="historique.diagnostics" data-options="Scoliose|Hernie ou protrusion discale|Sciatique|Syndrome rotulien|Tendinite|Entorse de cheville à répétition|Pubalgie|Diastasis|Hyperlaxité|Aucun"></div></div>
+            <label class="champ"><span>Blessures, opérations, accidents <small>(et quand)</small></span><textarea data-champ="historique.blessures" placeholder="ex. entorse cheville droite en 2022, césarienne en 2023…"></textarea></label>
+            <label class="champ"><span>Suivi en cours <small>(kiné, ostéo, médecin…)</small></span><input type="text" data-champ="historique.suivi" /></label>
+          </div>
+
+          <div class="carte" style="margin-top:14px">
+            <h3>Toi et ton corps</h3>
+            <label class="champ"><span>Qu'est-ce que tu aimerais améliorer dans ta posture ou ta silhouette ?</span><textarea data-champ="objectifs.posture" placeholder="ex. ne plus avoir le ventre qui ressort, me tenir plus droite, des fessiers plus hauts…"></textarea></label>
+            <label class="champ"><span>Autre chose à me dire ?</span><textarea data-champ="objectifs.autre"></textarea></label>
+          </div>
+        </div>
+      </section>
+
+      <section id="envoi">
+        <div class="conteneur">
+          <span class="surtitre">Dernière étape</span>
+          <h2>Envoie ton <em>bilan</em></h2>
+          <div class="carte" id="bloc-envoi">
+            <p class="doux">Voici ce que tu as rempli. Tu peux envoyer même s'il manque quelque chose, mais plus ton bilan est complet, plus ton programme sera précis.</p>
+            <ul class="recap" id="recap"></ul>
+            <div class="actions">
+              <button class="btn" id="btn-envoyer" type="button">Envoyer mon bilan à Marie 💜</button>
+            </div>
+            <div class="jauge" id="jauge" hidden><span></span></div>
+            <p class="journal" id="journal" aria-live="polite"></p>
+            <div id="plan-b" hidden>
+              <div class="encadre orange">
+                <span class="etiquette">Plan B</span>
+                <p>L'envoi direct n'a pas marché (connexion ou fichier trop lourd). Pas de panique : envoie-moi tes fichiers et ton récap par message.</p>
+              </div>
+              <div class="actions">
+                <button class="btn" id="btn-partager" type="button">Partager mes fichiers</button>
+                <button class="btn btn-fantome" id="btn-copier" type="button">Copier mon récap écrit</button>
+              </div>
+            </div>
+          </div>
+          <div class="carte bravo" id="bloc-bravo" hidden>
+            <div class="gros">💜</div>
+            <h2 style="margin-top:12px">C'est envoyé, <em id="bravo-prenom">bravo</em> !</h2>
+            <p class="doux">Je reçois tout de suite tes photos, tes vidéos et tes réponses. Je les analyse en détail et je construis ton programme à partir de ton bilan : exercices correctifs, choix des variantes, mobilité ciblée.</p>
+            <p class="doux">Garde ce lien : on refera ce bilan dans quelques mois pour mesurer tes progrès.</p>
+            <div class="actions">
+              <button class="btn btn-fantome btn-petit" id="btn-effacer" type="button">Effacer mes fichiers de ce téléphone</button>
+            </div>
+          </div>
+          <p class="avertissement">Tes fichiers sont envoyés dans un espace privé auquel seule Marie a accès. Ils servent uniquement à ton suivi.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <img src="assets/logo.webp" alt="Booty Flow Coaching" width="98" height="46" loading="lazy" />
+      <p>Booty Flow Coaching · Kit de démarrage</p>
+    </footer>
+  </div>
+
+  <!-- ============ ESPACE COACH (?coach) ============ -->
+  <div id="coach" hidden>
+    <header class="entete">
+      <div class="conteneur">
+        <img src="assets/logo.webp" alt="Booty Flow Coaching" width="85" height="40" />
+        <button class="btn btn-fantome btn-petit" id="coach-deco" type="button" hidden>Déconnexion</button>
+      </div>
+    </header>
+    <main class="conteneur" style="padding-top:30px;padding-bottom:60px">
+      <span class="surtitre">Espace coach</span>
+      <h2>Bilans <em>posturaux</em></h2>
+      <form class="carte" id="coach-connexion" style="margin-top:18px">
+        <p class="doux">Connecte-toi avec ton compte coach de l'app Booty Flow.</p>
+        <label class="champ"><span>E-mail</span><input type="email" id="coach-email" autocomplete="username" required /></label>
+        <label class="champ"><span>Mot de passe</span><input type="password" id="coach-mdp" autocomplete="current-password" required style="width:100%;min-height:48px;padding:11px 14px;border-radius:14px;border:0;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px var(--bord);font-size:16px" /></label>
+        <div class="actions"><button class="btn" type="submit">Se connecter</button></div>
+        <p class="journal" id="coach-erreur"></p>
+      </form>
+      <div id="coach-espace" hidden>
+        <div class="carte" style="margin-top:18px">
+          <h3>Lien à envoyer à une nouvelle élève</h3>
+          <div class="ligne-2" style="margin-top:10px;align-items:end">
+            <label class="champ" style="margin-top:0"><span>Prénom</span><input type="text" id="coach-lien-prenom" placeholder="Sarah" /></label>
+            <button class="btn btn-petit" id="coach-copier-lien" type="button">Copier le lien</button>
+          </div>
+        </div>
+        <div class="coach-liste" id="coach-liste"></div>
+        <div id="coach-detail" hidden></div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+<script type="module">
+/* =====================================================================
+   RÉGLAGES
+   ===================================================================== */
+const CONFIG = {
+  coach: 'Marie',
+  bucket: 'bilans-posturaux',        // espace de stockage Supabase (voir supabase/bilan-postural.sql)
+  table: 'bilans_posturaux',
+  instagramDM: 'https://ig.me/m/booty__flow',
+  tailleMax: 50 * 1024 * 1024        // 50 Mo par fichier (limite de Supabase gratuit)
+};
+
+/* =====================================================================
+   SCHÉMAS (silhouettes dessinées en SVG, viewBox 240 × 250, sol à y = 228)
+   ===================================================================== */
+const P = (pts) => pts.map(p => p.join(',')).join(' ');
+const m = (pts, cls = '') => `<polyline class="m ${cls}" points="${P(pts)}"/>`;
+const tete = ([x, y], r = 14, cls = '') => `<circle class="tete ${cls}" cx="${x}" cy="${y}" r="${r}"/>`;
+const torse = (pts) => `<polygon class="torse" points="${P(pts)}"/>`;
+const l = (x1, y1, x2, y2, cls = 'plomb') => `<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+const t = (x, y, txt, cls = '', a = 'middle') => `<text x="${x}" y="${y}" class="${cls}" text-anchor="${a}">${txt}</text>`;
+const pt = ([x, y]) => `<circle class="art" cx="${x}" cy="${y}" r="3.3"/>`;
+const sol = (y = 228) => l(8, y, 232, y, 'sol');
+const ko = (pts) => `<polyline class="ko" points="${P(pts)}"/>`;
+const rect = (x, y, w, h) => `<rect class="meuble" x="${x}" y="${y}" width="${w}" height="${h}" rx="3"/>`;
+
+// Silhouette de face (aussi utilisée de dos)
+const FACE = {
+  tete: [120, 34],
+  torse: [[98, 62], [142, 62], [134, 128], [106, 128]],
+  brasD: [[96, 64], [88, 104], [84, 142]],
+  brasG: [[144, 64], [152, 104], [156, 142]],
+  jambeD: [[110, 130], [108, 178], [108, 221], [101, 226]],
+  jambeG: [[130, 130], [132, 178], [132, 221], [139, 226]]
+};
+const silhouetteFace = () =>
+  m([[120, 48], [120, 60]], 'tr') + torse(FACE.torse) + m(FACE.brasD) + m(FACE.brasG) + m(FACE.jambeD) + m(FACE.jambeG) + tete(FACE.tete, 15);
+
+// Silhouette de profil (regard vers la droite)
+const silhouetteProfil = () =>
+  m([[113, 66], [111, 104], [114, 138]], 'loin') + m([[113, 128], [115, 178], [112, 221], [128, 226]], 'loin') +
+  m([[120, 50], [116, 66], [113, 96], [117, 126]], 'tr') +
+  m([[117, 128], [119, 178], [116, 221], [134, 226]]) +
+  m([[117, 66], [115, 104], [119, 138]]) + tete([124, 32], 15);
+
+const SCHEMAS = {
+  installation: () => `<g transform="translate(-62 0)">${silhouetteProfil()}</g>` +
+    sol() + l(196, 228, 196, 136, 'sol') + `<rect x="188" y="106" width="16" height="28" rx="4" fill="#261148" stroke="#D8A8FF" stroke-width="2"/>` +
+    `<circle cx="196" cy="114" r="2.5" fill="#D8A8FF"/>` +
+    l(188, 120, 48, 14) + l(188, 120, 48, 232) +
+    l(56, 240, 196, 240, 'cote') + t(126, 236, '2,5 à 3 m', 't-fort') +
+    t(196, 98, 'nombril', '', 'middle') + t(52, 12, 'tête', '', 'start') + t(30, 246, 'pieds', '', 'start'),
+
+  face: () => silhouetteFace() + sol() + l(120, 8, 120, 232) +
+    l(70, 62, 170, 62, 'ok') + l(76, 128, 164, 128, 'ok') + l(84, 178, 156, 178, 'ok') +
+    t(232, 65, 'épaules', '', 'end') + t(232, 131, 'bassin', '', 'end') + t(232, 181, 'genoux', '', 'end') +
+    t(8, 104, 'triangle', '', 'start') + t(8, 116, 'de taille', '', 'start') +
+    t(120, 246, 'fil à plomb : milieu des pieds', 't-fort'),
+
+  dos: () => silhouetteFace() + sol() + l(120, 8, 120, 232) +
+    `<path d="M120 62 C 124 80, 116 100, 120 126" class="ok"/>` +
+    `<ellipse cx="108" cy="80" rx="7" ry="11" fill="none" stroke="#5BE3A5" stroke-width="1.6"/><ellipse cx="132" cy="80" rx="7" ry="11" fill="none" stroke="#5BE3A5" stroke-width="1.6"/>` +
+    l(84, 140, 156, 140, 'ok') + t(232, 84, 'omoplates', '', 'end') + t(232, 106, 'colonne', '', 'end') +
+    t(232, 143, 'plis fessiers', '', 'end') + t(232, 218, 'talons', '', 'end') +
+    t(120, 246, 'vue de dos, même repère au sol', 't-fort'),
+
+  profil: () => silhouetteProfil() + sol() + l(118, 8, 118, 232) +
+    pt([124, 34]) + pt([116, 66]) + pt([117, 128]) + pt([119, 178]) + pt([116, 220]) +
+    t(140, 37, 'oreille', '', 'start') + t(140, 69, 'épaule', '', 'start') + t(140, 131, 'hanche', '', 'start') +
+    t(140, 181, 'genou', '', 'start') + t(140, 214, 'cheville', '', 'start') +
+    t(120, 246, 'idéal : 5 points sur la même ligne', 't-fort'),
+
+  squat: () => sol() +
+    m([[106, 221], [130, 170], [78, 168]], 'loin') +
+    m([[110, 221], [128, 226]]) + m([[110, 221], [136, 170], [82, 168]]) +
+    m([[82, 168], [112, 108]], 'tr') + m([[113, 110], [122, 70], [130, 28]]) + tete([124, 86], 14) +
+    l(70, 192, 120, 92, 'ok') + l(100, 241, 160, 123, 'ok') +
+    t(232, 120, 'tibia ∥ buste', 't-ok', 'end') + t(146, 26, 'bras aux oreilles', '', 'start') +
+    t(150, 238, 'talons au sol', '', 'start'),
+
+  flexion: () => sol() +
+    m([[106, 221], [104, 176], [100, 130]], 'loin') +
+    m([[110, 221], [128, 226]]) + m([[110, 221], [108, 176], [104, 130]]) +
+    `<path class="m tr" d="M104 128 C 118 104, 146 112, 150 142" />` +
+    m([[148, 146], [140, 180], [132, 204]]) + tete([156, 162], 13) +
+    l(132, 206, 132, 226, 'cote') + t(138, 220, 'doigts–sol', 't-fort', 'start') +
+    t(20, 120, 'bascule', '', 'start') + t(20, 132, 'du bassin', '', 'start') + `<path class="fleche" d="M70 116 C 84 102, 96 104, 102 112"/>` +
+    t(120, 246, 'vue de profil · photo de dos en bas', ''),
+
+  cheville: () => sol() + `<rect x="200" y="20" width="12" height="208" fill="rgba(216,168,255,.14)" stroke="rgba(216,168,255,.5)"/>` +
+    t(206, 14, 'mur', '', 'middle') +
+    m([[130, 148], [98, 222], [62, 226]], 'loin') +
+    m([[130, 148], [134, 86]], 'tr') + tete([136, 64], 14) + m([[134, 92], [166, 104], [198, 106]]) +
+    m([[130, 148], [196, 176], [156, 220], [180, 226]]) + pt([198, 176]) +
+    l(182, 238, 200, 238, 'cote') + t(150, 248, 'orteil–mur (cm)', 't-fort') +
+    t(150, 196, 'talon au sol', 't-ok', 'end'),
+
+  thomas: () => sol() + rect(16, 150, 160, 10) + l(26, 160, 26, 228, 'sol') + l(166, 160, 166, 228, 'sol') +
+    tete([34, 134], 13) + m([[52, 140], [140, 142]], 'tr') +
+    m([[140, 142], [112, 104], [146, 98]]) + m([[60, 138], [86, 116], [110, 104]]) +
+    ko([[140, 142], [178, 114], [190, 160]]) +
+    m([[140, 144], [192, 146], [194, 200], [208, 204]]) +
+    l(140, 144, 222, 144, 'ok') + t(232, 138, 'cuisse à plat', 't-ok', 'end') +
+    t(232, 222, 'genou ≈ 90°', 't-ok', 'end') + t(204, 104, 'à éviter', 't-ko', 'middle') +
+    t(80, 92, 'genou serré', '', 'middle') + t(80, 104, 'contre toi', '', 'middle'),
+
+  hanche: () => rect(46, 128, 148, 10) + l(56, 138, 56, 228, 'sol') + l(184, 138, 184, 228, 'sol') + sol() +
+    m([[120, 46], [120, 60]], 'tr') + torse([[102, 60], [138, 60], [134, 124], [106, 124]]) + tete([120, 32], 14) +
+    m([[100, 62], [84, 96], [78, 128]]) + m([[140, 62], [156, 96], [162, 128]]) +
+    m([[108, 126], [104, 140], [104, 194], [96, 199]]) +
+    m([[132, 126], [136, 140]]) + ko([[136, 140], [136, 194]]) + m([[136, 140], [176, 184], [182, 192]]) +
+    `<path class="fleche" d="M140 196 C 156 198, 168 192, 176 184"/>` +
+    t(232, 214, 'pied vers l\'extérieur', 't-fort', 'end') + t(232, 226, '= rotation interne', '', 'end') +
+    t(8, 214, 'cuisse immobile', '', 'start') + t(8, 226, 'fesses posées', '', 'start'),
+
+  epaules: () => sol() + `<rect x="72" y="0" width="12" height="228" fill="rgba(216,168,255,.14)" stroke="rgba(216,168,255,.5)"/>` +
+    m([[98, 126], [100, 176], [100, 221], [118, 226]], 'loin') +
+    m([[100, 50], [96, 66], [94, 96], [98, 126]], 'tr') + m([[98, 128], [102, 178], [102, 221], [120, 226]]) +
+    ko([[97, 64], [124, 40], [140, 18]]) +
+    m([[97, 64], [94, 36], [90, 8]]) + tete([102, 32], 14) +
+    t(232, 30, 'bras bloqués', 't-ko', 'end') + t(232, 42, 'avant le mur', '', 'end') +
+    t(64, 12, 'pouces', 't-ok', 'end') + t(64, 24, 'au mur', 't-ok', 'end') +
+    t(128, 112, 'lombaires collées', 't-ok', 'start') + `<path class="fleche" d="M126 108 C 112 106, 104 108, 98 112"/>`,
+
+  apley: () => sol() + m([[120, 48], [120, 60]], 'tr') + torse(FACE.torse) +
+    m(FACE.jambeD) + m(FACE.jambeG) + tete(FACE.tete, 15) +
+    m([[144, 64], [152, 14], [124, 80]]) + m([[96, 64], [84, 104], [116, 100]]) +
+    l(122, 84, 118, 96, 'cote') + t(62, 78, 'écart', 't-fort', 'middle') + t(62, 90, '(cm)', 't-fort', 'middle') +
+    `<path class="fleche" d="M84 88 C 96 90, 106 90, 114 90"/>` + t(120, 246, 'vue de dos · on inverse les bras', ''),
+
+  unipodal: () => sol() + m([[120, 60], [120, 74]], 'tr') + torse([[98, 76], [142, 76], [134, 140], [106, 140]]) + tete([120, 48], 15) +
+    m([[96, 78], [86, 108], [104, 132]]) + m([[144, 78], [154, 108], [136, 132]]) +
+    m([[130, 142], [140, 170], [146, 196]]) +
+    ko([[110, 142], [126, 184], [110, 221]]) +
+    m([[110, 142], [110, 184], [110, 221], [103, 226]]) +
+    l(110, 120, 110, 240, 'ok') + l(80, 142, 160, 142, 'ok') +
+    t(8, 186, 'hanche–genou', 't-ok', 'start') + t(8, 198, '–2e orteil', 't-ok', 'start') +
+    t(232, 145, 'bassin', '', 'end') + t(232, 157, 'horizontal', '', 'end') + t(160, 196, 'genou qui', 't-ko', 'start') + t(160, 208, 'rentre', 't-ko', 'start'),
+
+  pont: () => sol() + tete([24, 210], 12) +
+    m([[44, 214], [76, 224], [104, 226]]) +
+    m([[110, 172], [160, 144], [156, 220], [174, 226]], 'loin') +
+    m([[40, 214], [110, 172]], 'tr') + m([[110, 172], [160, 144], [214, 114]]) +
+    l(30, 222, 228, 108, 'ok') + t(232, 98, 'épaule–hanche–genou', 't-ok', 'end') + t(232, 86, 'alignés', 't-ok', 'end') +
+    t(120, 198, 'pousse dans le talon', '', 'start') + `<path class="fleche" d="M118 206 C 112 196, 112 188, 112 180"/>`,
+
+  diastasis: () => sol() + `<g transform="rotate(-12 50 212)">` + tete([36, 196], 12) + `</g>` +
+    m([[54, 210], [124, 222]], 'tr') + m([[124, 222], [160, 180], [186, 222], [202, 226]]) +
+    m([[56, 208], [78, 188], [96, 214]]) +
+    `<circle cx="96" cy="200" r="30" fill="none" stroke="#D8A8FF" stroke-width="1.5" stroke-dasharray="3 4"/>` +
+    t(122, 140, 'largeur en doigts', 't-fort', 'start') + t(122, 152, 'au-dessus du nombril', '', 'start') +
+    `<path class="fleche" d="M128 158 C 120 172, 112 182, 104 192"/>` +
+    t(10, 164, 'tête', '', 'start') + t(10, 176, 'décollée', '', 'start')
+};
+
+/* =====================================================================
+   CONTENU DES TESTS
+   ===================================================================== */
+const NIVEAUX = [
+  { v: 'facile', l: 'Facile, contrôlé', c: 'var(--vert)' },
+  { v: 'limite', l: 'Possible mais limité / ça tire', c: 'var(--orange)' },
+  { v: 'difficile', l: 'Très difficile ou douloureux', c: 'var(--rouge)' }
+];
+
+const TESTS = [
+  {
+    id: 'face', partie: 'photos', titre: 'Photo de face', duree: '1 min', schema: 'face',
+    but: 'Je regarde <b>la symétrie de ton corps</b> : tête, épaules, bassin, genoux et pieds.',
+    pas: [
+      'Pieds nus sur ta croix, écartés largeur de hanches, bras le long du corps.',
+      'Regard droit devant, tu respires et tu relâches tout. Ne te grandis pas.',
+      'Retardateur 10 s : une photo, de la tête aux pieds.'
+    ],
+    camera: 'Téléphone posé à hauteur du nombril, face à toi, à 2,5–3 m.',
+    observe: [
+      'Tête inclinée ou tournée d\'un côté',
+      'Une épaule ou une main plus basse que l\'autre',
+      'Triangle de taille (espace bras–taille) plus grand d\'un côté : bassin décalé',
+      'Bassin à niveau ou non',
+      'Genoux qui rentrent (valgus) ou s\'écartent (varus), rotules tournées vers l\'intérieur',
+      'Pieds ouverts « en canard », voûte plantaire qui s\'affaisse'
+    ],
+    slots: [{ id: 'face', label: 'Photo de face', type: 'photo' }]
+  },
+  {
+    id: 'dos', partie: 'photos', titre: 'Photo de dos', duree: '1 min', schema: 'dos',
+    but: 'Je regarde <b>tes omoplates, ta colonne et tes appuis</b> : c\'est là qu\'apparaissent les déséquilibres gauche/droite.',
+    pas: [
+      'Quart de tour… deux fois : tu tournes le dos au téléphone, pieds toujours sur la croix.',
+      'Cheveux attachés au-dessus de la nuque, bras relâchés.',
+      'Retardateur 10 s : une photo.'
+    ],
+    camera: 'Même position du téléphone que pour la photo de face.',
+    observe: [
+      'Omoplates décollées, à des hauteurs différentes, trop écartées ou trop serrées',
+      'Colonne droite ou en « S » (signe possible de scoliose)',
+      'Plis de taille asymétriques',
+      'Plis sous les fessiers à des hauteurs différentes',
+      'Tendons d\'Achille droits ou talons qui s\'écroulent vers l\'intérieur (pronation)'
+    ],
+    slots: [{ id: 'dos', label: 'Photo de dos', type: 'photo' }]
+  },
+  {
+    id: 'profils', partie: 'photos', titre: 'Photos de profil (droit et gauche)', duree: '2 min', schema: 'profil',
+    but: 'De profil, je vois <b>la position de ton bassin, la courbure de ton dos et la place de ta tête</b> : c\'est la vue la plus importante pour tes fessiers.',
+    pas: [
+      'Quart de tour : ton épaule droite face au téléphone. Bras le long du corps.',
+      'Regard à l\'horizontale, ventre relâché (on ne le rentre pas !).',
+      'Photo. Puis un demi-tour pour le profil gauche, nouvelle photo.'
+    ],
+    camera: 'Téléphone toujours à hauteur du nombril. Vérifie que tes pieds et le haut de ta tête sont dans le cadre.',
+    observe: [
+      'Alignement oreille – épaule – hanche – genou – cheville (fil à plomb)',
+      'Tête projetée en avant, épaules enroulées',
+      'Dos rond (cyphose) ou creux exagéré (hyperlordose)',
+      'Bassin basculé vers l\'avant (fesses en arrière, ventre qui pousse) ou vers l\'arrière (fesses « rentrées », dos plat)',
+      'Genoux en hyperextension (qui partent vers l\'arrière)',
+      'Poids sur les talons ou sur l\'avant des pieds'
+    ],
+    slots: [
+      { id: 'profil-d', label: 'Profil droit', type: 'photo' },
+      { id: 'profil-g', label: 'Profil gauche', type: 'photo' }
+    ]
+  },
+  {
+    id: 'squat', partie: 'mobilite', titre: 'Squat bras tendus', duree: '3 min', schema: 'squat', cotes: false,
+    but: 'Le test roi : en un seul mouvement, il montre <b>la mobilité de tes chevilles, hanches, haut du dos et épaules</b>, et le contrôle de tes genoux.',
+    pas: [
+      'Pieds nus, écartés largeur d\'épaules, orteils légèrement ouverts, comme tu le sens.',
+      'Bras tendus au-dessus de la tête, à côté des oreilles.',
+      'Descends lentement (3 secondes) aussi bas que possible, talons au sol, bras tendus, puis remonte.',
+      '5 répétitions, sans chercher à bien faire : fais comme ça vient.'
+    ],
+    camera: '2 vidéos : une de face, une de profil. Téléphone à hauteur de hanche, corps entier dans le cadre, bras compris.',
+    observe: [
+      'Talons qui décollent : chevilles raides',
+      'Genoux qui rentrent : moyen fessier faible ou manque de contrôle',
+      'Buste qui plonge vers l\'avant : chevilles, hanches ou haut du dos peu mobiles',
+      'Bras qui tombent devant : grand dorsal / pectoraux raides, haut du dos bloqué',
+      'Bas du dos qui s\'arrondit en bas du mouvement',
+      'Poids qui part d\'un côté : asymétrie'
+    ],
+    slots: [
+      { id: 'squat-face', label: 'Vidéo de face', type: 'video' },
+      { id: 'squat-profil', label: 'Vidéo de profil', type: 'video' }
+    ]
+  },
+  {
+    id: 'flexion', partie: 'mobilite', titre: 'Flexion avant jambes tendues', duree: '2 min', schema: 'flexion',
+    but: 'Je mesure <b>la souplesse de ta chaîne arrière</b> (ischios, mollets, bas du dos) et, vue de dos, je vérifie <b>la symétrie de ta colonne</b> (test d\'Adams).',
+    pas: [
+      'Debout, pieds joints, jambes tendues sans bloquer les genoux.',
+      'Expire et enroule-toi doucement vers le bas, bras relâchés, sans rebond.',
+      'Tiens 3 secondes en bas, puis remonte en déroulant le dos.',
+      'Mesure la distance entre le bout de tes doigts et le sol (0 si tu touches, nombre négatif si tu poses les paumes).'
+    ],
+    camera: 'Une vidéo de profil, puis une photo de DOS en position basse (le téléphone voit ton dos, retardateur ou quelqu\'un qui t\'aide).',
+    observe: [
+      'Où se fait la flexion : bascule du bassin (hanches) ou seulement le dos qui s\'arrondit',
+      'Genoux qui plient pour compenser',
+      'Vue de dos : un côté des côtes ou des lombaires plus haut que l\'autre → asymétrie à surveiller',
+      'Ischios raides : facteur classique de bas du dos qui tire au soulevé de terre jambes tendues'
+    ],
+    mesures: [{ id: 'doigts-sol', label: 'Distance doigts–sol', unite: 'cm' }],
+    slots: [
+      { id: 'flexion-profil', label: 'Vidéo de profil', type: 'video' },
+      { id: 'flexion-dos', label: 'Photo de dos en bas', type: 'photo' }
+    ]
+  },
+  {
+    id: 'cheville', partie: 'mobilite', titre: 'Mobilité de cheville : genou au mur', duree: '3 min', schema: 'cheville', cotes: true,
+    but: 'La flexion de ta cheville décide de <b>la profondeur de ton squat et de tes fentes</b>, et de la place de tes genoux.',
+    pas: [
+      'Face au mur, en fente : pied avant nu, gros orteil à 10 cm du mur, genou arrière au sol si tu veux.',
+      'Pousse le genou avant vers le mur, dans l\'axe du 2e orteil, sans que le talon décolle.',
+      'Le genou touche ? Recule le pied d\'1 cm et recommence. Garde la plus grande distance orteil–mur où le genou touche encore, talon au sol.',
+      'Fais les deux côtés.'
+    ],
+    camera: 'Une photo de profil par côté, en position maximale (côté du pied avant).',
+    repere: '10 cm et plus : très bien · 7 à 9 cm : correct · moins de 7 cm : cheville raide, on va la travailler.',
+    observe: [
+      'Distance inférieure à 7–8 cm : dorsiflexion limitée',
+      'Plus de 2 cm d\'écart entre gauche et droite',
+      'Genou qui part vers l\'intérieur pour toucher le mur',
+      'Pied qui s\'écrase (voûte qui s\'effondre) pour gagner de l\'amplitude'
+    ],
+    mesures: [
+      { id: 'cheville-g', label: 'Pied gauche', unite: 'cm' },
+      { id: 'cheville-d', label: 'Pied droit', unite: 'cm' }
+    ],
+    slots: [
+      { id: 'cheville-g', label: 'Pied gauche devant', type: 'photo' },
+      { id: 'cheville-d', label: 'Pied droit devant', type: 'photo' }
+    ]
+  },
+  {
+    id: 'thomas', partie: 'mobilite', titre: 'Test de Thomas : fléchisseurs de hanche', duree: '3 min', schema: 'thomas', cotes: true,
+    but: 'Des fléchisseurs de hanche raides (psoas, quadriceps) <b>tirent ton bassin vers l\'avant</b> : cambrure, lombaires qui travaillent au hip thrust, fessiers qui n\'arrivent pas en fin de mouvement.',
+    pas: [
+      'Assieds-toi tout au bord d\'un lit ferme ou d\'une table solide.',
+      'Allonge-toi sur le dos en ramenant les deux genoux contre ta poitrine.',
+      'Garde un genou serré contre toi (le bas du dos reste plaqué) et laisse l\'autre jambe descendre dans le vide, complètement relâchée.',
+      'Reste 5 secondes, photo, puis change de côté.'
+    ],
+    camera: 'Photo de profil, téléphone à hauteur de la table, du côté de la jambe qui pend.',
+    observe: [
+      'Cuisse au-dessus de l\'horizontale : psoas (fléchisseur de hanche) raide',
+      'Genou qui se tend (angle supérieur à 90°) : droit fémoral (quadriceps) raide',
+      'Cuisse qui part vers l\'extérieur : TFL / bandelette ilio-tibiale tendus',
+      'Différence entre gauche et droite'
+    ],
+    slots: [
+      { id: 'thomas-g', label: 'Jambe gauche dans le vide', type: 'photo' },
+      { id: 'thomas-d', label: 'Jambe droite dans le vide', type: 'photo' }
+    ]
+  },
+  {
+    id: 'hanche', partie: 'mobilite', titre: 'Rotations de hanche assise', duree: '3 min', schema: 'hanche', cotes: true,
+    but: 'Les rotations de hanche influencent <b>ton squat, tes fentes et ton hip thrust</b>. Une rotation interne limitée se compense souvent par les genoux ou le bas du dos.',
+    pas: [
+      'Assieds-toi au bord d\'une table ou d\'un plan de travail, cuisses parallèles, genoux à 90°, mains posées à côté de toi.',
+      'Rotation interne : sans bouger la cuisse ni décoller les fesses, emmène le pied vers l\'extérieur, aussi loin que possible.',
+      'Rotation externe : ramène ce pied vers l\'intérieur, devant l\'autre jambe.',
+      'Les deux jambes. Filme tout dans une seule vidéo.'
+    ],
+    camera: 'Vidéo de face, téléphone à hauteur des genoux.',
+    repere: 'Repères moyens : rotation interne 35 à 45°, rotation externe 40 à 50°.',
+    observe: [
+      'Rotation interne inférieure à 30° : capsule postérieure / rotateurs externes raides',
+      'Fesse qui décolle ou buste qui penche : compensation',
+      'Différence nette entre les deux hanches',
+      'Pincement dans l\'aine en fin de mouvement : à surveiller'
+    ],
+    slots: [{ id: 'hanche-video', label: 'Vidéo des 4 rotations', type: 'video' }]
+  },
+  {
+    id: 'epaules', partie: 'mobilite', titre: 'Bras au-dessus de la tête, dos au mur', duree: '2 min', schema: 'epaules', cotes: true,
+    but: 'Je teste <b>la mobilité de tes épaules et de ton haut du dos</b>, utile pour tes tirages, tes développés et ta posture (épaules enroulées).',
+    pas: [
+      'Dos au mur, talons à 10 cm : fesses, omoplates et arrière de la tête contre le mur.',
+      'Plaque le bas du dos : ta main passe à peine entre le mur et tes lombaires.',
+      'Bras tendus, pouces vers le haut, monte les bras devant toi jusqu\'au-dessus de la tête et essaie de toucher le mur avec les pouces.',
+      'Le bas du dos ne décolle pas. 3 répétitions lentes.'
+    ],
+    camera: 'Vidéo de profil, téléphone à hauteur de poitrine.',
+    observe: [
+      'Pouces au mur sans cambrer : mobilité OK',
+      'Bras bloqués avant le mur : grand dorsal, pectoraux ou haut du dos raides',
+      'Lombaires qui décollent : compensation par la cambrure',
+      'Un bras qui monte moins que l\'autre'
+    ],
+    slots: [{ id: 'epaules-video', label: 'Vidéo de profil', type: 'video' }]
+  },
+  {
+    id: 'apley', partie: 'mobilite', titre: 'Mains dans le dos', duree: '2 min', schema: 'apley', cotes: true,
+    but: 'Ce test combine les rotations de l\'épaule et révèle vite <b>une épaule plus raide que l\'autre</b>.',
+    pas: [
+      'Debout, monte une main par-dessus l\'épaule, paume contre le dos.',
+      'Descends l\'autre main dans le bas du dos, dos de la main contre la colonne.',
+      'Fais glisser les mains l\'une vers l\'autre sans forcer.',
+      'Mesure l\'écart entre tes majeurs (0 s\'ils se touchent, négatif s\'ils se chevauchent). Inverse les bras.'
+    ],
+    camera: 'Une photo de dos par côté.',
+    repere: 'Doigts qui se touchent ou se chevauchent : bien · plus de 5 cm : raideur · plus de 5 cm d\'écart entre les deux côtés : asymétrie.',
+    observe: [
+      'Écart supérieur à 5 cm',
+      'Différence importante gauche/droite (souvent côté dominant)',
+      'Épaule qui monte, buste qui se tord pour compenser'
+    ],
+    mesures: [
+      { id: 'apley-d', label: 'Main droite en haut', unite: 'cm' },
+      { id: 'apley-g', label: 'Main gauche en haut', unite: 'cm' }
+    ],
+    slots: [
+      { id: 'apley-d', label: 'Main droite en haut', type: 'photo' },
+      { id: 'apley-g', label: 'Main gauche en haut', type: 'photo' }
+    ]
+  },
+  {
+    id: 'unipodal', partie: 'mobilite', titre: 'Squat sur une jambe', duree: '3 min', schema: 'unipodal', cotes: true,
+    but: 'Je regarde <b>la stabilité de ton bassin et de ton genou</b> : le travail de ton moyen fessier, clé pour les fentes, step-up et squats bulgares.',
+    pas: [
+      'Debout sur une jambe, l\'autre légèrement devant toi, mains sur les hanches.',
+      'Plie le genou d\'appui comme pour t\'asseoir sur une chaise haute, puis remonte.',
+      '5 répétitions lentes par jambe.',
+      'Tu perds l\'équilibre ? Une main sur un mur, ce n\'est pas grave, note-le.'
+    ],
+    camera: 'Une vidéo de face avec les deux jambes, téléphone à hauteur de hanche.',
+    observe: [
+      'Genou qui rentre vers l\'intérieur (valgus dynamique) : moyen fessier, contrôle',
+      'Bassin qui chute du côté de la jambe levée (signe de Trendelenburg)',
+      'Buste qui penche sur le côté pour compenser',
+      'Voûte plantaire qui s\'écrase',
+      'Équilibre instable, différence gauche/droite'
+    ],
+    slots: [{ id: 'unipodal-video', label: 'Vidéo de face (2 jambes)', type: 'video' }]
+  },
+  {
+    id: 'pont', partie: 'mobilite', titre: 'Pont fessier sur une jambe', duree: '2 min', schema: 'pont', cotes: true,
+    but: 'Je vérifie que <b>tes fessiers savent tendre ta hanche</b> sans que les ischios ou le bas du dos prennent le relais.',
+    pas: [
+      'Allongée sur le dos, genoux pliés, pieds à plat près des fesses, bras au sol.',
+      'Tends une jambe dans le prolongement de la cuisse opposée.',
+      'Pousse dans le talon au sol et monte le bassin jusqu\'à aligner épaules, hanches et genou. Tiens 10 secondes.',
+      'Change de côté et note où tu as senti le travail.'
+    ],
+    camera: 'Vidéo de profil, téléphone posé au sol à 1,5 m.',
+    observe: [
+      'Bassin qui penche du côté de la jambe tendue : stabilité',
+      'Hanche qui ne monte pas jusqu\'à l\'alignement : fessiers faibles ou fléchisseurs raides',
+      'Crampe dans l\'ischio : ischios qui compensent',
+      'Bas du dos qui se creuse : lombaires qui compensent'
+    ],
+    sensations: ['Fessier', 'Ischios (arrière de cuisse)', 'Bas du dos', 'Crampe', 'Quadriceps'],
+    slots: [{ id: 'pont-video', label: 'Vidéo de profil (2 côtés)', type: 'video' }]
+  },
+  {
+    id: 'diastasis', partie: 'mobilite', titre: 'Auto-test diastasis', duree: '2 min', schema: 'diastasis', optionnel: true,
+    sousTitre: 'Si tu as été enceinte',
+    but: 'Après une grossesse, les abdominaux peuvent rester écartés. Ça change <b>ton gainage, tes exercices d\'abdos et la gestion des charges lourdes</b>.',
+    pas: [
+      'Allongée sur le dos, genoux pliés, pieds au sol.',
+      'Pose deux doigts à plat, à l\'horizontale, juste au-dessus du nombril.',
+      'Expire et décolle doucement la tête et les épaules (petit crunch).',
+      'Compte combien de doigts rentrent dans l\'écart entre les muscles, et sens si le fond est ferme ou mou. Recommence au nombril et 3 cm en dessous.'
+    ],
+    camera: 'Pas de photo obligatoire. Une courte vidéo du ventre pendant le crunch m\'aide si tu es à l\'aise.',
+    repere: '2 doigts ou moins, fond ferme : normal · plus de 2 doigts, ou ventre qui forme un « cône » : on adapte ton gainage. Parles-en aussi à ta sage-femme ou à un kiné.',
+    observe: [
+      'Écart supérieur à 2 doigts (≈ 2 cm)',
+      'Fond mou, sans tension',
+      'Ventre qui pointe en cône ou en dôme pendant l\'effort'
+    ],
+    mesures: [
+      { id: 'diastasis-haut', label: 'Au-dessus du nombril', unite: 'doigts' },
+      { id: 'diastasis-nombril', label: 'Au nombril', unite: 'doigts' },
+      { id: 'diastasis-bas', label: 'Sous le nombril', unite: 'doigts' }
+    ],
+    slots: [{ id: 'diastasis-video', label: 'Vidéo du ventre', type: 'video', optionnel: true }]
+  }
+];
+
+const ZONES = [
+  { id: 'cou', nom: 'Cou / nuque', x: 120, y: 54 },
+  { id: 'epaule-d', nom: 'Épaule droite', x: 94, y: 66 },
+  { id: 'epaule-g', nom: 'Épaule gauche', x: 146, y: 66 },
+  { id: 'poignet-d', nom: 'Poignet / main droite', x: 84, y: 140 },
+  { id: 'poignet-g', nom: 'Poignet / main gauche', x: 156, y: 140 },
+  { id: 'ventre', nom: 'Ventre / abdos', x: 120, y: 104 },
+  { id: 'aine-d', nom: 'Hanche / aine droite', x: 106, y: 134 },
+  { id: 'aine-g', nom: 'Hanche / aine gauche', x: 134, y: 134 },
+  { id: 'genou-d', nom: 'Genou droit', x: 108, y: 178 },
+  { id: 'genou-g', nom: 'Genou gauche', x: 132, y: 178 },
+  { id: 'pied-d', nom: 'Cheville / pied droit', x: 106, y: 218 },
+  { id: 'pied-g', nom: 'Cheville / pied gauche', x: 134, y: 218 },
+  { id: 'haut-dos', nom: 'Haut du dos', x: 360, y: 80 },
+  { id: 'lombaires', nom: 'Bas du dos (lombaires)', x: 360, y: 116 },
+  { id: 'fessier-g', nom: 'Fessier gauche', x: 348, y: 140 },
+  { id: 'fessier-d', nom: 'Fessier droit', x: 372, y: 140 },
+  { id: 'ischio-g', nom: 'Arrière de cuisse gauche', x: 348, y: 166 },
+  { id: 'ischio-d', nom: 'Arrière de cuisse droite', x: 372, y: 166 },
+  { id: 'mollet-g', nom: 'Mollet / Achille gauche', x: 348, y: 202 },
+  { id: 'mollet-d', nom: 'Mollet / Achille droit', x: 372, y: 202 }
+];
+const QUAND = ['Tout le temps', 'À l\'entraînement', 'Après l\'entraînement', 'Le matin', 'Assise longtemps', 'En marchant'];
+
+/* =====================================================================
+   OUTILS
+   ===================================================================== */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const mo = (n) => n > 1048576 ? `${(n / 1048576).toFixed(1).replace('.', ',')} Mo` : `${Math.max(1, Math.round(n / 1024))} Ko`;
+let minuterieToast;
+function toast(msg) {
+  const el = $('#toast'); el.textContent = msg; el.classList.add('visible');
+  clearTimeout(minuterieToast); minuterieToast = setTimeout(() => el.classList.remove('visible'), 3200);
+}
+const lire = (o, chemin) => chemin.split('.').reduce((a, k) => a?.[k], o);
+function ecrire(o, chemin, v) {
+  const k = chemin.split('.'); const fin = k.pop();
+  const cible = k.reduce((a, c) => (a[c] ??= {}), o); cible[fin] = v;
+}
+
+/* Sauvegarde : réponses dans localStorage, fichiers dans IndexedDB */
+const CLE = 'bilan-postural-v1';
+let etat = { profil: {}, tests: {}, quotidien: {}, sport: {}, historique: {}, objectifs: {}, douleurs: {} };
+try { etat = { ...etat, ...JSON.parse(localStorage.getItem(CLE) || '{}') }; } catch {}
+let minuterieSauvegarde;
+function sauver() {
+  clearTimeout(minuterieSauvegarde);
+  minuterieSauvegarde = setTimeout(() => { try { localStorage.setItem(CLE, JSON.stringify(etat)); } catch {} }, 250);
+  majAvancement();
+}
+
+const Fichiers = (() => {
+  let base = null;
+  const ouvrir = () => base ??= new Promise((ok, ko) => {
+    const r = indexedDB.open('bilan-postural', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('fichiers');
+    r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error);
+  });
+  const op = async (mode, fn) => {
+    const db = await ouvrir();
+    return new Promise((ok, ko) => {
+      const tx = db.transaction('fichiers', mode); const req = fn(tx.objectStore('fichiers'));
+      tx.oncomplete = () => ok(req?.result); tx.onerror = () => ko(tx.error);
+    });
+  };
+  return {
+    lire: (k) => op('readonly', s => s.get(k)).catch(() => null),
+    ecrire: (k, v) => op('readwrite', s => s.put(v, k)).catch(() => null),
+    effacer: (k) => op('readwrite', s => s.delete(k)).catch(() => null),
+    vider: () => op('readwrite', s => s.clear()).catch(() => null)
+  };
+})();
+const fichiers = new Map(); // slotId → File
+
+async function allegerPhoto(f) {
+  if (!f.type.startsWith('image/') || f.size < 700 * 1024) return f;
+  try {
+    const img = await createImageBitmap(f, { imageOrientation: 'from-image' });
+    const s = Math.min(1, 1800 / Math.max(img.width, img.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    const b = await new Promise(r => c.toBlob(r, 'image/jpeg', .86));
+    if (!b || b.size >= f.size) return f;
+    return new File([b], (f.name.replace(/\.[^.]+$/, '') || 'photo') + '.jpg', { type: 'image/jpeg' });
+  } catch { return f; }
+}
+
+/* =====================================================================
+   RENDU DES TESTS
+   ===================================================================== */
+const TOUS_SLOTS = TESTS.flatMap(tst => tst.slots.map(s => ({ ...s, test: tst })));
+const etatTest = (id) => (etat.tests[id] ??= {});
+
+function htmlTest(tst, i) {
+  const n = i + 1;
+  const total = tst.slots.filter(s => !s.optionnel).length;
+  const mesures = (tst.mesures || []).map(me => `
+    <label class="champ" style="margin-top:0"><span>${me.label} <small>(${me.unite})</small></span>
+      <input type="number" inputmode="decimal" step="0.5" data-mesure="${me.id}" /></label>`).join('');
+  return `
+  <article class="test" id="test-${tst.id}" data-test="${tst.id}">
+    <button class="test-tete" type="button" aria-expanded="false" aria-controls="corps-${tst.id}">
+      <span class="num">${n}</span>
+      <span class="titres"><h3>${tst.titre}</h3><small>${tst.sousTitre ? tst.sousTitre + ' · ' : ''}${tst.duree}${total ? ` · ${total} fichier${total > 1 ? 's' : ''}` : ''}${tst.optionnel ? ' · facultatif' : ''}</small></span>
+      <span class="statut">À faire</span>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="test-corps" id="corps-${tst.id}" hidden>
+      <div class="test-intro">
+        <figure class="schema"><svg viewBox="0 0 240 250" role="img" aria-label="Schéma : ${esc(tst.titre)}">${SCHEMAS[tst.schema]()}</svg></figure>
+        <div>
+          <p class="but">${tst.but}</p>
+          <ol class="pas">${tst.pas.map(p => `<li>${p}</li>`).join('')}</ol>
+          <div class="camera"><span>📱</span><span>${tst.camera}</span></div>
+        </div>
+      </div>
+      ${tst.repere ? `<div class="encadre vert"><span class="etiquette">Repères</span><p>${tst.repere}</p></div>` : ''}
+      <div class="encadre"><span class="etiquette">Ce que je regarde</span><ul>${tst.observe.map(o => `<li>${o}</li>`).join('')}</ul></div>
+
+      <div class="a-toi">
+        <h4>À toi</h4>
+        <div class="depots">${tst.slots.map(s => `<div class="depot vide" data-slot="${s.id}"></div>`).join('')}</div>
+        ${tst.partie === 'mobilite' ? `
+          <div class="champ"><span class="legende">Comment ça s'est passé ?</span>
+            <div class="choix niveaux">${NIVEAUX.map(nv => `<label><input type="radio" name="niv-${tst.id}" value="${nv.v}" /><span style="--c:${nv.c}" data-pt="">${nv.l}</span></label>`).join('')}</div>
+          </div>` : ''}
+        ${mesures ? `<div class="ligne-2" style="margin-top:14px">${mesures}</div>` : ''}
+        ${tst.cotes ? `
+          <div class="champ"><span class="legende">Un côté est plus raide ou moins stable ?</span>
+            <div class="choix">${['Non, pareil', 'Gauche', 'Droite'].map(c => `<label><input type="radio" name="cote-${tst.id}" value="${c}" /><span>${c}</span></label>`).join('')}</div>
+          </div>` : ''}
+        ${tst.sensations ? `
+          <div class="champ"><span class="legende">Où as-tu senti le travail ?</span>
+            <div class="choix">${tst.sensations.map(c => `<label><input type="checkbox" name="sens-${tst.id}" value="${c}" /><span>${c}</span></label>`).join('')}</div>
+          </div>` : ''}
+        ${tst.partie === 'mobilite' ? `
+          <div class="champ"><span class="legende">Douleur pendant le test ?</span>
+            <div class="choix">${['Non', 'Oui'].map(c => `<label><input type="radio" name="dl-${tst.id}" value="${c}" /><span>${c}</span></label>`).join('')}</div>
+          </div>` : ''}
+        <label class="champ"><span>Une remarque ? <small>(facultatif)</small></span><input type="text" data-note placeholder="${tst.partie === 'mobilite' ? 'ex. ça tire derrière le genou gauche' : 'ex. j\'ai une jambe plus courte'}" /></label>
+      </div>
+      <div class="suivant"><button class="btn btn-petit" type="button" data-suivant>${'Test suivant →'}</button></div>
+    </div>
+  </article>`;
+}
+
+function htmlDepot(slot) {
+  const f = fichiers.get(slot.id);
+  const type = slot.type === 'video' ? 'Vidéo' : 'Photo';
+  if (!f) {
+    return `<span class="quoi">${slot.label}<em>${type}${slot.optionnel ? ' · facultatif' : ''}</em></span>
+      <input type="file" id="f-${slot.id}" accept="image/*,video/*" />
+      <label class="ajout" for="f-${slot.id}">${slot.type === 'video' ? '🎥 Ajouter la vidéo' : '📸 Ajouter la photo'}</label>`;
+  }
+  const url = URL.createObjectURL(f);
+  const media = f.type.startsWith('video/')
+    ? `<video src="${url}#t=0.1" controls playsinline muted preload="metadata"></video>`
+    : `<img src="${url}" alt="${esc(slot.label)}" />`;
+  return `<span class="quoi">${slot.label}<em>✓ ajouté</em></span>
+    <div class="apercu">${media}</div>
+    <div class="infos"><span>${mo(f.size)}</span>
+      <span><input type="file" id="f-${slot.id}" accept="image/*,video/*" /><label for="f-${slot.id}" style="cursor:pointer;font-weight:700;color:var(--neon-clair);font-size:13px;padding:6px">Remplacer</label>
+      <button type="button" data-retirer>Retirer</button></span></div>`;
+}
+
+function rendreDepot(slotId) {
+  const slot = TOUS_SLOTS.find(s => s.id === slotId);
+  const el = $(`.depot[data-slot="${slotId}"]`);
+  if (!el || !slot) return;
+  $$('img, video', el).forEach(m => m.src.startsWith('blob:') && URL.revokeObjectURL(m.src.split('#')[0]));
+  el.classList.toggle('vide', !fichiers.has(slotId));
+  el.innerHTML = htmlDepot(slot);
+}
+
+async function ajouterFichier(slotId, f) {
+  if (!f) return;
+  if (!/^(image|video)\//.test(f.type) && !/\.(heic|heif|mov|mp4|jpe?g|png)$/i.test(f.name)) { toast('Choisis une photo ou une vidéo.'); return; }
+  const el = $(`.depot[data-slot="${slotId}"]`);
+  el.insertAdjacentHTML('beforeend', '<span class="attente">Préparation…</span>');
+  const pret = await allegerPhoto(f);
+  if (pret.type.startsWith('video/') && pret.size > 300 * 1024 * 1024) toast('Vidéo très lourde : filme plutôt 10 à 20 secondes en 1080p.');
+  fichiers.set(slotId, pret);
+  await Fichiers.ecrire(slotId, pret);
+  rendreDepot(slotId);
+  majTest(TOUS_SLOTS.find(s => s.id === slotId).test.id);
+  majAvancement();
+  toast('Ajouté 💜');
+}
+
+function brancherTest(art) {
+  const tst = TESTS.find(x => x.id === art.dataset.test);
+  const e = etatTest(tst.id);
+  // Restaure
+  $$('input[type=radio], input[type=checkbox]', art).forEach(inp => {
+    const [cle] = inp.name.split('-');
+    const champ = { niv: 'niveau', cote: 'cote', dl: 'douleur', sens: 'sensations' }[cle];
+    if (champ === 'sensations') inp.checked = (e.sensations || []).includes(inp.value);
+    else if (champ) inp.checked = e[champ] === inp.value;
+  });
+  $$('[data-mesure]', art).forEach(inp => inp.value = e.mesures?.[inp.dataset.mesure] ?? '');
+  const note = $('[data-note]', art); note.value = e.note || '';
+
+  art.addEventListener('change', async (ev) => {
+    const inp = ev.target;
+    if (inp.type === 'file') {
+      const slotId = inp.closest('.depot').dataset.slot;
+      await ajouterFichier(slotId, inp.files[0]);
+      return;
+    }
+    if (inp.name) {
+      const [cle] = inp.name.split('-');
+      const champ = { niv: 'niveau', cote: 'cote', dl: 'douleur', sens: 'sensations' }[cle];
+      if (champ === 'sensations') e.sensations = $$(`input[name="${inp.name}"]:checked`, art).map(x => x.value);
+      else if (champ) e[champ] = inp.value;
+    }
+    majTest(tst.id); sauver();
+  });
+  art.addEventListener('input', (ev) => {
+    const inp = ev.target;
+    if (inp.dataset.mesure) { (e.mesures ??= {})[inp.dataset.mesure] = inp.value; sauver(); }
+    if ('note' in inp.dataset) { e.note = inp.value; sauver(); }
+  });
+  art.addEventListener('click', async (ev) => {
+    if (ev.target.closest('.test-tete')) basculer(art);
+    if (ev.target.closest('[data-retirer]')) {
+      const slotId = ev.target.closest('.depot').dataset.slot;
+      fichiers.delete(slotId); await Fichiers.effacer(slotId);
+      rendreDepot(slotId); majTest(tst.id); majAvancement();
+    }
+    if (ev.target.closest('[data-suivant]')) {
+      const tous = $$('.test');
+      const suivant = tous[tous.indexOf(art) + 1];
+      basculer(art, false);
+      if (suivant) { basculer(suivant, true); requestAnimationFrame(() => suivant.scrollIntoView({ behavior: 'smooth', block: 'start' })); }
+      else $('#ressentis').scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+}
+
+function basculer(art, ouvrir) {
+  const ouvert = ouvrir ?? !art.classList.contains('ouvert');
+  art.classList.toggle('ouvert', ouvert);
+  $('.test-tete', art).setAttribute('aria-expanded', ouvert);
+  $('.test-corps', art).hidden = !ouvert;
+}
+
+function testComplet(tst) {
+  const e = etat.tests[tst.id] || {};
+  const slotsOk = tst.slots.filter(s => !s.optionnel).every(s => fichiers.has(s.id));
+  if (tst.optionnel) return slotsOk && (Object.values(e.mesures || {}).some(v => v !== '') || fichiers.has(tst.slots[0].id));
+  return slotsOk && (tst.partie === 'photos' || !!e.niveau);
+}
+function majTest(id) {
+  const tst = TESTS.find(x => x.id === id);
+  const art = $(`#test-${id}`);
+  const ok = testComplet(tst);
+  art.classList.toggle('fait', ok);
+  const nb = tst.slots.filter(s => fichiers.has(s.id)).length;
+  $('.statut', art).textContent = ok ? '✓ Fait' : nb ? `${nb}/${tst.slots.length}` : (tst.optionnel ? 'Facultatif' : 'À faire');
+}
+
+/* Avancement global */
+function majAvancement() {
+  const obligatoires = TESTS.filter(x => !x.optionnel);
+  const faits = obligatoires.filter(testComplet).length;
+  const questionnaire = ['quotidien.assise', 'sport.frequence', 'historique.grossesse'].filter(c => lire(etat, c)).length / 3;
+  const profil = etat.profil.prenom ? 1 : 0;
+  const pct = Math.round(((faits + questionnaire + profil) / (obligatoires.length + 2)) * 100);
+  $('#txt-avancement').textContent = `${pct} %`;
+  $('#anneau').style.strokeDashoffset = 94.25 * (1 - pct / 100);
+  rendreRecap();
+}
+
+/* =====================================================================
+   QUESTIONNAIRE + CARTE DES DOULEURS
+   ===================================================================== */
+function brancherQuestionnaire() {
+  $$('[data-champ]').forEach(inp => {
+    inp.value = lire(etat, inp.dataset.champ) ?? '';
+    inp.addEventListener('input', () => { ecrire(etat, inp.dataset.champ, inp.value); sauver(); if (inp.id === 'prenom') saluer(); });
+  });
+  $$('[data-choix], [data-multi]').forEach(bloc => {
+    const multi = !!bloc.dataset.multi; const chemin = bloc.dataset.multi || bloc.dataset.choix;
+    const nom = chemin.replace('.', '-');
+    bloc.innerHTML = bloc.dataset.options.split('|').map(o =>
+      `<label><input type="${multi ? 'checkbox' : 'radio'}" name="${nom}" value="${esc(o)}" /><span>${esc(o)}</span></label>`).join('');
+    const val = lire(etat, chemin);
+    $$('input', bloc).forEach(i => i.checked = multi ? (val || []).includes(i.value) : val === i.value);
+    bloc.addEventListener('change', () => {
+      ecrire(etat, chemin, multi ? $$('input:checked', bloc).map(i => i.value) : $('input:checked', bloc)?.value);
+      sauver();
+    });
+  });
+}
+
+function rendreCarteDouleurs() {
+  const svg = $('#carte-douleurs');
+  const fig = silhouetteFace();
+  svg.innerHTML = `<g opacity=".55">${fig}</g><g opacity=".55" transform="translate(240 0)">${fig}</g>` +
+    t(120, 246, 'de face', 't-fort') + t(360, 246, 'de dos', 't-fort') +
+    ZONES.map(z => `<g class="zone" role="button" tabindex="0" data-zone="${z.id}" aria-label="${esc(z.nom)}" aria-pressed="${!!etat.douleurs[z.id]}"><circle cx="${z.x}" cy="${z.y}" r="10"/><title>${esc(z.nom)}</title></g>`).join('');
+  const basculerZone = (g) => {
+    const id = g.dataset.zone;
+    if (etat.douleurs[id]) delete etat.douleurs[id]; else etat.douleurs[id] = { intensite: 4, quand: '' };
+    g.setAttribute('aria-pressed', !!etat.douleurs[id]); sauver(); rendreListeDouleurs();
+  };
+  svg.addEventListener('click', (e) => { const g = e.target.closest('.zone'); if (g) basculerZone(g); });
+  svg.addEventListener('keydown', (e) => { const g = e.target.closest('.zone'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); basculerZone(g); } });
+  rendreListeDouleurs();
+}
+function rendreListeDouleurs() {
+  const ids = ZONES.filter(z => etat.douleurs[z.id]);
+  $('#aucune-douleur').hidden = ids.length > 0;
+  $('#liste-douleurs').innerHTML = ids.map(z => {
+    const d = etat.douleurs[z.id];
+    return `<div class="douleur" data-zone="${z.id}">
+      <div class="haut"><span>${z.nom}</span><button type="button" data-retirer-zone>Retirer ✕</button></div>
+      <div class="reglages">
+        <label class="champ" style="margin-top:0"><span>Intensité : <b data-val>${d.intensite}</b>/10</span><input type="range" min="1" max="10" value="${d.intensite}" data-intensite /></label>
+        <label class="champ" style="margin-top:0"><span>Surtout…</span><select data-quand><option value="">Choisis</option>${QUAND.map(q => `<option ${d.quand === q ? 'selected' : ''}>${esc(q)}</option>`).join('')}</select></label>
+      </div></div>`;
+  }).join('');
+}
+function brancherListeDouleurs() {
+  const liste = $('#liste-douleurs');
+  liste.addEventListener('input', (e) => {
+    const bloc = e.target.closest('.douleur'); const d = etat.douleurs[bloc.dataset.zone];
+    if ('intensite' in e.target.dataset) { d.intensite = +e.target.value; $('[data-val]', bloc).textContent = d.intensite; }
+    if ('quand' in e.target.dataset) d.quand = e.target.value;
+    sauver();
+  });
+  liste.addEventListener('change', (e) => { if ('quand' in e.target.dataset) { etat.douleurs[e.target.closest('.douleur').dataset.zone].quand = e.target.value; sauver(); } });
+  liste.addEventListener('click', (e) => {
+    if (!e.target.closest('[data-retirer-zone]')) return;
+    const id = e.target.closest('.douleur').dataset.zone;
+    delete etat.douleurs[id];
+    $(`.zone[data-zone="${id}"]`).setAttribute('aria-pressed', 'false');
+    sauver(); rendreListeDouleurs();
+  });
+}
+
+/* =====================================================================
+   RÉCAP + ENVOI
+   ===================================================================== */
+function rendreRecap() {
+  const lignes = TESTS.map(tst => {
+    const ok = testComplet(tst);
+    const etatTxt = ok ? '<span class="ok">✓</span>' : tst.optionnel ? '<span class="doux">facultatif</span>' : '<span class="manque">à compléter</span>';
+    return `<li><b>${tst.titre}</b>${etatTxt}</li>`;
+  });
+  lignes.unshift(`<li><b>Prénom</b>${etat.profil.prenom ? '<span class="ok">✓</span>' : '<span class="manque">à compléter</span>'}</li>`);
+  const nbZones = Object.keys(etat.douleurs).length;
+  lignes.push(`<li><b>Ressentis et historique</b>${lire(etat, 'sport.frequence') ? '<span class="ok">✓</span>' : '<span class="manque">à compléter</span>'}</li>`);
+  lignes.push(`<li><b>Zones douloureuses</b><span class="doux">${nbZones || 'aucune'}</span></li>`);
+  $('#recap').innerHTML = lignes.join('');
+}
+
+function texteRecap() {
+  const L = [];
+  const p = etat.profil;
+  L.push(`BILAN POSTURAL · ${p.prenom || '?'}${p.age ? `, ${p.age} ans` : ''}${p.taille ? `, ${p.taille} cm` : ''}`);
+  if (p.instagram) L.push(`Instagram : ${p.instagram}`);
+  L.push('');
+  TESTS.forEach(tst => {
+    const e = etat.tests[tst.id] || {};
+    const morceaux = [];
+    if (e.niveau) morceaux.push(NIVEAUX.find(n => n.v === e.niveau)?.l);
+    (tst.mesures || []).forEach(me => { const v = e.mesures?.[me.id]; if (v !== undefined && v !== '') morceaux.push(`${me.label} : ${v} ${me.unite}`); });
+    if (e.cote) morceaux.push(`côté le plus raide : ${e.cote}`);
+    if (e.sensations?.length) morceaux.push(`senti : ${e.sensations.join(', ')}`);
+    if (e.douleur === 'Oui') morceaux.push('DOULEUR');
+    if (e.note) morceaux.push(`« ${e.note} »`);
+    const nbF = tst.slots.filter(s => fichiers.has(s.id)).length;
+    L.push(`• ${tst.titre} (${nbF}/${tst.slots.length} fichiers)${morceaux.length ? ' : ' + morceaux.join(' · ') : ''}`);
+  });
+  L.push('');
+  const dz = ZONES.filter(z => etat.douleurs[z.id]).map(z => `${z.nom} ${etat.douleurs[z.id].intensite}/10${etat.douleurs[z.id].quand ? ' (' + etat.douleurs[z.id].quand + ')' : ''}`);
+  L.push(`Douleurs : ${dz.join(' · ') || 'aucune'}`);
+  const q = (c, lib) => { const v = lire(etat, c); if (v && (!Array.isArray(v) || v.length)) L.push(`${lib} : ${Array.isArray(v) ? v.join(', ') : v}`); };
+  q('quotidien.metier', 'Métier'); q('quotidien.assise', 'Assise par jour'); q('quotidien.talons', 'Talons'); q('quotidien.portage', 'Portage');
+  q('quotidien.sommeil', 'Sommeil'); q('sport.frequence', 'Séances / semaine'); q('sport.niveau', 'Niveau'); q('sport.sensations', 'En séance');
+  q('historique.grossesse', 'Grossesse'); q('historique.diagnostics', 'Diagnostics'); q('historique.blessures', 'Blessures'); q('historique.suivi', 'Suivi');
+  q('objectifs.posture', 'Objectif'); q('objectifs.autre', 'Autre');
+  return L.join('\n');
+}
+
+const journal = (txt) => $('#journal').textContent = txt;
+const jauge = (p) => { $('#jauge').hidden = false; $('#jauge span').style.width = `${Math.round(p * 100)}%`; };
+
+async function clientSupabase(persist = false) {
+  const cfg = await import('../app/js/config.js');
+  if (!cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY) throw new Error('Supabase non configuré');
+  const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+  return createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY, { auth: { persistSession: persist, autoRefreshToken: persist } });
+}
+
+const extension = (f) => (f.name.match(/\.([a-z0-9]{2,5})$/i)?.[1] || (f.type.split('/')[1] || 'bin')).toLowerCase();
+
+async function envoyer() {
+  if (!etat.profil.prenom?.trim()) {
+    toast('Indique ton prénom en haut du bilan 💜');
+    $('#prenom').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('#prenom').focus({ preventScroll: true });
+    return;
+  }
+  const manquants = TESTS.filter(x => !x.optionnel && !testComplet(x));
+  if (manquants.length && !confirm(`Il manque encore ${manquants.length} test${manquants.length > 1 ? 's' : ''} (${manquants.map(x => x.titre).join(', ')}).\n\nEnvoyer quand même ?`)) return;
+
+  const btn = $('#btn-envoyer'); btn.disabled = true; $('#plan-b').hidden = true;
+  const id = crypto.randomUUID();
+  const liste = TOUS_SLOTS.filter(s => fichiers.has(s.id));
+  const envoyes = [];
+  try {
+    journal('Connexion…');
+    const sb = await clientSupabase();
+    let compression = null;
+    try { compression = await import('../app/js/compression.js'); } catch {}
+    for (let i = 0; i < liste.length; i++) {
+      const s = liste[i];
+      let f = fichiers.get(s.id);
+      const pas = (frac) => jauge((i + frac) / (liste.length + 1));
+      if (f.type.startsWith('video/') && compression) {
+        journal(`Allègement de la vidéo « ${s.test.titre} · ${s.label} »…`);
+        f = await compression.compresserVideo(f, { onProgress: (p) => { pas(p * .6); journal(`Allègement « ${s.label} »… ${Math.round(p * 100)} %`); } });
+      }
+      if (f.size > CONFIG.tailleMax) throw new Error(`« ${s.test.titre} · ${s.label} » fait ${mo(f.size)} (50 Mo max). Refilme-la plus courte.`);
+      journal(`Envoi ${i + 1}/${liste.length} : ${s.test.titre} · ${s.label}`);
+      pas(.6);
+      const chemin = `${id}/${s.id}.${extension(f)}`;
+      let { error } = await sb.storage.from(CONFIG.bucket).upload(chemin, f, { contentType: f.type || undefined, upsert: false });
+      if (error) ({ error } = await sb.storage.from(CONFIG.bucket).upload(chemin, f, { contentType: f.type || undefined, upsert: false }));
+      if (error && !/exists/i.test(error.message)) throw error;
+      envoyes.push({ slot: s.id, test: s.test.id, label: `${s.test.titre} · ${s.label}`, chemin, type: f.type });
+      pas(1);
+    }
+    journal('Enregistrement de tes réponses…');
+    const { error } = await sb.from(CONFIG.table).insert({
+      id, prenom: etat.profil.prenom.trim().slice(0, 80), email: (etat.profil.email || '').slice(0, 200) || null,
+      reponses: { ...etat, recap: texteRecap(), version: 1 }, fichiers: envoyes
+    });
+    if (error) throw error;
+    jauge(1);
+    etat.envoyeLe = new Date().toISOString(); sauver();
+    $('#bloc-envoi').hidden = true; $('#bloc-bravo').hidden = false;
+    $('#bravo-prenom').textContent = etat.profil.prenom.trim();
+    $('#bloc-bravo').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch (err) {
+    console.warn(err);
+    const msg = err?.message || '';
+    journal(/fetch|network|load/i.test(msg) ? 'Oups : connexion impossible pour le moment.'
+      : /bucket|relation|not found|does not exist/i.test(msg) ? 'Oups : l\'espace d\'envoi n\'est pas encore prêt.'
+      : `Oups : ${msg || 'envoi impossible'}`);
+    $('#plan-b').hidden = false;
+  } finally { btn.disabled = false; }
+}
+
+async function partager() {
+  const liste = TOUS_SLOTS.filter(s => fichiers.has(s.id)).map(s => {
+    const f = fichiers.get(s.id);
+    return new File([f], `${s.id}.${extension(f)}`, { type: f.type });
+  });
+  const donnees = { title: 'Mon bilan postural', text: texteRecap(), files: liste };
+  try {
+    if (liste.length && navigator.canShare?.(donnees)) { await navigator.share(donnees); return; }
+    if (navigator.share) { await navigator.share({ title: donnees.title, text: donnees.text }); toast('Envoie ensuite tes photos et vidéos depuis ta galerie.'); return; }
+  } catch (e) { if (e.name === 'AbortError') return; }
+  await copierRecap();
+  toast('Récap copié : colle-le en DM, puis envoie tes photos depuis ta galerie.');
+  window.open(CONFIG.instagramDM, '_blank', 'noopener');
+}
+async function copierRecap() {
+  try { await navigator.clipboard.writeText(texteRecap()); toast('Récap copié 💜'); }
+  catch { prompt('Copie ce texte :', texteRecap()); }
+}
+
+function saluer() {
+  const p = (etat.profil.prenom || '').trim();
+  $('#accueil').textContent = `${p ? `Bienvenue ${p} 💜` : 'Bienvenue dans le coaching 💜'} Avant d'écrire ton programme, j'ai besoin de voir comment ton corps se tient et comment il bouge. Tu suis les étapes, tu déposes tes photos et vidéos ici, et je personnalise tout à partir de là.`;
+}
+
+/* Étape active dans la barre */
+function suivreEtapes() {
+  const liens = $$('.etapes a');
+  const obs = new IntersectionObserver((entrees) => {
+    entrees.forEach(en => {
+      if (!en.isIntersecting) return;
+      liens.forEach(a => a.classList.toggle('actif', a.getAttribute('href') === '#' + en.target.id));
+      const actif = $('.etapes a.actif'), nav = $('.etapes');
+      if (actif) nav.scrollTo({ left: actif.offsetLeft - (nav.clientWidth - actif.offsetWidth) / 2, behavior: 'smooth' });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  ['preparer', 'photos', 'mobilite', 'ressentis', 'envoi'].forEach(id => obs.observe(document.getElementById(id)));
+}
+
+async function demarrerEleve() {
+  const prenomUrl = new URLSearchParams(location.search).get('p');
+  if (prenomUrl && !etat.profil.prenom) { etat.profil.prenom = prenomUrl.slice(0, 40); sauver(); }
+
+  $('#schema-installation').innerHTML = SCHEMAS.installation();
+  $('#tests-photos').innerHTML = TESTS.filter(x => x.partie === 'photos').map((x) => htmlTest(x, TESTS.indexOf(x))).join('');
+  $('#tests-mobilite').innerHTML = TESTS.filter(x => x.partie === 'mobilite').map((x) => htmlTest(x, TESTS.indexOf(x))).join('');
+
+  await Promise.all(TOUS_SLOTS.map(async s => { const f = await Fichiers.lire(s.id); if (f) fichiers.set(s.id, f); }));
+  TOUS_SLOTS.forEach(s => rendreDepot(s.id));
+  $$('.test').forEach(brancherTest);
+  TESTS.forEach(x => majTest(x.id));
+  const premier = $$('.test').find(a => !a.classList.contains('fait'));
+  if (premier) basculer(premier, true);
+
+  brancherQuestionnaire();
+  rendreCarteDouleurs(); brancherListeDouleurs();
+  saluer(); majAvancement(); suivreEtapes();
+
+  $('#btn-envoyer').addEventListener('click', envoyer);
+  $('#btn-partager').addEventListener('click', partager);
+  $('#btn-copier').addEventListener('click', copierRecap);
+  $('#btn-effacer').addEventListener('click', async () => {
+    if (!confirm('Effacer les photos et vidéos de ce téléphone ? (Marie les a déjà reçues.)')) return;
+    await Fichiers.vider(); fichiers.clear(); TOUS_SLOTS.forEach(s => rendreDepot(s.id)); TESTS.forEach(x => majTest(x.id)); majAvancement();
+    toast('Fichiers effacés de ce téléphone.');
+  });
+}
+
+/* =====================================================================
+   ESPACE COACH (?coach) : liste des bilans reçus
+   ===================================================================== */
+async function demarrerCoach() {
+  $('#eleve').hidden = true; $('#coach').hidden = false;
+  document.title = 'Bilans posturaux · Espace coach';
+  let sb;
+  try { sb = await clientSupabase(true); }
+  catch (e) { $('#coach-erreur').textContent = 'Supabase n\'est pas configuré (app/js/config.js).'; return; }
+
+  const afficherEspace = async () => {
+    $('#coach-connexion').hidden = true; $('#coach-espace').hidden = false; $('#coach-deco').hidden = false;
+    await chargerListe();
+  };
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) afficherEspace();
+
+  $('#coach-connexion').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    $('#coach-erreur').textContent = 'Connexion…';
+    const { error } = await sb.auth.signInWithPassword({ email: $('#coach-email').value.trim(), password: $('#coach-mdp').value });
+    if (error) { $('#coach-erreur').textContent = 'E-mail ou mot de passe incorrect.'; return; }
+    $('#coach-erreur').textContent = ''; afficherEspace();
+  });
+  $('#coach-deco').addEventListener('click', async () => { await sb.auth.signOut(); location.reload(); });
+  $('#coach-copier-lien').addEventListener('click', async () => {
+    const p = $('#coach-lien-prenom').value.trim();
+    const lien = `${location.origin}${location.pathname}${p ? `?p=${encodeURIComponent(p)}` : ''}`;
+    try { await navigator.clipboard.writeText(lien); toast('Lien copié : ' + lien); } catch { prompt('Copie ce lien :', lien); }
+  });
+
+  async function chargerListe() {
+    $('#coach-detail').hidden = true; $('#coach-liste').hidden = false;
+    const { data, error } = await sb.from(CONFIG.table).select('id, prenom, email, created_at, vu').order('created_at', { ascending: false });
+    if (error) { $('#coach-liste').innerHTML = `<p class="doux">Impossible de charger les bilans : ${esc(error.message)}. As-tu lancé <code>supabase/bilan-postural.sql</code> ?</p>`; return; }
+    if (!data.length) { $('#coach-liste').innerHTML = '<p class="doux">Aucun bilan reçu pour le moment.</p>'; return; }
+    $('#coach-liste').innerHTML = data.map(b => `
+      <button class="coach-ligne" type="button" data-id="${b.id}">
+        <span><b>${esc(b.prenom)}</b><br><small class="doux">${new Date(b.created_at).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}${b.email ? ' · ' + esc(b.email) : ''}</small></span>
+        ${b.vu ? '<span class="doux petit">vu</span>' : '<span class="nouveau">Nouveau</span>'}
+      </button>`).join('');
+    $$('.coach-ligne').forEach(bt => bt.addEventListener('click', () => ouvrirBilan(bt.dataset.id)));
+  }
+
+  async function ouvrirBilan(id) {
+    const { data: b, error } = await sb.from(CONFIG.table).select('*').eq('id', id).single();
+    if (error) { toast(error.message); return; }
+    const chemins = (b.fichiers || []).map(f => f.chemin);
+    const urls = {};
+    if (chemins.length) {
+      const { data: signes } = await sb.storage.from(CONFIG.bucket).createSignedUrls(chemins, 6 * 3600);
+      (signes || []).forEach(s => { if (s.signedUrl) urls[s.path] = s.signedUrl; });
+    }
+    const r = b.reponses || {};
+    const ligne = (k, v) => v === undefined || v === null || v === '' || (Array.isArray(v) && !v.length) ? '' : `<tr><td>${esc(k)}</td><td>${esc(Array.isArray(v) ? v.join(', ') : v)}</td></tr>`;
+    const medias = (testId) => (b.fichiers || []).filter(f => f.test === testId).map(f => {
+      const u = urls[f.chemin]; if (!u) return `<figure><figcaption>${esc(f.label)} (lien indisponible)</figcaption></figure>`;
+      const m = f.type?.startsWith('video/') ? `<video src="${esc(u)}" controls playsinline preload="metadata"></video>` : `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="${esc(f.label)}" loading="lazy"></a>`;
+      return `<figure>${m}<figcaption>${esc(f.label)} · <a href="${esc(u)}" download target="_blank" rel="noopener">télécharger</a></figcaption></figure>`;
+    }).join('');
+
+    const blocsTests = TESTS.map(tst => {
+      const e = r.tests?.[tst.id] || {};
+      const lignes = [
+        ligne('Ressenti', NIVEAUX.find(n => n.v === e.niveau)?.l),
+        ...(tst.mesures || []).map(me => ligne(me.label, e.mesures?.[me.id] ? `${e.mesures[me.id]} ${me.unite}` : '')),
+        ligne('Côté le plus raide', e.cote), ligne('Travail senti', e.sensations),
+        ligne('Douleur', e.douleur), ligne('Remarque', e.note)
+      ].join('');
+      return `<div class="carte coach-test"><h3>${esc(tst.titre)}</h3>
+        ${lignes ? `<table class="tableau">${lignes}</table>` : '<p class="doux petit">Pas de réponse.</p>'}
+        <div class="medias">${medias(tst.id)}</div>
+        <details class="grille"><summary>Grille de lecture</summary><ul class="doux petit" style="margin-top:6px">${tst.observe.map(o => `<li>${o}</li>`).join('')}</ul>${tst.repere ? `<p class="doux petit" style="margin-top:6px">${tst.repere}</p>` : ''}</details>
+      </div>`;
+    }).join('');
+
+    const dz = ZONES.filter(z => r.douleurs?.[z.id]).map(z => ligne(z.nom, `${r.douleurs[z.id].intensite}/10${r.douleurs[z.id].quand ? ' · ' + r.douleurs[z.id].quand : ''}`)).join('');
+    const q = (c, k) => ligne(k, lire(r, c));
+    $('#coach-liste').hidden = true;
+    const det = $('#coach-detail'); det.hidden = false;
+    det.innerHTML = `
+      <div class="actions" style="flex-direction:row;flex-wrap:wrap;max-width:none;margin:18px 0 0;justify-content:space-between">
+        <button class="btn btn-fantome btn-petit" type="button" id="coach-retour">← Tous les bilans</button>
+        <span style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-fantome btn-petit" type="button" id="coach-copier">Copier le récap</button>
+          <button class="btn btn-fantome btn-petit" type="button" id="coach-suppr" style="color:var(--rouge)">Supprimer</button>
+        </span>
+      </div>
+      <div class="carte" style="margin-top:14px">
+        <h2 style="margin-bottom:6px">${esc(b.prenom)}</h2>
+        <table class="tableau">${q('profil.age', 'Âge')}${q('profil.taille', 'Taille (cm)')}${ligne('E-mail', b.email)}${q('profil.instagram', 'Instagram')}${ligne('Reçu le', new Date(b.created_at).toLocaleString('fr-FR'))}</table>
+      </div>
+      ${blocsTests}
+      <div class="carte coach-test"><h3>Douleurs</h3>${dz ? `<table class="tableau">${dz}</table>` : '<p class="doux petit">Aucune zone signalée.</p>'}</div>
+      <div class="carte coach-test"><h3>Quotidien, sport, historique</h3><table class="tableau">
+        ${q('quotidien.metier', 'Métier')}${q('quotidien.assise', 'Assise / jour')}${q('quotidien.talons', 'Talons')}${q('quotidien.portage', 'Portage d\'un côté')}${q('quotidien.sommeil', 'Sommeil')}
+        ${q('sport.frequence', 'Séances / semaine')}${q('sport.niveau', 'Niveau')}${q('sport.sensations', 'En séance')}
+        ${q('historique.grossesse', 'Grossesse')}${q('historique.diagnostics', 'Diagnostics')}${q('historique.blessures', 'Blessures / opérations')}${q('historique.suivi', 'Suivi en cours')}
+        ${q('objectifs.posture', 'Ce qu\'elle veut améliorer')}${q('objectifs.autre', 'Autre')}
+      </table></div>`;
+    window.scrollTo({ top: 0 });
+    if (!b.vu) sb.from(CONFIG.table).update({ vu: true }).eq('id', id).then(() => {});
+    $('#coach-retour').addEventListener('click', chargerListe);
+    $('#coach-copier').addEventListener('click', async () => { try { await navigator.clipboard.writeText(r.recap || ''); toast('Récap copié'); } catch { prompt('Récap :', r.recap || ''); } });
+    $('#coach-suppr').addEventListener('click', async () => {
+      if (!confirm(`Supprimer définitivement le bilan de ${b.prenom} (réponses + fichiers) ?`)) return;
+      if (chemins.length) await sb.storage.from(CONFIG.bucket).remove(chemins);
+      const { error: err } = await sb.from(CONFIG.table).delete().eq('id', id);
+      if (err) { toast(err.message); return; }
+      toast('Bilan supprimé'); chargerListe();
+    });
+  }
+}
+
+if (new URLSearchParams(location.search).has('coach')) demarrerCoach();
+else demarrerEleve();
+</script>
+</body>
+</html>
