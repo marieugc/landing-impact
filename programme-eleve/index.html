@@ -188,6 +188,11 @@
     td.tempo, td.repos { white-space: nowrap; font-variant-numeric: tabular-nums; }
     td.notes { min-width: 180px; font-size: 13px; }
     td.actions { width: 1%; white-space: nowrap; }
+    .sous-titre { margin: 0 0 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--neon-clair); }
+    .sous-titre.corps { margin-top: 16px; color: var(--accent, var(--neon)); }
+    .zone-echauffement { border-style: dashed; background: rgba(255, 255, 255, .015); }
+    .zone-echauffement table { font-size: 12.5px; }
+    .zone-echauffement td.num span { background: transparent; }
     .note-seance { margin: 12px 0 0; padding: 10px 14px; border-radius: 12px; background: rgba(255, 196, 107, .08); border: 1px dashed rgba(255, 196, 107, .45); color: #FFE2B3; font-size: 13.5px; }
     .note-seance::before { content: "⚡ "; }
 
@@ -266,7 +271,7 @@
          (son cadre est redessiné de chaque côté de la coupure) au lieu de laisser une demi-page vide. */
       .bloc { break-inside: avoid; }
       .seance { box-shadow: none; border: 1px solid rgba(180, 92, 255, .6); break-inside: auto; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-      .seance-tete { break-after: avoid; break-inside: avoid; }
+      .seance-tete, .sous-titre { break-after: avoid; break-inside: avoid; }
       .note-seance { break-inside: avoid; }
       thead { display: table-header-group; }
       /* Le tableau tient toujours dans la largeur de la page : colonnes fixes, retours à la ligne autorisés */
@@ -570,7 +575,7 @@
         <div class="ajout-ligne edition-seule"><button class="btn petit principal" type="button" data-action="ajout-extra">＋ Ajouter un encadré</button></div>
       </section>` : ""}
 
-      ${P.seances.map((s, si) => { const c = k => voir(s.exercices.some(e => plein(e[k]))); return `
+      ${P.seances.map((s, si) => `
         <section class="seance ${s.type} ${si === 0 ? "saut" : ""}">
           <div class="seance-tete">
             <div class="gauche">
@@ -591,33 +596,20 @@
             </div>
             </div>
           </div>
-          <div class="tableau-zone">
-            <table>
-              <thead><tr><th class="c-num">#</th><th class="c-exo">Exercice</th><th class="c-series">Séries × reps</th>${c("tempo") ? '<th class="c-tempo">Tempo</th>' : ""}${c("repos") ? '<th class="c-repos">Repos</th>' : ""}${c("notes") ? '<th class="c-notes">Notes</th>' : ""}<th class="edition-seule"></th></tr></thead>
-              <tbody>
-                ${s.exercices.map((e, ei) => `
-                  <tr class="${/[a-z]$/i.test(e.n) ? "superset" : ""}">
-                    <td class="num"><span>${champ(`seances.${si}.exercices.${ei}.n`, "#")}</span></td>
-                    <td class="exo">${champ(`seances.${si}.exercices.${ei}.nom`, "Nom de l'exercice")}${lienVideo(e.lien)}${edition ? `<div class="lien-champ">${champ(`seances.${si}.exercices.${ei}.lien`, "🔗 Coller le lien de la vidéo (Instagram, YouTube, Drive…)")}</div>` : ""}</td>
-                    <td class="series">${champ(`seances.${si}.exercices.${ei}.series`, "3 × 10")}</td>
-                    ${c("tempo") ? `<td class="tempo">${champ(`seances.${si}.exercices.${ei}.tempo`, "—")}</td>` : ""}
-                    ${c("repos") ? `<td class="repos">${champ(`seances.${si}.exercices.${ei}.repos`, "—")}</td>` : ""}
-                    ${c("notes") ? `<td class="notes">${champ(`seances.${si}.exercices.${ei}.notes`, "")}</td>` : ""}
-                    <td class="actions edition-seule">
-                      <button class="btn icone petit" type="button" data-action="monter" data-s="${si}" data-e="${ei}" title="Monter">↑</button>
-                      <button class="btn icone petit" type="button" data-action="descendre" data-s="${si}" data-e="${ei}" title="Descendre">↓</button>
-                      <button class="btn icone petit danger" type="button" data-action="suppr" data-s="${si}" data-e="${ei}" title="Supprimer l'exercice">🗑</button>
-                    </td>
-                  </tr>`).join("")}
-              </tbody>
-            </table>
+          ${(s.echauffement || []).length ? `
+          <div class="echauffement">
+            <h3 class="sous-titre">🔥 Échauffement &amp; mobilité</h3>
+            ${tableauExos(s, si, "echauffement")}
           </div>
+          <h3 class="sous-titre corps">🏋️ Corps de séance</h3>` : ""}
+          ${tableauExos(s, si, "exercices")}
           ${s.note || edition ? `<p class="note-seance">${champ(`seances.${si}.note`, "Ajouter une consigne pour cette séance (facultatif)")}</p>` : ""}
           <div class="ajout-ligne edition-seule">
             <button class="btn petit principal" type="button" data-action="ajout" data-s="${si}">＋ Ajouter un exercice</button>
             <button class="btn petit" type="button" data-action="ajout-superset" data-s="${si}">＋ Ajouter un superset (a + b)</button>
+            <button class="btn petit" type="button" data-action="ajout" data-l="echauffement" data-s="${si}">＋ Ajouter un exercice d'échauffement</button>
           </div>
-        </section>`; }).join("")}
+        </section>`).join("")}
 
       <div class="ajout-ligne ecran-seul ajout-seance-texte">
         <button class="btn principal" type="button" data-action="coller-nouvelle">📝 Ajouter une séance (coller le texte)</button>
@@ -695,6 +687,35 @@
     if (el && /\.n$/.test(el.dataset.champ)) rendu();
   });
 
+  // Tableau d'exercices d'une séance : liste = "exercices" (corps de séance) ou "echauffement"
+  function tableauExos(s, si, liste) {
+    const exos = s[liste] || [];
+    const c = k => voir(exos.some(e => plein(e[k])));
+    const p = (ei, k) => `seances.${si}.${liste}.${ei}.${k}`;
+    return `
+          <div class="tableau-zone${liste === "echauffement" ? " zone-echauffement" : ""}">
+            <table>
+              <thead><tr><th class="c-num">#</th><th class="c-exo">Exercice</th><th class="c-series">Séries × reps</th>${c("tempo") ? '<th class="c-tempo">Tempo</th>' : ""}${c("repos") ? '<th class="c-repos">Repos</th>' : ""}${c("notes") ? '<th class="c-notes">Notes</th>' : ""}<th class="edition-seule"></th></tr></thead>
+              <tbody>
+                ${exos.map((e, ei) => `
+                  <tr class="${/[a-z]$/i.test(e.n) ? "superset" : ""}">
+                    <td class="num"><span>${champ(p(ei, "n"), "#")}</span></td>
+                    <td class="exo">${champ(p(ei, "nom"), "Nom de l'exercice")}${lienVideo(e.lien)}${edition ? `<div class="lien-champ">${champ(p(ei, "lien"), "🔗 Coller le lien de la vidéo (Instagram, YouTube, Drive…)")}</div>` : ""}</td>
+                    <td class="series">${champ(p(ei, "series"), "3 × 10")}</td>
+                    ${c("tempo") ? `<td class="tempo">${champ(p(ei, "tempo"), "—")}</td>` : ""}
+                    ${c("repos") ? `<td class="repos">${champ(p(ei, "repos"), "—")}</td>` : ""}
+                    ${c("notes") ? `<td class="notes">${champ(p(ei, "notes"), "")}</td>` : ""}
+                    <td class="actions edition-seule">
+                      <button class="btn icone petit" type="button" data-action="monter" data-l="${liste}" data-s="${si}" data-e="${ei}" title="Monter">↑</button>
+                      <button class="btn icone petit" type="button" data-action="descendre" data-l="${liste}" data-s="${si}" data-e="${ei}" title="Descendre">↓</button>
+                      <button class="btn icone petit danger" type="button" data-action="suppr" data-l="${liste}" data-s="${si}" data-e="${ei}" title="Supprimer l'exercice">🗑</button>
+                    </td>
+                  </tr>`).join("")}
+              </tbody>
+            </table>
+          </div>`;
+  }
+
   const nouvelExo = n => ({ n, nom: "", lien: "", series: "3 × 10-12", tempo: "2 s", repos: "90 s", notes: "" });
   function numeroSuivant(liste) {
     const max = liste.reduce((m, e) => Math.max(m, parseInt(e.n, 10) || 0), 0);
@@ -706,8 +727,10 @@
     const b = e.target.closest("[data-action]");
     if (!b) return;
     const s = +b.dataset.s, ex = +b.dataset.e, seance = P.seances[s];
+    const cle = b.dataset.l === "echauffement" ? "echauffement" : "exercices";
+    const liste = seance ? (seance[cle] ??= []) : [];
     switch (b.dataset.action) {
-      case "ajout": seance.exercices.push(nouvelExo(String(numeroSuivant(seance.exercices)))); break;
+      case "ajout": liste.push(nouvelExo((cle === "echauffement" ? "E" : "") + numeroSuivant(liste.map(e => ({ n: String(e.n).replace(/^E/i, "") }))))); break;
       case "ajout-superset": {
         const n = numeroSuivant(seance.exercices);
         const a = nouvelExo(n + "a"); a.repos = "0"; a.notes = `Enchaîner avec le ${n}b`;
@@ -715,11 +738,11 @@
         break;
       }
       case "suppr": {
-        const nom = seance.exercices[ex].nom || "cet exercice";
-        return demander(`Supprimer « ${nom} » ?`, () => { seance.exercices.splice(ex, 1); maj(); });
+        const nom = liste[ex].nom || "cet exercice";
+        return demander(`Supprimer « ${nom} » ?`, () => { liste.splice(ex, 1); maj(); });
       }
-      case "monter": echange(seance.exercices, ex, ex - 1); break;
-      case "descendre": echange(seance.exercices, ex, ex + 1); break;
+      case "monter": echange(liste, ex, ex - 1); break;
+      case "descendre": echange(liste, ex, ex + 1); break;
       case "type-seance": seance.type = seance.type === "bas" ? "haut" : "bas"; break;
       case "monter-seance": echange(P.seances, s, s - 1); break;
       case "descendre-seance": echange(P.seances, s, s + 1); break;
@@ -746,7 +769,7 @@
     maj();
     if (b.dataset.action.startsWith("ajout")) {
       // place le curseur sur le nouvel exercice
-      const champs = document.querySelectorAll(b.dataset.action === "ajout-seance" ? '[data-champ$=".titre"]' : `[data-champ^="seances.${s}.exercices."][data-champ$=".nom"]`);
+      const champs = document.querySelectorAll(b.dataset.action === "ajout-seance" ? '[data-champ$=".titre"]' : `[data-champ^="seances.${s}.${cle}."][data-champ$=".nom"]`);
       const cible = b.dataset.action === "ajout-superset" ? champs[champs.length - 2] : champs[champs.length - 1];
       cible?.focus();
       cible?.scrollIntoView({ block: "center", behavior: "smooth" });
@@ -1226,7 +1249,9 @@
     const lignes = brut.replace(/\r/g, "").split("\n").map(l => l.replace(/\t/g, " ").replace(/\s+/g, " ").trim());
     const res = { seances: [], extras: [], textes: {} };
     const intro = [];
-    let seance = null, exo = null, blanc = true;
+    let seance = null, exo = null, blanc = true, modeEchauf = false, dernierNumEchauf = 0;
+    const RE_ECHAUF = /^[#*_\s]*(?:\p{Extended_Pictographic}️?\s*)?(?:[ée]chauffement|mobilit[ée]|pr[ée]paration|activation|warm[\s-]?up|routine\s+(?:de\s+)?mobilit)/iu;
+    const RE_CORPS = /^[#*_\s]*(?:\p{Extended_Pictographic}️?\s*)?(?:corps\s+de\s+s[ée]ance|s[ée]ance\s*(?::|$)|entra[iî]nement\s*(?::|$)|musculation|exercices\s*(?::|$)|workout\s*(?::|$))/iu;
     const suivanteExo = i => { for (let k = i + 1; k < lignes.length; k++) if (lignes[k]) return RE_SERIES.test(lignes[k]); return false; };
 
     lignes.forEach((l, i) => {
@@ -1234,7 +1259,7 @@
       const debut = blanc; blanc = false;
       // Titre du programme sur la première ligne
       if (opts.titre && !seance && !RE_SERIES.test(l)) {
-        seance = Object.assign(lireTitreSeance(l), { exercices: [], note: "" });
+        seance = Object.assign(lireTitreSeance(l), { exercices: [], echauffement: [], note: "" });
         res.seances.push(seance); exo = null;
         return;
       }
@@ -1244,17 +1269,32 @@
         res.titre = propre(l.replace(/\s*(?:d['’]|de\s+|pour\s+)[A-ZÀ-Ý][\wÀ-ÿ-]+\s*,?/, " ").replace(/^#+\s*/, "")).replace(/^programme\s*[–—:-]\s*/i, "").replace(/^programme$/i, "") || "Programme d'entraînement";
         return;
       }
-      const series = l.match(RE_SERIES);
-      const titreSeance = !series && l.length <= 90 && (RE_TITRE_SEANCE.test(l) || (debut && suivanteExo(i) && (/:$/.test(l) || l === l.toUpperCase() || /^\p{Extended_Pictographic}/u.test(l))));
+      // Une ligne qui commence par « → » est toujours une consigne, même si elle contient « 2 x 15 »
+      const series = /^[→>]/.test(l) ? null : l.match(RE_SERIES);
+      // Intertitre dans une séance : « Échauffement… » ou « Mobilité… » ouvre l'échauffement, « Corps de séance » le ferme
+      const intertitre = !/^[-–•*→>]/.test(l) && (/:\s*$/.test(l) || l.length <= 45);
+      if (seance && !series && intertitre) {
+        if (RE_ECHAUF.test(l)) { modeEchauf = true; dernierNumEchauf = 0; exo = null; return; }
+        if (modeEchauf && RE_CORPS.test(l)) { modeEchauf = false; exo = null; return; }
+      }
+      const titreSeance = !series && l.length <= 90 && (RE_TITRE_SEANCE.test(l) || (debut && suivanteExo(i) && (RE_ECHAUF.test(l) || /:$/.test(l) || l === l.toUpperCase() || /^\p{Extended_Pictographic}/u.test(l))));
       if (titreSeance) {
-        seance = Object.assign(lireTitreSeance(l), { exercices: [], note: "" });
-        res.seances.push(seance); exo = null;
+        seance = Object.assign(lireTitreSeance(l), { exercices: [], echauffement: [], note: "" });
+        res.seances.push(seance); exo = null; modeEchauf = false;
         return;
       }
       if (series) {
-        if (!seance) { seance = Object.assign(lireTitreSeance(`Séance ${res.seances.length + 1}`), { exercices: [], note: "" }); res.seances.push(seance); }
+        if (!seance) { seance = Object.assign(lireTitreSeance(`Séance ${res.seances.length + 1}`), { exercices: [], echauffement: [], note: "" }); res.seances.push(seance); }
         exo = lireExercice(l, series, seance.exercices.length + 1);
-        seance.exercices.push(exo);
+        const num = parseInt(String(exo.n).replace(/^E/i, ""), 10) || 0;
+        // Après un échauffement numéroté 1, 2, 3…, un nouveau « 1. » ouvre le corps de séance
+        if (modeEchauf && !/^E/i.test(exo.n) && num && num <= dernierNumEchauf) modeEchauf = false;
+        const echauf = /^E\d/i.test(exo.n) || modeEchauf || /^(?:[ée]chauffement|mobilit[ée]|pr[ée]paration\s+(?:lombaire|lombo|articulaire|mobilit))/i.test(exo.nom);
+        if (echauf) {
+          if (modeEchauf) dernierNumEchauf = num;
+          if (!/^E/i.test(exo.n)) exo.n = "E" + (seance.echauffement.length + 1);
+          seance.echauffement.push(exo);
+        } else seance.exercices.push(exo);
         return;
       }
       // Ligne de consigne : sous l'exercice si elle le suit, sinon note de la séance
@@ -1265,6 +1305,12 @@
       else intro.push(l);
     });
     if (intro.length) res.extras.push({ titre: "À savoir", texte: intro.join("\n") });
+    // L'échauffement retiré du début (ex. « 1. Échauffement… ») : le corps de séance repart à 1
+    for (const x of res.seances) {
+      const premier = parseInt(x.exercices[0]?.n, 10);
+      if (!x.echauffement.length || !(premier > 1)) continue;
+      x.exercices.forEach(e => { e.n = String(e.n).replace(/^\d+/, d => String(Math.max(1, +d - premier + 1))); });
+    }
     return res;
   }
 
@@ -1305,7 +1351,10 @@
   function texteSeance(x) {
     const tete = [x.jour, x.titre].filter(Boolean).join(" : ") + (x.focus ? ` (${x.focus})` : "");
     const lignes = [tete || "Séance"];
-    for (const e of x.exercices) {
+    const ech = x.echauffement || [];
+    if (ech.length) lignes.push("Échauffement et mobilité :");
+    for (const e of [...ech.map(e => ({ ...e, n: /^E/i.test(e.n) ? e.n : "E" + e.n })), ...x.exercices]) {
+      if (ech.length && e === x.exercices[0]) lignes.push("Corps de séance :");
       const morceaux = [`${e.n}.`, e.nom, e.series];
       if (e.repos) morceaux.push(/repos/i.test(e.repos) ? e.repos : `repos ${e.repos}`);
       if (e.tempo && e.tempo !== "—") morceaux.push(`tempo ${e.tempo}`);
@@ -1364,7 +1413,7 @@ Séance 2 – Mercredi : haut du corps
     f.querySelector('[data-r="non"]').onclick = () => f.remove();
     f.querySelector('[data-r="oui"]').onclick = () => {
       const r = lireTexte(zone.value, { titre: !!cible });
-      const nb = r.seances.reduce((n, x) => n + x.exercices.length, 0);
+      const nb = r.seances.reduce((n, x) => n + x.exercices.length + (x.echauffement || []).length, 0);
       if (!nb) {
         f.querySelector(".erreur").textContent = "Aucun exercice trouvé. Écris les séries comme « 4x10 » ou « 3 séries de 12 » sur la ligne de chaque exercice.";
         return;
@@ -1375,15 +1424,15 @@ Séance 2 – Mercredi : haut du corps
           `Programme mis en page : ${r.seances.length} séance${r.seances.length > 1 ? "s" : ""}, ${nb} exercices`);
         return;
       }
-      const nouvelles = r.seances.filter(x => x.exercices.length);
+      const nouvelles = r.seances.filter(x => x.exercices.length || (x.echauffement || []).length);
       // Texte collé sans ligne de titre : la séance garde son jour et son nom
       const premiere = zone.value.split("\n").map(l => l.trim()).find(Boolean) || "";
       if (seance && RE_SERIES.test(premiere)) Object.assign(nouvelles[0], { jour: seance.jour, titre: seance.titre, focus: seance.focus, type: seance.type });
       if (seance) {
         // Garde l'emoji et les liens vidéo déjà ajoutés
         const liens = {};
-        seance.exercices.forEach(e => { if (e.lien) liens[sansAccent(e.nom)] = e.lien; });
-        nouvelles.forEach(x => x.exercices.forEach(e => { if (!e.lien && liens[sansAccent(e.nom)]) e.lien = liens[sansAccent(e.nom)]; }));
+        [...seance.exercices, ...(seance.echauffement || [])].forEach(e => { if (e.lien) liens[sansAccent(e.nom)] = e.lien; });
+        nouvelles.forEach(x => [...x.exercices, ...(x.echauffement || [])].forEach(e => { if (!e.lien && liens[sansAccent(e.nom)]) e.lien = liens[sansAccent(e.nom)]; }));
         nouvelles[0].emoji = seance.emoji;
         P.seances.splice(cible.si, 1, ...nouvelles);
       } else P.seances.push(...nouvelles);
