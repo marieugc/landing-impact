@@ -14,8 +14,10 @@ const charger = () => (bibliotheque ??= import('../vendor/mediabunny/mediabunny.
 const pair = (n) => Math.max(2, Math.round(n / 2) * 2);
 
 // codecs : formats essayés dans l'ordre ; H.264 (« avc ») se lit partout, iPhone compris
-export async function compresserVideo(fichier, { onProgress, codecs = ['avc'] } = {}) {
-  if (!fichier || fichier.size < SEUIL || !('VideoEncoder' in window)) return fichier;
+// forcer : convertit même une petite vidéo, pour qu'elle soit lisible dans tous les navigateurs
+// (les téléphones filment souvent en HEVC, que Chrome ne lit pas toujours)
+export async function compresserVideo(fichier, { onProgress, codecs = ['avc'], forcer = false } = {}) {
+  if (!fichier || (!forcer && fichier.size < SEUIL) || !('VideoEncoder' in window)) return fichier;
   try {
     const { Input, ALL_FORMATS, BlobSource, Output, Mp4OutputFormat, BufferTarget, Conversion, canEncodeVideo } = await charger();
     const input = new Input({ formats: ALL_FORMATS, source: new BlobSource(fichier) });
@@ -43,7 +45,7 @@ export async function compresserVideo(fichier, { onProgress, codecs = ['avc'] } 
     if (onProgress) conversion.onProgress = (p) => onProgress(p);
     await conversion.execute();
     const resultat = new File([output.target.buffer], `${fichier.name.replace(/\.[^.]+$/, '') || 'video'}.mp4`, { type: 'video/mp4' });
-    return resultat.size < fichier.size ? resultat : fichier;
+    return forcer || resultat.size < fichier.size ? resultat : fichier;
   } catch (e) {
     console.warn('Compression vidéo impossible, envoi de l\'original', e);
     return fichier;

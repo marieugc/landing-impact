@@ -285,6 +285,7 @@
     .medias figure { border-radius: 12px; overflow: hidden; background: #000; }
     .medias figcaption { font-size: 12px; color: var(--texte-pale); padding: 6px 8px; background: var(--carte-2); }
     .medias img, .medias video { width: 100%; max-height: 420px; object-fit: contain; }
+    .medias .illisible { padding: 16px; margin: 0; background: var(--carte); }
     .tableau { width: 100%; border-collapse: collapse; font-size: 15px; margin-top: 8px; }
     .tableau td { padding: 6px 0; border-bottom: 1px solid rgba(180, 92, 255, .15); vertical-align: top; }
     .tableau td:first-child { color: var(--texte-pale); width: 42%; padding-right: 10px; }
@@ -1399,13 +1400,13 @@ async function envoyer(sansLesEchecs = false) {
         let f = original;
         if (f.type.startsWith('video/') && compression) {
           journal(`Allègement de la vidéo « ${nom} »…`);
-          f = await compression.compresserVideo(f, { onProgress: (p) => { pas(p * .4); journal(`Allègement « ${nom} »… ${Math.round(p * 100)} %`); } });
+          f = await compression.compresserVideo(f, { forcer: true, onProgress: (p) => { pas(p * .4); journal(`Allègement « ${nom} »… ${Math.round(p * 100)} %`); } });
         }
         if (f.size > CONFIG.tailleMax) throw new Error(`trop lourde (${mo(f.size)}, 50 Mo max)`);
         const chemin = `${id}/${s.id}-${Date.now().toString(36)}.${extension(f)}`;
         journal(`Envoi ${i + 1}/${liste.length} : ${nom}`);
         await envoiFichier(sb, chemin, f, (p) => { pas(.4 + p * .6); journal(`Envoi ${i + 1}/${liste.length} : ${nom}… ${Math.round(p * 100)} %`); });
-        faits[s.id] = { sig: signature(original), slot: s.id, test: s.test.id, label: nom, chemin, type: typeMime(f) };
+        faits[s.id] = { sig: signature(original), slot: s.id, test: s.test.id, label: nom, chemin, type: typeMime(f), taille: f.size };
         sauver();
       } catch (e) {
         console.warn(nom, e);
@@ -1564,8 +1565,13 @@ async function demarrerCoach() {
     const ligne = (k, v) => v === undefined || v === null || v === '' || (Array.isArray(v) && !v.length) ? '' : `<tr><td>${esc(k)}</td><td>${esc(Array.isArray(v) ? v.join(', ') : v)}</td></tr>`;
     const medias = (testId) => (b.fichiers || []).filter(f => f.test === testId).map(f => {
       const u = urls[f.chemin]; if (!u) return `<figure><figcaption>${esc(f.label)} (lien indisponible)</figcaption></figure>`;
-      const m = f.type?.startsWith('video/') ? `<video src="${esc(u)}" controls playsinline preload="metadata"></video>` : `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="${esc(f.label)}" loading="lazy"></a>`;
-      return `<figure>${m}<figcaption>${esc(f.label)} · <a href="${esc(u)}" download target="_blank" rel="noopener">télécharger</a></figcaption></figure>`;
+      const ext = (f.chemin.split('.').pop() || 'mp4').toLowerCase();
+      const video = f.type?.startsWith('video/') || /^(mp4|mov|webm|3gp|m4v)$/.test(ext);
+      const nomFichier = encodeURIComponent(`${b.prenom} - ${f.label}`.replace(/[\\/:*?"<>|]+/g, '') + '.' + ext);
+      const m = video
+        ? `<video src="${esc(u)}" controls playsinline preload="metadata" data-video></video><p class="illisible doux petit" hidden>Ce navigateur ne sait pas lire cette vidéo (format ${esc(ext.toUpperCase())}${f.type ? ', ' + esc(f.type) : ''}). Clique sur « télécharger » : elle s'ouvre avec QuickTime, VLC ou sur ton téléphone. Safari la lit aussi souvent directement.</p>`
+        : `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="${esc(f.label)}" loading="lazy"></a>`;
+      return `<figure>${m}<figcaption>${esc(f.label)}${f.taille ? ' · ' + mo(f.taille) : ''} · <a href="${esc(u)}" target="_blank" rel="noopener">ouvrir</a> · <a href="${esc(u)}&download=${nomFichier}">télécharger</a></figcaption></figure>`;
     }).join('');
 
     const blocsTests = TESTS.map(tst => {
@@ -1601,6 +1607,12 @@ async function demarrerCoach() {
       </div>
       ${blocsTests}
       <div class="carte coach-test"><h3>Douleurs</h3>${dz ? `<table class="tableau">${dz}</table>` : '<p class="doux petit">Aucune zone signalée.</p>'}</div>`;
+    $$('video[data-video]', det).forEach(v => {
+      const illisible = () => { v.hidden = true; v.nextElementSibling.hidden = false; };
+      v.addEventListener('error', illisible);
+      // Format non pris en charge : parfois le son passe mais l'image reste noire (largeur 0)
+      v.addEventListener('loadedmetadata', () => { if (!v.videoWidth) illisible(); });
+    });
     window.scrollTo({ top: 0 });
     if (!b.vu) sb.from(CONFIG.table).update({ vu: true }).eq('id', id).then(() => {});
     $('#coach-retour').addEventListener('click', chargerListe);
