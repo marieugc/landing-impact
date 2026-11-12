@@ -261,9 +261,22 @@
       .doc { max-width: none; gap: 14px; }
       .entete { padding: 18px; gap: 18px; grid-template-columns: 1.1fr 1fr; }
       .entete h1 { font-size: 32px; }
-      .bloc, .seance { padding: 16px; break-inside: avoid; }
-      .seance { box-shadow: 0 0 0 1px rgba(180, 92, 255, .6); }
-      .seance.saut { break-before: page; }
+      .bloc, .seance { padding: 16px; }
+      /* Les blocs courts restent entiers ; une séance peut continuer sur la page suivante
+         (son cadre est redessiné de chaque côté de la coupure) au lieu de laisser une demi-page vide. */
+      .bloc { break-inside: avoid; }
+      .seance { box-shadow: none; border: 1px solid rgba(180, 92, 255, .6); break-inside: auto; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+      .seance-tete { break-after: avoid; break-inside: avoid; }
+      .note-seance { break-inside: avoid; }
+      thead { display: table-header-group; }
+      /* Le tableau tient toujours dans la largeur de la page : colonnes fixes, retours à la ligne autorisés */
+      table { table-layout: fixed; }
+      td.exo, td.series, td.notes { min-width: 0; }
+      td.tempo, td.repos { white-space: normal; }
+      thead th { white-space: normal; }
+      tbody td { overflow-wrap: anywhere; }
+      th.c-num { width: 8.5%; } th.c-exo { width: 26%; } th.c-series { width: 13%; }
+      th.c-tempo { width: 13%; } th.c-repos { width: 9%; } th.c-notes { width: auto; }
       .semaine { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
       .jour { padding: 8px 7px; }
       .jour .contenu { font-size: 10.5px; }
@@ -580,7 +593,7 @@
           </div>
           <div class="tableau-zone">
             <table>
-              <thead><tr><th>#</th><th>Exercice</th><th>Séries × reps</th>${c("tempo") ? "<th>Tempo</th>" : ""}${c("repos") ? "<th>Repos</th>" : ""}${c("notes") ? "<th>Notes</th>" : ""}<th class="edition-seule"></th></tr></thead>
+              <thead><tr><th class="c-num">#</th><th class="c-exo">Exercice</th><th class="c-series">Séries × reps</th>${c("tempo") ? '<th class="c-tempo">Tempo</th>' : ""}${c("repos") ? '<th class="c-repos">Repos</th>' : ""}${c("notes") ? '<th class="c-notes">Notes</th>' : ""}<th class="edition-seule"></th></tr></thead>
               <tbody>
                 ${s.exercices.map((e, ei) => `
                   <tr class="${/[a-z]$/i.test(e.n) ? "superset" : ""}">
