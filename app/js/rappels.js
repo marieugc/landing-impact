@@ -60,7 +60,7 @@ export async function carteRappels(conteneur, profil) {
     installer: ["Pour recevoir les notifications sur ton iPhone, installe d'abord l'app : bouton Partager de Safari, puis « Sur l'écran d'accueil ». Ouvre ensuite l'app depuis son icône.", ''],
     refuse: ['Les notifications sont bloquées sur cet appareil. Autorise-les pour Booty Flow dans les réglages (téléphone : Réglages › Notifications ; Mac : Réglages Système › Notifications, ou les réglages du site dans ton navigateur).', '']
   } : {
-    inactif: ['Sois prévenue quand ta coach te répond (message, correction, retour sur ton bilan) et reçois un rappel le dimanche soir si ton bilan n\'est pas encore envoyé.',
+    inactif: ['Sois prévenue quand ta coach te répond (message, correction, retour sur ton bilan) et reçois un rappel le dimanche soir si ton bilan du week-end (samedi ou dimanche) n\'est pas encore envoyé.',
       `<button class="bouton-principal compact" id="activer-rappels">${icone('cloche', 16)}ACTIVER LES NOTIFICATIONS</button>`],
     installer: ["Pour recevoir les notifications sur ton iPhone, installe d'abord l'app : bouton Partager de Safari, puis « Sur l'écran d'accueil ». Ouvre ensuite l'app depuis son icône.", ''],
     refuse: ['Les notifications sont bloquées. Pour les recevoir : Réglages du téléphone › Notifications › Booty Flow › Autoriser.', '']

@@ -1,6 +1,7 @@
 // Fonction Supabase « rappels-bilans » : notifications sur le téléphone des élèves.
-// - Dimanche 18 h (heure de Paris) : rappel aux élèves dont le bilan est attendu aujourd'hui et pas encore envoyé.
-// - Lundi 9 h : relance des élèves dont le bilan de la semaine n'est pas arrivé.
+// Bilan chaque week-end, obligatoirement le samedi ou le dimanche (aucune date à régler par la coach).
+// - Dimanche 18 h (heure de Paris) : rappel aux élèves qui n'ont envoyé leur bilan ni samedi ni dimanche.
+// - Lundi 9 h : relance des élèves dont le bilan du week-end n'est pas arrivé.
 // Appelée toutes les heures le dimanche et le lundi par pg_cron (voir supabase/rappels.sql) : elle n'envoie
 // rien en dehors de ces deux créneaux. Corps { "moment": "test" } : notification d'essai à tous les appareils.
 // Corps { "moment": "coach", "table": ..., "ligne": {...} } : envoyé par la base (supabase/notifications-coach.sql)
@@ -30,7 +31,7 @@ async function rest(chemin: string, options: RequestInit = {}) {
   return r.status === 204 ? null : r.json();
 }
 
-// ── Dates (même règle que l'app : échéance chaque dimanche, sauf jour choisi par la coach) ──
+// ── Dates (même règle que l'app : bilan le samedi ou le dimanche, échéance chaque dimanche) ──
 function heureDeParis(maintenant = new Date()) {
   const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23', weekday: 'short'
@@ -50,8 +51,8 @@ function dimancheApres(d: string, ecart = 0) {
   return plusJours(debut, (7 - jourUTC(debut).getUTCDay()) % 7);
 }
 type Eleve = { id: string; prenom: string | null; prochain_bilan: string | null; created_at: string };
+// L'ancienne date « prochain_bilan » réglée par la coach est ignorée : c'est toujours le week-end.
 function departBilans(e: Eleve, dates: string[]) {
-  if (e.prochain_bilan) return e.prochain_bilan;
   if (dates.length) return dimancheApres([...dates].sort()[0]);
   return dimancheApres(e.created_at.slice(0, 10), 4);
 }
@@ -61,13 +62,13 @@ function derniereEcheance(depart: string, aujourdhui: string) {
   if (n > 0) return null;
   return plusJours(depart, Math.floor(-n / 7) * 7);
 }
-// Un bilan envoyé jusqu'à 3 jours avant l'échéance compte (du jeudi au dimanche)
-const bilanRecu = (echeance: string, dates: string[]) => dates.some((d) => d >= plusJours(echeance, -3));
+// Le bilan compte s'il a été envoyé le samedi ou le dimanche de ce week-end
+const bilanRecu = (echeance: string, dates: string[]) => dates.some((d) => d >= plusJours(echeance, -1));
 
 const MESSAGES = {
   rappel: (prenom: string) => ({
     titre: 'Ton bilan de la semaine',
-    corps: `${prenom ? `${prenom}, pense` : 'Pense'} à envoyer ton bilan ce soir : poids, photos et ton état de la semaine.`,
+    corps: `${prenom ? `${prenom}, ton` : 'Ton'} bilan n'est pas encore envoyé : pense à le faire ce soir (poids, photos et ton état de la semaine).`,
     url: '#/bilan'
   }),
   retard: (prenom: string) => ({
@@ -216,7 +217,7 @@ Deno.serve(async (req) => {
     const dates = bilans.filter((b) => b.eleve_id === e.id).map((b) => b.date);
     const echeance = derniereEcheance(departBilans(e, dates), paris.date);
     if (!echeance || bilanRecu(echeance, dates)) return false;
-    // Dimanche soir : seulement si le bilan est attendu aujourd'hui ; lundi : échéance passée sans bilan
+    // Dimanche soir : rien reçu samedi ni aujourd'hui ; lundi : week-end passé sans bilan
     return moment === 'rappel' ? echeance === paris.date : echeance < paris.date;
   });
 

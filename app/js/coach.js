@@ -1,7 +1,7 @@
 // ESPACE COACH — tableau de bord, fiches élèves, corrections vidéo, bilans, compétitrices.
 import { api, MODE } from './data.js';
 import {
-  esc, icone, VERSION_APP, dateCourte, dateAvecJour, joursAvant, bilanEnRetard, departBilans, echeancesBilan, nombre, ecart, badge,
+  esc, icone, VERSION_APP, dateCourte, dateAvecJour, joursAvant, bilanEnRetard, departBilans, prochainWeekendBilan, texteWeekendBilan, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe, compresserImage
 } from './ui.js';
 import { retourBilanHtml, brancherRetours, vocalRetour } from './bilans.js';
@@ -149,20 +149,20 @@ async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
 }
 
 async function ficheSuivi(zone, e, recharger) {
-  const depart = departBilans(e, await api.listBilans(e.id));
-  const prochain = depart ? echeancesBilan(depart).prochaine : null;
+  const bilansEleve = await api.listBilans(e.id);
+  const prochain = prochainWeekendBilan(departBilans(e, bilansEleve), bilansEleve);
   const abonnements = await api.compterAbonnements(e.id).catch(() => null);
   zone.innerHTML = `<form class="formulaire carte large" id="form-suivi">
     <label>Prénom<input name="prenom" value="${esc(e.prenom)}" required></label>
     <label>Objectif<input name="objectif" value="${esc(e.objectif || '')}" placeholder="Ex. : Galber le bas du corps"></label>
-    <div class="grille-3">
+    <div class="grille-2">
       <label>Semaine actuelle<input name="semaine" type="number" min="1" value="${e.semaine}"></label>
       <label>Sur (semaines)<input name="semaines_total" type="number" min="1" value="${e.semaines_total}"></label>
-      <label>Jour de bilan (facultatif)<input name="prochain_bilan" type="date" value="${esc(e.prochain_bilan || '')}"></label>
     </div>
-    <p class="petit">${e.prochain_bilan ? 'Les bilans reviennent automatiquement chaque semaine à partir de la date choisie.' : 'Les bilans reviennent automatiquement chaque week-end (à envoyer au plus tard le dimanche).'}
-      ${prochain ? `<br>Prochain bilan : <strong>${dateAvecJour(prochain)}</strong>` : ''}
-      ${abonnements === null ? '' : `<br>Rappels sur son téléphone : <strong>${abonnements ? `activés${abonnements > 1 ? ` (${abonnements} appareils)` : ''}` : 'pas encore activés'}</strong>`}<br>Choisis une date seulement pour un autre jour que le dimanche, laisse vide pour revenir au week-end.</p>
+    <p class="petit">Bilan chaque week-end, à envoyer le samedi ou le dimanche : rien à régler, la date se met à jour toute seule.
+      ${prochain ? `<br>Prochain bilan : <strong>${texteWeekendBilan(prochain)}</strong>` : ''}
+      ${abonnements === null ? '' : `<br>Rappels sur son téléphone : <strong>${abonnements ? `activés${abonnements > 1 ? ` (${abonnements} appareils)` : ''}` : 'pas encore activés'}</strong>`}
+      <br>Sans bilan le samedi ni le dimanche, elle reçoit un rappel le dimanche à 18 h puis le lundi à 9 h.</p>
     <label>Message du jour (affiché sur son accueil)<textarea name="message_coach" rows="4">${esc(e.message_coach || '')}</textarea></label>
     <label class="case"><input type="checkbox" name="competitrice" ${e.competitrice ? 'checked' : ''}><span>Compétitrice (active l'onglet Posing)</span></label>
     <button class="bouton-principal" type="submit">ENREGISTRER</button>
@@ -175,7 +175,7 @@ async function ficheSuivi(zone, e, recharger) {
       objectif: d.get('objectif').trim(),
       semaine: Number(d.get('semaine')) || 1,
       semaines_total: Number(d.get('semaines_total')) || 12,
-      prochain_bilan: d.get('prochain_bilan') || null,
+      prochain_bilan: null, // ancienne date de bilan : plus utilisée (bilan chaque week-end)
       message_coach: d.get('message_coach').trim(),
       competitrice: d.get('competitrice') === 'on'
     }));
