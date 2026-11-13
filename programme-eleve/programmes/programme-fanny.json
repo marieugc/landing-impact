@@ -7,7 +7,7 @@
     {
       "jour": "Lundi",
       "type": "bas",
-      "seance": "Séance 1 · Fessiers (65-70 min)"
+      "seance": "Séance 1 · Fessiers"
     },
     {
       "jour": "Mardi",
@@ -40,7 +40,7 @@
       "seance": "Repos"
     }
   ],
-  "structure": "Chaque séance commence par 5 min de mobilité puis 5 min d'activation (séances 2 à 5).\nToujours au moins un jour sans jambes entre deux séances bas du corps. Les jours peuvent glisser, mais garder cet ordre.\nCardio de 20 min uniquement après les séances 2 et 4 (haut du corps). Plus de cardio après les séances jambes : il prend sur la récupération et l'énergie dont les cuisses ont besoin pour grossir.",
+  "structure": "Chaque séance commence par son bloc échauffement et mobilité, juste avant le corps de séance.\nToujours au moins un jour sans jambes entre deux séances bas du corps. Les jours peuvent glisser, mais garder cet ordre.\nCardio : 25 min modéré après la séance 1, 20 min après les séances 2 et 4. Pas de cardio après les séances 3 et 5 : il prend sur la récupération et l'énergie dont les cuisses ont besoin pour grossir.",
   "notation": "Effort : chaque série de travail se termine à 1-2 reps de l'échec (RIR 1-2). Les séries d'approche ne comptent pas.\nTempo : descente contrôlée en 3 s sur tous les exercices du bas du corps, sauf mention contraire.\nAmplitude : priorité à la position étirée (squat profond, bulgares, fentes en déficit, RDL, leg curl assis). Pas de demi-reps pour charger plus.",
   "echauffementBas": "",
   "echauffementHaut": "",
@@ -77,31 +77,22 @@
       "jour": "Lundi",
       "titre": "Séance 1 · Fessiers",
       "focus": "100 % fessiers : grand fessier lourd en raccourci et en étirement, puis moyen fessier",
-      "note": "Pas de cardio après cette séance.",
+      "note": "+25 min cardio modéré",
       "echauffement": [
         {
-          "n": "1",
-          "nom": "Activation fessier, bande aux chevilles",
-          "lien": "",
-          "series": "3 allers-retours",
-          "tempo": "",
-          "repos": "",
-          "notes": "Sans s'épuiser"
-        },
-        {
-          "n": "2",
-          "nom": "Glute bridge poids du corps",
-          "lien": "",
-          "series": "2 × 15",
+          "n": "E1",
+          "nom": "Rotations de hanches 90/90",
+          "lien": "https://drive.google.com/file/d/1xUmGlbL7SjV8jJNPMUMRvRhEZzDSn9GV/view?usp=drive_link",
+          "series": "2 × 15 / côté",
           "tempo": "",
           "repos": "",
           "notes": ""
         },
         {
-          "n": "3",
-          "nom": "Séries d'approche hip thrust",
-          "lien": "",
-          "series": "2 séries légères",
+          "n": "E2",
+          "nom": "Fentes profondes",
+          "lien": "https://drive.google.com/file/d/1dgSdpXWKYWMih3tIGrHQih8F3JLDvrmR/view?usp=drive_link",
+          "series": "2 × 15 / côté",
           "tempo": "",
           "repos": "",
           "notes": ""
@@ -110,48 +101,66 @@
       "exercices": [
         {
           "n": "1",
-          "nom": "Hip thrust barre (ancrage scapulaire sur banc)",
-          "lien": "",
-          "series": "4 × 6-10",
-          "tempo": "Contrôlé, 1 s pause en haut",
-          "repos": "2-3'",
-          "notes": "Lourd, priorité à la progression de charge. Menton rentré, bassin en rétroversion en haut"
+          "nom": "Activation fessier",
+          "lien": "https://drive.google.com/file/d/1bk1uWSoY7BmrQwvudzxMYeVr3QBra4Qu/view?usp=drive_link",
+          "series": "3 tours",
+          "tempo": "2 s",
+          "repos": "90 s",
+          "notes": "1 tour = 20 pas à droite + 20 pas à gauche"
         },
         {
           "n": "2",
-          "nom": "Fentes marchées haltères, grands pas, buste penché",
-          "lien": "",
-          "series": "3 × 10-12 / jambe",
-          "tempo": "3 s descente",
-          "repos": "2'",
-          "notes": "Pas long, genou arrière proche du sol, pousser dans le talon avant : gros étirement fessier"
+          "nom": "Hip thrust isométrie",
+          "lien": "https://drive.google.com/file/d/1ZMA6tduE3gmuB1ClqFEx6DRGPNmIs3Xt/view?usp=drive_link",
+          "series": "3 × 15",
+          "tempo": "3 s",
+          "repos": "60 s",
+          "notes": ""
         },
         {
           "n": "3",
-          "nom": "Extension lombaire 45° (dos rond, pieds en canard)",
-          "lien": "",
-          "series": "3 × 10-15",
-          "tempo": "2 s descente, 1 s contraction",
-          "repos": "90 s",
-          "notes": "Pousser avec les fessiers, pas avec les lombaires. Ajouter un disque dès que 15 reps sont faciles"
+          "nom": "Hip thrust double contraction",
+          "lien": "https://drive.google.com/file/d/13l8y4UqaMm9sCQEYvS879Ix1U2sAs8OI/view?usp=drive_link",
+          "series": "3 × 12",
+          "tempo": "2 s",
+          "repos": "60 s",
+          "notes": ""
         },
         {
           "n": "4",
-          "nom": "Kickback poulie basse, buste penché",
-          "lien": "",
-          "series": "3 × 12-15 / jambe",
-          "tempo": "2 s descente, 1 s contraction",
-          "repos": "60 s",
-          "notes": "Jambe tendue vers l'arrière et légèrement en diagonale, sans cambrer"
+          "nom": "Fentes bulgares focus fessier",
+          "lien": "https://drive.google.com/file/d/1mBwM7SB4HzrrtnyyIG15o7jm74mAAiS0/view?usp=drive_link",
+          "series": "3 × 10-12 / jambe",
+          "tempo": "3 s",
+          "repos": "90 s",
+          "notes": ""
         },
         {
           "n": "5",
+          "nom": "Extension lombaire 45° dos rond, pieds en canard",
+          "lien": "https://drive.google.com/file/d/1yjFpV-6tiZWn4rWwoRo79GkYX-axQH6B/view?usp=drive_link",
+          "series": "3 × 10-15",
+          "tempo": "3 s",
+          "repos": "60 s",
+          "notes": ""
+        },
+        {
+          "n": "6",
+          "nom": "Kickback poulie attache genoux",
+          "lien": "https://drive.google.com/file/d/1f1IhYavi6JtXSuN3WcI_vHioNtu0nqYe/view?usp=drive_link",
+          "series": "3 × 12-15 / jambe",
+          "tempo": "3 s",
+          "repos": "",
+          "notes": "Tu enchaînes les 3 séries sans repos, en alternant jambe droite et jambe gauche"
+        },
+        {
+          "n": "7",
           "nom": "Abduction machine, buste penché en avant",
           "lien": "",
-          "series": "3 × 15-20",
-          "tempo": "Contrôlé",
+          "series": "3 × 20",
+          "tempo": "",
           "repos": "60 s",
-          "notes": "Drop set sur la dernière série uniquement"
+          "notes": "Drop set sur la dernière série : à la fin de tes 20 reps, tu retires 30 % de la charge et tu fais un max de reps, puis tu retires de nouveau 30 % et tu refais un max de reps jusqu'à l'échec"
         }
       ]
     },
