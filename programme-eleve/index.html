@@ -600,6 +600,7 @@
           <div class="echauffement">
             <h3 class="sous-titre">🔥 Échauffement &amp; mobilité</h3>
             ${tableauExos(s, si, "echauffement")}
+            <div class="ajout-ligne edition-seule"><button class="btn petit" type="button" data-action="ajout" data-l="echauffement" data-s="${si}">＋ Ajouter un exercice de mobilité / échauffement</button></div>
           </div>
           <h3 class="sous-titre corps">🏋️ Corps de séance</h3>` : ""}
           ${tableauExos(s, si, "exercices")}
@@ -607,7 +608,7 @@
           <div class="ajout-ligne edition-seule">
             <button class="btn petit principal" type="button" data-action="ajout" data-s="${si}">＋ Ajouter un exercice</button>
             <button class="btn petit" type="button" data-action="ajout-superset" data-s="${si}">＋ Ajouter un superset (a + b)</button>
-            <button class="btn petit" type="button" data-action="ajout" data-l="echauffement" data-s="${si}">＋ Ajouter un exercice d'échauffement</button>
+            ${(s.echauffement || []).length ? "" : `<button class="btn petit" type="button" data-action="ajout" data-l="echauffement" data-s="${si}">＋ Ajouter un bloc mobilité / échauffement</button>`}
           </div>
         </section>`).join("")}
 
@@ -730,7 +731,11 @@
     const cle = b.dataset.l === "echauffement" ? "echauffement" : "exercices";
     const liste = seance ? (seance[cle] ??= []) : [];
     switch (b.dataset.action) {
-      case "ajout": liste.push(nouvelExo((cle === "echauffement" ? "E" : "") + numeroSuivant(liste.map(e => ({ n: String(e.n).replace(/^E/i, "") }))))); break;
+      case "ajout": {
+        const e = nouvelExo((cle === "echauffement" ? "E" : "") + numeroSuivant(liste.map(e => ({ n: String(e.n).replace(/^E/i, "") }))));
+        if (cle === "echauffement") Object.assign(e, { series: "", tempo: "", repos: "" });
+        liste.push(e); break;
+      }
       case "ajout-superset": {
         const n = numeroSuivant(seance.exercices);
         const a = nouvelExo(n + "a"); a.repos = "0"; a.notes = `Enchaîner avec le ${n}b`;
