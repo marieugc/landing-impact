@@ -193,7 +193,7 @@
     .zone-echauffement { border-style: dashed; background: rgba(255, 255, 255, .015); }
     .zone-echauffement table { font-size: 12.5px; }
     .zone-echauffement td.num span { background: transparent; }
-    .note-seance { margin: 12px 0 0; padding: 10px 14px; border-radius: 12px; background: rgba(255, 196, 107, .08); border: 1px dashed rgba(255, 196, 107, .45); color: #FFE2B3; font-size: 13.5px; }
+    .note-seance { margin: 12px 0 0; padding: 10px 14px; border-radius: 12px; background: rgba(255, 196, 107, .08); border: 1px dashed rgba(255, 196, 107, .45); color: #FFE2B3; font-size: 13.5px; white-space: pre-line; }
     .note-seance::before { content: "⚡ "; }
 
     /* Cycle */
@@ -1166,6 +1166,8 @@
       jour = majuscule(j[1].toLowerCase());
       const avant = t.slice(0, j.index).replace(/[\s,:\-–—·|]+$/, ""), apres = t.slice(j.index + j[0].length).replace(/^[\s,:\-–—·|]+/, "");
       t = propre(avant && apres ? `${avant} · ${apres}` : avant || apres);
+      // « (mardi, inchangée) » → « (inchangée) »
+      t = t.replace(/\(\s*[·,:\-–—]?\s*/g, "(").replace(/\s*[·,:\-–—]\s*\)/g, ")").replace(/\s*\(\s*\)/g, "").trim();
     }
     t = t.replace(/^#+\s*/, "").replace(/\s*:\s*$/, "").replace(/\s+[-–—]\s+/g, " · ");
     if (/[A-Z]/.test(t) && t === t.toUpperCase()) t = t.toLowerCase();
@@ -1246,13 +1248,62 @@
   const RE_TITRE_SEANCE = /^(#+\s*|s[ée]ance\b|jour\s*\d|day\b|workout\b|entra[iî]nement\s+\w|(bas|haut)\s+(\d|du corps|[a-z]\b)|full\s*body|upper\b|lower\b|push\b|pull\b|legs?\b|(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\b)/i;
 
   function lireTexte(brut, opts = {}) {
-    const lignes = brut.replace(/\r/g, "").split("\n").map(l => l.replace(/\t/g, " ").replace(/\s+/g, " ").trim());
+    // Texte copié depuis un chat ou un document : on retire la mise en forme Markdown
+    // (**gras**, *italique*, ## titres) et on lit les tableaux (colonnes séparées par | ou tabulation)
+    const demarque = x => x.replace(/\*\*|__/g, "").replace(/^#+\s+(?=\S)/, "")
+      .replace(/(^|[\s(«])[*_](?=\S)([^*_]*?\S)[*_](?=$|[\s.,:;)»!?])/g, "$1$2").trim();
+    const brutes = brut.replace(/\r/g, "").split("\n")
+      .filter(b => !/^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/.test(b)); // lignes « |---|---| »
+    const cellules = brutes.map(b => {
+      const x = b.trim();
+      let c = null;
+      if ((x.match(/\|/g) || []).length >= 2) c = x.replace(/^\|/, "").replace(/\|$/, "").split("|");
+      else if (/\t/.test(x) && x.split("\t").filter(s => s.trim()).length >= 3) c = x.split("\t");
+      return c ? c.map(s => demarque(s.replace(/\s+/g, " ").trim())) : null;
+    });
+    const lignes = brutes.map((b, i) => cellules[i] ? cellules[i].filter(Boolean).join(" ") : demarque(b.replace(/\t/g, " ").replace(/\s+/g, " ").trim()));
     const res = { seances: [], extras: [], textes: {} };
     const intro = [];
-    let seance = null, exo = null, blanc = true, modeEchauf = false, dernierNumEchauf = 0;
+    let seance = null, exo = null, blanc = true, modeEchauf = false, dernierNumEchauf = 0, colonnes = null;
+    // En-tête de tableau : « # | Exercice | Séries × reps | Tempo | Repos | Notes »
+    const lireEntete = c => {
+      if (!c || !c.some(x => /exercice|mouvement/i.test(x)) || !c.some(x => /s[ée]ries?|reps?\b|r[ée]p[ée]titions/i.test(x))) return null;
+      return c.map(x => {
+        const n = sansAccent(x);
+        return /^(#|n°?|num|no)$/.test(n) ? "n" : /exercice|mouvement/.test(n) ? "nom" : /series?|reps?\b|repetitions/.test(n) ? "series"
+          : /tempo/.test(n) ? "tempo" : /repos|recup|rest/.test(n) ? "repos" : /note|consigne|technique|remarque|conseil/.test(n) ? "notes" : null;
+      });
+    };
+    const suivanteEntete = i => { for (let k = i + 1; k < lignes.length; k++) if (lignes[k]) return !!lireEntete(cellules[k]); return false; };
+    // Échauffement / mobilité sans « 3 × 10 » : « 1. 90/90 hanches : 5 par côté »
+    const lireEchauf = (l, rang) => {
+      const m = l.match(/^(?:[-•*]\s*|(\d+)\s*[.)]\s+)/);
+      let reste = l.slice(m[0].length).trim(), series = "", notes = "";
+      const p = reste.match(/^(.*?\S)\s*[:–—]\s+(.+)$/) || reste.match(/^(.*?\S)\s+(\d+\s*(?:s|sec|secondes|min|reps?|tours?)\b.*)$/i);
+      if (p) { reste = p[1]; series = p[2]; }
+      // « 30 s par côté, en serrant le fessier » : la suite après la virgule va dans les notes
+      const v = series.match(/^([^,]{1,30}),\s*(.+)$/);
+      if (v) { series = v[1]; notes = majuscule(v[2]); }
+      return { n: m[1] || String(rang), nom: majuscule(propre(reste)), lien: "", series: propre(series), tempo: "", repos: "", notes };
+    };
+    const groupes = new Map();
     const RE_ECHAUF = /^[#*_\s]*(?:\p{Extended_Pictographic}️?\s*)?(?:[ée]chauffement|mobilit[ée]|pr[ée]paration|activation|warm[\s-]?up|routine\s+(?:de\s+)?mobilit)/iu;
     const RE_CORPS = /^[#*_\s]*(?:\p{Extended_Pictographic}️?\s*)?(?:corps\s+de\s+s[ée]ance|s[ée]ance\s*(?::|$)|entra[iî]nement\s*(?::|$)|musculation|exercices\s*(?::|$)|workout\s*(?::|$))/iu;
     const suivanteExo = i => { for (let k = i + 1; k < lignes.length; k++) if (lignes[k]) return RE_SERIES.test(lignes[k]); return false; };
+
+    // Range l'exercice dans l'échauffement ou le corps de séance
+    function ranger(e) {
+      exo = e;
+      const num = parseInt(String(exo.n).replace(/^E/i, ""), 10) || 0;
+      // Après un échauffement numéroté 1, 2, 3…, un nouveau « 1. » ouvre le corps de séance
+      if (modeEchauf && !/^E/i.test(exo.n) && num && num <= dernierNumEchauf) modeEchauf = false;
+      const echauf = /^E\d/i.test(exo.n) || modeEchauf || /^(?:[ée]chauffement|mobilit[ée]|pr[ée]paration\s+(?:lombaire|lombo|articulaire|mobilit))/i.test(exo.nom);
+      if (echauf) {
+        if (modeEchauf) dernierNumEchauf = num;
+        if (!/^E/i.test(exo.n)) exo.n = "E" + (seance.echauffement.length + 1);
+        seance.echauffement.push(exo);
+      } else seance.exercices.push(exo);
+    }
 
     lignes.forEach((l, i) => {
       if (!l) { blanc = true; return; }
@@ -1277,6 +1328,37 @@
         if (RE_ECHAUF.test(l)) { modeEchauf = true; dernierNumEchauf = 0; exo = null; return; }
         if (modeEchauf && RE_CORPS.test(l)) { modeEchauf = false; exo = null; return; }
       }
+      if (!cellules[i]) colonnes = null;
+      // En-tête de tableau : les lignes suivantes sont lues colonne par colonne
+      const entete = lireEntete(cellules[i]);
+      if (entete) { colonnes = entete; exo = null; return; }
+      if (seance && colonnes && cellules[i]) {
+        const e = { n: "", nom: "", lien: "", series: "", tempo: "", repos: "", notes: "" };
+        colonnes.forEach((k, j) => { if (k && cellules[i][j]) e[k] = cellules[i][j]; });
+        if (!e.nom) return;
+        const url = e.nom.match(/(https?:\/\/\S+|www\.\S+)/i);
+        if (url) { e.lien = url[1]; e.nom = propre(e.nom.replace(url[1], "")); }
+        e.n = e.n.replace(/[.)]$/, "") || String(seance.exercices.length + 1);
+        e.series = e.series.replace(/(\d)\s*[x×*]\s*(\d)/i, "$1 × $2");
+        if (e.tempo === "—" || e.tempo === "-") e.tempo = "";
+        return ranger(e);
+      }
+      // Intertitre juste avant un tableau (« Pectoraux », « Triceps »…) : repère de groupe
+      if (seance && !series && l.length <= 45 && !RE_TITRE_SEANCE.test(l) && !RE_ECHAUF.test(l) && suivanteEntete(i)) {
+        if (!(modeEchauf && RE_CORPS.test(l)) && !RE_CORPS.test(l)) {
+          groupes.set(seance, [...(groupes.get(seance) || []), { nom: l.replace(/\s*:\s*$/, ""), debut: seance.exercices.length }]);
+        }
+        exo = null; return;
+      }
+      // Mobilité / activation sans « 3 × 10 » : « 1. 90/90 hanches : 5 par côté »
+      if (seance && modeEchauf && !series && /^(?:[-•*]\s+|\d+\s*[.)]\s+)/.test(l)) return ranger(lireEchauf(l, seance.echauffement.length + 1));
+      // Phrase juste sous le titre de la séance : son objectif
+      if (seance && !series && !debut && !seance.objectif && !seance.exercices.length && !seance.echauffement.length && !seance.note
+          && !/^[-–•*→>\d]/.test(l) && l.length <= 160 && !RE_ECHAUF.test(l) && (!RE_TITRE_SEANCE.test(l) || /\.$/.test(l))) {
+        const obj = l.replace(/\.$/, "");
+        seance.focus = seance.focus ? `${obj} (${seance.focus.toLowerCase()})` : obj;
+        seance.objectif = true; return;
+      }
       const titreSeance = !series && l.length <= 90 && (RE_TITRE_SEANCE.test(l) || (debut && suivanteExo(i) && (RE_ECHAUF.test(l) || /:$/.test(l) || l === l.toUpperCase() || /^\p{Extended_Pictographic}/u.test(l))));
       if (titreSeance) {
         seance = Object.assign(lireTitreSeance(l), { exercices: [], echauffement: [], note: "" });
@@ -1285,17 +1367,7 @@
       }
       if (series) {
         if (!seance) { seance = Object.assign(lireTitreSeance(`Séance ${res.seances.length + 1}`), { exercices: [], echauffement: [], note: "" }); res.seances.push(seance); }
-        exo = lireExercice(l, series, seance.exercices.length + 1);
-        const num = parseInt(String(exo.n).replace(/^E/i, ""), 10) || 0;
-        // Après un échauffement numéroté 1, 2, 3…, un nouveau « 1. » ouvre le corps de séance
-        if (modeEchauf && !/^E/i.test(exo.n) && num && num <= dernierNumEchauf) modeEchauf = false;
-        const echauf = /^E\d/i.test(exo.n) || modeEchauf || /^(?:[ée]chauffement|mobilit[ée]|pr[ée]paration\s+(?:lombaire|lombo|articulaire|mobilit))/i.test(exo.nom);
-        if (echauf) {
-          if (modeEchauf) dernierNumEchauf = num;
-          if (!/^E/i.test(exo.n)) exo.n = "E" + (seance.echauffement.length + 1);
-          seance.echauffement.push(exo);
-        } else seance.exercices.push(exo);
-        return;
+        return ranger(lireExercice(l, series, seance.exercices.length + 1));
       }
       // Ligne de consigne : sous l'exercice si elle le suit, sinon note de la séance
       const texte = l.replace(/^[-–•*→>]+\s*/, "");
@@ -1310,6 +1382,16 @@
       const premier = parseInt(x.exercices[0]?.n, 10);
       if (!x.echauffement.length || !(premier > 1)) continue;
       x.exercices.forEach(e => { e.n = String(e.n).replace(/^\d+/, d => String(Math.max(1, +d - premier + 1))); });
+    }
+    res.seances.forEach(x => delete x.objectif);
+    // Groupes (« Pectoraux », « Triceps »…) : rappelés dans la consigne de la séance
+    for (const [x, g] of groupes) {
+      const ordre = g.filter(y => y.debut < x.exercices.length).map((y, k, t) => {
+        const fin = (k + 1 < t.length ? t[k + 1].debut : x.exercices.length) - 1;
+        const a = x.exercices[y.debut].n, b = x.exercices[fin].n;
+        return `${y.nom} (${a === b ? a : `${a}-${b}`})`;
+      });
+      if (ordre.length) x.note = [`Ordre : ${ordre.join(" · ")}`, x.note].filter(Boolean).join("\n");
     }
     return res;
   }
