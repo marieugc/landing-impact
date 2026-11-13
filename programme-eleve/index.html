@@ -1606,6 +1606,37 @@ Séance 2 – Mercredi : haut du corps
   };
 
   rendu();
+
+  /* =================================================================
+     LIEN DIRECT : …/programme-eleve/?eleve=fanny
+     Charge programmes/programme-fanny.json et le met À LA PLACE du
+     dernier programme enregistré de cette élève (après confirmation).
+     Les programmes des autres élèves ne bougent pas.
+     ================================================================= */
+  (function chargerDepuisLien() {
+    const nom = new URLSearchParams(location.search).get("eleve");
+    if (!nom) return;
+    const fichier = sansAccent(nom).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    // On retire « ?eleve=… » de l'adresse : recharger la page ne refait pas le remplacement
+    history.replaceState(null, "", location.pathname + location.hash);
+    fetch(`programmes/programme-${fichier}.json`, { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(d => {
+        if (!Array.isArray(d.seances)) throw new Error();
+        const p = reparer(Object.assign(copie(PROGRAMME_DEFAUT), d));
+        const memes = bib.programmes.filter(x => sansAccent(x.data.eleve || "") === sansAccent(p.eleve || ""));
+        if (!memes.length) return ajouterProgramme(p, `Programme de ${p.eleve} ajouté à Mes programmes`);
+        const cible = memes.sort((a, b) => b.maj - a.maj)[0];
+        demander(`Remplacer ton programme de ${p.eleve} (« ${cible.data.titre || "sans titre"} ») par la version à jour ?`, () => {
+          cible.data = p; cible.maj = Date.now();
+          bib.actif = cible.id; P = p;
+          quitterEdition(); sauver(); rendu();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          toast(`Programme de ${p.eleve} mis à jour`);
+        });
+      })
+      .catch(() => toast(`Aucun programme trouvé pour « ${nom} »`));
+  })();
   </script>
 </body>
 </html>
