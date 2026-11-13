@@ -150,7 +150,8 @@ L'icône Booty Flow apparaît alors comme une vraie app, en plein écran.
 
 ## Étape 6 : rappels de bilan sur le téléphone (notifications)
 
-Les élèves reçoivent une notification **le dimanche à 18 h** si leur bilan n'est pas encore envoyé,
+Le bilan se fait **chaque week-end, le samedi ou le dimanche** : la date se met à jour toute seule, tu n'as rien à régler.
+Les élèves reçoivent une notification **le dimanche à 18 h** si elles n'ont envoyé leur bilan ni le samedi ni le dimanche,
 et **le lundi à 9 h** s'il n'est toujours pas arrivé. Chaque élève les active une fois avec le bouton
 « Activer les rappels » sur son accueil (sur iPhone : app installée sur l'écran d'accueil, iOS 16.4 ou plus).
 

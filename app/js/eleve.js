@@ -2,7 +2,7 @@
 import { api, MODE } from './data.js';
 import { NOM_COACH, NOM_VIDEOTHEQUE } from './config.js';
 import {
-  esc, icone, VERSION_APP, dateCourte, dateAvecJour, joursAvant, echeancesBilan, departBilans, nombre, ecart, badge,
+  esc, icone, VERSION_APP, dateCourte, dateAvecJour, joursAvant, prochainWeekendBilan, texteWeekendBilan, departBilans, nombre, ecart, badge,
   toast, fenetre, fermerFenetre, pendant, courbe
 } from './ui.js';
 import { conversation } from './chat.js';
@@ -97,7 +97,7 @@ async function accueil(racine, profil) {
     </section>
     <div class="grille-2">
       <a href="#/bilan" class="carte carte-mini">${icone('horloge', 22, 'var(--accent)')}
-        <div><div class="petit">Prochain bilan</div><strong>${departBilan ? dateAvecJour(echeancesBilan(departBilan).prochaine) : 'Dès cette semaine'}</strong></div></a>
+        <div><div class="petit">Prochain bilan</div><strong>${texteWeekendBilan(prochainWeekendBilan(departBilan, mesBilans))}</strong></div></a>
       <a href="#/mouvement" class="carte carte-mini">${icone('video', 22, 'var(--accent)')}
         <div><div class="petit">Vidéos corrigées</div><strong>${recentes.length ? `${recentes.length} nouvelle${recentes.length > 1 ? 's' : ''}` : 'À jour'}</strong></div></a>
     </div>

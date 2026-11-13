@@ -2,7 +2,7 @@
 
 // Numéro affiché en bas de l'app : permet de vérifier que le téléphone a bien la dernière version.
 // À augmenter à chaque mise à jour, en même temps que version.json, VERSION dans sw.js et ?v= dans index.html.
-export const VERSION_APP = '31';
+export const VERSION_APP = '32';
 
 // Protège le texte saisi (évite qu'un nom ou un message casse la page)
 export function esc(v) {
@@ -84,23 +84,38 @@ function dimancheApres(v, ecart = 0) {
   const debut = plusJours(v, ecart);
   return plusJours(debut, (7 - versDate(debut).getDay()) % 7);
 }
-// Point de départ du rythme hebdomadaire : la date réglée par la coach, sinon chaque week-end
-// (échéance le dimanche). Une nouvelle inscrite a au moins 4 jours avant son premier bilan.
-// La coach n'a donc rien à régler.
+// Bilan chaque week-end, obligatoirement le samedi ou le dimanche (échéance le dimanche).
+// Point de départ : le premier week-end après le premier bilan, ou au moins 4 jours après l'inscription
+// pour une nouvelle élève. La coach n'a aucune date à régler (l'ancienne date « prochain_bilan » est ignorée).
 export function departBilans(eleve, bilansEleve = []) {
-  if (eleve?.prochain_bilan) return eleve.prochain_bilan;
   const premier = bilansEleve.map((b) => b.date).filter(Boolean).sort()[0];
   if (premier) return dimancheApres(premier);
   const inscription = eleve?.created_at ? String(eleve.created_at).slice(0, 10) : plusJours(new Date().toISOString().slice(0, 10), 0);
   return dimancheApres(inscription, 4);
 }
-// En retard : la dernière échéance est passée (pas le jour même) et aucun bilan n'a été envoyé
-// depuis 3 jours avant cette échéance (un bilan envoyé un peu en avance compte).
+const dateBilan = (b) => b.date || String(b.created_at).slice(0, 10);
+// En retard : le week-end est passé et aucun bilan n'a été envoyé ce samedi ou ce dimanche.
 export function bilanEnRetard(depart, bilansEleve) {
   const { derniere } = echeancesBilan(depart);
   if (!derniere || joursAvant(derniere) >= 0) return false;
-  const debut = plusJours(derniere, -3);
-  return !bilansEleve.some((b) => (b.date || String(b.created_at).slice(0, 10)) >= debut);
+  const samedi = plusJours(derniere, -1);
+  return !bilansEleve.some((b) => dateBilan(b) >= samedi);
+}
+// Prochain week-end de bilan { samedi, dimanche } : si le bilan de ce week-end est déjà envoyé,
+// c'est le week-end suivant.
+export function prochainWeekendBilan(depart, bilansEleve = []) {
+  let dimanche = echeancesBilan(depart).prochaine;
+  if (!dimanche) return null;
+  if (joursAvant(dimanche) <= 1 && bilansEleve.some((b) => dateBilan(b) >= plusJours(dimanche, -1))) dimanche = plusJours(dimanche, 7);
+  return { samedi: plusJours(dimanche, -1), dimanche };
+}
+// « Sam. 15 ou dim. 16 nov. »
+export function texteWeekendBilan(w) {
+  if (!w) return 'Ce week-end';
+  const s = versDate(w.samedi), d = versDate(w.dimanche);
+  return s.getMonth() === d.getMonth()
+    ? `Sam. ${s.getDate()} ou dim. ${d.getDate()} ${MOIS[d.getMonth()]}`
+    : `Sam. ${s.getDate()} ${MOIS[s.getMonth()]} ou dim. ${d.getDate()} ${MOIS[d.getMonth()]}`;
 }
 
 export function nombre(v, dec = 1) {
