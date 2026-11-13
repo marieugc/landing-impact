@@ -4,135 +4,748 @@
   "titre": "Bloc volume bas du corps · 10 semaines",
   "sousTitre": "Quadriceps et ischios passent de 1 à 2 séances par semaine, les fessiers gardent 3 séances avec moins de séries inutiles. Les deux séances haut du corps restent identiques.",
   "semaine": [
-    { "jour": "Lundi", "type": "bas", "seance": "Séance 1 · Fessiers (65-70 min)" },
-    { "jour": "Mardi", "type": "haut", "seance": "Séance 2 · Pecs + triceps + biceps + core (75-80 min)" },
-    { "jour": "Mercredi", "type": "bas", "seance": "Séance 3 · Quadriceps + fessiers (65-70 min)" },
-    { "jour": "Jeudi", "type": "repos", "seance": "Repos" },
-    { "jour": "Vendredi", "type": "haut", "seance": "Séance 4 · Dos + épaules arrière (75-80 min)" },
-    { "jour": "Samedi", "type": "bas", "seance": "Séance 5 · Ischios + quadriceps (70 min)" },
-    { "jour": "Dimanche", "type": "repos", "seance": "Repos" }
+    {
+      "jour": "Lundi",
+      "type": "bas",
+      "seance": "Séance 1 · Fessiers (65-70 min)"
+    },
+    {
+      "jour": "Mardi",
+      "type": "haut",
+      "seance": "Séance 2 · Pecs + triceps + biceps + core (80-85 min)"
+    },
+    {
+      "jour": "Mercredi",
+      "type": "bas",
+      "seance": "Séance 3 · Quadriceps + fessiers (75 min)"
+    },
+    {
+      "jour": "Jeudi",
+      "type": "repos",
+      "seance": "Repos"
+    },
+    {
+      "jour": "Vendredi",
+      "type": "haut",
+      "seance": "Séance 4 · Dos + épaules arrière (80-85 min)"
+    },
+    {
+      "jour": "Samedi",
+      "type": "bas",
+      "seance": "Séance 5 · Ischios + quadriceps (75 min)"
+    },
+    {
+      "jour": "Dimanche",
+      "type": "repos",
+      "seance": "Repos"
+    }
   ],
-  "structure": "Toujours au moins un jour sans jambes entre deux séances bas du corps. Les jours peuvent glisser, mais garder cet ordre.\nCardio de 20 min uniquement après les séances 2 et 4 (haut du corps). Plus de cardio après les séances jambes : il prend sur la récupération et l'énergie dont les cuisses ont besoin pour grossir.",
+  "structure": "Chaque séance commence par 5 min de mobilité puis 5 min d'activation (séances 2 à 5).\nToujours au moins un jour sans jambes entre deux séances bas du corps. Les jours peuvent glisser, mais garder cet ordre.\nCardio de 20 min uniquement après les séances 2 et 4 (haut du corps). Plus de cardio après les séances jambes : il prend sur la récupération et l'énergie dont les cuisses ont besoin pour grossir.",
   "notation": "Effort : chaque série de travail se termine à 1-2 reps de l'échec (RIR 1-2). Les séries d'approche ne comptent pas.\nTempo : descente contrôlée en 3 s sur tous les exercices du bas du corps, sauf mention contraire.\nAmplitude : priorité à la position étirée (squat profond, bulgares, fentes en déficit, RDL, leg curl assis). Pas de demi-reps pour charger plus.",
   "echauffementBas": "",
   "echauffementHaut": "",
   "extras": [
-    { "titre": "📓 Carnet de charges", "texte": "Obligatoire : noter la charge et les reps à chaque série, à chaque séance." },
-    { "titre": "⚡ Techniques d'intensité", "texte": "Uniquement sur la dernière série des exercices d'isolation indiqués. Jamais sur squat, RDL, presse ou fentes." },
-    { "titre": "📊 Volume hebdomadaire bas du corps", "texte": "Fessiers (travail direct) : ~35 séries → ~22 séries, 3 séances.\nQuadriceps : ~18 séries en 1 séance → ~18 séries en 2 séances.\nIschios : ~10 séries en 1 séance → ~10 séries + extensions 45°, 2 séances." },
-    { "titre": "🚶‍♀️ Activité quotidienne", "texte": "Objectif de pas stable d'une semaine à l'autre (par exemple 8 000-10 000), pour garder une dépense régulière sans fatigue." },
-    { "titre": "🥗 Nutrition (condition de réussite)", "texte": "Ce bloc ne donnera du volume que si tu n'es plus en déficit : apport à maintenance puis léger surplus, protéines élevées, glucides autour des séances jambes. Le plan alimentaire est ajusté en parallèle." },
-    { "titre": "📸 Suivi", "texte": "Carnet de charges rempli à chaque séance.\nPesée 3 matins par semaine, moyenne hebdomadaire.\nPhotos de dos, de face et de profil + tour de cuisse et tour de hanches toutes les 4 semaines.\nPoint avec Marie en semaine 4 et en semaine 10." }
+    {
+      "titre": "📓 Carnet de charges",
+      "texte": "Obligatoire : noter la charge et les reps à chaque série, à chaque séance."
+    },
+    {
+      "titre": "⚡ Techniques d'intensité",
+      "texte": "Uniquement sur la dernière série des exercices d'isolation indiqués. Jamais sur squat, RDL, presse ou fentes."
+    },
+    {
+      "titre": "📊 Volume hebdomadaire bas du corps",
+      "texte": "Fessiers (travail direct) : ~35 séries → ~22 séries, 3 séances.\nQuadriceps : ~18 séries en 1 séance → ~18 séries en 2 séances.\nIschios : ~10 séries en 1 séance → ~10 séries + extensions 45°, 2 séances."
+    },
+    {
+      "titre": "🚶‍♀️ Activité quotidienne",
+      "texte": "Objectif de pas stable d'une semaine à l'autre (par exemple 8 000-10 000), pour garder une dépense régulière sans fatigue."
+    },
+    {
+      "titre": "🥗 Nutrition (condition de réussite)",
+      "texte": "Ce bloc ne donnera du volume que si tu n'es plus en déficit : apport à maintenance puis léger surplus, protéines élevées, glucides autour des séances jambes. Le plan alimentaire est ajusté en parallèle."
+    },
+    {
+      "titre": "📸 Suivi",
+      "texte": "Carnet de charges rempli à chaque séance.\nPesée 3 matins par semaine, moyenne hebdomadaire.\nPhotos de dos, de face et de profil + tour de cuisse et tour de hanches toutes les 4 semaines.\nPoint avec Marie en semaine 4 et en semaine 10."
+    }
   ],
   "seances": [
     {
-      "emoji": "🍑", "type": "bas", "jour": "Lundi", "titre": "Séance 1 · Fessiers",
+      "emoji": "🍑",
+      "type": "bas",
+      "jour": "Lundi",
+      "titre": "Séance 1 · Fessiers",
       "focus": "100 % fessiers : grand fessier lourd en raccourci et en étirement, puis moyen fessier",
       "note": "Pas de cardio après cette séance.",
       "echauffement": [
-        { "n": "1", "nom": "Activation fessier, bande aux chevilles", "lien": "", "series": "3 allers-retours", "tempo": "", "repos": "", "notes": "Sans s'épuiser" },
-        { "n": "2", "nom": "Glute bridge poids du corps", "lien": "", "series": "2 × 15", "tempo": "", "repos": "", "notes": "" },
-        { "n": "3", "nom": "Séries d'approche hip thrust", "lien": "", "series": "2 séries légères", "tempo": "", "repos": "", "notes": "" }
+        {
+          "n": "1",
+          "nom": "Activation fessier, bande aux chevilles",
+          "lien": "",
+          "series": "3 allers-retours",
+          "tempo": "",
+          "repos": "",
+          "notes": "Sans s'épuiser"
+        },
+        {
+          "n": "2",
+          "nom": "Glute bridge poids du corps",
+          "lien": "",
+          "series": "2 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "3",
+          "nom": "Séries d'approche hip thrust",
+          "lien": "",
+          "series": "2 séries légères",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        }
       ],
       "exercices": [
-        { "n": "1", "nom": "Hip thrust barre (ancrage scapulaire sur banc)", "lien": "", "series": "4 × 6-10", "tempo": "Contrôlé, 1 s pause en haut", "repos": "2-3'", "notes": "Lourd, priorité à la progression de charge. Menton rentré, bassin en rétroversion en haut" },
-        { "n": "2", "nom": "Fentes marchées haltères, grands pas, buste penché", "lien": "", "series": "3 × 10-12 / jambe", "tempo": "3 s descente", "repos": "2'", "notes": "Pas long, genou arrière proche du sol, pousser dans le talon avant : gros étirement fessier" },
-        { "n": "3", "nom": "Extension lombaire 45° (dos rond, pieds en canard)", "lien": "", "series": "3 × 10-15", "tempo": "2 s descente, 1 s contraction", "repos": "90 s", "notes": "Pousser avec les fessiers, pas avec les lombaires. Ajouter un disque dès que 15 reps sont faciles" },
-        { "n": "4", "nom": "Kickback poulie basse, buste penché", "lien": "", "series": "3 × 12-15 / jambe", "tempo": "2 s descente, 1 s contraction", "repos": "60 s", "notes": "Jambe tendue vers l'arrière et légèrement en diagonale, sans cambrer" },
-        { "n": "5", "nom": "Abduction machine, buste penché en avant", "lien": "", "series": "3 × 15-20", "tempo": "Contrôlé", "repos": "60 s", "notes": "Drop set sur la dernière série uniquement" }
+        {
+          "n": "1",
+          "nom": "Hip thrust barre (ancrage scapulaire sur banc)",
+          "lien": "",
+          "series": "4 × 6-10",
+          "tempo": "Contrôlé, 1 s pause en haut",
+          "repos": "2-3'",
+          "notes": "Lourd, priorité à la progression de charge. Menton rentré, bassin en rétroversion en haut"
+        },
+        {
+          "n": "2",
+          "nom": "Fentes marchées haltères, grands pas, buste penché",
+          "lien": "",
+          "series": "3 × 10-12 / jambe",
+          "tempo": "3 s descente",
+          "repos": "2'",
+          "notes": "Pas long, genou arrière proche du sol, pousser dans le talon avant : gros étirement fessier"
+        },
+        {
+          "n": "3",
+          "nom": "Extension lombaire 45° (dos rond, pieds en canard)",
+          "lien": "",
+          "series": "3 × 10-15",
+          "tempo": "2 s descente, 1 s contraction",
+          "repos": "90 s",
+          "notes": "Pousser avec les fessiers, pas avec les lombaires. Ajouter un disque dès que 15 reps sont faciles"
+        },
+        {
+          "n": "4",
+          "nom": "Kickback poulie basse, buste penché",
+          "lien": "",
+          "series": "3 × 12-15 / jambe",
+          "tempo": "2 s descente, 1 s contraction",
+          "repos": "60 s",
+          "notes": "Jambe tendue vers l'arrière et légèrement en diagonale, sans cambrer"
+        },
+        {
+          "n": "5",
+          "nom": "Abduction machine, buste penché en avant",
+          "lien": "",
+          "series": "3 × 15-20",
+          "tempo": "Contrôlé",
+          "repos": "60 s",
+          "notes": "Drop set sur la dernière série uniquement"
+        }
       ]
     },
     {
-      "emoji": "💪", "type": "haut", "jour": "Mardi", "titre": "Séance 2 · Pectoraux + triceps + biceps + core",
+      "emoji": "💪",
+      "type": "haut",
+      "jour": "Mardi",
+      "titre": "Séance 2 · Pectoraux + triceps + biceps + core",
       "focus": "Développer le buste, renforcer les bras et affiner la ceinture abdominale (séance inchangée)",
-      "note": "Ordre : pectoraux (1-3), triceps (4-6), biceps (7-9), core (10-11).\nCardio fin de séance : 20 min vélo elliptique, zone 2 (60-65 % FC max), allure conversation possible.",
+      "note": "Cardio fin de séance : 20 min vélo elliptique, zone 2 (60-65 % FC max), allure conversation possible.",
       "echauffement": [
-        { "n": "1", "nom": "Rotations d'épaules", "lien": "", "series": "1 min", "tempo": "", "repos": "", "notes": "" },
-        { "n": "2", "nom": "Push-up", "lien": "", "series": "3 × 15", "tempo": "", "repos": "", "notes": "" },
-        { "n": "3", "nom": "Élévations frontales légères", "lien": "", "series": "1 × 15", "tempo": "", "repos": "", "notes": "" }
+        {
+          "n": "E1",
+          "nom": "Rotations thoraciques au sol (« open book »)",
+          "lien": "",
+          "series": "8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E2",
+          "nom": "Passages d'épaules avec bâton ou élastique",
+          "lien": "",
+          "series": "10 reps",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E3",
+          "nom": "Étirement dynamique des pectoraux au mur",
+          "lien": "",
+          "series": "10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E4",
+          "nom": "Cercles de poignets et de coudes",
+          "lien": "",
+          "series": "30 s",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E5",
+          "nom": "Rotations d'épaules",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E6",
+          "nom": "Pompes",
+          "lien": "",
+          "series": "3 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E7",
+          "nom": "Élévations frontales légères",
+          "lien": "",
+          "series": "1 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        }
       ],
       "exercices": [
-        { "n": "1", "nom": "Développé couché barre", "lien": "", "series": "4 × 8-10", "tempo": "2 s", "repos": "2'", "notes": "Pause 1 s sur la poitrine sur les 2 dernières séries" },
-        { "n": "2", "nom": "Écarté câble (poulie haute, croisé vers le bas)", "lien": "", "series": "3 × 15", "tempo": "2 s", "repos": "90 s", "notes": "Contraction 2 s en fin de mouvement" },
-        { "n": "3", "nom": "Dips, buste légèrement incliné en avant", "lien": "", "series": "4 × 8-12", "tempo": "3 s", "repos": "2'", "notes": "Drop set si difficile : lest retiré ou assisté machine" },
-        { "n": "4", "nom": "Skull crusher barre EZ", "lien": "", "series": "4 × 10-12", "tempo": "3 s", "repos": "90 s", "notes": "Contrôle excentrique strict" },
-        { "n": "5", "nom": "Extension poulie haute, corde", "lien": "", "series": "3 × 15-20", "tempo": "3 s", "repos": "60 s", "notes": "Myo-reps sur la dernière série" },
-        { "n": "6", "nom": "Extension overhead câble", "lien": "", "series": "3 × 12-15", "tempo": "3 s", "repos": "60 s", "notes": "Drop set sur la dernière série" },
-        { "n": "7", "nom": "Curl incliné haltères", "lien": "", "series": "4 × 10-12", "tempo": "3 s", "repos": "90 s", "notes": "Étirement maximal en bas" },
-        { "n": "8", "nom": "Curl marteau haltères", "lien": "", "series": "3 × 12-15", "tempo": "3 s", "repos": "60 s", "notes": "Rest-pause sur la dernière série" },
-        { "n": "9", "nom": "Curl câble poulie basse", "lien": "", "series": "3 × 15-20", "tempo": "3 s", "repos": "60 s", "notes": "Myo-reps sur la dernière série" },
-        { "n": "10", "nom": "Dead bug", "lien": "", "series": "3 × 10 / côté", "tempo": "", "repos": "", "notes": "Core : stabilisation profonde" },
-        { "n": "11", "nom": "Gainage latéral dynamique (toucher cheville)", "lien": "", "series": "3 × 15 / côté", "tempo": "", "repos": "", "notes": "Core : obliques + stabilisation" }
+        {
+          "n": "1",
+          "nom": "Développé couché barre",
+          "lien": "",
+          "series": "4 × 8-10",
+          "tempo": "2 s",
+          "repos": "2'",
+          "notes": "Pause 1 s sur la poitrine sur les 2 dernières séries"
+        },
+        {
+          "n": "2",
+          "nom": "Écarté câble (poulie haute, croisé vers le bas)",
+          "lien": "",
+          "series": "3 × 15",
+          "tempo": "2 s",
+          "repos": "90 s",
+          "notes": "Contraction 2 s en fin de mouvement"
+        },
+        {
+          "n": "3",
+          "nom": "Dips, buste légèrement incliné en avant",
+          "lien": "",
+          "series": "4 × 8-12",
+          "tempo": "3 s",
+          "repos": "2'",
+          "notes": "Drop set si difficile : lest retiré ou assisté machine"
+        },
+        {
+          "n": "4",
+          "nom": "Skull crusher barre EZ",
+          "lien": "",
+          "series": "4 × 10-12",
+          "tempo": "3 s",
+          "repos": "90 s",
+          "notes": "Contrôle excentrique strict"
+        },
+        {
+          "n": "5",
+          "nom": "Extension poulie haute, corde",
+          "lien": "",
+          "series": "3 × 15-20",
+          "tempo": "3 s",
+          "repos": "60 s",
+          "notes": "Myo-reps sur la dernière série"
+        },
+        {
+          "n": "6",
+          "nom": "Extension overhead câble",
+          "lien": "",
+          "series": "3 × 12-15",
+          "tempo": "3 s",
+          "repos": "60 s",
+          "notes": "Drop set sur la dernière série"
+        },
+        {
+          "n": "7",
+          "nom": "Curl incliné haltères",
+          "lien": "",
+          "series": "4 × 10-12",
+          "tempo": "3 s",
+          "repos": "90 s",
+          "notes": "Étirement maximal en bas"
+        },
+        {
+          "n": "8",
+          "nom": "Curl marteau haltères",
+          "lien": "",
+          "series": "3 × 12-15",
+          "tempo": "3 s",
+          "repos": "60 s",
+          "notes": "Rest-pause sur la dernière série"
+        },
+        {
+          "n": "9",
+          "nom": "Curl câble poulie basse",
+          "lien": "",
+          "series": "3 × 15-20",
+          "tempo": "3 s",
+          "repos": "60 s",
+          "notes": "Myo-reps sur la dernière série"
+        },
+        {
+          "n": "10",
+          "nom": "Dead bug",
+          "lien": "",
+          "series": "3 × 10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Stabilisation profonde"
+        },
+        {
+          "n": "11",
+          "nom": "Gainage latéral dynamique (toucher cheville)",
+          "lien": "",
+          "series": "3 × 15 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Obliques + stabilisation"
+        }
       ]
     },
     {
-      "emoji": "🔥", "type": "bas", "jour": "Mercredi", "titre": "Séance 3 · Quadriceps + fessiers",
+      "emoji": "🔥",
+      "type": "bas",
+      "jour": "Mercredi",
+      "titre": "Séance 3 · Quadriceps + fessiers",
       "focus": "Volume des quadriceps et du fessier en position étirée, squat en premier quand tu es fraîche",
       "note": "Pas de cardio après cette séance.",
       "echauffement": [
-        { "n": "1", "nom": "Vélo léger", "lien": "", "series": "5 min", "tempo": "", "repos": "", "notes": "" },
-        { "n": "2", "nom": "Goblet squat", "lien": "", "series": "2 × 10", "tempo": "", "repos": "", "notes": "" },
-        { "n": "3", "nom": "Séries d'approche squat", "lien": "", "series": "2-3 séries progressives", "tempo": "", "repos": "", "notes": "" }
+        {
+          "n": "E1",
+          "nom": "Mobilité de cheville genou au mur",
+          "lien": "",
+          "series": "10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E2",
+          "nom": "Squat profond tenu, en se tenant à un support",
+          "lien": "",
+          "series": "2 × 30 s",
+          "tempo": "",
+          "repos": "",
+          "notes": "Ouvrir les genoux avec les coudes"
+        },
+        {
+          "n": "E3",
+          "nom": "Fente basse, étirement du fléchisseur de hanche",
+          "lien": "",
+          "series": "30 s / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E4",
+          "nom": "Rotations de hanches 90/90",
+          "lien": "",
+          "series": "5 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E5",
+          "nom": "Vélo léger",
+          "lien": "",
+          "series": "5 min",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E6",
+          "nom": "Goblet squat",
+          "lien": "",
+          "series": "2 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E7",
+          "nom": "Séries d'approche au squat",
+          "lien": "",
+          "series": "2-3 séries progressives",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        }
       ],
       "exercices": [
-        { "n": "1", "nom": "Squat profond barre (ou hack squat)", "lien": "", "series": "4 × 6-8", "tempo": "3 s descente", "repos": "2-3'", "notes": "Cuisses sous la parallèle, talons au sol. Plus de leg extension avant : pas de pré-fatigue" },
-        { "n": "2", "nom": "Fentes bulgares, buste penché", "lien": "", "series": "3 × 8-10 / jambe", "tempo": "3 s descente", "repos": "2'", "notes": "Descente profonde, genou avant légèrement en avant, étirement fessier en bas. Commencer par la jambe la plus faible" },
-        { "n": "3", "nom": "Presse à cuisses, pieds au milieu de la plateforme", "lien": "", "series": "3 × 10-12", "tempo": "3 s descente", "repos": "2'", "notes": "Amplitude maximale sans décoller le bassin" },
-        { "n": "4", "nom": "Leg extension", "lien": "", "series": "3 × 12-15", "tempo": "2 s descente, 1 s contraction en haut", "repos": "90 s", "notes": "Drop set sur la dernière série uniquement" },
-        { "n": "5", "nom": "Leg curl assis", "lien": "", "series": "3 × 10-12", "tempo": "3 s descente", "repos": "90 s", "notes": "Buste penché en avant pour plus d'étirement. Premier passage ischios de la semaine" }
+        {
+          "n": "1",
+          "nom": "Squat profond barre (ou hack squat)",
+          "lien": "",
+          "series": "4 × 6-8",
+          "tempo": "3 s descente",
+          "repos": "2-3'",
+          "notes": "Cuisses sous la parallèle, talons au sol. Plus de leg extension avant : pas de pré-fatigue"
+        },
+        {
+          "n": "2",
+          "nom": "Fentes bulgares, buste penché",
+          "lien": "",
+          "series": "3 × 8-10 / jambe",
+          "tempo": "3 s descente",
+          "repos": "2'",
+          "notes": "Descente profonde, genou avant légèrement en avant, étirement fessier en bas. Commencer par la jambe la plus faible"
+        },
+        {
+          "n": "3",
+          "nom": "Presse à cuisses, pieds au milieu de la plateforme",
+          "lien": "",
+          "series": "3 × 10-12",
+          "tempo": "3 s descente",
+          "repos": "2'",
+          "notes": "Amplitude maximale sans décoller le bassin"
+        },
+        {
+          "n": "4",
+          "nom": "Leg extension",
+          "lien": "",
+          "series": "3 × 12-15",
+          "tempo": "2 s descente, 1 s contraction en haut",
+          "repos": "90 s",
+          "notes": "Drop set sur la dernière série uniquement"
+        },
+        {
+          "n": "5",
+          "nom": "Leg curl assis",
+          "lien": "",
+          "series": "3 × 10-12",
+          "tempo": "3 s descente",
+          "repos": "90 s",
+          "notes": "Buste penché en avant pour plus d'étirement. Premier passage ischios de la semaine"
+        }
       ]
     },
     {
-      "emoji": "💪", "type": "haut", "jour": "Vendredi", "titre": "Séance 4 · Dos + épaules arrière",
+      "emoji": "💪",
+      "type": "haut",
+      "jour": "Vendredi",
+      "titre": "Séance 4 · Dos + épaules arrière",
       "focus": "Le V qui affine : largeur (dorsaux), épaisseur (trapèzes moyens, rhomboïdes) et deltoïdes postérieurs (séance inchangée)",
       "note": "Cardio fin de séance : 20 min rameur, allure zone 2, 18-20 coups/min (bénéfice dos en même temps).",
       "echauffement": [
-        { "n": "1", "nom": "Rotations d'épaules", "lien": "", "series": "1 min", "tempo": "", "repos": "", "notes": "" },
-        { "n": "2", "nom": "Face pull à l'élastique", "lien": "", "series": "3 × 20", "tempo": "", "repos": "", "notes": "" },
-        { "n": "3", "nom": "Extension dorsale", "lien": "", "series": "1 × 15", "tempo": "", "repos": "", "notes": "" }
+        {
+          "n": "E1",
+          "nom": "Extensions thoraciques sur rouleau",
+          "lien": "",
+          "series": "10 reps",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E2",
+          "nom": "Rotations thoraciques au sol (« open book »)",
+          "lien": "",
+          "series": "8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E3",
+          "nom": "Passages d'épaules avec bâton ou élastique",
+          "lien": "",
+          "series": "10 reps",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E4",
+          "nom": "Suspension passive à la barre",
+          "lien": "",
+          "series": "2 × 20 s",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E5",
+          "nom": "Rotations d'épaules",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E6",
+          "nom": "Face pull à l'élastique",
+          "lien": "",
+          "series": "3 × 20",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E7",
+          "nom": "Extension dorsale",
+          "lien": "",
+          "series": "1 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        }
       ],
       "exercices": [
-        { "n": "1", "nom": "Traction pronation (libre ou machine guidée)", "lien": "", "series": "4 × 8-10", "tempo": "—", "repos": "2'", "notes": "Largeur dorsale, arc en V. Rest-pause sur la dernière série" },
-        { "n": "2", "nom": "Développé militaire barre (debout ou assis)", "lien": "", "series": "4 × 8-10", "tempo": "2 s", "repos": "2'", "notes": "Deltoïdes antérieurs et médians + trapèzes supérieurs" },
-        { "n": "3", "nom": "Rowing barre (prise pronation, coudes écartés)", "lien": "", "series": "4 × 10-12", "tempo": "3 s", "repos": "2'", "notes": "Épaisseur du dos : rhomboïdes, trapèzes moyens" },
-        { "n": "4", "nom": "Tirage horizontal câble (prise neutre, coudes au corps)", "lien": "", "series": "3 × 12-15", "tempo": "—", "repos": "90 s", "notes": "Drop set dernière série : × 12, drop 25 %, × max. Dorsaux bas" },
-        { "n": "5", "nom": "Face pull poulie haute (corde, coudes hauts)", "lien": "", "series": "4 × 20", "tempo": "—", "repos": "60 s", "notes": "Deltoïdes postérieurs + coiffe des rotateurs : santé de l'épaule et look arrière" },
-        { "n": "6", "nom": "Élévation latérale haltères (légère inclinaison avant)", "lien": "", "series": "4 × 15-20", "tempo": "—", "repos": "60 s", "notes": "Deltoïde médian. Myo-reps sur les 2 dernières séries" },
-        { "n": "7", "nom": "Oiseau haltères ou câble", "lien": "", "series": "3 × 15-20", "tempo": "2-0-3-0", "repos": "60 s", "notes": "Isolation deltoïdes postérieurs" }
+        {
+          "n": "1",
+          "nom": "Traction pronation (libre ou machine guidée)",
+          "lien": "",
+          "series": "4 × 8-10",
+          "tempo": "—",
+          "repos": "2'",
+          "notes": "Largeur dorsale, arc en V. Rest-pause sur la dernière série"
+        },
+        {
+          "n": "2",
+          "nom": "Développé militaire barre (debout ou assis)",
+          "lien": "",
+          "series": "4 × 8-10",
+          "tempo": "2 s",
+          "repos": "2'",
+          "notes": "Deltoïdes antérieurs et médians + trapèzes supérieurs"
+        },
+        {
+          "n": "3",
+          "nom": "Rowing barre (prise pronation, coudes écartés)",
+          "lien": "",
+          "series": "4 × 10-12",
+          "tempo": "3 s",
+          "repos": "2'",
+          "notes": "Épaisseur du dos : rhomboïdes, trapèzes moyens"
+        },
+        {
+          "n": "4",
+          "nom": "Tirage horizontal câble (prise neutre, coudes au corps)",
+          "lien": "",
+          "series": "3 × 12-15",
+          "tempo": "—",
+          "repos": "90 s",
+          "notes": "Drop set dernière série : × 12, drop 25 %, × max. Dorsaux bas"
+        },
+        {
+          "n": "5",
+          "nom": "Face pull poulie haute (corde, coudes hauts)",
+          "lien": "",
+          "series": "4 × 20",
+          "tempo": "—",
+          "repos": "60 s",
+          "notes": "Deltoïdes postérieurs + coiffe des rotateurs : santé de l'épaule et look arrière"
+        },
+        {
+          "n": "6",
+          "nom": "Élévation latérale haltères (légère inclinaison avant)",
+          "lien": "",
+          "series": "4 × 15-20",
+          "tempo": "—",
+          "repos": "60 s",
+          "notes": "Deltoïde médian. Myo-reps sur les 2 dernières séries"
+        },
+        {
+          "n": "7",
+          "nom": "Oiseau haltères ou câble",
+          "lien": "",
+          "series": "3 × 15-20",
+          "tempo": "2-0-3-0",
+          "repos": "60 s",
+          "notes": "Isolation deltoïdes postérieurs"
+        }
       ]
     },
     {
-      "emoji": "🍑", "type": "bas", "jour": "Samedi", "titre": "Séance 5 · Ischios + quadriceps",
+      "emoji": "🍑",
+      "type": "bas",
+      "jour": "Samedi",
+      "titre": "Séance 5 · Ischios + quadriceps",
       "focus": "Charnière de hanche lourde pour les ischios en étirement, deuxième passage quadriceps de la semaine",
       "note": "Pas de cardio après cette séance.",
       "echauffement": [
-        { "n": "1", "nom": "Activation fessier avec bande", "lien": "", "series": "1 tour", "tempo": "", "repos": "", "notes": "" },
-        { "n": "2", "nom": "Montées de marches", "lien": "", "series": "2 min", "tempo": "", "repos": "", "notes": "" },
-        { "n": "3", "nom": "RDL barre vide", "lien": "", "series": "2 × 10", "tempo": "", "repos": "", "notes": "" }
+        {
+          "n": "E1",
+          "nom": "Balanciers de jambe d'avant en arrière",
+          "lien": "",
+          "series": "10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E2",
+          "nom": "Inchworm (marcher sur les mains, jambes tendues)",
+          "lien": "",
+          "series": "6 reps",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E3",
+          "nom": "Charnière de hanche au poids du corps, bâton dans le dos",
+          "lien": "",
+          "series": "10 reps",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E4",
+          "nom": "Rotations de hanches 90/90",
+          "lien": "",
+          "series": "5 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E5",
+          "nom": "Activation fessier avec bande",
+          "lien": "",
+          "series": "1 tour",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E6",
+          "nom": "Montées de marches",
+          "lien": "",
+          "series": "2 min",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E7",
+          "nom": "RDL barre vide",
+          "lien": "",
+          "series": "2 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        }
       ],
       "exercices": [
-        { "n": "1", "nom": "Soulevé de terre roumain barre", "lien": "", "series": "4 × 6-8", "tempo": "3 s descente, 1 s pause en bas", "repos": "2-3'", "notes": "Hanches loin en arrière, genoux légèrement fléchis, descendre jusqu'à l'étirement maximal des ischios sans arrondir le bas du dos" },
-        { "n": "2", "nom": "Fentes arrière en déficit (pied avant sur un step de 5-10 cm)", "lien": "", "series": "3 × 8-10 / jambe", "tempo": "3 s descente", "repos": "2'", "notes": "Gros étirement fessier en bas, buste légèrement penché" },
-        { "n": "3", "nom": "Leg curl couché", "lien": "", "series": "3 × 10-15", "tempo": "3 s descente", "repos": "90 s", "notes": "Bassin collé au banc, ne pas cambrer. Drop set sur la dernière série uniquement" },
-        { "n": "4", "nom": "Presse à cuisses, pieds hauts et écartés", "lien": "", "series": "3 × 10-12", "tempo": "3 s descente", "repos": "2'", "notes": "Genoux vers la poitrine en bas, sans décoller le bassin" },
-        { "n": "5", "nom": "Sissy squat", "lien": "", "series": "2 × 12-15", "tempo": "3 s descente", "repos": "90 s", "notes": "Isolation quadriceps, se tenir à un support" }
+        {
+          "n": "1",
+          "nom": "Soulevé de terre roumain barre",
+          "lien": "",
+          "series": "4 × 6-8",
+          "tempo": "3 s descente, 1 s pause en bas",
+          "repos": "2-3'",
+          "notes": "Hanches loin en arrière, genoux légèrement fléchis, descendre jusqu'à l'étirement maximal des ischios sans arrondir le bas du dos"
+        },
+        {
+          "n": "2",
+          "nom": "Fentes arrière en déficit (pied avant sur un step de 5-10 cm)",
+          "lien": "",
+          "series": "3 × 8-10 / jambe",
+          "tempo": "3 s descente",
+          "repos": "2'",
+          "notes": "Gros étirement fessier en bas, buste légèrement penché"
+        },
+        {
+          "n": "3",
+          "nom": "Leg curl couché",
+          "lien": "",
+          "series": "3 × 10-15",
+          "tempo": "3 s descente",
+          "repos": "90 s",
+          "notes": "Bassin collé au banc, ne pas cambrer. Drop set sur la dernière série uniquement"
+        },
+        {
+          "n": "4",
+          "nom": "Presse à cuisses, pieds hauts et écartés",
+          "lien": "",
+          "series": "3 × 10-12",
+          "tempo": "3 s descente",
+          "repos": "2'",
+          "notes": "Genoux vers la poitrine en bas, sans décoller le bassin"
+        },
+        {
+          "n": "5",
+          "nom": "Sissy squat",
+          "lien": "",
+          "series": "2 × 12-15",
+          "tempo": "3 s descente",
+          "repos": "90 s",
+          "notes": "Isolation quadriceps, se tenir à un support"
+        }
       ]
     }
   ],
   "progression": "Double progression : quand toutes les séries atteignent le haut de la fourchette de reps, augmente la charge (+2,5 à 5 kg sur les gros mouvements, +1 à 2,5 kg sur l'isolation) et repars en bas de la fourchette.\nRIR = répétitions en réserve avant l'échec.",
   "cycle": [
-    { "semaines": "S1-2", "objectif": "RIR 2-3. Prise en main : trouver les charges de travail, technique stricte, tout noter." },
-    { "semaines": "S3-6", "objectif": "RIR 1-2. Double progression chaque semaine sur tous les exercices." },
-    { "semaines": "S7-9", "objectif": "RIR 0-1 sur l'isolation, 1 sur les gros mouvements. +1 série sur le hip thrust (séance 1), le squat (séance 3) et le RDL (séance 5)." },
-    { "semaines": "S10", "objectif": "Décharge : mêmes exercices, moitié des séries, charges −20 %, pas de technique d'intensité." }
+    {
+      "semaines": "S1-2",
+      "objectif": "RIR 2-3. Prise en main : trouver les charges de travail, technique stricte, tout noter."
+    },
+    {
+      "semaines": "S3-6",
+      "objectif": "RIR 1-2. Double progression chaque semaine sur tous les exercices."
+    },
+    {
+      "semaines": "S7-9",
+      "objectif": "RIR 0-1 sur l'isolation, 1 sur les gros mouvements. +1 série sur le hip thrust (séance 1), le squat (séance 3) et le RDL (séance 5)."
+    },
+    {
+      "semaines": "S10",
+      "objectif": "Décharge : mêmes exercices, moitié des séries, charges −20 %, pas de technique d'intensité."
+    }
   ],
   "decharge": "La semaine 10 est une semaine volontairement allégée : mêmes séances, mêmes exercices, mêmes jours, mais volume et intensité réduits. Après la semaine 10 : nouvelles photos et mesures, comparaison des charges sur le squat, le RDL et le hip thrust, puis nouveau bloc avec des variantes (hack squat ↔ squat, RDL haltères, leg curl unilatéral…).",
   "pourquoi": "Après 9 semaines à pousser fort, la fatigue s'accumule (muscles, articulations, système nerveux) même si on ne la ressent pas toujours. Une semaine plus légère permet de récupérer complètement pour repartir plus forte sur le bloc suivant.",
   "alerte": "⚠️ La semaine de décharge est obligatoire, pas optionnelle.",
   "regles": [
-    { "titre": "📉 Séries : moitié", "texte": "Un exercice à 4 séries passe à 2, un exercice à 3 séries passe à 1 ou 2." },
-    { "titre": "🏋️ Charges : −20 %", "texte": "On allège les barres et haltères sur tous les exercices." },
-    { "titre": "🛑 Pas de technique d'intensité", "texte": "Plus de drop sets, myo-reps ni rest-pause pendant la décharge." },
-    { "titre": "✅ Le reste ne change pas", "texte": "Mêmes jours, mêmes exercices, même tempo. Échauffement et cardio des séances 2 et 4 conservés." }
+    {
+      "titre": "📉 Séries : moitié",
+      "texte": "Un exercice à 4 séries passe à 2, un exercice à 3 séries passe à 1 ou 2."
+    },
+    {
+      "titre": "🏋️ Charges : −20 %",
+      "texte": "On allège les barres et haltères sur tous les exercices."
+    },
+    {
+      "titre": "🛑 Pas de technique d'intensité",
+      "texte": "Plus de drop sets, myo-reps ni rest-pause pendant la décharge."
+    },
+    {
+      "titre": "✅ Le reste ne change pas",
+      "texte": "Mêmes jours, mêmes exercices, même tempo. Échauffement et cardio des séances 2 et 4 conservés."
+    }
   ]
 }
