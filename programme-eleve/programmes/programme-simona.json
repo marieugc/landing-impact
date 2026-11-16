@@ -1,0 +1,526 @@
+{
+  "eleve": "Simona",
+  "coach": "Booty Flow Coaching",
+  "titre": "Programme 4 semaines · douleurs en baisse, fessiers en hausse",
+  "sousTitre": "Faire baisser tes douleurs tout en continuant à développer tes fessiers, surtout le côté droit. Ton IRM est normale : tu ne risques pas de t'abîmer en bougeant, on augmente la charge progressivement selon ce que ton corps tolère.",
+  "semaine": [
+    {
+      "jour": "Jour de repos 1",
+      "type": "bas",
+      "seance": "Séance A · fessiers (extension de hanche) + dos · 60 min"
+    },
+    {
+      "jour": "Jour de repos 2",
+      "type": "bas",
+      "seance": "Séance B · jambes + gainage · 60 min"
+    },
+    {
+      "jour": "Jour de repos 3",
+      "type": "bas",
+      "seance": "Séance C · fessiers (volume) + dos · 60 min"
+    },
+    {
+      "jour": "Jour de garde",
+      "type": "bas",
+      "seance": "Séance « jour de garde » · fessiers au poids du corps · 20 min"
+    },
+    {
+      "jour": "Autre jour",
+      "type": "repos",
+      "seance": "Repos actif : marche à rythme confortable, 20 à 30 min"
+    }
+  ],
+  "structure": "3 séances salle (A, B, C) dans cet ordre, avec au moins 1 jour entre deux séances : de préférence les jours de repos ou les lendemains de repos, jamais juste après une longue garde.\nLes jours de garde : la séance « jour de garde » (20 min), avant ou après le travail selon ton énergie.\nLes autres jours : marche à rythme confortable, 20 à 30 min.\nTous les jours de travail : la routine au travail et la routine après la garde (voir encadrés).\nSi ton planning ne permet que 2 séances salle dans la semaine, enchaîne A puis B et reprends C la semaine suivante. Mieux vaut 2 séances bien faites que 3 séances fatiguée.",
+  "notation": "Garde toujours 2 à 3 répétitions en réserve : aucune série jusqu'à l'échec pendant ces 4 semaines.\nDescente lente sur 3 secondes, montée contrôlée.\nCôtes basses et bassin légèrement rentré sur tous les exercices de fessiers : tu ne dois jamais sentir tes lombaires travailler.\nSur les exercices unilatéraux, commence toujours par la jambe droite et fais 1 série de plus de ce côté.\nL'échauffement correctif (10 min) n'est pas optionnel : il remet ton bassin en place et allume ton fessier droit avant de charger.",
+  "echauffementBas": "",
+  "echauffementHaut": "",
+  "extras": [
+    {
+      "titre": "🎯 Les 3 objectifs",
+      "texte": "1. Apprendre à ton fessier droit à faire son travail, au lieu de laisser ton bas du dos et tes ischios compenser.\n2. Renforcer ton gainage et ton haut du dos pour mieux tenir les longues heures debout.\n3. Retrouver de la mobilité aux chevilles et aux hanches pour squatter sans douleur derrière le genou."
+    },
+    {
+      "titre": "🚦 La règle du feu tricolore (à chaque exercice)",
+      "texte": "🟢 Vert · douleur 0 à 3/10, et pas pire le lendemain : tu continues et tu peux progresser la semaine suivante.\n🟠 Orange · 4 à 5/10, ou douleur encore plus forte le lendemain : tu réduis l'amplitude ou la charge, ou tu prends la variante plus facile.\n🔴 Rouge · 6/10 et plus, douleur vive ou qui irradie : tu arrêtes cet exercice et tu me préviens."
+    },
+    {
+      "titre": "🏥 Pendant la garde",
+      "texte": "Ne reste jamais figée : toutes les 10 à 15 min, transfère ton poids d'un pied à l'autre, fais 10 montées sur pointes de pieds et serre tes fessiers 5 s.\nPosition debout active : pieds largeur de bassin, genoux légèrement déverrouillés, poids réparti sur les deux jambes. Ne te pose pas sur la hanche droite.\nSi c'est possible, pose un pied sur un rebord ou une marche quelques minutes, puis change de pied.\nPorte des chaussures amorties, avec des semelles si tu es debout sur un sol dur."
+    },
+    {
+      "titre": "⏸️ Mini-routine de pause (2 min, 2 à 3 fois par garde)",
+      "texte": "1. 10 bascules du bassin debout (rentrer puis relâcher doucement).\n2. 10 ouvertures d'épaules, bras le long du corps, paumes vers l'avant.\n3. Étirement des fléchisseurs de hanche en fente debout, 20 s par côté, bassin rentré."
+    },
+    {
+      "titre": "🛋️ Après la garde (5 min)",
+      "texte": "Allongée au sol, jambes posées sur une chaise, respiration ventrale lente pendant 5 min. Ça décharge le bas du dos et aide ton système nerveux à redescendre après des heures debout."
+    },
+    {
+      "titre": "⏳ Mis de côté pendant 4 semaines",
+      "texte": "Ces exercices ne sont pas interdits pour toujours : ils reviendront progressivement quand tes douleurs auront baissé.\nSquat barre sur le dos, fentes barre : charge sur le haut du dos et l'épaule droite.\nSoulevé de terre, soulevé de terre jambes tendues lourd, good morning, kettlebell swing : sollicitent beaucoup les lombaires.\nSquat sumo, mouvements jambes très écartées : irritent l'aine.\nAdducteurs machine en grande amplitude : irritent l'aine.\nExtensions lombaires à 45° : reviendront en version focus fessiers après le retest."
+    },
+    {
+      "titre": "🩺 Parles-en à ton médecin si tu remarques",
+      "texte": "Des réveils la nuit à cause de la douleur.\nUne raideur le matin qui dure plus de 30 min et s'améliore en bougeant.\nDes douleurs qui changent de place ou s'étendent.\nUne grande fatigue, ou des fourmillements dans les jambes."
+    }
+  ],
+  "seances": [
+    {
+      "emoji": "🍑",
+      "type": "bas",
+      "jour": "Jour de repos",
+      "titre": "Séance A · fessiers (extension de hanche) + dos",
+      "focus": "60 min, échauffement compris",
+      "note": "Repos : 90 s sur les exercices principaux, 60 s sur les autres. Les séries indiquées sont celles de la semaine 1 (voir Progression).",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Respiration 90/90 au sol, pieds au mur",
+          "lien": "",
+          "series": "5 respirations lentes",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin légèrement rentré, souffle long par la bouche, sens tes côtes descendre"
+        },
+        {
+          "n": "E2",
+          "nom": "Mobilité cheville genou au mur",
+          "lien": "",
+          "series": "2 × 10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Talon collé au sol, genou dans l'axe du 2e orteil"
+        },
+        {
+          "n": "E3",
+          "nom": "Dead bug",
+          "lien": "",
+          "series": "2 × 8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bas du dos plaqué au sol tout le long"
+        },
+        {
+          "n": "E4",
+          "nom": "Clamshell avec élastique",
+          "lien": "",
+          "series": "2 × 15 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin immobile, ne roule pas en arrière"
+        },
+        {
+          "n": "E5",
+          "nom": "Pont fessier avec bascule du bassin",
+          "lien": "",
+          "series": "2 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": "Rentre le bassin AVANT de monter, pause 2 s en haut : tu dois sentir les fessiers, pas les lombaires"
+        },
+        {
+          "n": "E6",
+          "nom": "Rotation externe d'épaule à l'élastique",
+          "lien": "",
+          "series": "2 × 12 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Coude collé au corps, mouvement lent, sans douleur"
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Hip thrust machine ou au banc avec haltère",
+          "lien": "",
+          "series": "3 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Menton rentré, côtes basses, pause 2 s en haut sans cambrer"
+        },
+        {
+          "n": "2",
+          "nom": "Pont fessier une jambe au sol",
+          "lien": "",
+          "series": "3 × 10 à droite, 2 × 10 à gauche",
+          "tempo": "",
+          "repos": "",
+          "notes": "Amplitude courte, bassin bien horizontal, la hanche ne doit pas tomber"
+        },
+        {
+          "n": "3",
+          "nom": "Step-up sur box basse avec haltères",
+          "lien": "",
+          "series": "3 × 10 / jambe",
+          "tempo": "",
+          "repos": "",
+          "notes": "Box à hauteur de genou maximum, pousse dans le talon, genou aligné sur le pied"
+        },
+        {
+          "n": "4",
+          "nom": "Abduction machine buste penché en avant",
+          "lien": "",
+          "series": "3 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Tempo lent, pause 1 s en ouverture, sans gêne à l'aine"
+        },
+        {
+          "n": "5",
+          "nom": "Rowing poulie assis prise neutre",
+          "lien": "",
+          "series": "3 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Omoplates serrées vers l'arrière et le bas, buste immobile"
+        },
+        {
+          "n": "6",
+          "nom": "Pallof press à la poulie",
+          "lien": "",
+          "series": "3 × 10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin face à l'avant, ne te laisse pas tourner"
+        }
+      ]
+    },
+    {
+      "emoji": "🔥",
+      "type": "bas",
+      "jour": "Jour de repos",
+      "titre": "Séance B · jambes (quadriceps + fessiers) + gainage",
+      "focus": "60 min, échauffement compris",
+      "note": "Repos : 90 s sur les exercices principaux, 60 s sur les autres. Les séries indiquées sont celles de la semaine 1 (voir Progression).",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Respiration 90/90 au sol, pieds au mur",
+          "lien": "",
+          "series": "5 respirations lentes",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin légèrement rentré, souffle long par la bouche, sens tes côtes descendre"
+        },
+        {
+          "n": "E2",
+          "nom": "Mobilité cheville genou au mur",
+          "lien": "",
+          "series": "2 × 10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Talon collé au sol, genou dans l'axe du 2e orteil"
+        },
+        {
+          "n": "E3",
+          "nom": "Dead bug",
+          "lien": "",
+          "series": "2 × 8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bas du dos plaqué au sol tout le long"
+        },
+        {
+          "n": "E4",
+          "nom": "Clamshell avec élastique",
+          "lien": "",
+          "series": "2 × 15 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin immobile, ne roule pas en arrière"
+        },
+        {
+          "n": "E5",
+          "nom": "Pont fessier avec bascule du bassin",
+          "lien": "",
+          "series": "2 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": "Rentre le bassin AVANT de monter, pause 2 s en haut : tu dois sentir les fessiers, pas les lombaires"
+        },
+        {
+          "n": "E6",
+          "nom": "Rotation externe d'épaule à l'élastique",
+          "lien": "",
+          "series": "2 × 12 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Coude collé au corps, mouvement lent, sans douleur"
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Goblet squat talons surélevés (cale de 2 à 3 cm)",
+          "lien": "",
+          "series": "3 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": "Descends seulement jusqu'où ni le genou ni l'aine ne tirent, dos droit"
+        },
+        {
+          "n": "2",
+          "nom": "Presse à cuisses pieds hauts",
+          "lien": "",
+          "series": "3 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Arrête la descente avant que le bassin décolle du siège"
+        },
+        {
+          "n": "3",
+          "nom": "Split squat amplitude partielle, main en appui",
+          "lien": "",
+          "series": "3 × 8 / jambe",
+          "tempo": "",
+          "repos": "",
+          "notes": "Commence à droite, descends à mi-chemin, buste légèrement penché"
+        },
+        {
+          "n": "4",
+          "nom": "Kickback à la poulie",
+          "lien": "",
+          "series": "3 × 12 / jambe",
+          "tempo": "",
+          "repos": "",
+          "notes": "Ne monte pas la jambe plus haut que le bassin, zéro cambrure"
+        },
+        {
+          "n": "5",
+          "nom": "Face pull à la corde",
+          "lien": "",
+          "series": "3 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Tire vers le front en ouvrant les coudes, sans douleur à l'épaule droite"
+        },
+        {
+          "n": "6",
+          "nom": "Gainage latéral (sur les genoux si besoin)",
+          "lien": "",
+          "series": "3 × 20 s / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Corps aligné, hanche haute"
+        }
+      ]
+    },
+    {
+      "emoji": "🍑",
+      "type": "bas",
+      "jour": "Jour de repos",
+      "titre": "Séance C · fessiers (volume) + dos",
+      "focus": "60 min, échauffement compris",
+      "note": "Repos : 90 s sur les exercices principaux, 60 s sur les autres. Les séries indiquées sont celles de la semaine 1 (voir Progression).",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Respiration 90/90 au sol, pieds au mur",
+          "lien": "",
+          "series": "5 respirations lentes",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin légèrement rentré, souffle long par la bouche, sens tes côtes descendre"
+        },
+        {
+          "n": "E2",
+          "nom": "Mobilité cheville genou au mur",
+          "lien": "",
+          "series": "2 × 10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Talon collé au sol, genou dans l'axe du 2e orteil"
+        },
+        {
+          "n": "E3",
+          "nom": "Dead bug",
+          "lien": "",
+          "series": "2 × 8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bas du dos plaqué au sol tout le long"
+        },
+        {
+          "n": "E4",
+          "nom": "Clamshell avec élastique",
+          "lien": "",
+          "series": "2 × 15 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin immobile, ne roule pas en arrière"
+        },
+        {
+          "n": "E5",
+          "nom": "Pont fessier avec bascule du bassin",
+          "lien": "",
+          "series": "2 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": "Rentre le bassin AVANT de monter, pause 2 s en haut : tu dois sentir les fessiers, pas les lombaires"
+        },
+        {
+          "n": "E6",
+          "nom": "Rotation externe d'épaule à l'élastique",
+          "lien": "",
+          "series": "2 × 12 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Coude collé au corps, mouvement lent, sans douleur"
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Hip thrust haltère ou barre (charge modérée)",
+          "lien": "",
+          "series": "3 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Mêmes consignes que la séance A, tempo 3 s en descente"
+        },
+        {
+          "n": "2",
+          "nom": "Abduction à la poulie debout",
+          "lien": "",
+          "series": "3 × 12 / jambe",
+          "tempo": "",
+          "repos": "",
+          "notes": "Commence à droite, bassin fixe, jambe légèrement en arrière"
+        },
+        {
+          "n": "3",
+          "nom": "Leg curl assis (charge légère)",
+          "lien": "",
+          "series": "3 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Contrôle la descente, sans tirer à l'arrière de la cuisse droite"
+        },
+        {
+          "n": "4",
+          "nom": "Frog pumps",
+          "lien": "",
+          "series": "2 × 20",
+          "tempo": "",
+          "repos": "",
+          "notes": "Plantes de pieds collées, bassin rentré, contraction en haut"
+        },
+        {
+          "n": "5",
+          "nom": "Tirage vertical prise neutre",
+          "lien": "",
+          "series": "3 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Tire vers le haut de la poitrine, épaules basses"
+        },
+        {
+          "n": "6",
+          "nom": "Marche fermier d'un côté (suitcase carry)",
+          "lien": "",
+          "series": "3 × 20 m / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Haltère légère dans une main, ne penche pas du côté de la charge"
+        }
+      ]
+    },
+    {
+      "emoji": "🏠",
+      "type": "bas",
+      "jour": "Jour de garde",
+      "titre": "Séance « jour de garde » · au poids du corps",
+      "focus": "20 min chez toi, avant ou après le travail : entretenir l'activation des fessiers et décharger le dos, pas te fatiguer",
+      "note": "",
+      "echauffement": [],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Respiration 90/90 au sol, pieds au mur",
+          "lien": "",
+          "series": "5 respirations lentes",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin rentré, relâche les épaules"
+        },
+        {
+          "n": "2",
+          "nom": "Pont fessier deux jambes",
+          "lien": "",
+          "series": "2 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Pause 2 s en haut"
+        },
+        {
+          "n": "3",
+          "nom": "Pont fessier une jambe",
+          "lien": "",
+          "series": "2 × 10 à droite, 1 × 10 à gauche",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin horizontal"
+        },
+        {
+          "n": "4",
+          "nom": "Clamshell avec élastique",
+          "lien": "",
+          "series": "2 × 15 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Lent et contrôlé"
+        },
+        {
+          "n": "5",
+          "nom": "Bird dog",
+          "lien": "",
+          "series": "2 × 8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Dos plat, ne bascule pas le bassin"
+        },
+        {
+          "n": "6",
+          "nom": "Mobilité cheville genou au mur",
+          "lien": "",
+          "series": "1 × 10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Talon au sol"
+        },
+        {
+          "n": "7",
+          "nom": "Ouvertures thoraciques sur le côté (livre qui s'ouvre)",
+          "lien": "",
+          "series": "1 × 8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Seulement dans l'amplitude sans douleur"
+        }
+      ]
+    }
+  ],
+  "progression": "On passe à l'étape suivante uniquement si la semaine précédente est restée au vert. Si une semaine passe à l'orange, tu la répètes au lieu d'avancer.\nAu bout des 4 semaines, on refait un point. Si le pont sur la jambe droite se sent uniquement dans le fessier et que les douleurs ont baissé, on réintroduit progressivement les mouvements mis de côté.",
+  "cycle": [
+    {
+      "semaines": "S1",
+      "objectif": "Apprendre les placements : séries et reps comme écrit, charges légères. Tu dois finir chaque série en te disant que tu aurais pu en faire 3 de plus."
+    },
+    {
+      "semaines": "S2",
+      "objectif": "Ajouter du volume : +1 série sur le hip thrust et le pont une jambe côté droit. Gainage latéral à 30 s."
+    },
+    {
+      "semaines": "S3",
+      "objectif": "Ajouter de la charge : +5 à 10 % sur le hip thrust, la presse et le step-up si tu restes au vert. Split squat un peu plus profond."
+    },
+    {
+      "semaines": "S4",
+      "objectif": "Consolider et retester : mêmes charges qu'en semaine 3. En fin de semaine, refais le pont une jambe et le squat bras tendus du bilan, puis envoie-moi les vidéos."
+    }
+  ],
+  "decharge": "",
+  "pourquoi": "",
+  "alerte": "",
+  "regles": []
+}
