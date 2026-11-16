@@ -5,33 +5,43 @@
   "sousTitre": "Faire baisser tes douleurs tout en continuant à développer tes fessiers, surtout le côté droit. Ton IRM est normale : tu ne risques pas de t'abîmer en bougeant, on augmente la charge progressivement selon ce que ton corps tolère.",
   "semaine": [
     {
-      "jour": "Jour de repos 1",
+      "jour": "Lundi",
       "type": "bas",
-      "seance": "Séance A · fessiers (extension de hanche) + dos · 60 min"
+      "seance": "Bas A · fessiers (extension de hanche)"
     },
     {
-      "jour": "Jour de repos 2",
-      "type": "bas",
-      "seance": "Séance B · jambes + gainage · 60 min"
+      "jour": "Mardi",
+      "type": "haut",
+      "seance": "Haut · dos, épaules et gainage"
     },
     {
-      "jour": "Jour de repos 3",
-      "type": "bas",
-      "seance": "Séance C · fessiers (volume) + dos · 60 min"
-    },
-    {
-      "jour": "Jour de garde",
-      "type": "bas",
-      "seance": "Séance « jour de garde » · fessiers au poids du corps · 20 min"
-    },
-    {
-      "jour": "Autre jour",
+      "jour": "Mercredi",
       "type": "repos",
-      "seance": "Repos actif : marche à rythme confortable, 20 à 30 min"
+      "seance": "Repos actif : marche 20 à 30 min"
+    },
+    {
+      "jour": "Jeudi",
+      "type": "bas",
+      "seance": "Bas B · jambes + gainage"
+    },
+    {
+      "jour": "Vendredi",
+      "type": "repos",
+      "seance": "Repos actif : marche 20 à 30 min"
+    },
+    {
+      "jour": "Samedi",
+      "type": "bas",
+      "seance": "Bas C · fessiers (volume)"
+    },
+    {
+      "jour": "Dimanche",
+      "type": "repos",
+      "seance": "Repos"
     }
   ],
-  "structure": "3 séances salle (A, B, C) dans cet ordre, avec au moins 1 jour entre deux séances : de préférence les jours de repos ou les lendemains de repos, jamais juste après une longue garde.\nLes jours de garde : la séance « jour de garde » (20 min), avant ou après le travail selon ton énergie.\nLes autres jours : marche à rythme confortable, 20 à 30 min.\nTous les jours de travail : la routine au travail et la routine après la garde (voir encadrés).\nSi ton planning ne permet que 2 séances salle dans la semaine, enchaîne A puis B et reprends C la semaine suivante. Mieux vaut 2 séances bien faites que 3 séances fatiguée.",
-  "notation": "Garde toujours 2 à 3 répétitions en réserve : aucune série jusqu'à l'échec pendant ces 4 semaines.\nDescente lente sur 3 secondes, montée contrôlée.\nCôtes basses et bassin légèrement rentré sur tous les exercices de fessiers : tu ne dois jamais sentir tes lombaires travailler.\nSur les exercices unilatéraux, commence toujours par la jambe droite et fais 1 série de plus de ce côté.\nL'échauffement correctif (10 min) n'est pas optionnel : il remet ton bassin en place et allume ton fessier droit avant de charger.",
+  "structure": "On alterne bas et haut pour que tu puisses récupérer et te renforcer : Bas A, Haut, repos, Bas B, repos, Bas C, repos. Chaque séance salle dure 60 min, échauffement compris.\nLes jours peuvent glisser selon ton planning de garde : garde cet ordre, au moins 1 jour entre deux séances bas, et jamais une séance salle juste après une longue garde.\nLes jours de garde : la séance « jour de garde » (20 min), avant ou après le travail selon ton énergie.\nLes jours de repos : marche à rythme confortable, 20 à 30 min.\nTous les jours de travail : la routine au travail et la routine après la garde (voir encadrés).\nSi ton planning ne permet pas tout dans la semaine, fais Bas A, Haut et Bas B, et reprends Bas C la semaine suivante. Mieux vaut 2 ou 3 séances bien faites que 4 séances fatiguée.",
+  "notation": "Garde toujours 2 à 3 répétitions en réserve : aucune série jusqu'à l'échec pendant ces 4 semaines.\nDescente lente sur 3 secondes, montée contrôlée.\nCôtes basses et bassin légèrement rentré sur tous les exercices de fessiers : tu ne dois jamais sentir tes lombaires travailler.\nSur les exercices unilatéraux, commence toujours par la jambe droite et fais 1 série de plus de ce côté.\nL'échauffement (10 min) n'est pas optionnel : il remet ton bassin en place et allume ton fessier droit avant de charger.",
   "echauffementBas": "",
   "echauffementHaut": "",
   "extras": [
@@ -68,8 +78,8 @@
     {
       "emoji": "🍑",
       "type": "bas",
-      "jour": "Jour de repos",
-      "titre": "Séance A · fessiers (extension de hanche) + dos",
+      "jour": "Lundi",
+      "titre": "Bas A · fessiers (extension de hanche)",
       "focus": "60 min, échauffement compris",
       "note": "Repos : 90 s sur les exercices principaux, 60 s sur les autres. Les séries indiquées sont celles de la semaine 1 (voir Progression).",
       "echauffement": [
@@ -164,9 +174,75 @@
           "tempo": "",
           "repos": "",
           "notes": "Tempo lent, pause 1 s en ouverture, sans gêne à l'aine"
+        }
+      ]
+    },
+    {
+      "emoji": "💪",
+      "type": "haut",
+      "jour": "Mardi",
+      "titre": "Haut · dos, épaules et gainage",
+      "focus": "Renforcer le haut du dos et le gainage pour mieux tenir les longues heures debout, en ménageant l'épaule droite (60 min, échauffement compris)",
+      "note": "Repos : 90 s sur les exercices principaux, 60 s sur les autres.\nÉpaule droite : tout se fait dans l'amplitude sans douleur (règle du feu tricolore). Pas de développé au-dessus de la tête.",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Respiration 90/90 au sol, pieds au mur",
+          "lien": "",
+          "series": "5 respirations lentes",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin légèrement rentré, souffle long par la bouche, sens tes côtes descendre"
         },
         {
-          "n": "5",
+          "n": "E2",
+          "nom": "Ouvertures thoraciques sur le côté (livre qui s'ouvre)",
+          "lien": "",
+          "series": "1 × 8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Seulement dans l'amplitude sans douleur"
+        },
+        {
+          "n": "E3",
+          "nom": "Rotation externe d'épaule à l'élastique",
+          "lien": "",
+          "series": "2 × 12 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Coude collé au corps, mouvement lent, sans douleur"
+        },
+        {
+          "n": "E4",
+          "nom": "Band pull-apart",
+          "lien": "",
+          "series": "2 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bras tendus, omoplates qui se rapprochent, épaules basses"
+        },
+        {
+          "n": "E5",
+          "nom": "Dead bug",
+          "lien": "",
+          "series": "2 × 8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bas du dos plaqué au sol tout le long"
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Tirage vertical prise neutre",
+          "lien": "",
+          "series": "3 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Tire vers le haut de la poitrine, épaules basses"
+        },
+        {
+          "n": "2",
           "nom": "Rowing poulie assis prise neutre",
           "lien": "",
           "series": "3 × 12",
@@ -175,21 +251,66 @@
           "notes": "Omoplates serrées vers l'arrière et le bas, buste immobile"
         },
         {
+          "n": "3",
+          "nom": "Rowing haltère unilatéral, appui sur banc",
+          "lien": "",
+          "series": "3 × 10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Commence à droite, tire le coude vers la hanche, dos plat"
+        },
+        {
+          "n": "4",
+          "nom": "Pompes inclinées (mains sur un banc)",
+          "lien": "",
+          "series": "3 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": "Corps gainé, coudes à 45°, descends seulement jusqu'où l'épaule droite est confortable"
+        },
+        {
+          "n": "5",
+          "nom": "Face pull à la corde",
+          "lien": "",
+          "series": "3 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Tire vers le front en ouvrant les coudes, sans douleur à l'épaule droite"
+        },
+        {
           "n": "6",
+          "nom": "Élévations latérales haltères légères",
+          "lien": "",
+          "series": "2 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Monte jusqu'à hauteur d'épaule maximum, sans douleur à l'épaule droite"
+        },
+        {
+          "n": "7",
           "nom": "Pallof press à la poulie",
           "lien": "",
           "series": "3 × 10 / côté",
           "tempo": "",
           "repos": "",
           "notes": "Bassin face à l'avant, ne te laisse pas tourner"
+        },
+        {
+          "n": "8",
+          "nom": "Marche fermier d'un côté (suitcase carry)",
+          "lien": "",
+          "series": "3 × 20 m / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Haltère légère dans une main, ne penche pas du côté de la charge"
         }
       ]
     },
     {
       "emoji": "🔥",
       "type": "bas",
-      "jour": "Jour de repos",
-      "titre": "Séance B · jambes (quadriceps + fessiers) + gainage",
+      "jour": "Jeudi",
+      "titre": "Bas B · jambes (quadriceps + fessiers) + gainage",
       "focus": "60 min, échauffement compris",
       "note": "Repos : 90 s sur les exercices principaux, 60 s sur les autres. Les séries indiquées sont celles de la semaine 1 (voir Progression).",
       "echauffement": [
@@ -287,15 +408,6 @@
         },
         {
           "n": "5",
-          "nom": "Face pull à la corde",
-          "lien": "",
-          "series": "3 × 15",
-          "tempo": "",
-          "repos": "",
-          "notes": "Tire vers le front en ouvrant les coudes, sans douleur à l'épaule droite"
-        },
-        {
-          "n": "6",
           "nom": "Gainage latéral (sur les genoux si besoin)",
           "lien": "",
           "series": "3 × 20 s / côté",
@@ -308,8 +420,8 @@
     {
       "emoji": "🍑",
       "type": "bas",
-      "jour": "Jour de repos",
-      "titre": "Séance C · fessiers (volume) + dos",
+      "jour": "Samedi",
+      "titre": "Bas C · fessiers (volume)",
       "focus": "60 min, échauffement compris",
       "note": "Repos : 90 s sur les exercices principaux, 60 s sur les autres. Les séries indiquées sont celles de la semaine 1 (voir Progression).",
       "echauffement": [
@@ -404,24 +516,6 @@
           "tempo": "",
           "repos": "",
           "notes": "Plantes de pieds collées, bassin rentré, contraction en haut"
-        },
-        {
-          "n": "5",
-          "nom": "Tirage vertical prise neutre",
-          "lien": "",
-          "series": "3 × 12",
-          "tempo": "",
-          "repos": "",
-          "notes": "Tire vers le haut de la poitrine, épaules basses"
-        },
-        {
-          "n": "6",
-          "nom": "Marche fermier d'un côté (suitcase carry)",
-          "lien": "",
-          "series": "3 × 20 m / côté",
-          "tempo": "",
-          "repos": "",
-          "notes": "Haltère légère dans une main, ne penche pas du côté de la charge"
         }
       ]
     },
