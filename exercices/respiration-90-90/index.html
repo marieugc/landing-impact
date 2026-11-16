@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Respiration 90/90</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout : une scène animée en tête (la silhouette qui respire), puis les consignes en deux colonnes qui passent en une sur téléphone.
+   Univers Booty Flow : nuit violette et néon lilas, un seul thème sombre assumé. */
+:root {
+  color-scheme: dark;
+  --nuit: #140a22;
+  --carte: #20112f;
+  --trait: #3a2353;
+  --texte: #f3eafc;
+  --doux: #b9a6cf;
+  --neon: #d48bff;
+  --rose: #ff7ac8;
+  --menthe: #7ff0c4;
+  --corps: #e8d5ff;
+  --sol: #4b2f6b;
+  --display: "Playfair Display", Georgia, serif;
+  --texte-f: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--nuit);
+  color: var(--texte);
+  font-family: var(--texte-f);
+  font-size: 16px;
+  line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 48px;
+  margin: 0;
+}
+main { max-width: 860px; margin: 0 auto; display: grid; gap: 28px; }
+.surtitre { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--neon); font-weight: 700; }
+h1 { font-family: var(--display); font-style: italic; font-size: clamp(32px, 7vw, 48px); line-height: 1.05; margin: 6px 0 8px; text-wrap: balance; }
+.intro { color: var(--doux); margin: 0; max-width: 62ch; }
+
+.scene { background: var(--carte); border: 1px solid var(--trait); border-radius: 22px; padding: 18px; display: grid; gap: 14px; }
+.scene svg { width: 100%; height: auto; display: block; max-width: 100%; }
+.etat { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+.phase { font-family: var(--display); font-style: italic; font-size: clamp(24px, 5vw, 34px); line-height: 1.1; color: var(--texte); min-height: 1.2em; }
+.phase b { font-family: var(--texte-f); font-style: normal; font-variant-numeric: tabular-nums; color: var(--neon); margin-left: 10px; }
+.compteur { color: var(--doux); font-variant-numeric: tabular-nums; font-weight: 500; }
+.jauge { height: 8px; background: var(--nuit); border-radius: 99px; overflow: hidden; }
+.jauge div { height: 100%; width: 0; background: linear-gradient(90deg, var(--neon), var(--rose)); border-radius: 99px; }
+.boutons { display: flex; flex-wrap: wrap; gap: 10px; }
+button {
+  font: 700 14px/1 var(--texte-f); letter-spacing: .04em; color: var(--texte);
+  background: transparent; border: 1px solid var(--trait); border-radius: 99px; padding: 12px 18px; cursor: pointer;
+}
+button.principal { background: var(--neon); border-color: var(--neon); color: var(--nuit); }
+button:focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
+
+.grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 18px; }
+.bloc { background: var(--carte); border: 1px solid var(--trait); border-radius: 18px; padding: 20px; min-width: 0; }
+.bloc h2 { font-family: var(--display); font-style: italic; font-size: 24px; margin: 0 0 12px; }
+ol, ul { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 12px; }
+ol { counter-reset: e; }
+ol li { counter-increment: e; display: grid; grid-template-columns: 30px 1fr; gap: 10px; }
+ol li::before { content: counter(e); width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--neon); color: var(--neon); display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+ul li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
+.oui li::before { content: "✓"; color: var(--menthe); font-weight: 700; }
+.non li::before { content: "✕"; color: var(--rose); font-weight: 700; }
+.bloc h3 { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--doux); margin: 18px 0 10px; }
+.pied { color: var(--doux); font-size: 14px; text-align: center; }
+
+/* Dessin */
+.sol { stroke: var(--sol); stroke-width: 4; }
+.mur { fill: var(--sol); opacity: .55; }
+.corps { fill: var(--corps); }
+.membre { stroke: var(--corps); stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.cheveux { fill: #6b3d93; }
+.bras { stroke: #cdb3ef; }
+.short { fill: #b35cf0; }
+.cotes { fill: none; stroke: var(--neon); stroke-width: 3; opacity: .95; }
+.creux { fill: var(--rose); opacity: .55; }
+.air { fill: var(--menthe); }
+.fleche { stroke: var(--menthe); stroke-width: 3; fill: none; stroke-linecap: round; }
+.etiquette { fill: var(--doux); font: 500 15px var(--texte-f); }
+.etiquette.forte { fill: var(--texte); font-weight: 700; }
+.repere { stroke: var(--doux); stroke-width: 1.2; stroke-dasharray: 3 4; fill: none; }
+.angle { fill: var(--neon); font: 700 14px var(--texte-f); }
+.cache-reperes .reperes { display: none; }
+</style>
+</head>
+<body>
+
+<main>
+  <header>
+    <div class="surtitre">Échauffement · pour Simona</div>
+    <h1>Respiration 90/90, pieds au mur</h1>
+    <p class="intro">Le premier exercice de chaque séance. Il remet ton bassin en place et calme le bas du dos avant de charger. Suis la silhouette : inspire quand elle inspire, souffle quand elle souffle. 5 respirations lentes, environ 1 minute.</p>
+  </header>
+
+  <section class="scene" aria-label="Animation de l'exercice">
+    <div class="etat">
+      <div class="phase" id="phase" aria-live="polite">Inspire par le nez<b id="decompte">4</b></div>
+      <div class="compteur" id="compteur">Respiration 1 / 5</div>
+    </div>
+    <div class="jauge" aria-hidden="true"><div id="jauge"></div></div>
+
+    <svg id="dessin" viewBox="0 0 800 400" role="img" aria-label="Femme allongée sur le dos, hanches et genoux à 90 degrés, pieds posés à plat contre le mur. À l'expiration, les côtes descendent et le creux du bas du dos s'efface.">
+      <!-- mur et sol -->
+      <rect class="mur" x="660" y="40" width="26" height="300" rx="4"/>
+      <line class="sol" x1="30" y1="340" x2="686" y2="340"/>
+
+      <!-- repères (angles, consignes) -->
+      <g class="reperes">
+        <path class="repere" d="M 432 318 L 432 240"/>
+        <path class="repere" d="M 432 178 L 520 178"/>
+        
+        <text class="etiquette" x="470" y="72">Pieds à plat contre le mur,</text>
+        <text class="etiquette" x="470" y="92">largeur de bassin</text>
+        <g id="fleches-talons">
+          <path class="fleche" d="M 588 150 L 630 150 M 620 141 L 630 150 L 620 159"/>
+          <text class="etiquette forte" x="520" y="128" id="txt-talons">pousse doucement</text>
+        </g>
+        <text class="etiquette forte" id="txt-cotes" x="226" y="196">les côtes descendent</text>
+        <path class="fleche" id="fleche-cotes" d="M 300 206 L 300 236 M 291 227 L 300 236 L 309 227"/>
+        <text class="etiquette" id="txt-creux" x="272" y="378">le creux du bas du dos s'efface</text>
+      </g>
+
+      <!-- silhouette (dessinée par le script) -->
+      <path class="corps" id="tronc"/>
+      <path class="creux" id="creux"/>
+      <path class="membre bras" id="bras" stroke-width="16"/>
+      <path class="cotes" id="cotes"/>
+      <path class="short" id="short"/>
+      <path class="membre" id="cuisse" stroke-width="40"/>
+      <path class="membre" id="tibia" stroke-width="30"/>
+      <path class="membre" id="pied" stroke-width="18"/>
+      <circle class="corps" id="tete" r="30"/>
+      <path class="cheveux" id="cheveux"/>
+      <g id="particules"></g>
+      <g class="reperes">
+        <text class="angle" x="384" y="262">90°</text>
+        <text class="angle" x="470" y="160">90°</text>
+      </g>
+    </svg>
+
+    <div class="boutons">
+      <button class="principal" id="lecture" type="button">Pause</button>
+      <button id="recommencer" type="button">Recommencer</button>
+      <button id="reperes" type="button" aria-pressed="true">Masquer les repères</button>
+    </div>
+  </section>
+
+  <div class="grille">
+    <section class="bloc">
+      <h2>Comment faire</h2>
+      <ol>
+        <li><span>Allonge-toi sur le dos, fesses proches du mur. Pose les pieds à plat contre le mur : hanches et genoux pliés à 90°, pieds largeur de bassin.</span></li>
+        <li><span>Rentre très légèrement le bassin : ton coccyx se décolle à peine du sol. Ce n'est pas un pont, les fesses restent presque au sol.</span></li>
+        <li><span>Inspire par le nez pendant 4 secondes : le ventre et les côtes s'ouvrent sur les côtés.</span></li>
+        <li><span>Souffle longuement par la bouche pendant 6 secondes, comme dans une paille. Sens tes côtes descendre vers ton bassin et le bas de ton dos se poser au sol.</span></li>
+        <li><span>Pendant l'expiration, pousse doucement les talons dans le mur : tu sens l'arrière des cuisses et les fessiers s'allumer légèrement.</span></li>
+      </ol>
+    </section>
+    <section class="bloc">
+      <h2>Ce que tu dois sentir</h2>
+      <ul class="oui">
+        <li><span>Le bas du dos qui se détend et se pose au sol.</span></li>
+        <li><span>Les côtes qui descendent et se referment à chaque expiration.</span></li>
+        <li><span>Un léger travail à l'arrière des cuisses et dans les fessiers.</span></li>
+      </ul>
+      <h3>À éviter</h3>
+      <ul class="non">
+        <li><span>Soulever les fesses haut comme un pont.</span></li>
+        <li><span>Creuser le dos ou hausser les épaules.</span></li>
+        <li><span>Bloquer ta respiration ou souffler vite.</span></li>
+      </ul>
+    </section>
+  </div>
+
+  <p class="pied">Booty Flow Coaching · Si tu ressens une douleur au-dessus de 3/10, arrête-toi et préviens Marie.</p>
+</main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const INSPIRE = 4, EXPIRE = 6, CYCLE = INSPIRE + EXPIRE, TOTAL = 5;
+  const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ease = (x) => 0.5 - Math.cos(Math.PI * x) / 2;
+
+  // Particules d'air
+  const zone = $('particules');
+  const NS = 'http://www.w3.org/2000/svg';
+  const bulles = Array.from({ length: 7 }, () => {
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('class', 'air'); c.setAttribute('r', '4');
+    zone.appendChild(c); return c;
+  });
+
+  // Dessine la pose. tilt : 0 = bassin neutre (inspiration), 1 = bassin rentré (fin d'expiration)
+  // souffle : 0 = poumons vides, 1 = poumons pleins
+  function pose(tilt, souffle, phaseAir, inspire) {
+    const lift = 7 * tilt;                       // le coccyx se décolle à peine
+    const hanche = { x: 432, y: 318 - lift };
+    const genou = { x: 440, y: 178 };
+    const cheville = { x: 628, y: 172 };
+    const epaule = { x: 200, y: 318 };
+    const creux = 12 * (1 - tilt);               // creux lombaire
+
+    // Tronc : dos en bas (avec le creux lombaire), ventre et poitrine en haut
+    const haut = 262 - 10 * souffle;             // la poitrine se soulève à l'inspiration
+    $('tronc').setAttribute('d',
+      `M ${epaule.x - 6} ${epaule.y + 12}
+       C ${epaule.x + 60} ${epaule.y + 14}, 300 ${334 - creux}, 340 ${336 - creux}
+       C 380 ${336 - creux}, ${hanche.x - 30} ${hanche.y + 20}, ${hanche.x + 20} ${hanche.y + 6}
+       L ${hanche.x + 18} ${hanche.y - 34}
+       C 400 ${hanche.y - 44}, 360 ${282 - 6 * souffle}, 320 ${282 - 8 * souffle}
+       C 280 ${haut}, 230 ${haut}, ${epaule.x - 4} ${272}
+       C ${epaule.x - 22} 276, ${epaule.x - 26} ${epaule.y + 6}, ${epaule.x - 6} ${epaule.y + 12} Z`);
+
+    // Zone rose sous le bas du dos = creux lombaire qui s'efface en expirant
+    $('creux').setAttribute('d', `M 270 340 C 300 ${340 - creux * 1.15}, 370 ${340 - creux * 1.15}, 400 340 Z`);
+    $('creux').style.opacity = String(0.15 + 0.6 * (1 - tilt));
+
+    // Cage thoracique : s'ouvre à l'inspiration, descend vers le bassin à l'expiration
+    const cx = 268 + 10 * tilt, rx = 30 + 8 * souffle, ry = 22 + 8 * souffle, cy = 290 - 4 * souffle;
+    $('cotes').setAttribute('d', `M ${cx - rx} ${cy} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cy} M ${cx - rx + 8} ${cy + 6} A ${rx - 8} ${ry - 6} 0 0 1 ${cx + rx - 8} ${cy + 6} M ${cx - rx + 16} ${cy + 12} A ${rx - 16} ${ry - 12} 0 0 1 ${cx + rx - 16} ${cy + 12}`);
+
+    // Short
+    $('short').setAttribute('d', `M ${hanche.x - 44} ${hanche.y + 18} C ${hanche.x - 30} ${hanche.y + 24}, ${hanche.x + 6} ${hanche.y + 22}, ${hanche.x + 22} ${hanche.y + 8} L ${hanche.x + 22} ${hanche.y - 34} C ${hanche.x} ${hanche.y - 40}, ${hanche.x - 34} ${hanche.y - 36}, ${hanche.x - 46} ${hanche.y - 22} Z`);
+
+    // Jambes à 90/90, pieds contre le mur
+    $('cuisse').setAttribute('d', `M ${hanche.x} ${hanche.y - 6} L ${genou.x} ${genou.y}`);
+    $('tibia').setAttribute('d', `M ${genou.x} ${genou.y} L ${cheville.x} ${cheville.y}`);
+    $('pied').setAttribute('d', `M ${cheville.x + 6} ${cheville.y + 14} L ${cheville.x + 18} ${cheville.y + 12} L ${cheville.x + 20} ${cheville.y - 34}`);
+
+    // Bras le long du corps, paumes au sol
+    $('bras').setAttribute('d', `M ${epaule.x + 10} ${epaule.y - 4} C 250 312, 300 322, 380 326`);
+
+    // Tête et cheveux
+    $('tete').setAttribute('cx', 148); $('tete').setAttribute('cy', 300);
+    $('cheveux').setAttribute('d', 'M 120 296 C 112 268, 140 256, 160 266 C 150 276, 132 286, 128 312 C 118 326, 92 334, 70 336 C 96 326, 112 314, 120 296 Z');
+
+    // Air : entre par le nez (inspiration), sort longuement par la bouche (expiration)
+    const nez = { x: 168, y: 274 };
+    bulles.forEach((b, i) => {
+      const k = (phaseAir + i / bulles.length) % 1;
+      let x, y, o;
+      if (inspire) { x = nez.x + 70 * (1 - k); y = nez.y - 90 * (1 - k); o = Math.sin(Math.PI * k); }
+      else { x = nez.x + 4 + 130 * k; y = nez.y - 6 - 120 * k; o = Math.sin(Math.PI * k) * 0.9; }
+      b.setAttribute('cx', x.toFixed(1)); b.setAttribute('cy', y.toFixed(1));
+      b.setAttribute('opacity', o.toFixed(2));
+    });
+
+    // Repères qui ne s'allument qu'à l'expiration
+    const exp = inspire ? 0 : 1;
+    ['fleches-talons', 'txt-cotes', 'fleche-cotes', 'txt-creux'].forEach((id) => { $(id).style.opacity = String(0.25 + 0.75 * exp); });
+  }
+
+  // Lecture
+  let enCours = !reduit, debut = performance.now(), ecoule = 0, fin = false;
+  function etat(t) {
+    const tour = Math.floor(t / CYCLE);
+    const dans = t % CYCLE;
+    const inspire = dans < INSPIRE;
+    const x = inspire ? dans / INSPIRE : (dans - INSPIRE) / EXPIRE;
+    return { tour, dans, inspire, x };
+  }
+  function afficher(t) {
+    if (t >= CYCLE * TOTAL) {
+      fin = true; enCours = false;
+      pose(1, 0, 0, false);
+      $('phase').innerHTML = 'Terminé, bravo !';
+      $('compteur').textContent = '5 respirations faites';
+      $('jauge').style.width = '100%';
+      $('lecture').textContent = 'Rejouer';
+      return;
+    }
+    const { tour, dans, inspire, x } = etat(t);
+    const e = ease(x);
+    const souffle = inspire ? e : 1 - e;
+    const tilt = inspire ? 1 - e : e;
+    pose(tilt, souffle, (t * (inspire ? 0.45 : 0.3)) % 1, inspire);
+    const reste = Math.ceil(inspire ? INSPIRE - dans : CYCLE - dans);
+    $('phase').innerHTML = `${inspire ? 'Inspire par le nez' : 'Souffle longuement par la bouche'}<b>${reste}</b>`;
+    $('compteur').textContent = `Respiration ${tour + 1} / ${TOTAL}`;
+    $('jauge').style.width = `${(t / (CYCLE * TOTAL)) * 100}%`;
+  }
+  function boucle(now) {
+    if (enCours) { ecoule = (now - debut) / 1000; afficher(ecoule); }
+    requestAnimationFrame(boucle);
+  }
+
+  $('lecture').addEventListener('click', () => {
+    if (fin) { fin = false; ecoule = 0; }
+    enCours = !enCours;
+    debut = performance.now() - ecoule * 1000;
+    $('lecture').textContent = enCours ? 'Pause' : 'Reprendre';
+  });
+  $('recommencer').addEventListener('click', () => {
+    fin = false; ecoule = 0; debut = performance.now(); enCours = true;
+    $('lecture').textContent = 'Pause';
+    afficher(0);
+  });
+  $('reperes').addEventListener('click', (ev) => {
+    const svg = $('dessin');
+    const cache = svg.classList.toggle('cache-reperes');
+    ev.currentTarget.textContent = cache ? 'Afficher les repères' : 'Masquer les repères';
+    ev.currentTarget.setAttribute('aria-pressed', String(!cache));
+  });
+
+  if (reduit) { $('lecture').textContent = 'Lancer'; afficher(INSPIRE + EXPIRE * 0.99); $('phase').innerHTML = 'Fin d\'expiration : côtes basses, dos posé'; }
+  else afficher(0);
+  requestAnimationFrame(boucle);
+})();
+</script>
+</body>
+</html>
