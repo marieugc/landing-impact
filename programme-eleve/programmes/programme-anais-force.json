@@ -1,0 +1,606 @@
+{
+  "eleve": "Anaïs",
+  "coach": "Booty Flow Coaching",
+  "titre": "Programme de force · cycle de 8 semaines",
+  "sousTitre": "3 séances lourdes de bas du corps · 1 séance de tonification du haut du corps · 3 jours de repos",
+  "semaine": [
+    {
+      "jour": "Lundi",
+      "type": "bas",
+      "seance": "Bas A · fessiers force"
+    },
+    {
+      "jour": "Mardi",
+      "type": "haut",
+      "seance": "Haut · tonification"
+    },
+    {
+      "jour": "Mercredi",
+      "type": "repos",
+      "seance": "Repos"
+    },
+    {
+      "jour": "Jeudi",
+      "type": "bas",
+      "seance": "Bas B · quadriceps + fessiers force"
+    },
+    {
+      "jour": "Vendredi",
+      "type": "repos",
+      "seance": "Repos"
+    },
+    {
+      "jour": "Samedi",
+      "type": "bas",
+      "seance": "Bas C · ischios + fessiers force"
+    },
+    {
+      "jour": "Dimanche",
+      "type": "repos",
+      "seance": "Repos"
+    }
+  ],
+  "structure": "Chaque séance de bas dure environ 80 à 90 min : 10 min d'échauffement, 55 à 60 min de musculation (les repos sont plus longs qu'en hypertrophie), puis 20 min de cardio doux (marche inclinée ou vélo, ~130 bpm).\nLe cardio se fait toujours après la musculation, jamais avant.\nOn garde au moins 48 h entre deux séances de bas.",
+  "notation": "Tempo : descente, pause, montée (ex. 3-1-X : 3 s de descente, 1 s de pause, montée explosive). En force, la montée est toujours dynamique, la descente reste contrôlée.\nLes exercices marqués [FORCE] sont les mouvements principaux : ils suivent la progression en vagues (voir Progression). Tous les autres suivent la double progression habituelle.\nSuperset : les exercices « a » et « b » s'enchaînent, le repos est pris après le « b ».",
+  "echauffementBas": "",
+  "echauffementHaut": "",
+  "extras": [
+    {
+      "titre": "🛡️ Sécurité du dos (scoliose, sciatique)",
+      "texte": "Pas de squat barre sur le dos ni de soulevé de terre depuis le sol : la charge lourde passe par le hip thrust, le hack squat et la presse, qui chargent peu la colonne.\nGainage anti-rotation et anti-inclinaison (Pallof press, suitcase carry) à chaque séance de bas pour stabiliser le tronc sous charge lourde."
+    },
+    {
+      "titre": "⚠️ Si ça tire dans la jambe",
+      "texte": "Douleur qui descend dans la jambe, fourmillements ou engourdissement : on arrête l'exercice et on passe à la variante indiquée dans les notes.\nCeinture possible sur les séries lourdes de hack squat et de soulevé de terre roumain, à partir de la semaine 3."
+    }
+  ],
+  "seances": [
+    {
+      "emoji": "🍑",
+      "type": "bas",
+      "jour": "Lundi",
+      "titre": "Bas A · fessiers force",
+      "focus": "La séance clé du fessier : le hip thrust est le mouvement le plus lourd de la semaine",
+      "note": "Variante si gêne lombaire au hip thrust : hip thrust machine ou Smith, mêmes séries et reps.\nCardio après la musculation, jamais avant : 20 min de cardio doux (marche inclinée ou vélo, ~130 bpm).",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Mobilité 90/90 hanches",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E2",
+          "nom": "Fente basse",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E3",
+          "nom": "Mobilité chevilles",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E4",
+          "nom": "Marche latérale élastique",
+          "lien": "",
+          "series": "2 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E5",
+          "nom": "Pont fessier au poids du corps",
+          "lien": "",
+          "series": "2 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E6",
+          "nom": "Séries d'approche au hip thrust",
+          "lien": "",
+          "series": "8 reps à 50 % · 5 reps à 70 % · 2-3 reps à 85 %",
+          "tempo": "",
+          "repos": "",
+          "notes": "De la charge de travail, puis séries de travail"
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Hip thrust barre [FORCE]",
+          "lien": "",
+          "series": "5 × voir progression (6 → 3)",
+          "tempo": "2-1-X",
+          "repos": "3'",
+          "notes": "Pause 1 s en haut, menton rentré, bassin en rétroversion. Pieds à plat, tibias verticaux en haut"
+        },
+        {
+          "n": "2",
+          "nom": "Hack squat, pieds hauts",
+          "lien": "",
+          "series": "4 × 6-8",
+          "tempo": "3-0-X",
+          "repos": "2'30",
+          "notes": "Pieds hauts = plus de fessiers. Profondeur max sans décoller le bassin"
+        },
+        {
+          "n": "3",
+          "nom": "Fentes bulgares buste penché, haltères",
+          "lien": "",
+          "series": "3 × 6-8 / jambe",
+          "tempo": "3-0-1",
+          "repos": "2'",
+          "notes": "Commencer par le côté faible. Sangles autorisées pour tenir les haltères lourds"
+        },
+        {
+          "n": "4",
+          "nom": "Leg curl couché",
+          "lien": "",
+          "series": "3 × 6-8",
+          "tempo": "3-0-1",
+          "repos": "2'",
+          "notes": "Charge lourde, hanches collées au banc"
+        },
+        {
+          "n": "5",
+          "nom": "Abduction machine buste penché",
+          "lien": "",
+          "series": "3 × 12-15",
+          "tempo": "2-1-1",
+          "repos": "75 s",
+          "notes": "Pause 1 s en ouverture"
+        },
+        {
+          "n": "6a",
+          "nom": "Pallof press",
+          "lien": "",
+          "series": "3 × 10 / côté",
+          "tempo": "2-2-2",
+          "repos": "0",
+          "notes": "Anti-rotation, bassin fixe. Enchaîner avec 6b"
+        },
+        {
+          "n": "6b",
+          "nom": "Dead bug",
+          "lien": "",
+          "series": "3 × 10 / côté",
+          "tempo": "lent",
+          "repos": "60 s",
+          "notes": "Lombaires plaquées au sol"
+        }
+      ]
+    },
+    {
+      "emoji": "💪",
+      "type": "haut",
+      "jour": "Mardi",
+      "titre": "Haut · tonification",
+      "focus": "Entretien de tout le haut du corps, charges modérées et RIR 2 : elle tonifie sans voler de récupération aux séances de force du bas",
+      "note": "Environ 50 min de musculation, puis 20 min de cardio (escalier ou elliptique).",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Cat row",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E2",
+          "nom": "Rotations externes d'épaule à l'élastique",
+          "lien": "",
+          "series": "2 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E3",
+          "nom": "Rétractions scapulaires",
+          "lien": "",
+          "series": "2 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E4",
+          "nom": "Séries d'approche sur le premier exercice",
+          "lien": "",
+          "series": "2 séries progressives",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Tirage vertical, prise large",
+          "lien": "",
+          "series": "3 × 10-12",
+          "tempo": "2-1-2",
+          "repos": "90 s",
+          "notes": "Tirer vers le haut de la poitrine, coudes vers les hanches"
+        },
+        {
+          "n": "2",
+          "nom": "Développé incliné haltères, 30°",
+          "lien": "",
+          "series": "3 × 10-12",
+          "tempo": "3-1-1",
+          "repos": "90 s",
+          "notes": "Charge modérée, pas de développé militaire"
+        },
+        {
+          "n": "3",
+          "nom": "Rowing unilatéral, poitrine appuyée sur banc incliné",
+          "lien": "",
+          "series": "3 × 10-12 / bras",
+          "tempo": "2-1-2",
+          "repos": "75 s",
+          "notes": "Dos protégé, contraction 1 s en haut"
+        },
+        {
+          "n": "4a",
+          "nom": "Élévations latérales poulie",
+          "lien": "",
+          "series": "3 × 12-15",
+          "tempo": "2-0-1",
+          "repos": "0",
+          "notes": "Enchaîner avec 4b"
+        },
+        {
+          "n": "4b",
+          "nom": "Face pull",
+          "lien": "",
+          "series": "3 × 15",
+          "tempo": "2-1-2",
+          "repos": "60 s",
+          "notes": "Santé des épaules et posture"
+        },
+        {
+          "n": "5a",
+          "nom": "Curl biceps incliné, haltères",
+          "lien": "",
+          "series": "3 × 12",
+          "tempo": "3-0-1",
+          "repos": "0",
+          "notes": "Enchaîner avec 5b"
+        },
+        {
+          "n": "5b",
+          "nom": "Extension triceps poulie, corde",
+          "lien": "",
+          "series": "3 × 12",
+          "tempo": "2-1-1",
+          "repos": "60 s",
+          "notes": "Superset bras"
+        },
+        {
+          "n": "6",
+          "nom": "Planche latérale + vacuum",
+          "lien": "",
+          "series": "3 tours : planche latérale max / côté + vacuum 3 × 20 s",
+          "tempo": "—",
+          "repos": "45 s",
+          "notes": "Transverse et obliques"
+        }
+      ]
+    },
+    {
+      "emoji": "🔥",
+      "type": "bas",
+      "jour": "Jeudi",
+      "titre": "Bas B · quadriceps + fessiers force",
+      "focus": "Le hack squat lourd construit la force des jambes ; la presse et le hip thrust gardent le fessier au centre",
+      "note": "Cardio après la musculation, jamais avant : 20 min de cardio doux (marche inclinée ou vélo, ~130 bpm).",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Mobilité 90/90 hanches",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E2",
+          "nom": "Fente basse",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E3",
+          "nom": "Mobilité chevilles",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E4",
+          "nom": "Marche latérale élastique",
+          "lien": "",
+          "series": "2 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E5",
+          "nom": "Pont fessier au poids du corps",
+          "lien": "",
+          "series": "2 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E6",
+          "nom": "Séries d'approche au hack squat",
+          "lien": "",
+          "series": "8 reps à 50 % · 5 reps à 70 % · 2-3 reps à 85 %",
+          "tempo": "",
+          "repos": "",
+          "notes": "De la charge de travail, puis séries de travail"
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Hack squat, pieds moyens, profondeur max [FORCE]",
+          "lien": "",
+          "series": "5 × voir progression (6 → 3)",
+          "tempo": "3-1-X",
+          "repos": "3'",
+          "notes": "Pause 1 s en bas. Si gêne lombaire : cale sous la pointe des pieds, ou belt squat"
+        },
+        {
+          "n": "2",
+          "nom": "Presse à cuisses, pieds hauts et écartés",
+          "lien": "",
+          "series": "4 × 6-8",
+          "tempo": "3-0-X",
+          "repos": "2'30",
+          "notes": "Bassin collé au dossier, ne pas verrouiller les genoux"
+        },
+        {
+          "n": "3",
+          "nom": "Hip thrust machine ou Smith",
+          "lien": "",
+          "series": "3 × 6-8",
+          "tempo": "2-1-X",
+          "repos": "2'",
+          "notes": "Pause 1 s en haut. Charge à ~85 % de celle du lundi"
+        },
+        {
+          "n": "4",
+          "nom": "Fentes arrière Smith, grand pas",
+          "lien": "",
+          "series": "3 × 6-8 / jambe",
+          "tempo": "3-0-1",
+          "repos": "2'",
+          "notes": "Grand pas en arrière = fessier. Commencer par le côté faible"
+        },
+        {
+          "n": "5",
+          "nom": "Leg extension",
+          "lien": "",
+          "series": "3 × 8-10",
+          "tempo": "2-1-1",
+          "repos": "90 s",
+          "notes": "Contraction 1 s en haut"
+        },
+        {
+          "n": "6a",
+          "nom": "Adducteurs machine",
+          "lien": "",
+          "series": "3 × 12-15",
+          "tempo": "3-0-1",
+          "repos": "0",
+          "notes": "Enchaîner avec 6b"
+        },
+        {
+          "n": "6b",
+          "nom": "Planche latérale",
+          "lien": "",
+          "series": "3 × max / côté",
+          "tempo": "—",
+          "repos": "60 s",
+          "notes": "Corps aligné, hanche haute"
+        }
+      ]
+    },
+    {
+      "emoji": "🍑",
+      "type": "bas",
+      "jour": "Samedi",
+      "titre": "Bas C · ischios + fessiers force",
+      "focus": "La séance chaîne postérieure : RDL lourd et leg curl lourd pour consolider les ischios, B-stance pour corriger les asymétries",
+      "note": "Cardio après la musculation, jamais avant : 20 min de cardio doux (marche inclinée ou vélo, ~130 bpm).",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Mobilité 90/90 hanches",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E2",
+          "nom": "Fente basse",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E3",
+          "nom": "Mobilité chevilles",
+          "lien": "",
+          "series": "1 min",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E4",
+          "nom": "Marche latérale élastique",
+          "lien": "",
+          "series": "2 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E5",
+          "nom": "Pont fessier au poids du corps",
+          "lien": "",
+          "series": "2 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E6",
+          "nom": "Séries d'approche au soulevé de terre roumain",
+          "lien": "",
+          "series": "8 reps à 50 % · 5 reps à 70 % · 2-3 reps à 85 %",
+          "tempo": "",
+          "repos": "",
+          "notes": "De la charge de travail, puis séries de travail"
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Soulevé de terre roumain, barre [FORCE]",
+          "lien": "",
+          "series": "4 × voir progression (6 → 3)",
+          "tempo": "3-1-X",
+          "repos": "3'",
+          "notes": "Dos neutre, barre collée aux jambes, descendre jusqu'à mi-tibia max. Si gêne sciatique : version haltères, 4 × 8"
+        },
+        {
+          "n": "2",
+          "nom": "Leg curl assis",
+          "lien": "",
+          "series": "4 × 6-8",
+          "tempo": "4-0-1",
+          "repos": "2'",
+          "notes": "Descente lente : c'est le stimulus principal de l'ischio"
+        },
+        {
+          "n": "3",
+          "nom": "Hip thrust B-stance, barre",
+          "lien": "",
+          "series": "3 × 6-8 / jambe",
+          "tempo": "2-1-X",
+          "repos": "2'",
+          "notes": "Jambe d'appui active, l'autre pied sert juste d'équilibre. Commencer par le côté faible"
+        },
+        {
+          "n": "4",
+          "nom": "Step-up sur banc haut, haltères",
+          "lien": "",
+          "series": "3 × 6-8 / jambe",
+          "tempo": "2-0-1",
+          "repos": "2'",
+          "notes": "Pousser avec le talon, ne pas s'aider de la jambe arrière"
+        },
+        {
+          "n": "5",
+          "nom": "Hyperextension 45° lestée, dos arrondi",
+          "lien": "",
+          "series": "3 × 8-10",
+          "tempo": "2-1-1",
+          "repos": "90 s",
+          "notes": "Version fessiers : pieds en canard, menton rentré"
+        },
+        {
+          "n": "6",
+          "nom": "Abducteurs + adducteurs",
+          "lien": "",
+          "series": "3 × 12-15",
+          "tempo": "2-1-1",
+          "repos": "60 s",
+          "notes": "Enchaîner les deux à la suite sur chaque tour"
+        },
+        {
+          "n": "7",
+          "nom": "Suitcase carry",
+          "lien": "",
+          "series": "3 × 20 m / côté",
+          "tempo": "—",
+          "repos": "60 s",
+          "notes": "Haltère lourd d'un seul côté, buste parfaitement droit : anti-inclinaison pour le dos"
+        }
+      ]
+    }
+  ],
+  "progression": "Les 3 exercices [FORCE] (hip thrust, hack squat, soulevé de terre roumain) progressent en vagues : moins de répétitions, plus de charge chaque quinzaine. On ne va jamais à l'échec sur ces mouvements.\nTous les autres exercices suivent la double progression habituelle.",
+  "cycle": [
+    {
+      "semaines": "S1-2",
+      "objectif": "6 reps par série · RIR 3. On cale les charges, technique parfaite."
+    },
+    {
+      "semaines": "S3-4",
+      "objectif": "5 reps par série · RIR 2. +5 à 7,5 % par rapport à S1-2."
+    },
+    {
+      "semaines": "S5-6",
+      "objectif": "4 reps par série · RIR 1-2. +5 à 7,5 % par rapport à S3-4."
+    },
+    {
+      "semaines": "S7",
+      "objectif": "3 reps par série · RIR 1. Semaine de pic : charges les plus lourdes du cycle, 4 séries (soulevé de terre roumain : 3)."
+    },
+    {
+      "semaines": "S8",
+      "objectif": "Décharge · RIR 3-4. −40 % de séries, charges −10 %."
+    }
+  ],
+  "decharge": "La semaine 8 est volontairement allégée : mêmes séances, mêmes exercices et mêmes jours, mais volume et intensité réduits.",
+  "pourquoi": "",
+  "alerte": "",
+  "regles": [
+    {
+      "titre": "📉 Séries : −40 %",
+      "texte": "Un exercice à 5 séries passe à 3, un exercice à 3 ou 4 séries passe à 2."
+    },
+    {
+      "titre": "🏋️ Charges : −10 %",
+      "texte": "On allège légèrement les barres et haltères sur tous les exercices."
+    },
+    {
+      "titre": "🛑 RIR 3-4",
+      "texte": "On s'arrête loin de l'échec (3 à 4 répétitions en réserve)."
+    }
+  ]
+}
