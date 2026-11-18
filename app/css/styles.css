@@ -646,3 +646,12 @@ span.vignette { cursor: default; }
   .tableau-ligne.lignes-abonnees > :nth-child(6) { grid-column: 2; grid-row: 1 / span 5; }
   .ligne-filtres input[type="search"] { min-width: 0; width: 100%; }
 }
+.tableau-tete.lignes-webhooks, .tableau-ligne.lignes-webhooks { grid-template-columns: 1fr 1fr 1.6fr 0.8fr 2.6fr; }
+button.tableau-ligne { width: 100%; background: none; border-left: 0; border-right: 0; border-bottom: 0; text-align: left; font: inherit; }
+.lien-journal { align-self: flex-start; }
+pre.json { margin: 8px 0 0; padding: 12px; max-height: 50vh; overflow: auto; border-radius: 12px; background: var(--fond); border: 1px solid var(--bord); font-size: 12px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+@media (max-width: 899px) {
+  .tableau-ligne.lignes-webhooks { grid-template-columns: 1fr auto; }
+  .tableau-ligne.lignes-webhooks > :nth-child(n+2) { grid-column: 1; }
+  .tableau-ligne.lignes-webhooks > :nth-child(4) { grid-column: 2; grid-row: 1; }
+}

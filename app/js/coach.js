@@ -182,6 +182,7 @@ async function abonnees(racine, profil) {
       ${lignes || '<p class="vide">Aucune abonnée pour le moment. Elles apparaissent ici automatiquement après leur achat sur Systeme.io.</p>'}
     </section>
     <p class="petit">Pour faire passer une abonnée en coaching : ouvre sa fiche et change sa formule. Elle garde tout son historique.</p>
+    <a href="#/coach/webhooks" class="bouton-contour compact lien-journal">${icone('doc', 16)}Journal des webhooks Systeme.io</a>
   `);
   racine.querySelectorAll('[data-filtre]').forEach((b) => b.addEventListener('click', () => {
     filtreAbonnees = b.dataset.filtre;
@@ -198,6 +199,41 @@ async function abonnees(racine, profil) {
       nouveau.setSelectionRange(nouveau.value.length, nouveau.value.length);
     }, 250);
   });
+}
+
+// ───────────── Journal des webhooks Systeme.io ─────────────
+const STATUTS_WEBHOOK = { traite: ['Traité', VERT], ignore: ['Ignoré', GRIS], erreur: ['Erreur', ORANGE], refuse: ['Refusé', ORANGE], en_cours: ['En cours', GRIS] };
+const EVENEMENTS = { vente: 'New sale', annulation: 'Sale canceled', inconnu: 'Autre' };
+async function webhooks(racine, profil) {
+  const liste = await api.listWebhooks();
+  const heure = (v) => new Date(v).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  const lignes = liste.map((w) => {
+    const [st, couleur] = STATUTS_WEBHOOK[w.statut] || [w.statut, GRIS];
+    return `<button class="tableau-ligne lignes-webhooks" data-webhook="${esc(w.id)}">
+      <span class="gris">${heure(w.recu_le)}</span>
+      <span><strong>${esc(EVENEMENTS[w.evenement] || w.evenement || '—')}</strong></span>
+      <span class="gris">${esc(w.email || '—')}</span>
+      <span class="statut" style="color:${couleur}">${esc(st)}</span>
+      <span class="petit">${esc(w.message || '')}</span>
+    </button>`;
+  }).join('');
+  racine.innerHTML = page(profil, 'coach/abonnees', `
+    <div class="bureau-tete"><div class="ligne-auteur">
+      <a href="#/coach/abonnees" class="bouton-rond" aria-label="Retour aux abonnées">${icone('retour', 20)}</a>
+      <div><div class="surtitre">ABONNÉES APP</div><h1>Journal Systeme.io</h1></div></div></div>
+    <p class="petit">Chaque webhook reçu de Systeme.io, avec ce que l'app en a fait. Clique sur une ligne pour voir le contenu brut envoyé par Systeme.io.</p>
+    <section class="carte tableau">
+      <div class="tableau-tete lignes-webhooks"><span>REÇU LE</span><span>ÉVÉNEMENT</span><span>E-MAIL</span><span>RÉSULTAT</span><span>DÉTAIL</span></div>
+      ${lignes || '<p class="vide">Aucun webhook reçu pour le moment.</p>'}
+    </section>`);
+  racine.querySelectorAll('[data-webhook]').forEach((b) => b.addEventListener('click', () => {
+    const w = liste.find((x) => x.id === b.dataset.webhook);
+    fenetre(`${EVENEMENTS[w.evenement] || 'Webhook'} · ${heure(w.recu_le)}`, `
+      <p class="petit">Adresse IP : ${esc(w.ip || 'inconnue')} · Résultat : ${esc(w.message || w.statut)}</p>
+      <div class="surtitre-carte">CONTENU REÇU</div>
+      <pre class="json">${esc(JSON.stringify(w.contenu, null, 2))}</pre>
+      <details><summary class="petit">En-têtes</summary><pre class="json">${esc(JSON.stringify(w.entetes, null, 2))}</pre></details>`);
+  }));
 }
 
 // ───────────── Fiche élève ─────────────
@@ -1008,4 +1044,4 @@ function formulaireBiblio(v, recharger) {
   });
 }
 
-export const ecransCoach = { tableau, abonnees, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages, videotheque };
+export const ecransCoach = { tableau, abonnees, webhooks, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages, videotheque };

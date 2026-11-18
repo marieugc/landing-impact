@@ -4,6 +4,9 @@
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
 
 export const MODE = SUPABASE_URL && SUPABASE_ANON_KEY ? 'supabase' : 'demo';
+// Arrivée par le lien de l'e-mail de bienvenue (compte créé après un achat sur Systeme.io) :
+// lu avant que Supabase n'efface le lien de l'adresse
+export const ARRIVEE_INVITATION = MODE === 'supabase' && /type=invite/.test(location.hash);
 
 const aujourdhui = () => new Date().toISOString().slice(0, 10);
 const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
@@ -211,6 +214,22 @@ const demo = {
     const d = lireDemo();
     const p = d.profiles.find((x) => x.id === localStorage.getItem(CLE_SESSION));
     if (p) { p.derniere_activite = new Date().toISOString(); ecrireDemo(d); }
+  },
+  // Journal des webhooks Systeme.io (exemples en démo)
+  async listWebhooks() {
+    const h = (j, hh) => new Date(Date.now() + j * 864e5 - hh * 36e5).toISOString();
+    const vente = (email, prenom, offre) => ({ type: 'SALE_NEW', data: { customer: { email, fields: { first_name: prenom } },
+      offer_price_plan: { id: offre, name: offre === 123456 ? 'Booty Flow App' : 'Ebook recettes' }, order: { id: 98765432 } } });
+    return [
+      { id: 'w4', recu_le: h(0, 2), evenement: 'vente', email: 'lou@demo.fr', ip: '185.236.142.1', statut: 'ignore',
+        message: 'Autre offre que Booty Flow App (identifiants trouvés : 999999)', contenu: vente('lou@demo.fr', 'Lou', 999999), entetes: { 'x-webhook-event': 'SALE_NEW' } },
+      { id: 'w3', recu_le: h(-3, 5), evenement: 'annulation', email: 'jade@demo.fr', ip: '185.236.142.2', statut: 'traite',
+        message: "Abonnement résilié, accès ouvert jusqu'au " + dansJours(5), contenu: { type: 'SALE_CANCELED', data: { customer: { email: 'jade@demo.fr' } } }, entetes: { 'x-webhook-event': 'SALE_CANCELED' } },
+      { id: 'w2', recu_le: h(-10, 3), evenement: 'vente', email: 'emma@demo.fr', ip: '185.236.142.3', statut: 'traite',
+        message: "Abonnement App renouvelé, accès jusqu'au " + dansJours(20), contenu: vente('emma@demo.fr', 'Emma', 123456), entetes: { 'x-webhook-event': 'SALE_NEW' } },
+      { id: 'w1', recu_le: h(-12, 1), evenement: 'vente', email: 'test@exemple.fr', ip: '51.15.0.12', statut: 'refuse',
+        message: 'Adresse IP non autorisée : 51.15.0.12', contenu: vente('test@exemple.fr', 'Test', 123456), entetes: {} }
+    ];
   },
   // Simule la règle de la base : seules les abonnées App (accès ouvert) et la coach lisent les offres
   async listOffres() {
@@ -492,6 +511,11 @@ const reel = {
   },
   async marquerActivite() {
     await (await client()).rpc('marquer_activite');
+  },
+  async listWebhooks() {
+    const { data, error } = await (await client()).from('webhooks_systemeio').select('*').order('recu_le', { ascending: false }).limit(200);
+    if (error) return []; // table pas encore créée (supabase/webhook-systemeio.sql)
+    return data;
   },
   // La base ne renvoie les offres qu'aux abonnées App (et à la coach) : vide pour une élève coaching
   async listOffres() {

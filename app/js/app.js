@@ -1,5 +1,5 @@
 // Démarrage de l'app : connexion, choix élève/coach, navigation entre les écrans.
-import { api, MODE } from './data.js';
+import { api, MODE, ARRIVEE_INVITATION } from './data.js';
 import { esc, icone, toast, pendant, fenetre, VERSION_APP } from './ui.js';
 import { ouvrirEleve, nouvellesVideosCoach } from './eleve.js';
 import { ecransCoach } from './coach.js';
@@ -165,15 +165,16 @@ function ecranConnexion(onglet = 'connexion') {
   });
 }
 
-function ecranNouveauMotDePasse() {
-  const f = fenetre('Nouveau mot de passe', `<form class="formulaire">
-    <label>Nouveau mot de passe<input name="mdp" type="password" minlength="6" autocomplete="new-password" required></label>
+function ecranNouveauMotDePasse(bienvenue = false) {
+  const f = fenetre(bienvenue ? 'Crée ton mot de passe' : 'Nouveau mot de passe', `<form class="formulaire">
+    ${bienvenue ? '<p>Bienvenue dans Booty Flow App ! Choisis ton mot de passe : tu t\'en serviras pour te connecter à l\'app.</p>' : ''}
+    <label>${bienvenue ? 'Mon mot de passe' : 'Nouveau mot de passe'}<input name="mdp" type="password" minlength="6" autocomplete="new-password" required></label>
     <button class="bouton-principal" type="submit">ENREGISTRER</button></form>`);
   f.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     await pendant(e.submitter, 'Enregistrement…', () => api.updatePassword(new FormData(e.target).get('mdp')));
     f.remove();
-    toast('Mot de passe modifié.');
+    toast(bienvenue ? 'Mot de passe enregistré, bienvenue !' : 'Mot de passe modifié.');
     demarrer();
   });
 }
@@ -189,7 +190,7 @@ async function afficher() {
       if (racineRoute !== 'coach') { location.replace('#/coach'); return; }
       const [sous, ...params] = reste;
       const ecran = {
-        '': ecransCoach.tableau, undefined: ecransCoach.tableau, abonnees: ecransCoach.abonnees,
+        '': ecransCoach.tableau, undefined: ecransCoach.tableau, abonnees: ecransCoach.abonnees, webhooks: ecransCoach.webhooks,
         eleve: ecransCoach.fiche, videos: ecransCoach.videos, bilans: ecransCoach.bilans,
         competitrices: ecransCoach.competitrices, nutrition: ecransCoach.plansNutrition,
         charges: ecransCoach.suiviCharges, messages: ecransCoach.messages,
@@ -291,6 +292,7 @@ racine.addEventListener('click', async (e) => {
 });
 window.addEventListener('hashchange', afficher);
 
+let invitationAOuvrir = ARRIVEE_INVITATION;
 async function demarrer() {
   racine.innerHTML = '<div class="chargement" aria-label="Chargement"></div>';
   const session = await api.getSession();
@@ -303,6 +305,7 @@ async function demarrer() {
     return;
   }
   afficher();
+  if (invitationAOuvrir) { invitationAOuvrir = false; ecranNouveauMotDePasse(true); }
   synchroniserRappels(profil);
   api.marquerActivite?.().catch(() => {}); // dernière activité, visible dans l'admin
 }
