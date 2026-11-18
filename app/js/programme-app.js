@@ -91,6 +91,10 @@ export async function etatProgramme(profil) {
 // Vidéo de la vidéothèque : celle choisie par la coach, sinon celle dont le titre contient le nom de l'exercice
 const normaliser = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 function videoDe(ex, biblio) {
+  // Vidéo envoyée par la coach pour cet exercice, sinon son lien, sinon la vidéothèque
+  if (ex.video_chemin || ex.video_lien) {
+    return { titre: ex.nom, categorie: 'Exercice', description: ex.consignes, chemin: ex.video_chemin || null, lien: ex.video_chemin ? null : ex.video_lien };
+  }
   if (ex.video_id) return biblio.find((v) => v.id === ex.video_id) || null;
   const nom = normaliser(ex.nom);
   return nom ? biblio.find((v) => normaliser(v.titre).includes(nom)) || null : null;
@@ -121,9 +125,10 @@ export async function programme(racine, profil) {
   const consigneSemaine = cycle.semaines?.find((x) => x.numero === semaine)?.consigne;
   const maison = pa.lieu === 'maison';
 
+  const videos = (seance.exercices || []).map((ex) => videoDe(ex, biblio));
   const exercices = (seance.exercices || []).map((ex, i) => {
     const p = ex.progression?.[semaine - 1] || {};
-    const video = videoDe(ex, biblio);
+    const video = videos[i];
     return `<li class="exercice">
       <div class="exercice-tete"><span class="numero">${i + 1}</span>
         <div><strong>${esc(maison && ex.alternative_maison ? ex.alternative_maison : ex.nom)}</strong>
@@ -137,7 +142,7 @@ export async function programme(racine, profil) {
       ${p.charge ? `<p class="exercice-charge">${icone('haltere', 16, 'var(--accent)')}<span>${esc(p.charge)}</span></p>` : ''}
       ${ex.consignes ? `<p class="petit">${esc(ex.consignes)}</p>` : ''}
       ${!maison && ex.alternative_maison ? `<details class="petit"><summary>Variante à la maison</summary>${esc(ex.alternative_maison)}</details>` : ''}
-      ${video ? `<button class="bouton-contour compact" data-video="${esc(video.id)}">${icone('lecture', 16)}Voir la vidéo</button>` : ''}
+      ${video ? `<button class="bouton-contour compact" data-video="${i}">${icone('lecture', 16)}Voir la vidéo</button>` : ''}
     </li>`;
   }).join('');
 
@@ -190,7 +195,7 @@ export async function programme(racine, profil) {
     recharger();
   }));
   racine.querySelectorAll('[data-video]').forEach((b) => b.addEventListener('click', () =>
-    ouvrirVideo(biblio.find((v) => v.id === b.dataset.video))));
+    ouvrirVideo(videos[Number(b.dataset.video)])));
   racine.querySelector('#faite')?.addEventListener('click', async (e) => {
     await pendant(e.currentTarget, 'Enregistrement…', () => api.marquerSeances([{ seance_id: seance.id, cycle_numero: pa.cycle_numero, semaine, statut: 'faite' }]));
     toast('Bravo, séance cochée !');

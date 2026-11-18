@@ -726,3 +726,8 @@ pre.json { margin: 8px 0 0; padding: 12px; max-height: 50vh; overflow: auto; bor
 }
 button.segment { border: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 700; color: var(--doux); }
 button.segment.actif { background: var(--carte-2); color: var(--lilas); }
+.bloc-video-exercice { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 14px; border: 1px dashed var(--bord); }
+.bloc-video-exercice .petit { margin: 0; }
+.etat-video { display: flex; align-items: center; gap: 6px; color: var(--vert); }
+.etat-video .lien { padding: 0 6px; }
+.etat-video[hidden] { display: none; }

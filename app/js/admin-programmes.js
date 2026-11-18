@@ -3,6 +3,8 @@ import { api, semainesVides } from './data.js';
 import { esc, icone, toast, pendant, badge } from './ui.js';
 import { page } from './coach.js';
 import { NIVEAUX } from './programme-app.js';
+import { videoPrete } from './compression.js';
+import { lienValide } from './videotheque.js';
 
 const ACTIF = 'coach/programmes';
 const entete = (surtitre, titreTexte, retour) => `<div class="bureau-tete"><div class="ligne-auteur">
@@ -151,7 +153,7 @@ async function editeurCycle(racine, profil, pid, cid) {
 
 // ───────────── Une séance : exercices + progression semaine par semaine ─────────────
 const exerciceVide = () => ({
-  nom: '', principal: false, series: 3, reps: '10-12', repos: '1 min 30', consignes: '', alternative_maison: '', video_id: null,
+  nom: '', principal: false, series: 3, reps: '10-12', repos: '1 min 30', consignes: '', alternative_maison: '', video_id: null, video_lien: '', video_chemin: null,
   progression: Array.from({ length: 12 }, () => ({ series: 3, reps: '10-12', charge: '' }))
 });
 
@@ -164,12 +166,22 @@ function carteExercice(ex, i, total, biblio) {
         <button type="button" class="bouton-rond" data-descendre="${i}" aria-label="Descendre"${i === total - 1 ? ' disabled' : ''}>↓</button>
         <button type="button" class="bouton-rond" data-retirer="${i}" aria-label="Supprimer l'exercice">${icone('poubelle', 16)}</button>
       </div></div>
-    <div class="grille-2">
-      <label>Exercice<input data-champ="nom" value="${esc(ex.nom)}" required placeholder="Ex. : Hip thrust"></label>
-      <label>Vidéo de la vidéothèque<select data-champ="video_id">
-        <option value="">Automatique (vidéo dont le titre contient le nom)</option>
-        ${biblio.map((v) => `<option value="${esc(v.id)}"${v.id === ex.video_id ? ' selected' : ''}>${esc(v.titre)}</option>`).join('')}
-      </select></label>
+    <label>Exercice<input data-champ="nom" value="${esc(ex.nom)}" required placeholder="Ex. : Hip thrust"></label>
+    <div class="bloc-video-exercice">
+      <div class="surtitre-carte">VIDÉO DE L'EXERCICE</div>
+      <input type="hidden" data-champ="video_chemin" value="${esc(ex.video_chemin || '')}">
+      <p class="petit etat-video"${ex.video_chemin ? '' : ' hidden'}>${icone('check', 14, 'var(--vert)')} Vidéo envoyée
+        <button type="button" class="lien danger" data-retirer-video>Retirer</button></p>
+      <label class="choix-video">${icone('video', 18, 'var(--accent)')}<span>${ex.video_chemin ? 'Remplacer la vidéo' : 'Envoyer une vidéo depuis mon appareil (50 Mo max)'}</span>
+        <input type="file" accept="video/*" data-video-fichier></label>
+      <div class="grille-2">
+        <label>Ou un lien (YouTube, Vimeo, Instagram, Drive…)<input data-champ="video_lien" type="url" inputmode="url" value="${esc(ex.video_lien || '')}" placeholder="https://youtu.be/…"></label>
+        <label>Ou une vidéo de la vidéothèque<select data-champ="video_id">
+          <option value="">Automatique (vidéo dont le titre contient le nom)</option>
+          ${biblio.map((v) => `<option value="${esc(v.id)}"${v.id === ex.video_id ? ' selected' : ''}>${esc(v.titre)}</option>`).join('')}
+        </select></label>
+      </div>
+      <p class="petit">Priorité : la vidéo envoyée, puis le lien, puis la vidéothèque.</p>
     </div>
     <div class="grille-3">
       <label>Séries<input data-champ="series" type="number" min="1" value="${esc(ex.series)}"></label>
@@ -204,6 +216,7 @@ function lireExercices(zone) {
     }));
     return {
       nom: champ('nom').value.trim(), video_id: champ('video_id').value || null,
+      video_chemin: champ('video_chemin').value || null, video_lien: champ('video_lien').value.trim(),
       series: Number(champ('series').value) || null, reps: champ('reps').value.trim(), repos: champ('repos').value.trim(),
       consignes: champ('consignes').value.trim(), alternative_maison: champ('alternative_maison').value.trim(),
       principal: champ('principal').checked, progression
@@ -251,9 +264,38 @@ async function editeurSeance(racine, profil, pid, cid, sid) {
       f.querySelectorAll('[data-cle="reps"]').forEach((x) => { x.value = reps; });
       toast('Séries et répétitions recopiées sur les 12 semaines.');
     }));
+    // Vidéo envoyée : allégée puis enregistrée dès qu'elle est choisie (la séance est enregistrée ensuite)
+    form.querySelectorAll('[data-video-fichier]').forEach((entree) => entree.addEventListener('change', async () => {
+      const fichier = entree.files[0];
+      if (!fichier) return;
+      const carte = entree.closest('.carte-exercice');
+      const texte = entree.previousElementSibling;
+      const enregistrer = form.querySelector('button[type=submit]');
+      enregistrer.disabled = true;
+      try {
+        const chemin = await api.envoyerVideoExercice(await videoPrete(fichier, texte));
+        carte.querySelector('[data-champ="video_chemin"]').value = chemin;
+        carte.querySelector('.etat-video').hidden = false;
+        texte.textContent = 'Remplacer la vidéo';
+        toast('Vidéo envoyée. Pense à enregistrer la séance.');
+      } catch (err) {
+        toast(err.message || "La vidéo n'a pas pu être envoyée.", true);
+        texte.textContent = 'Envoyer une vidéo depuis mon appareil (50 Mo max)';
+      } finally {
+        enregistrer.disabled = false;
+        entree.value = '';
+      }
+    }));
+    form.querySelectorAll('[data-retirer-video]').forEach((b) => b.addEventListener('click', () => {
+      const carte = b.closest('.carte-exercice');
+      carte.querySelector('[data-champ="video_chemin"]').value = '';
+      carte.querySelector('.etat-video').hidden = true;
+    }));
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       garder();
+      const mauvais = exercices.find((x) => x.video_lien && !lienValide(x.video_lien));
+      if (mauvais) { toast(`Le lien vidéo de « ${mauvais.nom} » doit commencer par https://`, true); return; }
       const d = new FormData(form);
       await pendant(e.submitter, 'Enregistrement…', () => api.saveSeanceApp(sid, cid, {
         nom: d.get('nom').trim(), ordre: Number(d.get('ordre')) || 1, description: d.get('description').trim(), exercices

@@ -362,6 +362,7 @@ const demo = {
     ecrireDemo(d);
   },
   async listProfilsApp() { return Object.values((await demoApp()).profilsApp); },
+  async envoyerVideoExercice(fichier) { return garderFichier(fichier); },
 
   // Journal des webhooks Systeme.io (exemples en démo)
   async listWebhooks() {
@@ -747,6 +748,8 @@ const reel = {
     const { data, error } = await (await client()).from('profils_app').select('*');
     return error ? [] : data;
   },
+  // Vidéo d'un exercice de programme : rangée dans le dossier « bibliotheque », lisible par les abonnées (accès ouvert)
+  async envoyerVideoExercice(fichier) { return envoyerFichier('bibliotheque', 'exercices', fichier); },
 
   async listWebhooks() {
     const { data, error } = await (await client()).from('webhooks_systemeio').select('*').order('recu_le', { ascending: false }).limit(200);
