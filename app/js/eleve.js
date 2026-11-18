@@ -13,6 +13,8 @@ import { grillePhotos, chargerPhotos, preparerPhotos, suivreChoixPhotos } from '
 import { retourBilanHtml, brancherRetours, retourEstNouveau, marquerRetoursVus, vocalRetour } from './bilans.js';
 import { carteProgramme, brancherFichiers, estNouveau, nouveauxProgrammes, marquerTrainingVu } from './programmes.js';
 import { CATEGORIES, nouveautes, estNouvelle, vignette, chargerMiniatures, ouvrirVideo, lecteurLien } from './videotheque.js';
+import { estApp, aAcces, compteValide, accesOuvert, intervalleBilan, formuleDe } from './formules.js';
+import { ecransApp, compte, offres, ecranAttente, ecranFerme } from './espace-app.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -25,9 +27,18 @@ const ONGLETS = [
   { route: 'progres', libelle: 'Progrès', icone: 'progres' },
   { route: 'chat', libelle: 'Chat', icone: 'chat' }
 ];
+// Formule « app » : pas de plan personnalisé, de bilans, de chat ni de corrections (encart à la place)
+const ONGLETS_APP = [
+  { route: 'accueil', libelle: 'Accueil', icone: 'accueil' },
+  { route: 'programme', libelle: 'Programme', icone: 'haltere' },
+  { route: 'nutrition', libelle: 'Nutrition', icone: 'nutrition' },
+  { route: 'mouvement', lien: 'videotheque', libelle: 'Vidéos', icone: 'video' },
+  { route: 'progres', libelle: 'Progrès', icone: 'progres' },
+  { route: 'compte', libelle: 'Compte', icone: 'compte' }
+];
 
 function navigation(profil, actif) {
-  const liens = ONGLETS
+  const liens = (estApp(profil) ? ONGLETS_APP : ONGLETS)
     .filter((o) => !o.competitrice || profil.competitrice)
     .map((o) => {
       const on = o.route === actif;
@@ -37,14 +48,14 @@ function navigation(profil, actif) {
   return `<nav class="barre-onglets" aria-label="Navigation principale">${liens}</nav>`;
 }
 
-function entete(surtitre, titre) {
+export function entete(surtitre, titre) {
   return `<header class="entete">
     <div><div class="surtitre">${esc(surtitre)}</div><h1>${esc(titre)}</h1></div>
     <img src="img/coach.jpg" alt="Coach ${esc(NOM_COACH)}" class="avatar-coach">
   </header>`;
 }
 
-function page(profil, actif, contenu) {
+export function page(profil, actif, contenu) {
   return `<div class="mobile">
     <main class="mobile-contenu">${contenu}</main>
     ${navigation(profil, actif)}
@@ -97,7 +108,7 @@ async function accueil(racine, profil) {
     </section>
     <div class="grille-2">
       <a href="#/bilan" class="carte carte-mini">${icone('horloge', 22, 'var(--accent)')}
-        <div><div class="petit">Prochain bilan</div><strong>${texteWeekendBilan(prochainWeekendBilan(departBilan, mesBilans))}</strong></div></a>
+        <div><div class="petit">Prochain bilan</div><strong>${texteWeekendBilan(prochainWeekendBilan(departBilan, mesBilans, intervalleBilan(profil)))}</strong></div></a>
       <a href="#/mouvement" class="carte carte-mini">${icone('video', 22, 'var(--accent)')}
         <div><div class="petit">Vidéos corrigées</div><strong>${recentes.length ? `${recentes.length} nouvelle${recentes.length > 1 ? 's' : ''}` : 'À jour'}</strong></div></a>
     </div>
@@ -110,6 +121,7 @@ async function accueil(racine, profil) {
     </section>
     <a href="#/bilan" class="bouton-principal">${icone('check', 18, 'currentColor')}FAIRE MON BILAN</a>
     <div class="pied-accueil">
+      <a href="#/compte" class="lien">Mon compte</a>
       <button class="lien" id="installer" hidden>Installer l'app sur mon téléphone</button>
       <button class="lien" id="deconnexion">Se déconnecter</button>
       <p class="version">Version ${VERSION_APP}</p>
@@ -418,7 +430,7 @@ async function progres(racine, profil) {
     </section>
   ` : `<section class="carte"><p class="vide">Fais ton premier bilan pour voir ta progression ici.</p></section>
     <div id="charges"></div>`) + `
-    <a href="#/bilan" class="bouton-principal">${icone('plus', 18)}NOUVEAU BILAN DE LA SEMAINE</a>
+    <a href="#/bilan" class="bouton-principal">${icone('plus', 18)}${formuleDe(profil) === 'autonomie' ? 'NOUVEAU BILAN DU MOIS' : 'NOUVEAU BILAN DE LA SEMAINE'}</a>
   `);
   afficherPhotos(racine);
   brancherRetours(racine);
@@ -563,7 +575,7 @@ async function bilan(racine, profil) {
 
   racine.innerHTML = page(profil, 'progres', `
     <header class="entete"><a href="#/progres" class="bouton-rond" aria-label="Retour">${icone('retour', 20)}</a>
-      <div><div class="surtitre">MON SUIVI</div><h1>Bilan de la semaine</h1></div></header>
+      <div><div class="surtitre">MON SUIVI</div><h1>${formuleDe(profil) === 'autonomie' ? 'Bilan du mois' : 'Bilan de la semaine'}</h1></div></header>
     <form class="formulaire" id="form-bilan">
       <section class="carte"><div class="surtitre-carte">MENSURATIONS</div>
         ${champ('poids', 'Poids', 'kg')}
@@ -572,7 +584,7 @@ async function bilan(racine, profil) {
       <section class="carte"><div class="surtitre-carte">PHOTOS</div>
         <div class="grille-3">${photo('face', 'Face')}${photo('profil', 'Profil')}${photo('dos', 'Dos')}</div>
       </section>
-      <section class="carte"><div class="surtitre-carte">MON ÉTAT DE LA SEMAINE</div>
+      <section class="carte"><div class="surtitre-carte">${formuleDe(profil) === 'autonomie' ? 'MON ÉTAT DU MOIS' : 'MON ÉTAT DE LA SEMAINE'}</div>
         <p class="petit">Glisse chaque curseur de 1 à 10 pour que ta coach sache comment tu te sens.</p>
         ${curseursHtml()}
       </section>
@@ -613,3 +625,30 @@ async function chat(racine, profil) {
 }
 
 export const ecransEleve = { accueil, training, nutrition, mouvement, videotheque, posing, progres, bilan, chat };
+
+// Fonction nécessaire pour ouvrir chaque écran de coaching (voir formules.js)
+const DROIT_ECRAN = { training: 'plan_perso', nutrition: 'plan_perso', mouvement: 'corrections', posing: 'posing', bilan: 'bilans', chat: 'messagerie' };
+
+// Ouvre l'écran demandé selon la formule de l'élève. Renvoie false si la page n'existe pas pour elle.
+export async function ouvrirEleve(racine, profil, route) {
+  if (!compteValide(profil)) { ecranAttente(racine, profil); return true; }
+  if (route === 'compte') { await compte(racine, profil); return true; }
+  if (!accesOuvert(profil)) { ecranFerme(racine, profil); return true; }
+  if (route === 'offres') {
+    // Page réservée aux abonnées App : contrôlée ici ET par la base de données
+    if (!aAcces(profil, 'offres')) return false;
+    await offres(racine, profil);
+    return true;
+  }
+  if (estApp(profil)) {
+    if (route === 'videotheque') { await videotheque(racine, profil); return true; }
+    const ecran = ecransApp[route];
+    if (!ecran) return false;
+    await ecran(racine, profil);
+    return true;
+  }
+  const ecran = ecransEleve[route];
+  if (!ecran || (DROIT_ECRAN[route] && !aAcces(profil, DROIT_ECRAN[route]))) return false;
+  await ecran(racine, profil);
+  return true;
+}

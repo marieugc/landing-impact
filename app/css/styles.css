@@ -601,3 +601,48 @@ span.vignette { cursor: default; }
 /* Carte « Rappels de bilan » sur l'accueil élève */
 .carte-rappels { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
 .carte-rappels p { margin: 0; }
+
+/* ───────── Formules (Personnalisé / Autonomie / App) ───────── */
+.encart-coaching { border-color: var(--accent); background: linear-gradient(160deg, var(--carte-2), var(--carte)); }
+.encart-coaching strong { font-family: var(--titre); font-size: 16px; }
+.encart-coaching .petit { margin: 0; }
+.encart-coaching .bouton-contour { align-self: flex-start; }
+.icone-cadenas { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 12px; background: var(--carte); border: 1px solid var(--bord); flex-shrink: 0; }
+[aria-disabled="true"].bouton-principal, [aria-disabled="true"].bouton-contour { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+/* Mon compte */
+.ligne-compte { padding: 10px 0; border-bottom: 1px solid var(--bord); gap: 12px; }
+.ligne-compte:last-child { border-bottom: 0; }
+.ligne-compte strong { text-align: right; }
+
+/* Page « Passer au coaching » */
+.offre .titre-carte { margin: 0; }
+.offre .petit { margin: 0; }
+.offre.mise-en-avant { border-color: var(--accent); box-shadow: 0 0 24px rgba(178, 102, 255, 0.25); }
+.offre.offre-actuelle { opacity: 0.85; }
+.liste-offre { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.liste-offre li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.35; }
+.liste-offre li svg { flex-shrink: 0; margin-top: 1px; }
+.liste-offre .non-inclus { color: var(--doux); }
+.prix-offre { margin: 0; font-family: var(--titre); font-size: 22px; font-weight: 800; color: var(--lilas); }
+
+/* Admin : comptes à valider, abonnées App, formule dans la fiche */
+.attente { border-color: var(--orange); }
+.attente .petit { margin: 0; }
+.ligne-attente { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding-top: 12px; border-top: 1px solid var(--bord); }
+.ligne-attente select, .bloc-formule select { min-height: 44px; padding: 0 14px; border-radius: 12px; background: var(--carte-2); border: 1px solid var(--bord); color: var(--texte); font: inherit; }
+.tableau-tete.lignes-abonnees, .tableau-ligne.lignes-abonnees { grid-template-columns: 2.4fr 1.3fr 1fr 1.2fr 1fr 40px; }
+.ligne-filtres { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.ligne-filtres .filtres { margin: 0; }
+.ligne-filtres input[type="search"] { min-height: 44px; min-width: 240px; padding: 0 14px; border-radius: 12px; background: var(--carte); border: 1px solid var(--bord); color: var(--texte); font: inherit; }
+.bloc-formule { border: 1px solid var(--bord); border-radius: 16px; padding: 14px; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.bloc-formule legend { padding: 0 6px; }
+.bloc-formule .petit { margin: 0; }
+@media (max-width: 899px) {
+  .ligne-attente { grid-template-columns: 1fr auto; }
+  .ligne-attente .cellule-nom { grid-column: 1 / -1; }
+  .tableau-ligne.lignes-abonnees { grid-template-columns: 1fr auto; }
+  .tableau-ligne.lignes-abonnees > :nth-child(n+2):nth-child(-n+5) { grid-column: 1; }
+  .tableau-ligne.lignes-abonnees > :nth-child(6) { grid-column: 2; grid-row: 1 / span 5; }
+  .ligne-filtres input[type="search"] { min-width: 0; width: 100%; }
+}

@@ -1,7 +1,7 @@
 // Démarrage de l'app : connexion, choix élève/coach, navigation entre les écrans.
 import { api, MODE } from './data.js';
 import { esc, icone, toast, pendant, fenetre, VERSION_APP } from './ui.js';
-import { ecransEleve, nouvellesVideosCoach } from './eleve.js';
+import { ouvrirEleve, nouvellesVideosCoach } from './eleve.js';
 import { ecransCoach } from './coach.js';
 import { nonLus } from './chat.js';
 import { nouveautes } from './videotheque.js';
@@ -189,7 +189,7 @@ async function afficher() {
       if (racineRoute !== 'coach') { location.replace('#/coach'); return; }
       const [sous, ...params] = reste;
       const ecran = {
-        '': ecransCoach.tableau, undefined: ecransCoach.tableau,
+        '': ecransCoach.tableau, undefined: ecransCoach.tableau, abonnees: ecransCoach.abonnees,
         eleve: ecransCoach.fiche, videos: ecransCoach.videos, bilans: ecransCoach.bilans,
         competitrices: ecransCoach.competitrices, nutrition: ecransCoach.plansNutrition,
         charges: ecransCoach.suiviCharges, messages: ecransCoach.messages,
@@ -197,9 +197,7 @@ async function afficher() {
       }[sous] || ecransCoach.tableau;
       await ecran(racine, profil, params);
     } else {
-      const ecran = ecransEleve[racineRoute];
-      if (!ecran) { location.replace('#/accueil'); return; }
-      await ecran(racine, profil);
+      if (!(await ouvrirEleve(racine, profil, racineRoute))) { location.replace('#/accueil'); return; }
       racine.querySelector('.mobile-contenu')?.scrollTo(0, 0);
     }
   } catch (e) {
@@ -306,6 +304,7 @@ async function demarrer() {
   }
   afficher();
   synchroniserRappels(profil);
+  api.marquerActivite?.().catch(() => {}); // dernière activité, visible dans l'admin
 }
 
 api.onRecovery(ecranNouveauMotDePasse);

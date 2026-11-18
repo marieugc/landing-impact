@@ -23,3 +23,11 @@ export const NOM_VIDEOTHEQUE = 'Vidéothèque';
 // Clé publique des notifications (rappels de bilan). Elle peut être visible ;
 // la clé privée qui va avec est rangée dans les secrets Supabase (VAPID_PRIVATE_KEY).
 export const VAPID_PUBLIC_KEY = 'BMvwomyF4FBLG7_SGkdeO7VcppuBAVG7G5c_yGLBQaVvPGdVNhXa2hVNsUWUKgAU7eqgipsM22EmfdfjA80GX1s';
+
+// ───────────── Booty Flow App (abonnement Systeme.io) ─────────────
+// Ton lien Calendly pour réserver un Audit (boutons « Réserver mon Audit » et message de plateau)
+export const CALENDLY_URL = '';
+// Ton espace client Systeme.io, où l'abonnée gère ou résilie son abonnement (« Gérer mon abonnement »)
+export const SYSTEMEIO_ESPACE_CLIENT_URL = '';
+// La page de vente Systeme.io de Booty Flow App (bouton « Me réabonner » quand l'accès est terminé)
+export const PAGE_VENTE_APP_URL = '';

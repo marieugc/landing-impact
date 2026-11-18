@@ -10,7 +10,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v7';
+const CLE_DEMO = 'bootyflow-demo-v8';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -29,8 +29,25 @@ function donneesDemo() {
       competitrice, prochain_bilan,
       message_coach: id === 'sarah'
         ? "Super semaine Sarah ! On garde la même charge sur le hip thrust et on ajoute une série. Pense à bien boire."
-        : ''
-    }))
+        : '',
+      formule: id === 'lea' ? 'autonomie' : 'personnalise', statut_abonnement: 'actif', compte_valide: true, origine: 'inscription',
+      created_at: dansJours(-semaine * 7) + 'T09:00:00.000Z', derniere_activite: dansJours(-1) + 'T18:00:00.000Z'
+    })),
+    // Abonnées « Booty Flow App » (formule autonome, achat sur Systeme.io)
+    ...[
+      ['emma', 'Emma', 'actif', -10, 20, -1],
+      ['jade', 'Jade', 'resilie', -25, 5, -3],
+      ['clara', 'Clara', 'expire', -50, -20, -21]
+    ].map(([id, prenom, statut, paiement, fin, activite]) => ({
+      id, email: `${id}@demo.fr`, prenom, role: 'eleve', objectif: '', semaine: 1, semaines_total: 12, competitrice: false,
+      message_coach: '', prochain_bilan: null, formule: 'app', statut_abonnement: statut, compte_valide: true, origine: 'systemeio',
+      dernier_paiement: dansJours(paiement) + 'T10:00:00.000Z', fin_acces: dansJours(fin) + 'T10:00:00.000Z',
+      created_at: dansJours(paiement - 30) + 'T10:00:00.000Z', derniere_activite: dansJours(activite) + 'T20:00:00.000Z'
+    })),
+    // Compte créé avec « Créer mon compte » : attend la validation de la coach
+    { id: 'zoe', email: 'zoe@demo.fr', prenom: 'Zoé', role: 'eleve', objectif: '', semaine: 1, semaines_total: 12, competitrice: false,
+      message_coach: '', prochain_bilan: null, formule: 'personnalise', statut_abonnement: 'actif', compte_valide: false, origine: 'inscription',
+      created_at: dansJours(0) + 'T08:00:00.000Z' }
   ];
   const repas = [
     { heure: '7h30', nom: 'Petit-déjeuner', details: "Flocons d'avoine, skyr, fruits rouges" },
@@ -134,6 +151,23 @@ function garderFichier(file) {
   return chemin;
 }
 
+// Même contenu que dans supabase/formules.sql
+const OFFRES_DEMO = [
+  { id: 'personnalise', ordre: 1, nom: 'Booty Flow Personnalisé', accroche: 'Je te suis de près, chaque semaine.', mise_en_avant: true,
+    inclus: ["Programme d'entraînement 100 % personnalisé", 'Plan alimentaire personnalisé et ajusté', 'Bilan chaque semaine avec mon retour',
+      'Messagerie avec moi (écrit et vocal)', 'Corrections vidéo individuelles de tes exercices', 'Vidéothèque complète', 'Suivi des charges et de ta progression'],
+    non_inclus: [], prix: null, bouton: 'Réserver mon Audit' },
+  { id: 'autonomie', ordre: 2, nom: 'Booty Flow Autonomie', accroche: 'Un plan sur mesure, un point chaque mois.', mise_en_avant: false,
+    inclus: ["Programme d'entraînement 100 % personnalisé", 'Plan alimentaire personnalisé et ajusté', 'Bilan chaque mois avec mon retour',
+      'Messagerie avec moi (écrit et vocal)', 'Corrections vidéo individuelles de tes exercices', 'Vidéothèque complète', 'Suivi des charges et de ta progression'],
+    non_inclus: ['Bilan chaque semaine (1 bilan par mois)'], prix: null, bouton: 'Réserver mon Audit' },
+  { id: 'app', ordre: 3, nom: 'Booty Flow App', accroche: 'Ta formule actuelle : 100 % autonome.', mise_en_avant: false,
+    inclus: ['Programmes préconçus de 12 semaines', 'Vidéothèque (exercices + mindset)', 'Calculateur nutrition et journées types',
+      'Suivi de progression (charges, mensurations, photos)', 'Live du mois + 1 vidéo technique par mois'],
+    non_inclus: ['Programme et plan alimentaire personnalisés', 'Bilans avec ta coach', 'Messagerie et suivi individuel', 'Corrections vidéo individuelles'],
+    prix: '49 €/mois', bouton: null }
+];
+
 const demo = {
   async getSession() {
     try {
@@ -151,7 +185,8 @@ const demo = {
     email = email.trim().toLowerCase();
     if (d.profiles.some((x) => x.email === email)) throw new Error('Un compte existe déjà avec cette adresse.');
     const p = { id: id(), email, prenom, role: 'eleve', objectif: '', semaine: 1, semaines_total: 12,
-      competitrice: false, message_coach: '', prochain_bilan: null, created_at: new Date().toISOString() };
+      competitrice: false, message_coach: '', prochain_bilan: null, created_at: new Date().toISOString(),
+      formule: 'personnalise', statut_abonnement: 'actif', compte_valide: false, origine: 'inscription' };
     d.profiles.push(p);
     ecrireDemo(d);
     localStorage.setItem(CLE_SESSION, p.id);
@@ -171,6 +206,18 @@ const demo = {
   },
   async listEleves() {
     return lireDemo().profiles.filter((p) => p.role === 'eleve').sort((a, b) => a.prenom.localeCompare(b.prenom));
+  },
+  async marquerActivite() {
+    const d = lireDemo();
+    const p = d.profiles.find((x) => x.id === localStorage.getItem(CLE_SESSION));
+    if (p) { p.derniere_activite = new Date().toISOString(); ecrireDemo(d); }
+  },
+  // Simule la règle de la base : seules les abonnées App (accès ouvert) et la coach lisent les offres
+  async listOffres() {
+    const moi = lireDemo().profiles.find((x) => x.id === localStorage.getItem(CLE_SESSION));
+    const { aAcces } = await import('./formules.js');
+    if (!moi || (moi.role !== 'coach' && !aAcces(moi, 'offres'))) return [];
+    return OFFRES_DEMO;
   },
 
   async getNutrition(uid) { return lireDemo().nutrition[uid] || null; },
@@ -442,6 +489,15 @@ const reel = {
   },
   async listEleves() {
     return verifier(await (await client()).from('profiles').select('*').eq('role', 'eleve').order('prenom'));
+  },
+  async marquerActivite() {
+    await (await client()).rpc('marquer_activite');
+  },
+  // La base ne renvoie les offres qu'aux abonnées App (et à la coach) : vide pour une élève coaching
+  async listOffres() {
+    const { data, error } = await (await client()).from('offres').select('*').order('ordre');
+    if (error) return [];
+    return data;
   },
 
   async getNutrition(uid) {

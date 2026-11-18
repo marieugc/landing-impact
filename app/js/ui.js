@@ -2,7 +2,7 @@
 
 // Numéro affiché en bas de l'app : permet de vérifier que le téléphone a bien la dernière version.
 // À augmenter à chaque mise à jour, en même temps que version.json, VERSION dans sw.js et ?v= dans index.html.
-export const VERSION_APP = '32';
+export const VERSION_APP = '33';
 
 // Protège le texte saisi (évite qu'un nom ou un message casse la page)
 export function esc(v) {
@@ -33,7 +33,9 @@ const TRACES = {
   haltere: '<path d="M6 7v10M18 7v10M3 9.5v5M21 9.5v5M6 12h12"/>',
   chat: '<path d="M4 5h16v11H9l-5 4z"/>',
   micro: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
-  avion: '<path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/>'
+  avion: '<path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/>',
+  cadenas: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  compte: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'
 };
 
 export function icone(nom, taille = 22, couleur = 'currentColor', plein = false) {
@@ -72,12 +74,13 @@ const plusJours = (v, n) => {
   d.setDate(d.getDate() + n);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
-export function echeancesBilan(depart) {
+// pas : 7 jours (bilan chaque semaine, formule Personnalisé) ou 28 jours (formule Autonomie)
+export function echeancesBilan(depart, pas = 7) {
   const n = joursAvant(depart);
   if (n === null) return { derniere: null, prochaine: null };
   if (n >= 0) return { derniere: n === 0 ? depart : null, prochaine: depart };
-  const derniere = plusJours(depart, Math.floor(-n / 7) * 7);
-  return { derniere, prochaine: joursAvant(derniere) === 0 ? derniere : plusJours(derniere, 7) };
+  const derniere = plusJours(depart, Math.floor(-n / pas) * pas);
+  return { derniere, prochaine: joursAvant(derniere) === 0 ? derniere : plusJours(derniere, pas) };
 }
 // Premier dimanche à au moins `ecart` jours de la date donnée
 function dimancheApres(v, ecart = 0) {
@@ -95,18 +98,18 @@ export function departBilans(eleve, bilansEleve = []) {
 }
 const dateBilan = (b) => b.date || String(b.created_at).slice(0, 10);
 // En retard : le week-end est passé et aucun bilan n'a été envoyé ce samedi ou ce dimanche.
-export function bilanEnRetard(depart, bilansEleve) {
-  const { derniere } = echeancesBilan(depart);
+export function bilanEnRetard(depart, bilansEleve, pas = 7) {
+  const { derniere } = echeancesBilan(depart, pas);
   if (!derniere || joursAvant(derniere) >= 0) return false;
   const samedi = plusJours(derniere, -1);
   return !bilansEleve.some((b) => dateBilan(b) >= samedi);
 }
 // Prochain week-end de bilan { samedi, dimanche } : si le bilan de ce week-end est déjà envoyé,
 // c'est le week-end suivant.
-export function prochainWeekendBilan(depart, bilansEleve = []) {
-  let dimanche = echeancesBilan(depart).prochaine;
+export function prochainWeekendBilan(depart, bilansEleve = [], pas = 7) {
+  let dimanche = echeancesBilan(depart, pas).prochaine;
   if (!dimanche) return null;
-  if (joursAvant(dimanche) <= 1 && bilansEleve.some((b) => dateBilan(b) >= plusJours(dimanche, -1))) dimanche = plusJours(dimanche, 7);
+  if (joursAvant(dimanche) <= 1 && bilansEleve.some((b) => dateBilan(b) >= plusJours(dimanche, -1))) dimanche = plusJours(dimanche, pas);
   return { samedi: plusJours(dimanche, -1), dimanche };
 }
 // « Sam. 15 ou dim. 16 nov. »

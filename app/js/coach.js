@@ -16,6 +16,7 @@ import { NOM_VIDEOTHEQUE } from './config.js';
 import { carteProgramme, brancherFichiers } from './programmes.js';
 import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide, lecteurLien } from './videotheque.js';
 import { carteRappels } from './rappels.js';
+import { FORMULES, STATUTS, formuleDe, statutDe, estApp, compteValide, accesOuvert, intervalleBilan } from './formules.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -23,6 +24,7 @@ const GRIS = '#BCA8DE';
 
 const MENU = [
   { route: 'coach', libelle: 'Mes élèves', icone: 'eleves' },
+  { route: 'coach/abonnees', libelle: 'Abonnées App', icone: 'compte' },
   { route: 'coach/nutrition', libelle: 'Plans nutrition', icone: 'nutrition' },
   { route: 'coach/videos', libelle: 'Vidéos à corriger', icone: 'video' },
   { route: 'coach/competitrices', libelle: 'Compétitrices', icone: 'etoile' },
@@ -60,7 +62,7 @@ function statutEleve(e, aCorriger, bilans) {
   if (siennes.length) return ['Posing à corriger', ORANGE];
   if (bilans.some((b) => b.eleve_id === e.id && !b.lu)) return ['Bilan reçu', VERT];
   const depart = departBilans(e, bilans.filter((b) => b.eleve_id === e.id));
-  if (depart && bilanEnRetard(depart, bilans.filter((b) => b.eleve_id === e.id))) return ['Bilan en retard', ORANGE];
+  if (depart && bilanEnRetard(depart, bilans.filter((b) => b.eleve_id === e.id), intervalleBilan(e))) return ['Bilan en retard', ORANGE];
   const dernier = bilans.filter((b) => b.eleve_id === e.id).sort((a, b) => a.date.localeCompare(b.date)).pop();
   const forme = formeGlobale(dernier);
   if (forme != null && forme <= SEUIL_VIGILANCE) return ['Forme basse', ORANGE];
@@ -73,9 +75,12 @@ function initiale(prenom) {
 
 // ───────────── Tableau de bord : Mes élèves ─────────────
 async function tableau(racine, profil) {
-  const [eleves, aCorriger, bilans] = await Promise.all([
+  const [inscrites, aCorriger, bilans] = await Promise.all([
     api.listEleves(), api.listVideos({ statut: 'a_corriger' }), api.listBilans()
   ]);
+  // Mes élèves = coaching (Personnalisé et Autonomie) ; les abonnées App ont leur propre page
+  const enAttente = inscrites.filter((e) => !compteValide(e));
+  const eleves = inscrites.filter((e) => compteValide(e) && !estApp(e));
   const nonLus = bilans.filter((b) => !b.lu).length;
   const posings = aCorriger.filter((v) => v.type === 'posing').length;
   const stat = (libelle, valeur, ic, lien) => `<a href="${lien}" class="carte stat">
@@ -85,7 +90,7 @@ async function tableau(racine, profil) {
   const lignes = eleves.map((e) => {
     const [statut, couleur] = statutEleve(e, aCorriger, bilans);
     return `<a href="#/coach/eleve/${esc(e.id)}" class="tableau-ligne">
-      <span class="cellule-nom">${initiale(e.prenom)}<strong>${esc(e.prenom)}</strong>${e.competitrice ? badge('COMPÉTITRICE') : ''}</span>
+      <span class="cellule-nom">${initiale(e.prenom)}<strong>${esc(e.prenom)}</strong>${formuleDe(e) === 'autonomie' ? badge('AUTONOMIE', VERT) : ''}${e.competitrice ? badge('COMPÉTITRICE') : ''}${statutDe(e) === 'expire' ? badge('EXPIRÉ', ORANGE) : ''}</span>
       <span class="gris">${esc(e.objectif || '—')}</span>
       <span>Sem. ${e.semaine} / ${e.semaines_total}</span>
       <span class="statut" style="color:${couleur}">${statut}</span>
@@ -101,6 +106,15 @@ async function tableau(racine, profil) {
       ${stat('Bilans reçus', nonLus, 'check', '#/coach/bilans')}
       ${stat('Posing à corriger', posings, 'etoile', '#/coach/competitrices')}
     </div>
+    ${enAttente.length ? `<section class="carte attente">
+      <div class="surtitre-carte">À VALIDER · ${enAttente.length} NOUVEAU${enAttente.length > 1 ? 'X' : ''} COMPTE${enAttente.length > 1 ? 'S' : ''}</div>
+      <p class="petit">Ces personnes ont créé leur compte avec « Créer mon compte ». Elles n'ont accès à rien tant que tu ne les as pas validées.</p>
+      ${enAttente.map((e) => `<form class="ligne-attente" data-valider="${esc(e.id)}">
+        <span class="cellule-nom">${initiale(e.prenom)}<span><strong>${esc(e.prenom)}</strong><br><span class="petit">${esc(e.email || '')} · inscrite le ${dateCourte(e.created_at)}</span></span></span>
+        <select name="formule" aria-label="Formule de ${esc(e.prenom)}">${Object.entries(FORMULES).map(([v, t]) => `<option value="${v}">${t}</option>`).join('')}</select>
+        <button class="bouton-principal compact" type="submit">VALIDER</button>
+      </form>`).join('')}
+    </section>` : ''}
     <div id="zone-rappels"></div>
     <section class="carte tableau">
       <div class="tableau-tete"><span>ÉLÈVE</span><span>OBJECTIF</span><span>SEMAINE</span><span>STATUT</span><span></span></div>
@@ -121,7 +135,69 @@ async function tableau(racine, profil) {
       catch (e) { f.querySelector('textarea').select(); toast('Sélectionne le texte et copie-le.'); }
     });
   });
+  racine.querySelectorAll('[data-valider]').forEach((f) => f.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const formule = new FormData(f).get('formule');
+    await pendant(ev.submitter, 'Validation…', () => api.updateProfile(f.dataset.valider, { compte_valide: true, formule, statut_abonnement: 'actif' }));
+    toast(`Compte validé (${FORMULES[formule]}).`);
+    tableau(racine, profil);
+  }));
   carteRappels(racine.querySelector('#zone-rappels'), profil);
+}
+
+// ───────────── Abonnées « Booty Flow App » ─────────────
+let filtreAbonnees = 'toutes';
+let rechercheAbonnees = '';
+async function abonnees(racine, profil) {
+  const toutes = (await api.listEleves()).filter((e) => compteValide(e) && estApp(e));
+  const compte = (st) => toutes.filter((e) => statutDe(e) === st).length;
+  const q = rechercheAbonnees.trim().toLowerCase();
+  const visibles = toutes
+    .filter((e) => filtreAbonnees === 'toutes' || statutDe(e) === filtreAbonnees)
+    .filter((e) => !q || `${e.prenom} ${e.email}`.toLowerCase().includes(q))
+    .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+  const couleur = { actif: VERT, resilie: ORANGE, expire: GRIS };
+  const filtre = (cle, texte) => `<button class="filtre${filtreAbonnees === cle ? ' actif' : ''}" data-filtre="${cle}">${texte}</button>`;
+  const lignes = visibles.map((e) => `<a href="#/coach/eleve/${esc(e.id)}" class="tableau-ligne lignes-abonnees">
+      <span class="cellule-nom">${initiale(e.prenom)}<span><strong>${esc(e.prenom)}</strong><br><span class="petit">${esc(e.email || '')}</span></span></span>
+      <span class="statut" style="color:${couleur[statutDe(e)]}">${STATUTS[statutDe(e)]}${statutDe(e) !== 'expire' && !accesOuvert(e) ? ' (fin dépassée)' : ''}</span>
+      <span class="gris">${dateCourte(e.created_at)}</span>
+      <span class="gris">${e.derniere_activite ? dateCourte(e.derniere_activite) : '—'}</span>
+      <span class="gris">${e.fin_acces ? dateCourte(e.fin_acces) : '—'}</span>
+      <span class="gris" aria-hidden="true">${icone('chevron', 20)}</span>
+    </a>`).join('');
+  racine.innerHTML = page(profil, 'coach/abonnees', titre('Abonnées App') + `
+    <div class="grille-stats">
+      <div class="carte stat"><span class="petit">Actives</span><strong>${compte('actif')}</strong></div>
+      <div class="carte stat"><span class="petit">Résiliées (accès en cours)</span><strong>${compte('resilie')}</strong></div>
+      <div class="carte stat"><span class="petit">Expirées</span><strong>${compte('expire')}</strong></div>
+      <div class="carte stat"><span class="petit">Total</span><strong>${toutes.length}</strong></div>
+    </div>
+    <div class="ligne-filtres">
+      <div class="filtres">${filtre('toutes', 'Toutes')}${filtre('actif', 'Actives')}${filtre('resilie', 'Résiliées')}${filtre('expire', 'Expirées')}</div>
+      <input type="search" id="recherche" placeholder="Rechercher un prénom, un e-mail…" value="${esc(rechercheAbonnees)}" aria-label="Rechercher une abonnée">
+    </div>
+    <section class="carte tableau">
+      <div class="tableau-tete lignes-abonnees"><span>ABONNÉE</span><span>STATUT</span><span>INSCRIPTION</span><span>DERNIÈRE ACTIVITÉ</span><span>FIN D'ACCÈS</span><span></span></div>
+      ${lignes || '<p class="vide">Aucune abonnée pour le moment. Elles apparaissent ici automatiquement après leur achat sur Systeme.io.</p>'}
+    </section>
+    <p class="petit">Pour faire passer une abonnée en coaching : ouvre sa fiche et change sa formule. Elle garde tout son historique.</p>
+  `);
+  racine.querySelectorAll('[data-filtre]').forEach((b) => b.addEventListener('click', () => {
+    filtreAbonnees = b.dataset.filtre;
+    abonnees(racine, profil);
+  }));
+  const champ = racine.querySelector('#recherche');
+  champ.addEventListener('input', () => {
+    rechercheAbonnees = champ.value;
+    clearTimeout(champ.attente);
+    champ.attente = setTimeout(async () => {
+      await abonnees(racine, profil);
+      const nouveau = racine.querySelector('#recherche');
+      nouveau.focus();
+      nouveau.setSelectionRange(nouveau.value.length, nouveau.value.length);
+    }, 250);
+  });
 }
 
 // ───────────── Fiche élève ─────────────
@@ -130,16 +206,18 @@ const ONGLETS_FICHE = [['suivi', 'Suivi'], ['training', 'Training'], ['nutrition
 async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
   const e = await api.getProfile(eleveId);
   if (!e) { racine.innerHTML = page(profil, 'coach', titre('Élève introuvable')); return; }
+  const app = estApp(e);
   const onglets = ONGLETS_FICHE
     .filter(([cle]) => cle !== 'competition' || e.competitrice)
+    .filter(([cle]) => !app || ['suivi', 'charges'].includes(cle))
     .map(([cle, nom]) => `<a href="#/coach/eleve/${esc(e.id)}/${cle}" class="filtre${cle === onglet ? ' actif' : ''}">${nom}</a>`).join('');
 
-  racine.innerHTML = page(profil, 'coach', `
+  racine.innerHTML = page(profil, app ? 'coach/abonnees' : 'coach', `
     <div class="bureau-tete"><div class="ligne-auteur">
-      <a href="#/coach" class="bouton-rond" aria-label="Retour à la liste">${icone('retour', 20)}</a>
-      ${initiale(e.prenom)}<div><div class="surtitre">FICHE ÉLÈVE</div><h1>${esc(e.prenom)}</h1></div></div>
+      <a href="#/${app ? 'coach/abonnees' : 'coach'}" class="bouton-rond" aria-label="Retour à la liste">${icone('retour', 20)}</a>
+      ${initiale(e.prenom)}<div><div class="surtitre">${app ? 'ABONNÉE APP' : `FICHE ÉLÈVE · ${esc(FORMULES[formuleDe(e)].toUpperCase())}`}</div><h1>${esc(e.prenom)}</h1></div></div>
       <div class="bureau-actions"><span class="petit">${esc(e.email || '')}</span>
-        <a href="#/coach/messages/${esc(e.id)}" class="bouton-contour compact">${icone('chat', 16)}Écrire</a></div></div>
+        ${app ? '' : `<a href="#/coach/messages/${esc(e.id)}" class="bouton-contour compact">${icone('chat', 16)}Écrire</a>`}</div></div>
     <div class="filtres">${onglets}</div>
     <div id="onglet"></div>
   `);
@@ -150,34 +228,56 @@ async function fiche(racine, profil, [eleveId, onglet = 'suivi']) {
 
 async function ficheSuivi(zone, e, recharger) {
   const bilansEleve = await api.listBilans(e.id);
-  const prochain = prochainWeekendBilan(departBilans(e, bilansEleve), bilansEleve);
+  const pas = intervalleBilan(e);
+  const prochain = prochainWeekendBilan(departBilans(e, bilansEleve), bilansEleve, pas);
+  const app = estApp(e);
+  const dateInput = (v) => (v ? String(v).slice(0, 10) : '');
+  // Tant que supabase/formules.sql n'a pas été lancé, la base n'a pas ces champs : on ne les affiche pas
+  const baseAJour = 'formule' in e;
   const abonnements = await api.compterAbonnements(e.id).catch(() => null);
   zone.innerHTML = `<form class="formulaire carte large" id="form-suivi">
+    ${baseAJour ? `<fieldset class="bloc-formule">
+      <legend class="surtitre-carte">FORMULE ET ACCÈS</legend>
+      <div class="grille-2">
+        <label>Formule<select name="formule">${Object.entries(FORMULES).map(([v, t]) => `<option value="${v}"${formuleDe(e) === v ? ' selected' : ''}>${t}</option>`).join('')}</select></label>
+        <label>Statut<select name="statut_abonnement">${Object.entries(STATUTS).map(([v, t]) => `<option value="${v}"${statutDe(e) === v ? ' selected' : ''}>${t}</option>`).join('')}</select></label>
+      </div>
+      ${app ? `<div class="grille-2">
+        <label>Dernier paiement<input name="dernier_paiement" type="date" value="${dateInput(e.dernier_paiement)}"></label>
+        <label>Fin d'accès<input name="fin_acces" type="date" value="${dateInput(e.fin_acces)}"></label>
+      </div>` : ''}
+      <p class="petit">Changer la formule ne supprime rien : charges, mensurations, photos et historique sont gardés.
+        ${app ? 'Statut et dates sont mis à jour automatiquement par Systeme.io.' : '« Expiré » coupe l\'accès à son espace (ses données restent gardées).'}</p>
+    </fieldset>` : ''}
     <label>Prénom<input name="prenom" value="${esc(e.prenom)}" required></label>
-    <label>Objectif<input name="objectif" value="${esc(e.objectif || '')}" placeholder="Ex. : Galber le bas du corps"></label>
+    ${app ? '' : `<label>Objectif<input name="objectif" value="${esc(e.objectif || '')}" placeholder="Ex. : Galber le bas du corps"></label>
     <div class="grille-2">
       <label>Semaine actuelle<input name="semaine" type="number" min="1" value="${e.semaine}"></label>
       <label>Sur (semaines)<input name="semaines_total" type="number" min="1" value="${e.semaines_total}"></label>
     </div>
-    <p class="petit">Bilan chaque week-end, à envoyer le samedi ou le dimanche : rien à régler, la date se met à jour toute seule.
+    ${app ? '' : `<p class="petit">${pas === 7 ? 'Bilan chaque week-end' : 'Formule Autonomie : bilan un week-end sur quatre (une fois par mois)'}, à envoyer le samedi ou le dimanche : rien à régler, la date se met à jour toute seule.
       ${prochain ? `<br>Prochain bilan : <strong>${texteWeekendBilan(prochain)}</strong>` : ''}
       ${abonnements === null ? '' : `<br>Rappels sur son téléphone : <strong>${abonnements ? `activés${abonnements > 1 ? ` (${abonnements} appareils)` : ''}` : 'pas encore activés'}</strong>`}
-      <br>Sans bilan le samedi ni le dimanche, elle reçoit un rappel le dimanche à 18 h puis le lundi à 9 h.</p>
+      <br>Sans bilan le samedi ni le dimanche, elle reçoit un rappel le dimanche à 18 h puis le lundi à 9 h.</p>`}
     <label>Message du jour (affiché sur son accueil)<textarea name="message_coach" rows="4">${esc(e.message_coach || '')}</textarea></label>
-    <label class="case"><input type="checkbox" name="competitrice" ${e.competitrice ? 'checked' : ''}><span>Compétitrice (active l'onglet Posing)</span></label>
+    <label class="case"><input type="checkbox" name="competitrice" ${e.competitrice ? 'checked' : ''}><span>Compétitrice (active l'onglet Posing)</span></label>`}
     <button class="bouton-principal" type="submit">ENREGISTRER</button>
   </form>`;
   zone.querySelector('form').addEventListener('submit', async (ev) => {
     ev.preventDefault();
     const d = new FormData(ev.target);
+    const dateOuNull = (k) => (d.get(k) ? new Date(`${d.get(k)}T12:00:00`).toISOString() : null);
     await pendant(ev.submitter, 'Enregistrement…', () => api.updateProfile(e.id, {
-      prenom: d.get('prenom').trim(),
-      objectif: d.get('objectif').trim(),
-      semaine: Number(d.get('semaine')) || 1,
-      semaines_total: Number(d.get('semaines_total')) || 12,
-      prochain_bilan: null, // ancienne date de bilan : plus utilisée (bilan chaque week-end)
-      message_coach: d.get('message_coach').trim(),
-      competitrice: d.get('competitrice') === 'on'
+      ...(baseAJour ? { formule: d.get('formule'), statut_abonnement: d.get('statut_abonnement') } : {}),
+      ...(app ? { dernier_paiement: dateOuNull('dernier_paiement'), fin_acces: dateOuNull('fin_acces') } : {
+        objectif: d.get('objectif').trim(),
+        semaine: Number(d.get('semaine')) || 1,
+        semaines_total: Number(d.get('semaines_total')) || 12,
+        prochain_bilan: null, // ancienne date de bilan : plus utilisée (bilan chaque week-end)
+        message_coach: d.get('message_coach').trim(),
+        competitrice: d.get('competitrice') === 'on'
+      }),
+      prenom: d.get('prenom').trim()
     }));
     toast('Fiche enregistrée.');
     recharger();
@@ -908,4 +1008,4 @@ function formulaireBiblio(v, recharger) {
   });
 }
 
-export const ecransCoach = { tableau, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages, videotheque };
+export const ecransCoach = { tableau, abonnees, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages, videotheque };
