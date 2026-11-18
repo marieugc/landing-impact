@@ -26,7 +26,7 @@ export const VAPID_PUBLIC_KEY = 'BMvwomyF4FBLG7_SGkdeO7VcppuBAVG7G5c_yGLBQaVvPGd
 
 // ───────────── Booty Flow App (abonnement Systeme.io) ─────────────
 // Ton lien Calendly pour réserver un Audit (boutons « Réserver mon Audit » et message de plateau)
-export const CALENDLY_URL = '';
+export const CALENDLY_URL = 'https://calendly.com/bootyflow/nouvelle-reunion';
 // Ton espace client Systeme.io, où l'abonnée gère ou résilie son abonnement (« Gérer mon abonnement »)
 export const SYSTEMEIO_ESPACE_CLIENT_URL = '';
 // La page de vente Systeme.io de Booty Flow App (bouton « Me réabonner » quand l'accès est terminé)
