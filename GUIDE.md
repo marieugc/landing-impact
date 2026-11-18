@@ -211,9 +211,20 @@ aucun changement pour elles. Les nouveaux comptes créés avec « Créer mon com
 
 ### 7b. L'e-mail de bienvenue
 
-1. **Envoi des e-mails** : l'envoi intégré de Supabase est très limité. Crée un compte gratuit Brevo
-   (300 e-mails/jour), puis Supabase › Authentication › Emails › **SMTP Settings** : active « Custom SMTP »
-   et colle les réglages SMTP donnés par Brevo (serveur `smtp-relay.brevo.com`, port 587, identifiant et clé SMTP).
+1. **Envoi des e-mails avec ton adresse Hostinger** (l'envoi intégré de Supabase est très limité) :
+   Supabase › Authentication › Emails › **SMTP Settings** › active « Enable Custom SMTP » :
+
+   | Champ | Valeur |
+   |---|---|
+   | Sender email | ton adresse Hostinger (ex. `contact@tondomaine.fr`) |
+   | Sender name | `Marie · Booty Flow` |
+   | Host | `smtp.hostinger.com` |
+   | Port | `465` |
+   | Username | ton adresse Hostinger complète |
+   | Password | le mot de passe de cette boîte mail |
+
+   Puis Authentication › **Rate Limits** › « Rate limit for sending emails » : monte à 100 par heure si besoin.
+   Dans Hostinger (hPanel › Emails), vérifie que SPF, DKIM et DMARC sont actifs (sinon l'e-mail risque d'arriver en spam).
 2. Authentication › Emails › **Invite user** : objet `Bienvenue dans Booty Flow App 💜 Crée ton mot de passe`,
    et dans le corps, colle le contenu de `supabase/emails/bienvenue-app.html`.
 3. Authentication › Sign In / Providers › Email › **Email OTP Expiration** : mets `86400` (le lien reste valable 24 h).
