@@ -13,7 +13,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v8';
+const CLE_DEMO = 'bootyflow-demo-v9';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -40,7 +40,8 @@ function donneesDemo() {
     ...[
       ['emma', 'Emma', 'actif', -10, 20, -1],
       ['jade', 'Jade', 'resilie', -25, 5, -3],
-      ['clara', 'Clara', 'expire', -50, -20, -21]
+      ['clara', 'Clara', 'expire', -50, -20, -21],
+      ['nina', 'Nina', 'actif', 0, 31, 0]
     ].map(([id, prenom, statut, paiement, fin, activite]) => ({
       id, email: `${id}@demo.fr`, prenom, role: 'eleve', objectif: '', semaine: 1, semaines_total: 12, competitrice: false,
       message_coach: '', prochain_bilan: null, formule: 'app', statut_abonnement: statut, compte_valide: true, origine: 'systemeio',
@@ -171,6 +172,33 @@ const OFFRES_DEMO = [
     prix: '49 €/mois', bouton: null }
 ];
 
+// 12 semaines sans consigne (nouveau cycle)
+export const semainesVides = () => Array.from({ length: 12 }, (_, i) => ({ numero: i + 1, consigne: '' }));
+
+// Mode démo : programmes préconçus (chargés seulement quand on en a besoin), questionnaires et séances cochées
+async function demoApp() {
+  const d = lireDemo();
+  if (!d.programmesApp) {
+    const { PROGRAMMES_DEMO } = await import('./programmes-app-demo.js');
+    d.programmesApp = PROGRAMMES_DEMO;
+    const questionnaire = (uid, programme, niveau, seances, debut) => ({ eleve_id: uid, age: 31, taille: 166, poids_depart: 64, niveau,
+      seances_semaine: seances, lieu: 'salle', objectif: 'perte_de_gras', programme_id: programme, cycle_numero: 1,
+      debut_cycle: dansJours(debut), complete_le: dansJours(debut) + 'T10:00:00.000Z' });
+    d.profilsApp = {
+      emma: questionnaire('emma', 'prog2', 'intermediaire', 4, -17),
+      jade: questionnaire('jade', 'prog1', 'intermediaire', 3, -40),
+      clara: questionnaire('clara', 'prog3', 'avancee', 3, -80)
+    };
+    // Emma : semaines 1 et 2 faites, semaine 3 commencée (séance A faite)
+    const emma = PROGRAMMES_DEMO[1].cycles[0].seances;
+    d.seancesFaites = [1, 2].flatMap((semaine) => emma.map((s, i) => ({ id: id(), eleve_id: 'emma', seance_id: s.id, cycle_numero: 1, semaine,
+      statut: 'faite', fait_le: dansJours(-17 + (semaine - 1) * 7 + i * 2) + 'T18:00:00.000Z' })));
+    d.seancesFaites.push({ id: id(), eleve_id: 'emma', seance_id: emma[0].id, cycle_numero: 1, semaine: 3, statut: 'faite', fait_le: dansJours(-2) + 'T18:00:00.000Z' });
+    ecrireDemo(d);
+  }
+  return d;
+}
+
 const demo = {
   async getSession() {
     try {
@@ -215,6 +243,126 @@ const demo = {
     const p = d.profiles.find((x) => x.id === localStorage.getItem(CLE_SESSION));
     if (p) { p.derniere_activite = new Date().toISOString(); ecrireDemo(d); }
   },
+  // ── Booty Flow App : questionnaire, programmes préconçus, séances cochées ──
+  async getProfilApp(uid) { return (await demoApp()).profilsApp[uid] || null; },
+  async terminerQuestionnaire(r) {
+    const d = await demoApp();
+    const uid = localStorage.getItem(CLE_SESSION);
+    const prog = d.programmesApp.filter((p) => p.actif && p.niveau === r.niveau && p.seances_semaine === r.seances_semaine)
+      .sort((a, b) => a.ordre - b.ordre)[0];
+    const avant = d.profilsApp[uid];
+    const change = !avant?.programme_id || avant.niveau !== r.niveau || avant.seances_semaine !== r.seances_semaine;
+    d.profilsApp[uid] = { ...avant, eleve_id: uid, age: r.age, taille: r.taille, poids_depart: avant?.poids_depart ?? r.poids,
+      niveau: r.niveau, seances_semaine: r.seances_semaine, lieu: r.lieu, objectif: r.objectif,
+      programme_id: change ? prog?.id || null : avant.programme_id, cycle_numero: change ? 1 : avant.cycle_numero,
+      debut_cycle: avant?.debut_cycle || aujourdhui(), complete_le: avant?.complete_le || new Date().toISOString() };
+    const p = d.profiles.find((x) => x.id === uid);
+    if (r.prenom) p.prenom = r.prenom;
+    ecrireDemo(d);
+    return d.profilsApp[uid];
+  },
+  async listProgrammesApp() {
+    return (await demoApp()).programmesApp.map(({ cycles, ...p }) => ({ ...p, nb_cycles: cycles.length }))
+      .sort((a, b) => a.ordre - b.ordre);
+  },
+  async getProgrammeApp(pid) { return structuredClone((await demoApp()).programmesApp.find((p) => p.id === pid) || null); },
+  async getCycleApp(pid, numero) {
+    const p = (await demoApp()).programmesApp.find((x) => x.id === pid);
+    return structuredClone(p?.cycles.find((c) => c.numero === numero) || null);
+  },
+  async listSeancesFaites(uid, cycle) {
+    return (await demoApp()).seancesFaites.filter((f) => f.eleve_id === uid && (cycle == null || f.cycle_numero === cycle));
+  },
+  async marquerSeances(lignes) {
+    const d = await demoApp();
+    const uid = localStorage.getItem(CLE_SESSION);
+    for (const l of lignes) {
+      if (d.seancesFaites.some((f) => f.eleve_id === uid && f.seance_id === l.seance_id && f.cycle_numero === l.cycle_numero && f.semaine === l.semaine)) continue;
+      d.seancesFaites.push({ id: id(), eleve_id: uid, statut: 'faite', fait_le: new Date().toISOString(), ...l });
+    }
+    ecrireDemo(d);
+  },
+  async annulerSeance({ seance_id, cycle_numero, semaine }) {
+    const d = await demoApp();
+    const uid = localStorage.getItem(CLE_SESSION);
+    d.seancesFaites = d.seancesFaites.filter((f) => !(f.eleve_id === uid && f.seance_id === seance_id && f.cycle_numero === cycle_numero && f.semaine === semaine));
+    ecrireDemo(d);
+  },
+  async passerCycleSuivant() {
+    const d = await demoApp();
+    const uid = localStorage.getItem(CLE_SESSION);
+    const pa = d.profilsApp[uid];
+    const p = d.programmesApp.find((x) => x.id === pa.programme_id);
+    const cycle = p.cycles.find((c) => c.numero === pa.cycle_numero);
+    const faites = d.seancesFaites.filter((f) => f.eleve_id === uid && f.cycle_numero === pa.cycle_numero).length;
+    if (faites < cycle.seances.length * 12) throw new Error("Le cycle en cours n'est pas terminé");
+    if (!p.cycles.some((c) => c.numero === pa.cycle_numero + 1)) throw new Error("Le cycle suivant n'est pas encore prêt");
+    pa.cycle_numero += 1;
+    pa.debut_cycle = aujourdhui();
+    ecrireDemo(d);
+    return pa.cycle_numero;
+  },
+  // Coach
+  async setProfilApp(uid, patch) {
+    const d = await demoApp();
+    d.profilsApp[uid] = { ...(d.profilsApp[uid] || { eleve_id: uid, cycle_numero: 1 }), ...patch };
+    ecrireDemo(d);
+  },
+  async saveProgrammeApp(pid, data) {
+    const d = await demoApp();
+    if (pid) Object.assign(d.programmesApp.find((p) => p.id === pid), data);
+    else { pid = `prog-${id()}`; d.programmesApp.push({ id: pid, actif: true, ordre: d.programmesApp.length + 1, ...data, cycles: [] }); }
+    ecrireDemo(d);
+    return pid;
+  },
+  async deleteProgrammeApp(pid) {
+    const d = await demoApp();
+    d.programmesApp = d.programmesApp.filter((p) => p.id !== pid);
+    ecrireDemo(d);
+  },
+  async saveCycleApp(cid, programmeId, data) {
+    const d = await demoApp();
+    const p = d.programmesApp.find((x) => x.id === programmeId);
+    if (cid) Object.assign(p.cycles.find((c) => c.id === cid), data);
+    else {
+      cid = `cy-${id()}`;
+      const numero = Math.max(0, ...p.cycles.map((c) => c.numero)) + 1;
+      p.cycles.push({ id: cid, programme_id: programmeId, numero, titre: `Cycle ${numero}`, description: '', semaines: semainesVides(), seances: [], ...data });
+    }
+    ecrireDemo(d);
+    return cid;
+  },
+  async dupliquerCycleApp(cid) {
+    const d = await demoApp();
+    const p = d.programmesApp.find((x) => x.cycles.some((c) => c.id === cid));
+    const source = p.cycles.find((c) => c.id === cid);
+    const numero = Math.max(...p.cycles.map((c) => c.numero)) + 1;
+    const nouveau = { ...structuredClone(source), id: `cy-${id()}`, numero, titre: `Cycle ${numero}` };
+    nouveau.seances = nouveau.seances.map((s) => ({ ...s, id: `se-${id()}`, cycle_id: nouveau.id }));
+    p.cycles.push(nouveau);
+    ecrireDemo(d);
+    return nouveau.id;
+  },
+  async deleteCycleApp(cid) {
+    const d = await demoApp();
+    for (const p of d.programmesApp) p.cycles = p.cycles.filter((c) => c.id !== cid);
+    ecrireDemo(d);
+  },
+  async saveSeanceApp(sid, cycleId, data) {
+    const d = await demoApp();
+    const cycle = d.programmesApp.flatMap((p) => p.cycles).find((c) => c.id === cycleId);
+    if (sid) Object.assign(cycle.seances.find((s) => s.id === sid), data);
+    else { sid = `se-${id()}`; cycle.seances.push({ id: sid, cycle_id: cycleId, ordre: cycle.seances.length + 1, exercices: [], ...data }); }
+    ecrireDemo(d);
+    return sid;
+  },
+  async deleteSeanceApp(sid) {
+    const d = await demoApp();
+    for (const c of d.programmesApp.flatMap((p) => p.cycles)) c.seances = c.seances.filter((s) => s.id !== sid);
+    ecrireDemo(d);
+  },
+  async listProfilsApp() { return Object.values((await demoApp()).profilsApp); },
+
   // Journal des webhooks Systeme.io (exemples en démo)
   async listWebhooks() {
     const h = (j, hh) => new Date(Date.now() + j * 864e5 - hh * 36e5).toISOString();
@@ -474,6 +622,10 @@ async function envoyerFichier(eleveId, dossier, file) {
   return chemin;
 }
 
+function normaliserCycle({ seances_app, ...c }) {
+  return { ...c, seances: (seances_app || []).sort((a, b) => a.ordre - b.ordre) };
+}
+
 const reel = {
   async getSession() {
     const { data } = await (await client()).auth.getSession();
@@ -512,6 +664,90 @@ const reel = {
   async marquerActivite() {
     await (await client()).rpc('marquer_activite');
   },
+  // ── Booty Flow App : questionnaire, programmes préconçus, séances cochées ──
+  async getProfilApp(uid) {
+    const { data, error } = await (await client()).from('profils_app').select('*').eq('eleve_id', uid).maybeSingle();
+    if (error) return null; // table pas encore créée (supabase/programmes-app.sql)
+    return data;
+  },
+  async terminerQuestionnaire(r) {
+    return verifier(await (await client()).rpc('terminer_questionnaire', {
+      p_prenom: r.prenom, p_age: r.age, p_taille: r.taille, p_poids: r.poids,
+      p_niveau: r.niveau, p_seances: r.seances_semaine, p_lieu: r.lieu, p_objectif: r.objectif
+    }));
+  },
+  async listProgrammesApp() {
+    const lignes = verifier(await (await client()).from('programmes_app').select('*, cycles_app(count)').order('ordre'));
+    return lignes.map(({ cycles_app, ...p }) => ({ ...p, nb_cycles: cycles_app?.[0]?.count ?? 0 }));
+  },
+  async getProgrammeApp(pid) {
+    const p = verifier(await (await client()).from('programmes_app').select('*, cycles_app(*, seances_app(*))').eq('id', pid).maybeSingle());
+    if (!p) return null;
+    const { cycles_app, ...reste } = p;
+    return { ...reste, cycles: (cycles_app || []).map(normaliserCycle).sort((a, b) => a.numero - b.numero) };
+  },
+  async getCycleApp(pid, numero) {
+    const c = verifier(await (await client()).from('cycles_app').select('*, seances_app(*)').eq('programme_id', pid).eq('numero', numero).maybeSingle());
+    return c ? normaliserCycle(c) : null;
+  },
+  async listSeancesFaites(uid, cycle) {
+    let q = (await client()).from('seances_faites').select('*').eq('eleve_id', uid);
+    if (cycle != null) q = q.eq('cycle_numero', cycle);
+    return verifier(await q);
+  },
+  async marquerSeances(lignes) {
+    const uid = (await reel.getSession())?.userId;
+    verifier(await (await client()).from('seances_faites')
+      .upsert(lignes.map((l) => ({ ...l, eleve_id: uid })), { onConflict: 'eleve_id,seance_id,cycle_numero,semaine', ignoreDuplicates: true }));
+  },
+  async annulerSeance({ seance_id, cycle_numero, semaine }) {
+    verifier(await (await client()).from('seances_faites').delete()
+      .eq('seance_id', seance_id).eq('cycle_numero', cycle_numero).eq('semaine', semaine));
+  },
+  async passerCycleSuivant() { return verifier(await (await client()).rpc('passer_cycle_suivant')); },
+  // Coach
+  async setProfilApp(uid, patch) {
+    verifier(await (await client()).from('profils_app').upsert({ eleve_id: uid, ...patch, updated_at: new Date().toISOString() }));
+  },
+  async saveProgrammeApp(pid, data) {
+    const table = (await client()).from('programmes_app');
+    if (pid) { verifier(await table.update(data).eq('id', pid)); return pid; }
+    return verifier(await table.insert(data).select('id').single()).id;
+  },
+  async deleteProgrammeApp(pid) { verifier(await (await client()).from('programmes_app').delete().eq('id', pid)); },
+  async saveCycleApp(cid, programmeId, data) {
+    const sb = await client();
+    if (cid) { verifier(await sb.from('cycles_app').update(data).eq('id', cid)); return cid; }
+    const existants = verifier(await sb.from('cycles_app').select('numero').eq('programme_id', programmeId));
+    const numero = Math.max(0, ...existants.map((c) => c.numero)) + 1;
+    return verifier(await sb.from('cycles_app').insert({ programme_id: programmeId, numero, titre: `Cycle ${numero}`, semaines: semainesVides(), ...data })
+      .select('id').single()).id;
+  },
+  async dupliquerCycleApp(cid) {
+    const sb = await client();
+    const c = normaliserCycle(verifier(await sb.from('cycles_app').select('*, seances_app(*)').eq('id', cid).single()));
+    const existants = verifier(await sb.from('cycles_app').select('numero').eq('programme_id', c.programme_id));
+    const numero = Math.max(...existants.map((x) => x.numero)) + 1;
+    const nouveau = verifier(await sb.from('cycles_app').insert({ programme_id: c.programme_id, numero, titre: `Cycle ${numero}`,
+      description: c.description, semaines: c.semaines }).select('id').single());
+    if (c.seances.length) {
+      verifier(await sb.from('seances_app').insert(c.seances.map(({ ordre, nom, description, exercices }) =>
+        ({ cycle_id: nouveau.id, ordre, nom, description, exercices }))));
+    }
+    return nouveau.id;
+  },
+  async deleteCycleApp(cid) { verifier(await (await client()).from('cycles_app').delete().eq('id', cid)); },
+  async saveSeanceApp(sid, cycleId, data) {
+    const table = (await client()).from('seances_app');
+    if (sid) { verifier(await table.update(data).eq('id', sid)); return sid; }
+    return verifier(await table.insert({ ...data, cycle_id: cycleId }).select('id').single()).id;
+  },
+  async deleteSeanceApp(sid) { verifier(await (await client()).from('seances_app').delete().eq('id', sid)); },
+  async listProfilsApp() {
+    const { data, error } = await (await client()).from('profils_app').select('*');
+    return error ? [] : data;
+  },
+
   async listWebhooks() {
     const { data, error } = await (await client()).from('webhooks_systemeio').select('*').order('recu_le', { ascending: false }).limit(200);
     if (error) return []; // table pas encore créée (supabase/webhook-systemeio.sql)

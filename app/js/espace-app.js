@@ -7,6 +7,7 @@ import { page, entete, blocCharges } from './eleve.js';
 import { FORMULES, STATUTS, formuleDe, statutDe, estApp, aAcces, encartCoaching } from './formules.js';
 import { carteRappels } from './rappels.js';
 import { nouveautes, vignette, chargerMiniatures } from './videotheque.js';
+import { programme, questionnaire, etatProgramme } from './programme-app.js';
 
 const lienExterne = (url, texte, classe = 'bouton-principal') => url
   ? `<a href="${esc(url)}" class="${classe}" target="_blank" rel="noopener">${texte}</a>`
@@ -26,14 +27,16 @@ const bientot = (texte) => `<section class="carte"><div class="surtitre-carte">B
 
 // ───────────── Accueil ─────────────
 async function accueil(racine, profil) {
-  const nouvelles = await nouveautes(profil);
+  const [nouvelles, etat] = await Promise.all([nouveautes(profil), etatProgramme(profil).catch(() => null)]);
+  const duJour = etat?.seanceDuJour;
   racine.innerHTML = page(profil, 'accueil', `
     <img src="img/banniere.jpg" alt="Booty Flow" class="banniere">
     <div class="ligne-entre"><div class="bonjour">Bonjour ${esc(profil.prenom)}</div>${badge('BOOTY FLOW APP')}</div>
     <a href="#/programme" class="carte carte-training">
       <span class="icone-training">${icone('haltere', 24, 'var(--accent)')}</span>
-      <span class="carte-nouveaute-texte"><span class="surtitre-carte">LA SÉANCE DU JOUR</span>
-        <strong>Mon programme</strong><span class="petit">Voir ma séance</span></span>
+      <span class="carte-nouveaute-texte"><span class="surtitre-carte">${etat?.termine ? `CYCLE ${etat.pa.cycle_numero} TERMINÉ` : 'LA SÉANCE DU JOUR'}</span>
+        <strong>${esc(duJour?.nom || (etat?.termine ? 'Débloque ton cycle suivant' : 'Mon programme'))}</strong>
+        <span class="petit">${etat && !etat.termine ? `Cycle ${etat.pa.cycle_numero} · semaine ${etat.semaine} sur 12 · ${etat.faites}/${etat.total} séances` : 'Voir mon programme'}</span></span>
       ${icone('chevron', 18, 'var(--doux)')}</a>
     ${nouvelles.length ? `<a href="#/videotheque" class="carte carte-nouveaute">
       ${vignette(nouvelles[0])}
@@ -52,11 +55,6 @@ async function accueil(racine, profil) {
   `);
   chargerMiniatures(racine);
   carteRappels(racine.querySelector('#zone-rappels'), profil);
-}
-
-async function programme(racine, profil) {
-  racine.innerHTML = page(profil, 'programme', entete('MON PROGRAMME', 'Séance du jour')
-    + bientot('Ton programme de 12 semaines (choisi selon ton niveau et ton nombre de séances) et ta séance du jour arrivent ici très bientôt.'));
 }
 
 async function nutrition(racine, profil) {
@@ -96,6 +94,7 @@ async function corrections(racine, profil) {
 
 export const ecransApp = {
   accueil, programme, nutrition, progres, live, mouvement: corrections,
+  questionnaire: (racine, profil) => questionnaire(racine, profil, { modification: true }),
   training: sectionCoaching('plan_perso', 'programme', 'MON PROGRAMME', 'Programme personnalisé'),
   bilan: sectionCoaching('bilans', 'progres', 'MON SUIVI', 'Bilans'),
   chat: sectionCoaching('messagerie', 'accueil', 'MA COACH', 'Messagerie')
@@ -118,6 +117,7 @@ export async function compte(racine, profil) {
       ${app && profil.dernier_paiement ? ligne('Dernier paiement', dateCourte(profil.dernier_paiement)) : ''}
     </section>
     ${app && statut === 'resilie' ? `<p class="petit centre">Ton abonnement est résilié : tu gardes tout ton accès jusqu'à la fin de la période payée.</p>` : ''}
+    ${app ? `<a href="#/questionnaire" class="bouton-contour">${icone('compte', 18)}Mes informations (âge, poids, niveau…)</a>` : ''}
     ${app ? lienExterne(SYSTEMEIO_ESPACE_CLIENT_URL, 'Gérer mon abonnement', 'bouton-contour') : ''}
     ${aAcces(profil, 'offres') ? `<a href="#/offres" class="bouton-contour">${icone('etoile', 18)}Passer au coaching</a>` : ''}
     ${piedDePage().replace('<a href="#/compte" class="lien">Mon compte</a>', '')}

@@ -16,6 +16,7 @@ import { NOM_VIDEOTHEQUE } from './config.js';
 import { carteProgramme, brancherFichiers } from './programmes.js';
 import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide, lecteurLien } from './videotheque.js';
 import { carteRappels } from './rappels.js';
+import { programmesApp, blocProgrammeAbonnee } from './admin-programmes.js';
 import { FORMULES, STATUTS, formuleDe, statutDe, estApp, compteValide, accesOuvert, intervalleBilan } from './formules.js';
 
 const VERT = '#7FE0B8';
@@ -34,6 +35,7 @@ const MENU = [
   { route: 'coach/messages', libelle: 'Messages', icone: 'chat' },
   { groupe: 'ABONNÉES BOOTY FLOW APP', app: true },
   { route: 'coach/abonnees', libelle: 'Abonnées', icone: 'compte', app: true },
+  { route: 'coach/programmes', libelle: 'Programmes', icone: 'haltere', app: true },
   { route: 'coach/webhooks', libelle: 'Journal Systeme.io', icone: 'doc', app: true },
   { groupe: 'POUR TOUTES' },
   { route: 'coach/videotheque', libelle: NOM_VIDEOTHEQUE, icone: 'lecture' }
@@ -41,7 +43,7 @@ const MENU = [
 // Élèves du coaching uniquement (les abonnées App ont leur propre espace)
 const elevesCoaching = (liste) => liste.filter((e) => compteValide(e) && !estApp(e));
 
-function page(profil, actif, contenu) {
+export function page(profil, actif, contenu) {
   const liens = MENU.map((m) => {
     if (m.groupe) return `<div class="menu-groupe${m.app ? ' menu-groupe-app' : ''}">${m.groupe}</div>`;
     const on = m.route === actif;
@@ -304,7 +306,11 @@ async function ficheSuivi(zone, e, recharger) {
     <label class="case"><input type="checkbox" name="competitrice" ${e.competitrice ? 'checked' : ''}><span>Compétitrice (active l'onglet Posing)</span></label>`}
     <button class="bouton-principal" type="submit">ENREGISTRER</button>
   </form>`;
-  zone.querySelector('form').addEventListener('submit', async (ev) => {
+  if (app) {
+    zone.insertAdjacentHTML('beforeend', '<div id="programme-abonnee"></div>');
+    blocProgrammeAbonnee(zone.querySelector('#programme-abonnee'), e);
+  }
+  zone.querySelector('#form-suivi').addEventListener('submit', async (ev) => {
     ev.preventDefault();
     const d = new FormData(ev.target);
     const dateOuNull = (k) => (d.get(k) ? new Date(`${d.get(k)}T12:00:00`).toISOString() : null);
@@ -1051,4 +1057,4 @@ function formulaireBiblio(v, recharger) {
   });
 }
 
-export const ecransCoach = { tableau, abonnees, webhooks, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages, videotheque };
+export const ecransCoach = { tableau, abonnees, webhooks, programmes: programmesApp, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages, videotheque };

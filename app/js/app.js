@@ -84,7 +84,8 @@ async function rafraichirProfil() {
   if (!profil) return;
   try {
     const frais = await api.getProfile(profil.id);
-    if (!frais || JSON.stringify(frais) === JSON.stringify(profil)) return;
+    const { app, ...actuel } = profil; // réponses au questionnaire App : rechargées à part
+    if (!frais || JSON.stringify(frais) === JSON.stringify(actuel)) return;
     profil = frais;
     if (!document.querySelector('.fenetre')) afficher();
   } catch (e) { /* hors ligne : on garde le profil actuel */ }
@@ -116,6 +117,8 @@ function ecranConnexion(onglet = 'connexion') {
       <div class="surtitre-carte">ESSAYER LA DÉMO</div>
       <button class="bouton-contour" data-demo="sarah@demo.fr">${icone('accueil', 18)}Espace élève (Sarah)</button>
       <button class="bouton-contour" data-demo="chloe@demo.fr">${icone('etoile', 18)}Espace compétitrice (Chloé)</button>
+      <button class="bouton-contour" data-demo="emma@demo.fr">${icone('haltere', 18)}Abonnée Booty Flow App (Emma)</button>
+      <button class="bouton-contour" data-demo="nina@demo.fr">${icone('compte', 18)}Nouvelle abonnée App : questionnaire (Nina)</button>
       <button class="bouton-contour" data-demo="marie@demo.fr">${icone('eleves', 18)}Espace coach (Marie)</button>
       <button class="lien" id="reinit">Remettre la démo à zéro</button>
     </div>` : ''}
@@ -190,7 +193,7 @@ async function afficher() {
       if (racineRoute !== 'coach') { location.replace('#/coach'); return; }
       const [sous, ...params] = reste;
       const ecran = {
-        '': ecransCoach.tableau, undefined: ecransCoach.tableau, abonnees: ecransCoach.abonnees, webhooks: ecransCoach.webhooks,
+        '': ecransCoach.tableau, undefined: ecransCoach.tableau, abonnees: ecransCoach.abonnees, webhooks: ecransCoach.webhooks, programmes: ecransCoach.programmes,
         eleve: ecransCoach.fiche, videos: ecransCoach.videos, bilans: ecransCoach.bilans,
         competitrices: ecransCoach.competitrices, nutrition: ecransCoach.plansNutrition,
         charges: ecransCoach.suiviCharges, messages: ecransCoach.messages,

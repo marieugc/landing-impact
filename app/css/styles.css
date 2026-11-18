@@ -664,3 +664,65 @@ pre.json { margin: 8px 0 0; padding: 12px; max-height: 50vh; overflow: auto; bor
   .menu-groupe { display: none; }
   .menu-lien.menu-app { border: 1px solid rgba(127, 224, 184, 0.35); }
 }
+
+/* ───────── Booty Flow App : questionnaire ───────── */
+.choix-pastilles { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.formulaire .pastille-choix, .pastille-choix { position: relative; display: block; cursor: pointer; color: var(--texte); }
+.pastille-choix input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.pastille-choix span { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--bord); background: var(--carte-2); }
+.pastille-choix strong { font-size: 15px; }
+.pastille-choix small { font-size: 12px; color: var(--doux); line-height: 1.35; }
+.pastille-choix input:checked + span { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; background: rgba(178, 102, 255, 0.14); }
+.pastille-choix input:focus-visible + span { outline: 2px solid var(--lilas); outline-offset: 2px; }
+
+/* ───────── Booty Flow App : programme ───────── */
+.defile-semaines { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 4px; scrollbar-width: none; }
+.defile-semaines::-webkit-scrollbar { display: none; }
+.pastille-semaine { flex: 0 0 36px; height: 36px; border-radius: 18px; border: 1px solid var(--bord); background: var(--carte-2); color: var(--doux); font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; }
+.pastille-semaine.faite { color: var(--vert); border-color: rgba(127, 224, 184, 0.5); }
+.pastille-semaine.en-cours { border-color: var(--lilas); color: var(--lilas); }
+.pastille-semaine.actif { background: var(--accent); border-color: var(--accent); color: var(--fond); }
+.carte-seance.du-jour { border-color: var(--accent); }
+.carte-seance .titre-carte { margin: 0; }
+.carte-seance .petit { margin: 0; }
+.liste-exercices { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.exercice { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: var(--carte-2); border: 1px solid var(--bord); }
+.exercice p { margin: 0; }
+.exercice .bouton-contour { align-self: flex-start; }
+.exercice-tete { display: flex; gap: 10px; align-items: flex-start; }
+.exercice-tete > div { flex: 1; min-width: 0; }
+.exercice-tete .numero { flex: 0 0 26px; height: 26px; border-radius: 13px; background: var(--accent); color: var(--fond); font-weight: 800; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; }
+.exercice-chiffres { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--doux); }
+.exercice-chiffres b { color: var(--texte); font-size: 15px; }
+.exercice-charge { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; color: var(--lilas); }
+.exercice-charge svg { flex-shrink: 0; margin-top: 1px; }
+.exercice details summary { cursor: pointer; color: var(--lilas); }
+.carte-bravo { border-color: var(--vert); }
+.carte-bravo .petit { margin: 0; }
+
+/* ───────── Coach : éditeur de programmes ───────── */
+.grille-programmes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.carte-programme { color: var(--texte); }
+.carte-programme:hover { border-color: var(--accent); }
+.ligne-cycle { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--bord); color: var(--texte); }
+.ligne-cycle > a, .ligne-cycle > span { display: flex; flex-direction: column; gap: 2px; color: var(--texte); min-width: 0; }
+.lien-bloc:hover strong { color: var(--lilas); }
+.actions-ligne { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.actions-ligne .bouton-rond { width: 36px; height: 36px; }
+.ligne-boutons { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; }
+.lien.danger { color: var(--orange); }
+.grille-semaines { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.carte-exercice { border: 1px solid var(--bord); border-radius: 16px; padding: 16px; margin: 0; display: flex; flex-direction: column; gap: 12px; background: var(--carte-2); }
+.carte-exercice legend { padding: 0; float: left; }
+.carte-exercice .ligne-entre { clear: both; }
+.carte-exercice .grille-2, .carte-exercice .grille-3 { gap: 10px; }
+.progression summary { cursor: pointer; color: var(--lilas); font-weight: 700; font-size: 13.5px; }
+.tableau-progression { display: grid; grid-template-columns: 34px 70px 100px 1fr; gap: 6px 8px; align-items: center; margin: 12px 0 8px; }
+.tableau-progression input { min-height: 36px; padding: 0 10px; border-radius: 10px; background: var(--fond); border: 1px solid var(--bord); color: var(--texte); font: inherit; font-size: 13px; width: 100%; }
+.barre-enregistrer { position: sticky; bottom: 0; padding: 12px 0; background: linear-gradient(transparent, var(--carte) 30%); }
+@media (max-width: 600px) {
+  .tableau-progression { grid-template-columns: 28px 52px 70px 1fr; gap: 4px; }
+  .ligne-cycle { flex-direction: column; align-items: flex-start; }
+}
+button.segment { border: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 700; color: var(--doux); }
+button.segment.actif { background: var(--carte-2); color: var(--lilas); }

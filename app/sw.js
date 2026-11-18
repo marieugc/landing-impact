@@ -24,6 +24,8 @@ const FICHIERS = [
   './js/compression.js',
   './js/formules.js',
   './js/espace-app.js',
+  './js/programme-app.js',
+  './js/admin-programmes.js',
   './js/app.js?v=33',
   './img/banniere.jpg',
   './img/coach.jpg',

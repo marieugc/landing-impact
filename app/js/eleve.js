@@ -15,6 +15,7 @@ import { carteProgramme, brancherFichiers, estNouveau, nouveauxProgrammes, marqu
 import { CATEGORIES, nouveautes, estNouvelle, vignette, chargerMiniatures, ouvrirVideo, lecteurLien } from './videotheque.js';
 import { estApp, aAcces, compteValide, accesOuvert, intervalleBilan, formuleDe } from './formules.js';
 import { ecransApp, compte, offres, ecranAttente, ecranFerme } from './espace-app.js';
+import { questionnaire } from './programme-app.js';
 
 const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
@@ -641,6 +642,9 @@ export async function ouvrirEleve(racine, profil, route) {
     return true;
   }
   if (estApp(profil)) {
+    // Première connexion : questionnaire (programme + besoins) avant tout le reste
+    if (profil.app === undefined) profil.app = await api.getProfilApp(profil.id);
+    if (!profil.app?.complete_le) { await questionnaire(racine, profil); return true; }
     if (route === 'videotheque') { await videotheque(racine, profil); return true; }
     const ecran = ecransApp[route];
     if (!ecran) return false;
