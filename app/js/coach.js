@@ -17,6 +17,7 @@ import { carteProgramme, brancherFichiers } from './programmes.js';
 import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide, lecteurLien } from './videotheque.js';
 import { carteRappels } from './rappels.js';
 import { programmesApp, blocProgrammeAbonnee } from './admin-programmes.js';
+import { reglagesNutrition } from './nutrition-app.js';
 import { FORMULES, STATUTS, formuleDe, statutDe, estApp, compteValide, accesOuvert, intervalleBilan } from './formules.js';
 
 const VERT = '#7FE0B8';
@@ -36,6 +37,7 @@ const MENU = [
   { groupe: 'ABONNÉES BOOTY FLOW APP', app: true },
   { route: 'coach/abonnees', libelle: 'Abonnées', icone: 'compte', app: true },
   { route: 'coach/programmes', libelle: 'Programmes', icone: 'haltere', app: true },
+  { route: 'coach/nutrition-app', libelle: 'Nutrition App', icone: 'nutrition', app: true },
   { route: 'coach/webhooks', libelle: 'Journal Systeme.io', icone: 'doc', app: true },
   { groupe: 'POUR TOUTES' },
   { route: 'coach/videotheque', libelle: NOM_VIDEOTHEQUE, icone: 'lecture' }
@@ -1057,4 +1059,4 @@ function formulaireBiblio(v, recharger) {
   });
 }
 
-export const ecransCoach = { tableau, abonnees, webhooks, programmes: programmesApp, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages, videotheque };
+export const ecransCoach = { tableau, abonnees, webhooks, programmes: programmesApp, nutritionApp: reglagesNutrition, fiche, videos, bilans, competitrices, plansNutrition, suiviCharges, messages, videotheque };

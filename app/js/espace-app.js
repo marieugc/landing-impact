@@ -8,6 +8,8 @@ import { FORMULES, STATUTS, formuleDe, statutDe, estApp, aAcces, encartCoaching 
 import { carteRappels } from './rappels.js';
 import { nouveautes, vignette, chargerMiniatures } from './videotheque.js';
 import { programme, questionnaire, etatProgramme } from './programme-app.js';
+import { nutritionAbonnee, profilCalcul } from './nutrition-app.js';
+import { besoins } from './nutrition-calcul.js';
 
 const lienExterne = (url, texte, classe = 'bouton-principal') => url
   ? `<a href="${esc(url)}" class="${classe}" target="_blank" rel="noopener">${texte}</a>`
@@ -27,7 +29,8 @@ const bientot = (texte) => `<section class="carte"><div class="surtitre-carte">B
 
 // ───────────── Accueil ─────────────
 async function accueil(racine, profil) {
-  const [nouvelles, etat] = await Promise.all([nouveautes(profil), etatProgramme(profil).catch(() => null)]);
+  const [nouvelles, etat, reglages] = await Promise.all([nouveautes(profil), etatProgramme(profil).catch(() => null), api.getNutritionApp().catch(() => null)]);
+  const besoinsJour = reglages ? besoins(profilCalcul(profil.app), reglages.coefficients) : null;
   const duJour = etat?.seanceDuJour;
   racine.innerHTML = page(profil, 'accueil', `
     <img src="img/banniere.jpg" alt="Booty Flow" class="banniere">
@@ -45,7 +48,7 @@ async function accueil(racine, profil) {
       ${icone('chevron', 18, 'var(--doux)')}</a>` : ''}
     <div class="grille-2">
       <a href="#/nutrition" class="carte carte-mini">${icone('nutrition', 22, 'var(--accent)')}
-        <div><div class="petit">Nutrition</div><strong>Mes journées types</strong></div></a>
+        <div><div class="petit">Nutrition</div><strong>${besoinsJour ? `${besoinsJour.training.kcal.toLocaleString('fr-FR')} kcal jour training` : 'Mes journées types'}</strong></div></a>
       <a href="#/live" class="carte carte-mini">${icone('video', 22, 'var(--accent)')}
         <div><div class="petit">Live du mois</div><strong>Avec ${esc(NOM_COACH)}</strong></div></a>
     </div>
@@ -57,11 +60,7 @@ async function accueil(racine, profil) {
   carteRappels(racine.querySelector('#zone-rappels'), profil);
 }
 
-async function nutrition(racine, profil) {
-  racine.innerHTML = page(profil, 'nutrition', entete('MA NUTRITION', 'Journées types')
-    + bientot('Ton calculateur de macros et tes journées types (jour training / jour off) arrivent ici très bientôt.')
-    + encartCoaching('plan_perso'));
-}
+const nutrition = nutritionAbonnee;
 
 async function progres(racine, profil) {
   racine.innerHTML = page(profil, 'progres', entete('MES RÉSULTATS', 'Progression') + `

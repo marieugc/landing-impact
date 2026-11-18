@@ -1,0 +1,55 @@
+// Tests du calculateur nutrition. Lancer : node --test app/tests/nutrition.test.mjs
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { besoins, journeeType, arrondir, libelleQuantite, REGLAGES_DEFAUT } from '../js/nutrition-calcul.js';
+
+const camille = { poids: 62, taille: 165, age: 29, seances_semaine: 4, objectif: 'perte_de_gras' };
+
+test('dépense, déficit et macros', () => {
+  const b = besoins(camille);
+  assert.equal(b.base, 1345);                 // 620 + 1031,25 − 145 − 161
+  assert.equal(b.depense, 2085);              // × 1,55 (4 séances)
+  assert.equal(b.moyenne, 1585);              // − 500 kcal
+  assert.equal(b.training.proteines, 124);    // 2 g/kg
+  assert.equal(b.training.lipides, 56);       // 0,9 g/kg
+  assert.ok(b.training.glucides > b.off.glucides, 'plus de glucides les jours training');
+  assert.equal(b.training.proteines, b.off.proteines);
+  // Moyenne de la semaine conservée (4 jours training, 3 jours off)
+  const semaine = (b.training.kcal * 4 + b.off.kcal * 3) / 7;
+  assert.ok(Math.abs(semaine - b.moyenne) <= 3, `moyenne ${semaine}`);
+});
+
+test('prise de muscle : +500 kcal', () => {
+  const b = besoins({ ...camille, objectif: 'prise_de_muscle', seances_semaine: 3 });
+  assert.equal(b.moyenne, Math.round(1345.25 * 1.45 + 500));
+});
+
+test('les coefficients de la coach sont utilisés', () => {
+  const b = besoins(camille, { ...REGLAGES_DEFAUT.coefficients, proteines_g_kg: 1.8, deficit_perte_de_gras: 300 });
+  assert.equal(b.training.proteines, 112);
+  assert.equal(b.moyenne, 1785);
+});
+
+test('arrondis : chiffres ronds uniquement', () => {
+  assert.equal(arrondir(165, 50), 150);
+  assert.equal(arrondir(168, 50), 150);
+  assert.equal(arrondir(176, 50), 200);
+  assert.equal(arrondir(20, 50), 50);
+  assert.equal(arrondir(13, 5), 15);
+});
+
+test('journée type : quantités rondes, proche de la cible, poids cuit / cru indiqués', () => {
+  const b = besoins(camille);
+  for (const type of ['training', 'off']) {
+    const j = journeeType(b[type], REGLAGES_DEFAUT.journees[type], REGLAGES_DEFAUT.aliments);
+    for (const r of j.repas) for (const it of r.items) {
+      if (it.unite === 'g') assert.equal(it.quantite % (it.aliment.pas || 50), 0, `${it.aliment.nom} ${it.quantite}`);
+    }
+    const ecart = Math.abs(j.total.kcal - b[type].kcal) / b[type].kcal;
+    console.log(type, 'cible', b[type], '→ journée', j.total, `écart ${(ecart * 100).toFixed(1)} %`);
+    for (const r of j.repas) console.log('   ', r.nom, '·', r.items.map(libelleQuantite).join(' + '));
+    assert.ok(ecart < 0.12, `écart ${ecart}`);
+  }
+  const riz = journeeType(b.training, REGLAGES_DEFAUT.journees.training).repas[1].items.find((x) => x.aliment.id === 'riz');
+  assert.match(libelleQuantite(riz), /poids cuit/);
+});

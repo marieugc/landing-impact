@@ -193,7 +193,7 @@ async function afficher() {
       if (racineRoute !== 'coach') { location.replace('#/coach'); return; }
       const [sous, ...params] = reste;
       const ecran = {
-        '': ecransCoach.tableau, undefined: ecransCoach.tableau, abonnees: ecransCoach.abonnees, webhooks: ecransCoach.webhooks, programmes: ecransCoach.programmes,
+        '': ecransCoach.tableau, undefined: ecransCoach.tableau, abonnees: ecransCoach.abonnees, webhooks: ecransCoach.webhooks, programmes: ecransCoach.programmes, 'nutrition-app': ecransCoach.nutritionApp,
         eleve: ecransCoach.fiche, videos: ecransCoach.videos, bilans: ecransCoach.bilans,
         competitrices: ecransCoach.competitrices, nutrition: ecransCoach.plansNutrition,
         charges: ecransCoach.suiviCharges, messages: ecransCoach.messages,

@@ -363,6 +363,21 @@ const demo = {
   },
   async listProfilsApp() { return Object.values((await demoApp()).profilsApp); },
   async envoyerVideoExercice(fichier) { return garderFichier(fichier); },
+  // Réglages du calculateur nutrition (coefficients, aliments, journées types)
+  async getNutritionApp() {
+    const d = lireDemo();
+    if (!d.nutritionApp) {
+      const { REGLAGES_DEFAUT } = await import('./nutrition-calcul.js');
+      d.nutritionApp = structuredClone(REGLAGES_DEFAUT);
+      ecrireDemo(d);
+    }
+    return structuredClone(d.nutritionApp);
+  },
+  async saveNutritionApp(patch) {
+    const d = lireDemo();
+    d.nutritionApp = { ...(d.nutritionApp || {}), ...patch };
+    ecrireDemo(d);
+  },
 
   // Journal des webhooks Systeme.io (exemples en démo)
   async listWebhooks() {
@@ -747,6 +762,18 @@ const reel = {
   async listProfilsApp() {
     const { data, error } = await (await client()).from('profils_app').select('*');
     return error ? [] : data;
+  },
+  async getNutritionApp() {
+    const { data, error } = await (await client()).from('nutrition_app').select('*').eq('id', 1).maybeSingle();
+    if (error || !data) {
+      // Table pas encore créée (supabase/nutrition-app.sql) : réglages par défaut
+      const { REGLAGES_DEFAUT } = await import('./nutrition-calcul.js');
+      return structuredClone(REGLAGES_DEFAUT);
+    }
+    return data;
+  },
+  async saveNutritionApp(patch) {
+    verifier(await (await client()).from('nutrition_app').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', 1));
   },
   // Vidéo d'un exercice de programme : rangée dans le dossier « bibliotheque », lisible par les abonnées (accès ouvert)
   async envoyerVideoExercice(fichier) { return envoyerFichier('bibliotheque', 'exercices', fichier); },
