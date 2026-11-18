@@ -183,7 +183,9 @@ Deno.serve(async (req) => {
     const ligne: Ligne = corpsRequete.ligne ?? {};
     const eleveId = String(ligne.eleve_id ?? '');
     if (!/^[0-9a-f-]{36}$/i.test(eleveId)) return new Response('Élève inconnue', { status: 400 });
-    const [eleve] = await rest(`profiles?id=eq.${eleveId}&select=prenom`) as { prenom: string | null }[];
+    const [eleve] = await rest(`profiles?id=eq.${eleveId}&select=*`) as { prenom: string | null; formule?: string }[];
+    // Abonnées Booty Flow App : pas de notification à la coach (pas de suivi individuel)
+    if (eleve?.formule === 'app') return Response.json({ moment: 'coach', envoyes: 0, raison: 'abonnée App' });
     const message = messageCoach(String(corpsRequete.table), ligne, eleve?.prenom ?? '');
     if (!message) return new Response('Table inconnue', { status: 400 });
     const coachs = await rest('profiles?role=eq.coach&select=id') as { id: string }[];

@@ -257,7 +257,7 @@ aucun changement pour elles. Les nouveaux comptes créés avec « Créer mon com
 
 Copie les blocs de `supabase/tests/simuler-webhooks.sql` dans SQL Editor, un par un (le fichier explique
 ce qui doit se passer à chaque bloc) : achat, doublon, résiliation, fin d'accès, réabonnement.
-Chaque webhook reçu apparaît dans l'espace coach › **Abonnées App › Journal des webhooks Systeme.io**,
+Chaque webhook reçu apparaît dans l'espace coach › partie **Abonnées Booty Flow App › Journal Systeme.io**,
 avec son contenu brut (clique sur une ligne).
 
 > 🔎 **Après le premier vrai achat** : ouvre le journal et vérifie que la ligne est « Traité ».

@@ -22,22 +22,30 @@ const VERT = '#7FE0B8';
 const ORANGE = '#FFB86B';
 const GRIS = '#BCA8DE';
 
+// Deux espaces bien séparés : le coaching (Personnalisé, Autonomie) et les abonnées Booty Flow App
 const MENU = [
+  { groupe: 'COACHING' },
   { route: 'coach', libelle: 'Mes élèves', icone: 'eleves' },
-  { route: 'coach/abonnees', libelle: 'Abonnées App', icone: 'compte' },
   { route: 'coach/nutrition', libelle: 'Plans nutrition', icone: 'nutrition' },
   { route: 'coach/videos', libelle: 'Vidéos à corriger', icone: 'video' },
   { route: 'coach/competitrices', libelle: 'Compétitrices', icone: 'etoile' },
   { route: 'coach/bilans', libelle: 'Bilans', icone: 'progres' },
   { route: 'coach/charges', libelle: 'Suivi des charges', icone: 'haltere' },
   { route: 'coach/messages', libelle: 'Messages', icone: 'chat' },
+  { groupe: 'ABONNÉES BOOTY FLOW APP', app: true },
+  { route: 'coach/abonnees', libelle: 'Abonnées', icone: 'compte', app: true },
+  { route: 'coach/webhooks', libelle: 'Journal Systeme.io', icone: 'doc', app: true },
+  { groupe: 'POUR TOUTES' },
   { route: 'coach/videotheque', libelle: NOM_VIDEOTHEQUE, icone: 'lecture' }
 ];
+// Élèves du coaching uniquement (les abonnées App ont leur propre espace)
+const elevesCoaching = (liste) => liste.filter((e) => compteValide(e) && !estApp(e));
 
 function page(profil, actif, contenu) {
   const liens = MENU.map((m) => {
+    if (m.groupe) return `<div class="menu-groupe${m.app ? ' menu-groupe-app' : ''}">${m.groupe}</div>`;
     const on = m.route === actif;
-    return `<a href="#/${m.route}" class="menu-lien${on ? ' actif' : ''}"${on ? ' aria-current="page"' : ''}>${icone(m.icone, 20)}<span>${m.libelle}</span></a>`;
+    return `<a href="#/${m.route}" class="menu-lien${m.app ? ' menu-app' : ''}${on ? ' actif' : ''}"${on ? ' aria-current="page"' : ''}>${icone(m.icone, 20)}<span>${m.libelle}</span></a>`;
   }).join('');
   return `<div class="bureau">
     <aside class="barre-laterale">
@@ -80,7 +88,7 @@ async function tableau(racine, profil) {
   ]);
   // Mes élèves = coaching (Personnalisé et Autonomie) ; les abonnées App ont leur propre page
   const enAttente = inscrites.filter((e) => !compteValide(e));
-  const eleves = inscrites.filter((e) => compteValide(e) && !estApp(e));
+  const eleves = elevesCoaching(inscrites);
   const nonLus = bilans.filter((b) => !b.lu).length;
   const posings = aCorriger.filter((v) => v.type === 'posing').length;
   const stat = (libelle, valeur, ic, lien) => `<a href="${lien}" class="carte stat">
@@ -166,7 +174,7 @@ async function abonnees(racine, profil) {
       <span class="gris">${e.fin_acces ? dateCourte(e.fin_acces) : '—'}</span>
       <span class="gris" aria-hidden="true">${icone('chevron', 20)}</span>
     </a>`).join('');
-  racine.innerHTML = page(profil, 'coach/abonnees', titre('Abonnées App') + `
+  racine.innerHTML = page(profil, 'coach/abonnees', titre('Abonnées Booty Flow App') + `
     <div class="grille-stats">
       <div class="carte stat"><span class="petit">Actives</span><strong>${compte('actif')}</strong></div>
       <div class="carte stat"><span class="petit">Résiliées (accès en cours)</span><strong>${compte('resilie')}</strong></div>
@@ -182,7 +190,6 @@ async function abonnees(racine, profil) {
       ${lignes || '<p class="vide">Aucune abonnée pour le moment. Elles apparaissent ici automatiquement après leur achat sur Systeme.io.</p>'}
     </section>
     <p class="petit">Pour faire passer une abonnée en coaching : ouvre sa fiche et change sa formule. Elle garde tout son historique.</p>
-    <a href="#/coach/webhooks" class="bouton-contour compact lien-journal">${icone('doc', 16)}Journal des webhooks Systeme.io</a>
   `);
   racine.querySelectorAll('[data-filtre]').forEach((b) => b.addEventListener('click', () => {
     filtreAbonnees = b.dataset.filtre;
@@ -217,10 +224,8 @@ async function webhooks(racine, profil) {
       <span class="petit">${esc(w.message || '')}</span>
     </button>`;
   }).join('');
-  racine.innerHTML = page(profil, 'coach/abonnees', `
-    <div class="bureau-tete"><div class="ligne-auteur">
-      <a href="#/coach/abonnees" class="bouton-rond" aria-label="Retour aux abonnées">${icone('retour', 20)}</a>
-      <div><div class="surtitre">ABONNÉES APP</div><h1>Journal Systeme.io</h1></div></div></div>
+  racine.innerHTML = page(profil, 'coach/webhooks', `
+    <div class="bureau-tete"><div><div class="surtitre">ABONNÉES BOOTY FLOW APP</div><h1>Journal Systeme.io</h1></div></div>
     <p class="petit">Chaque webhook reçu de Systeme.io, avec ce que l'app en a fait. Clique sur une ligne pour voir le contenu brut envoyé par Systeme.io.</p>
     <section class="carte tableau">
       <div class="tableau-tete lignes-webhooks"><span>REÇU LE</span><span>ÉVÉNEMENT</span><span>E-MAIL</span><span>RÉSULTAT</span><span>DÉTAIL</span></div>
@@ -872,7 +877,7 @@ async function competitrices(racine, profil) {
 }
 
 async function plansNutrition(racine, profil) {
-  const eleves = await api.listEleves();
+  const eleves = elevesCoaching(await api.listEleves());
   const plans = await Promise.all(eleves.map((e) => api.getNutrition(e.id)));
   const lignes = eleves.map((e, i) => {
     const n = plans[i];
@@ -893,7 +898,8 @@ async function plansNutrition(racine, profil) {
 
 // Vue d'ensemble des charges de toutes les élèves
 async function suiviCharges(racine, profil) {
-  const [eleves, charges] = await Promise.all([api.listEleves(), api.listCharges()]);
+  const [inscrites, charges] = await Promise.all([api.listEleves(), api.listCharges()]);
+  const eleves = elevesCoaching(inscrites);
   const lignes = eleves.map((e) => {
     const siennes = charges.filter((c) => c.eleve_id === e.id);
     const parExo = new Map();
@@ -943,7 +949,8 @@ function apercu(m) {
 
 async function messages(racine, profil, [eleveId]) {
   if (eleveId) return discussion(racine, profil, eleveId);
-  const [eleves, { derniers, nonLus: aLire }] = await Promise.all([api.listEleves(), api.apercuConversations()]);
+  const [inscrites, { derniers, nonLus: aLire }] = await Promise.all([api.listEleves(), api.apercuConversations()]);
+  const eleves = elevesCoaching(inscrites);
   const lignes = eleves.map((e) => ({ e, dernier: derniers[e.id], nonLus: aLire[e.id] || 0 })).sort((a, b) => (b.nonLus - a.nonLus) || (b.dernier?.created_at || '').localeCompare(a.dernier?.created_at || ''));
 
   racine.innerHTML = page(profil, 'coach/messages', titre('Messages') + `
