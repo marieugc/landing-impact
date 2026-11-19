@@ -2,6 +2,8 @@
 // Bilan chaque week-end, obligatoirement le samedi ou le dimanche (aucune date à régler par la coach).
 // - Dimanche 18 h (heure de Paris) : rappel aux élèves qui n'ont envoyé leur bilan ni samedi ni dimanche.
 // - Lundi 9 h : relance des élèves dont le bilan du week-end n'est pas arrivé.
+// - Abonnées Booty Flow App : un seul rappel par mois (dimanche 18 h), quand leur bilan du mois est dû
+//   (28 jours après le dernier, ou la première semaine après leur questionnaire), puis tous les 28 jours tant qu'il manque.
 // Appelée toutes les heures le dimanche et le lundi par pg_cron (voir supabase/rappels.sql) : elle n'envoie
 // rien en dehors de ces deux créneaux. Corps { "moment": "test" } : notification d'essai à tous les appareils.
 // Corps { "moment": "coach", "table": ..., "ligne": {...} } : envoyé par la base (supabase/notifications-coach.sql)
@@ -54,7 +56,7 @@ type Eleve = {
   id: string; prenom: string | null; prochain_bilan: string | null; created_at: string;
   formule?: string; compte_valide?: boolean; statut_abonnement?: string;
 };
-// Bilan chaque semaine (Personnalisé) ou toutes les 4 semaines (Autonomie). Pas de bilan pour la formule App.
+// Bilan chaque semaine (Personnalisé) ou toutes les 4 semaines (Autonomie). Formule App : bilan du mois à part (plus bas).
 const pasBilan = (e: Eleve) => (e.formule === 'autonomie' ? 28 : 7);
 const recoitBilans = (e: Eleve) => (e.formule ?? 'personnalise') !== 'app' && e.compte_valide !== false && e.statut_abonnement !== 'expire';
 // L'ancienne date « prochain_bilan » réglée par la coach est ignorée : c'est toujours le week-end.
@@ -67,6 +69,13 @@ function derniereEcheance(depart: string, aujourdhui: string, pas = 7) {
   const n = ecartJours(depart, aujourdhui);
   if (n > 0) return null;
   return plusJours(depart, Math.floor(-n / pas) * pas);
+}
+// Abonnée App : rappel du bilan du mois le dimanche où il devient dû, puis tous les 28 jours s'il manque toujours.
+// reference = date du dernier bilan du mois, ou (aucun bilan) début de l'abonnement moins 28 jours.
+const recoitRappelMois = (e: Eleve) => e.formule === 'app' && e.compte_valide !== false && e.statut_abonnement !== 'expire';
+export function rappelMoisDu(reference: string, aujourdhui: string) {
+  const n = ecartJours(aujourdhui, reference);
+  return n >= 28 && (n - 28) % 28 < 7;
 }
 // Le bilan compte s'il a été envoyé le samedi ou le dimanche de ce week-end
 const bilanRecu = (echeance: string, dates: string[]) => dates.some((d) => d >= plusJours(echeance, -1));
@@ -81,6 +90,11 @@ const MESSAGES = {
     titre: 'Bilan pas encore reçu',
     corps: `${prenom ? `${prenom}, ta` : 'Ta'} coach n'a pas reçu ton bilan du week-end. Tu peux encore l'envoyer aujourd'hui.`,
     url: '#/bilan'
+  }),
+  mois: (prenom: string) => ({
+    titre: 'Ton bilan du mois',
+    corps: `${prenom ? `${prenom}, c'est` : "C'est"} le moment de ton bilan du mois : mensurations, photos et ta question, je te réponds personnellement.`,
+    url: '#/progres'
   }),
   test: () => ({ titre: 'Booty Flow', corps: 'Les notifications fonctionnent !', url: '#/accueil' })
 };
@@ -222,12 +236,15 @@ Deno.serve(async (req) => {
   }
   if (!['rappel', 'retard', 'test'].includes(moment)) return new Response('Moment inconnu', { status: 400 });
 
-  const [eleves, bilans, abonnements] = await Promise.all([
+  const [eleves, bilans, abonnements, releves, profilsApp] = await Promise.all([
     // select=* : fonctionne avant comme après supabase/formules.sql (formule, compte_valide…)
     rest('profiles?role=eq.eleve&select=*'),
     rest('bilans?select=eleve_id,date'),
-    rest('abonnements_push?select=id,eleve_id,endpoint,p256dh,auth')
-  ]) as [Eleve[], { eleve_id: string; date: string }[], (Abonnement & { id: string; eleve_id: string })[]];
+    rest('abonnements_push?select=id,eleve_id,endpoint,p256dh,auth'),
+    moment === 'rappel' ? rest('releves_app?select=eleve_id,date').catch(() => []) : [],
+    moment === 'rappel' ? rest('profils_app?select=eleve_id,complete_le').catch(() => []) : []
+  ]) as [Eleve[], { eleve_id: string; date: string }[], (Abonnement & { id: string; eleve_id: string })[],
+    { eleve_id: string; date: string }[], { eleve_id: string; complete_le: string | null }[]];
 
   // Qui doit recevoir la notification ?
   const cibles = eleves.filter((e) => {
@@ -244,12 +261,25 @@ Deno.serve(async (req) => {
   if (moment === 'test') {
     return Response.json({ moment, paris, ...(await envoyerA(abonnements, MESSAGES.test())) });
   }
+  // Dimanche soir : abonnées App dont le bilan du mois est dû (un rappel par mois)
+  const ciblesMois = moment !== 'rappel' ? [] : eleves.filter((e) => {
+    if (!recoitRappelMois(e)) return false;
+    const dates = releves.filter((r) => r.eleve_id === e.id).map((r) => r.date).sort();
+    const debut = profilsApp.find((p) => p.eleve_id === e.id)?.complete_le;
+    if (!dates.length && !debut) return false; // questionnaire pas encore rempli
+    const reference = dates.length ? dates[dates.length - 1] : plusJours(String(debut).slice(0, 10), -28);
+    return rappelMoisDu(reference, paris.date);
+  });
+
   let envoyes = 0, supprimes = 0, erreurs = 0;
-  for (const e of cibles) {
-    const message = MESSAGES[moment as 'rappel' | 'retard'](e.prenom ?? '');
+  const envois: [Eleve, object][] = [
+    ...cibles.map((e) => [e, MESSAGES[moment as 'rappel' | 'retard'](e.prenom ?? '')] as [Eleve, object]),
+    ...ciblesMois.map((e) => [e, MESSAGES.mois(e.prenom ?? '')] as [Eleve, object])
+  ];
+  for (const [e, message] of envois) {
     // Tous les appareils de l'élève (une élève peut avoir téléphone + tablette)
     const r = await envoyerA(abonnements.filter((x) => x.eleve_id === e.id), message);
     envoyes += r.envoyes; supprimes += r.supprimes; erreurs += r.erreurs;
   }
-  return Response.json({ moment, paris, eleves_concernees: cibles.length, envoyes, supprimes, erreurs });
+  return Response.json({ moment, paris, eleves_concernees: cibles.length, abonnees_app: ciblesMois.length, envoyes, supprimes, erreurs });
 });
