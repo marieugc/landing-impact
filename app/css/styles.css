@@ -799,3 +799,8 @@ details.carte > summary { cursor: pointer; }
 .question-bilan { display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 12px; background: var(--carte-2); }
 .question-bilan p { margin: 0; }
 .question-bilan .bouton-contour { align-self: flex-start; }
+/* Montée en gamme */
+.encart-montee { border-color: var(--accent); background: linear-gradient(160deg, rgba(178, 102, 255, 0.18), var(--carte)); }
+.encart-montee strong { font-family: var(--titre); font-size: 16px; }
+.encart-montee .petit { margin: 0; }
+.bouton-rond.petit-rond { width: 32px; height: 32px; }

@@ -12,6 +12,7 @@ import { nutritionAbonnee, profilCalcul } from './nutrition-app.js';
 import { besoins } from './nutrition-calcul.js';
 import { progresAbonnee, peseeAFaire, releveAFaire } from './suivi-app.js';
 import { retourEstNouveau } from './bilans.js';
+import { plateau, encartPlateau, brancherPlateau, bilanDeCycle } from './montee-app.js';
 
 const lienExterne = (url, texte, classe = 'bouton-principal') => url
   ? `<a href="${esc(url)}" class="${classe}" target="_blank" rel="noopener">${texte}</a>`
@@ -33,6 +34,7 @@ async function accueil(racine, profil) {
   const [nouvelles, etat, reglages, pesees] = await Promise.all([nouveautes(profil), etatProgramme(profil).catch(() => null),
     api.getNutritionApp().catch(() => null), api.listPesees(profil.id).catch(() => [])]);
   const releves = await api.listReleves(profil.id).catch(() => []);
+  const enPlateau = await plateau(profil, etat).catch(() => null);
   const besoinsJour = reglages ? besoins(profilCalcul(profil.app, pesees[pesees.length - 1]?.poids), reglages.coefficients, profil.app?.ajustement_glucides || 0) : null;
   const duJour = etat?.seanceDuJour;
   racine.innerHTML = page(profil, 'accueil', `
@@ -53,6 +55,12 @@ async function accueil(racine, profil) {
       <span class="carte-nouveaute-texte"><span class="surtitre-carte">C'EST LE MOMENT</span>
         <strong>Mon bilan du mois</strong><span class="petit">Mensurations, photos, ta question : ${esc(NOM_COACH)} te répond</span></span>
       ${icone('chevron', 18, 'var(--doux)')}</a>` : ''}
+    ${etat?.termine ? `<a href="#/bilan-cycle" class="carte carte-training nouveau">
+      <span class="icone-training">${icone('etoile', 24, 'var(--accent)')}</span>
+      <span class="carte-nouveaute-texte"><span class="surtitre-carte">CYCLE ${etat.pa.cycle_numero} TERMINÉ</span>
+        <strong>Ton bilan de cycle est prêt</strong><span class="petit">Tes séances, tes charges et ta silhouette en 12 semaines</span></span>
+      ${icone('chevron', 18, 'var(--doux)')}</a>` : ''}
+    ${encartPlateau(enPlateau)}
     <a href="#/programme" class="carte carte-training">
       <span class="icone-training">${icone('haltere', 24, 'var(--accent)')}</span>
       <span class="carte-nouveaute-texte"><span class="surtitre-carte">${etat?.termine ? `CYCLE ${etat.pa.cycle_numero} TERMINÉ` : 'LA SÉANCE DU JOUR'}</span>
@@ -75,6 +83,7 @@ async function accueil(racine, profil) {
     ${piedDePage()}
   `);
   chargerMiniatures(racine);
+  brancherPlateau(racine, profil);
   carteRappels(racine.querySelector('#zone-rappels'), profil);
 }
 
@@ -102,6 +111,7 @@ async function corrections(racine, profil) {
 export const ecransApp = {
   accueil, programme, nutrition, progres, live, mouvement: corrections,
   questionnaire: (racine, profil) => questionnaire(racine, profil, { modification: true }),
+  'bilan-cycle': bilanDeCycle,
   training: sectionCoaching('plan_perso', 'programme', 'MON PROGRAMME', 'Programme personnalisé'),
   bilan: sectionCoaching('bilans', 'progres', 'MON SUIVI', 'Bilans'),
   chat: sectionCoaching('messagerie', 'accueil', 'MA COACH', 'Messagerie')

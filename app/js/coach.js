@@ -19,6 +19,7 @@ import { carteRappels } from './rappels.js';
 import { programmesApp, blocProgrammeAbonnee } from './admin-programmes.js';
 import { reglagesNutrition } from './nutrition-app.js';
 import { blocSuiviAbonnee, bilansApp } from './suivi-app.js';
+import { detecterPlateau, exercicesPrincipaux } from './montee-calcul.js';
 import { FORMULES, STATUTS, formuleDe, statutDe, estApp, compteValide, accesOuvert, intervalleBilan } from './formules.js';
 
 const VERT = '#7FE0B8';
@@ -164,6 +165,17 @@ let filtreAbonnees = 'toutes';
 let rechercheAbonnees = '';
 async function abonnees(racine, profil) {
   const toutes = (await api.listEleves()).filter((e) => compteValide(e) && estApp(e));
+  // Plateau : charges des exercices principaux de son cycle en cours qui ne montent plus depuis 4 semaines
+  const enPlateau = new Set();
+  try {
+    const [profilsApp, charges] = await Promise.all([api.listProfilsApp(), api.listCharges()]);
+    const programmes = new Map();
+    for (const pa of profilsApp.filter((x) => x.programme_id)) {
+      if (!programmes.has(pa.programme_id)) programmes.set(pa.programme_id, await api.getProgrammeApp(pa.programme_id));
+      const cycle = programmes.get(pa.programme_id)?.cycles.find((c) => c.numero === (pa.cycle_numero || 1));
+      if (cycle && detecterPlateau(charges.filter((c) => c.eleve_id === pa.eleve_id), exercicesPrincipaux(cycle.seances)).plateau) enPlateau.add(pa.eleve_id);
+    }
+  } catch (e) { /* pas de badge si les données manquent */ }
   const compte = (st) => toutes.filter((e) => statutDe(e) === st).length;
   const q = rechercheAbonnees.trim().toLowerCase();
   const visibles = toutes
@@ -173,7 +185,7 @@ async function abonnees(racine, profil) {
   const couleur = { actif: VERT, resilie: ORANGE, expire: GRIS };
   const filtre = (cle, texte) => `<button class="filtre${filtreAbonnees === cle ? ' actif' : ''}" data-filtre="${cle}">${texte}</button>`;
   const lignes = visibles.map((e) => `<a href="#/coach/eleve/${esc(e.id)}" class="tableau-ligne lignes-abonnees">
-      <span class="cellule-nom">${initiale(e.prenom)}<span><strong>${esc(e.prenom)}</strong><br><span class="petit">${esc(e.email || '')}</span></span></span>
+      <span class="cellule-nom">${initiale(e.prenom)}<span><strong>${esc(e.prenom)}</strong>${enPlateau.has(e.id) ? badge('PLATEAU', ORANGE) : ''}<br><span class="petit">${esc(e.email || '')}</span></span></span>
       <span class="statut" style="color:${couleur[statutDe(e)]}">${STATUTS[statutDe(e)]}${statutDe(e) !== 'expire' && !accesOuvert(e) ? ' (fin dépassée)' : ''}</span>
       <span class="gris">${dateCourte(e.created_at)}</span>
       <span class="gris">${e.derniere_activite ? dateCourte(e.derniere_activite) : '—'}</span>
@@ -195,7 +207,8 @@ async function abonnees(racine, profil) {
       <div class="tableau-tete lignes-abonnees"><span>ABONNÉE</span><span>STATUT</span><span>INSCRIPTION</span><span>DERNIÈRE ACTIVITÉ</span><span>FIN D'ACCÈS</span><span></span></div>
       ${lignes || '<p class="vide">Aucune abonnée pour le moment. Elles apparaissent ici automatiquement après leur achat sur Systeme.io.</p>'}
     </section>
-    <p class="petit">Pour faire passer une abonnée en coaching : ouvre sa fiche et change sa formule. Elle garde tout son historique.</p>
+    <p class="petit">Pour faire passer une abonnée en coaching : ouvre sa fiche et change sa formule. Elle garde tout son historique.
+      « Plateau » : ses charges principales ne montent plus depuis 4 semaines (elle voit un message pour réserver un Audit).</p>
   `);
   racine.querySelectorAll('[data-filtre]').forEach((b) => b.addEventListener('click', () => {
     filtreAbonnees = b.dataset.filtre;

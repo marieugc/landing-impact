@@ -13,7 +13,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v16';
+const CLE_DEMO = 'bootyflow-demo-v17';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -194,8 +194,19 @@ async function demoApp() {
     d.seancesFaites = [1, 2].flatMap((semaine) => emma.map((s, i) => ({ id: id(), eleve_id: 'emma', seance_id: s.id, cycle_numero: 1, semaine,
       statut: 'faite', fait_le: dansJours(-17 + (semaine - 1) * 7 + i * 2) + 'T18:00:00.000Z' })));
     d.seancesFaites.push({ id: id(), eleve_id: 'emma', seance_id: emma[0].id, cycle_numero: 1, semaine: 3, statut: 'faite', fait_le: dansJours(-2) + 'T18:00:00.000Z' });
+    // Jade a terminé son cycle 1 (3 séances × 12 semaines, 2 séances passées) : son bilan de cycle est prêt
+    d.profilsApp.jade.debut_cycle = dansJours(-86);
+    const jade = PROGRAMMES_DEMO[0].cycles[0].seances;
+    for (let semaine = 1; semaine <= 12; semaine++) jade.forEach((s, i) => d.seancesFaites.push({ id: id(), eleve_id: 'jade', seance_id: s.id, cycle_numero: 1, semaine,
+      statut: semaine === 6 && i === 2 || semaine === 10 && i === 1 ? 'sautee' : 'faite', fait_le: dansJours(-86 + (semaine - 1) * 7 + i * 2) + 'T18:00:00.000Z' }));
+    // Charges : Emma stagne depuis 4 semaines sur ses exercices principaux (plateau), Jade a bien progressé
+    const serie = (eleve, exercice, poids, fin = -2) => poids.map((kg, i) => ({ id: id(), eleve_id: eleve, exercice, date: dansJours(fin - 7 * (poids.length - 1 - i)), poids: kg, series: 4, reps: 8, note: '' }));
+    d.charges.push(...serie('emma', 'Hip thrust', [60, 65, 70, 70, 70, 70, 70]), ...serie('emma', 'Squat', [40, 42.5, 45, 45, 45, 45, 45]),
+      ...serie('emma', 'Soulevé de terre roumain', [40, 45, 45, 45, 45, 45, 45]),
+      ...serie('jade', 'Hip thrust', [50, 55, 57.5, 60, 62.5, 65, 67.5, 70, 72.5], -3), ...serie('jade', 'Soulevé de terre roumain', [35, 37.5, 40, 42.5, 45, 47.5, 50], -3));
     // Pesées d'Emma : elle perd bien au début, puis son poids stagne (sa prochaine pesée déclenchera un ajustement)
     d.pesees = [64.2, 63.8, 63.5, 63.4].map((poids, i) => ({ id: id(), eleve_id: 'emma', date: dansJours(-28 + i * 7), poids }));
+    d.pesees.push(...[64.5, 63.9, 63.1, 62.4, 61.8].map((poids, i) => ({ id: id(), eleve_id: 'jade', date: dansJours(-88 + i * 21), poids })));
     d.ajustements = [];
     // Relevés du mois d'Emma : mensurations (sans photos en démo)
     d.releves = [[-31, 70, 99, 101, 57.5, 28.5], [-3, 68.5, 98, 101.5, 56.5, 28.5]].map(([j, tour_taille, hanches, fessiers, cuisse, bras], i) =>
@@ -204,6 +215,9 @@ async function demoApp() {
         question: i ? 'Est-ce que je descends assez bas sur les fentes bulgares ?' : null, video_exercice: i ? 'Fentes bulgares' : null, video_chemin: null,
         retour: i ? null : 'Super premier mois Emma ! Ton tour de taille va bouger, garde le cap sur les protéines.',
         retour_audio: null, retour_audio_duree: null, retour_photos: [], retour_le: i ? null : dansJours(-29) + 'T18:00:00.000Z', lu: !i }));
+    d.releves.push(...[[-86, 71, 100, 99.5, 58], [-4, 67.5, 98, 101, 56.5]].map(([j, tour_taille, hanches, fessiers, cuisse]) => ({ id: id(), eleve_id: 'jade', date: dansJours(j),
+      tour_taille, hanches, fessiers, cuisse, bras: null, photo_face: null, photo_profil: null, photo_dos: null, ressenti: null, question: null, video_exercice: null,
+      video_chemin: null, retour: null, retour_audio: null, retour_audio_duree: null, retour_photos: [], retour_le: null, lu: true })));
     ecrireDemo(d);
   }
   return d;

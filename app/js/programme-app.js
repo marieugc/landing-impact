@@ -3,6 +3,7 @@ import { api } from './data.js';
 import { esc, icone, toast, pendant, badge, dateCourte } from './ui.js';
 import { page, entete } from './eleve.js';
 import { ouvrirVideo } from './videotheque.js';
+import { plateau, encartPlateau, brancherPlateau } from './montee-app.js';
 
 export const NIVEAUX = { intermediaire: 'Intermédiaire', avancee: 'Avancée' };
 export const OBJECTIFS = { perte_de_gras: 'Perte de gras', prise_de_muscle: 'Prise de muscle' };
@@ -107,6 +108,7 @@ export async function programme(racine, profil) {
     return;
   }
   const [etat, biblio] = await Promise.all([etatProgramme(profil), api.listBibliotheque().catch(() => [])]);
+  const enPlateau = etat ? await plateau(profil, etat).catch(() => null) : null;
   if (!etat || !etat.seances.length) {
     racine.innerHTML = page(profil, 'programme', entete('MON PROGRAMME', 'Séance du jour') + '<section class="carte"><p class="texte">Ce cycle est en cours de préparation par ta coach.</p></section>');
     return;
@@ -153,9 +155,11 @@ export async function programme(racine, profil) {
     ${termine ? `<section class="carte carte-bravo">
       <div class="surtitre-carte">CYCLE ${pa.cycle_numero} TERMINÉ</div>
       <div class="titre-carte">Bravo ${esc(profil.prenom || '')}, 12 semaines bouclées !</div>
-      <p class="petit">Compare tes charges avec celles du début du cycle dans Progrès, puis passe au cycle suivant.</p>
-      <button class="bouton-principal" id="cycle-suivant">DÉBLOQUER LE CYCLE ${pa.cycle_numero + 1}</button>
+      <p class="petit">Découvre ton bilan : tes séances, tes charges et ta silhouette sur ces 12 semaines.</p>
+      <a href="#/bilan-cycle" class="bouton-principal">${icone('progres', 18)}VOIR MON BILAN DE CYCLE</a>
+      <button class="bouton-contour" id="cycle-suivant">Débloquer le cycle ${pa.cycle_numero + 1}</button>
     </section>` : ''}
+    ${encartPlateau(enPlateau)}
     <section class="carte">
       <div class="ligne-entre petit"><span>${esc(cycle.titre || `Cycle ${pa.cycle_numero}`)} · ${faites} séance${faites > 1 ? 's' : ''} sur ${total}</span><strong class="lilas">${pct} %</strong></div>
       <div class="jauge"><div style="width:${pct}%"></div></div>
@@ -179,6 +183,7 @@ export async function programme(racine, profil) {
   `);
 
   const recharger = () => programme(racine, profil);
+  brancherPlateau(racine, profil);
   racine.querySelectorAll('[data-semaine]').forEach((b) => b.addEventListener('click', () => {
     vue = { semaine: Number(b.dataset.semaine), seance: null };
     recharger();

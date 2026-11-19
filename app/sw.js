@@ -28,6 +28,8 @@ const FICHIERS = [
   './js/nutrition-app.js',
   './js/nutrition-calcul.js',
   './js/suivi-app.js',
+  './js/montee-app.js',
+  './js/montee-calcul.js',
   './js/admin-programmes.js',
   './js/app.js?v=33',
   './img/banniere.jpg',
