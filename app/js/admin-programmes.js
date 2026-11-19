@@ -153,7 +153,7 @@ async function editeurCycle(racine, profil, pid, cid) {
 
 // ───────────── Une séance : exercices + progression semaine par semaine ─────────────
 const exerciceVide = () => ({
-  nom: '', principal: false, series: 3, reps: '10-12', repos: '1 min 30', consignes: '', alternative_maison: '', video_id: null, video_lien: '', video_chemin: null,
+  nom: '', principal: false, series: 3, reps: '10-12', repos: '1 min 30', consignes: '', video_id: null, video_lien: '', video_chemin: null,
   progression: Array.from({ length: 12 }, () => ({ series: 3, reps: '10-12', charge: '' }))
 });
 
@@ -189,7 +189,6 @@ function carteExercice(ex, i, total, biblio) {
       <label>Repos<input data-champ="repos" value="${esc(ex.repos)}"></label>
     </div>
     <label>Consignes<textarea data-champ="consignes" rows="2">${esc(ex.consignes)}</textarea></label>
-    <label>Variante à la maison<input data-champ="alternative_maison" value="${esc(ex.alternative_maison)}" placeholder="Ex. : Hip thrust au sol avec sac lesté"></label>
     <label class="case"><input type="checkbox" data-champ="principal"${ex.principal ? ' checked' : ''}><span>Exercice principal (suivi de progression et détection de plateau)</span></label>
     <details class="progression">
       <summary>Progression semaine par semaine</summary>
@@ -218,7 +217,7 @@ function lireExercices(zone) {
       nom: champ('nom').value.trim(), video_id: champ('video_id').value || null,
       video_chemin: champ('video_chemin').value || null, video_lien: champ('video_lien').value.trim(),
       series: Number(champ('series').value) || null, reps: champ('reps').value.trim(), repos: champ('repos').value.trim(),
-      consignes: champ('consignes').value.trim(), alternative_maison: champ('alternative_maison').value.trim(),
+      consignes: champ('consignes').value.trim(),
       principal: champ('principal').checked, progression
     };
   });

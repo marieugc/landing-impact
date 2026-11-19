@@ -41,7 +41,7 @@ export async function questionnaire(racine, profil, { modification = false } = {
         ${choix('seances_semaine', { 3: ['3 séances', ''], 4: ['4 séances', ''] }, r.seances_semaine)}
       </section>
       <section class="carte"><div class="surtitre-carte">OÙ T'ENTRAÎNES-TU ?</div>
-        ${choix('lieu', { salle: ['En salle', ''], maison: ['À la maison', 'Variantes avec élastiques, haltères ou sac lesté'] }, r.lieu)}
+        ${choix('lieu', { salle: ['En salle', ''], maison: ['À la maison', ''] }, r.lieu)}
       </section>
       <section class="carte"><div class="surtitre-carte">TON OBJECTIF</div>
         ${choix('objectif', { perte_de_gras: ['Perte de gras', 'Affiner et dessiner ta silhouette'], prise_de_muscle: ['Prise de muscle', 'Développer tes fessiers et ta masse musculaire'] }, r.objectif)}
@@ -123,7 +123,6 @@ export async function programme(racine, profil) {
   const future = semaine > semaineEnCours;
   const pct = Math.round((faites / Math.max(1, total)) * 100);
   const consigneSemaine = cycle.semaines?.find((x) => x.numero === semaine)?.consigne;
-  const maison = pa.lieu === 'maison';
 
   const videos = (seance.exercices || []).map((ex) => videoDe(ex, biblio));
   const exercices = (seance.exercices || []).map((ex, i) => {
@@ -131,8 +130,7 @@ export async function programme(racine, profil) {
     const video = videos[i];
     return `<li class="exercice">
       <div class="exercice-tete"><span class="numero">${i + 1}</span>
-        <div><strong>${esc(maison && ex.alternative_maison ? ex.alternative_maison : ex.nom)}</strong>
-          ${maison && ex.alternative_maison ? `<div class="petit">Variante maison de : ${esc(ex.nom)}</div>` : ''}</div>
+        <div><strong>${esc(ex.nom)}</strong></div>
         ${ex.principal ? badge('PRINCIPAL') : ''}</div>
       <div class="exercice-chiffres">
         <span><b>${esc(p.series || ex.series || '—')}</b> séries</span>
@@ -141,7 +139,6 @@ export async function programme(racine, profil) {
       </div>
       ${p.charge ? `<p class="exercice-charge">${icone('haltere', 16, 'var(--accent)')}<span>${esc(p.charge)}</span></p>` : ''}
       ${ex.consignes ? `<p class="petit">${esc(ex.consignes)}</p>` : ''}
-      ${!maison && ex.alternative_maison ? `<details class="petit"><summary>Variante à la maison</summary>${esc(ex.alternative_maison)}</details>` : ''}
       ${video ? `<button class="bouton-contour compact" data-video="${i}">${icone('lecture', 16)}Voir la vidéo</button>` : ''}
     </li>`;
   }).join('');
