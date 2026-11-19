@@ -13,7 +13,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v13';
+const CLE_DEMO = 'bootyflow-demo-v14';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -197,6 +197,9 @@ async function demoApp() {
     // Pesées d'Emma : elle perd bien au début, puis son poids stagne (sa prochaine pesée déclenchera un ajustement)
     d.pesees = [64.2, 63.8, 63.5, 63.4].map((poids, i) => ({ id: id(), eleve_id: 'emma', date: dansJours(-28 + i * 7), poids }));
     d.ajustements = [];
+    // Relevés du mois d'Emma : mensurations (sans photos en démo)
+    d.releves = [[-31, 70, 99, 101, 57.5, 28.5], [-3, 68.5, 98, 101.5, 56.5, 28.5]].map(([j, tour_taille, hanches, fessiers, cuisse, bras]) =>
+      ({ id: id(), eleve_id: 'emma', date: dansJours(j), tour_taille, hanches, fessiers, cuisse, bras, photo_face: null, photo_profil: null, photo_dos: null }));
     ecrireDemo(d);
   }
   return d;
@@ -387,6 +390,22 @@ const demo = {
     }
     ecrireDemo(d);
     return r;
+  },
+  async listReleves(uid) {
+    return ((await demoApp()).releves || []).filter((r) => r.eleve_id === uid).sort((a, b) => a.date.localeCompare(b.date));
+  },
+  async addReleve(mesures, photos = {}) {
+    const d = await demoApp();
+    d.releves ??= [];
+    const uid = localStorage.getItem(CLE_SESSION);
+    d.releves.push({ id: id(), eleve_id: uid, date: aujourdhui(), ...mesures,
+      photo_face: garderFichier(photos.face), photo_profil: garderFichier(photos.profil), photo_dos: garderFichier(photos.dos) });
+    ecrireDemo(d);
+  },
+  async supprimerReleve(rid) {
+    const d = await demoApp();
+    d.releves = (d.releves || []).filter((r) => r.id !== rid);
+    ecrireDemo(d);
   },
   async supprimerPesee(pid) {
     const d = await demoApp();
@@ -827,6 +846,18 @@ const reel = {
     return verifier(await (await client()).rpc('enregistrer_pesee', date ? { p_poids: poids, p_date: date } : { p_poids: poids }));
   },
   async supprimerPesee(pid) { verifier(await (await client()).from('pesees_app').delete().eq('id', pid)); },
+  // Relevé du mois : mensurations + photos (rangées dans le dossier de l'abonnée)
+  async listReleves(uid) {
+    const { data, error } = await (await client()).from('releves_app').select('*').eq('eleve_id', uid).order('date');
+    return error ? [] : data;
+  },
+  async addReleve(mesures, photos = {}) {
+    const uid = (await reel.getSession())?.userId;
+    const ligne = { ...mesures, eleve_id: uid };
+    for (const cote of ['face', 'profil', 'dos']) ligne[`photo_${cote}`] = await envoyerFichier(uid, 'suivi', photos[cote]);
+    verifier(await (await client()).from('releves_app').insert(ligne));
+  },
+  async supprimerReleve(rid) { verifier(await (await client()).from('releves_app').delete().eq('id', rid)); },
   async ajusterGlucidesCoach(uid, total, raison) {
     const sb = await client();
     const pa = verifier(await sb.from('profils_app').select('ajustement_glucides').eq('eleve_id', uid).single());

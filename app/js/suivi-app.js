@@ -1,6 +1,6 @@
 // BOOTY FLOW APP — pesée de la semaine, courbe de poids et ajustement automatique du plan alimentaire.
 import { api } from './data.js';
-import { esc, icone, toast, pendant, dateCourte, nombre, courbe, joursAvant } from './ui.js';
+import { esc, icone, toast, pendant, dateCourte, nombre, courbe, joursAvant, fenetre, fermerFenetre, compresserImage, ecart } from './ui.js';
 import { page, entete, blocCharges } from './eleve.js';
 import { encartCoaching } from './formules.js';
 
@@ -35,8 +35,71 @@ export function peseeAFaire(pesees) {
   return !derniere || joursAvant(derniere.date) <= -7;
 }
 
+// ───────────── Relevé du mois : mensurations + photos ─────────────
+export const MESURES = [['tour_taille', 'Tour de taille'], ['hanches', 'Hanches'], ['fessiers', 'Fessiers'], ['cuisse', 'Cuisse'], ['bras', 'Bras']];
+const COTES = [['face', 'Face'], ['profil', 'Profil'], ['dos', 'Dos']];
+export const JOURS_ENTRE_RELEVES = 28;
+export function releveAFaire(releves) {
+  const dernier = releves[releves.length - 1];
+  return !dernier || joursAvant(dernier.date) <= -JOURS_ENTRE_RELEVES;
+}
+const plusJoursIso = (d, n) => { const x = new Date(`${d}T12:00:00`); x.setDate(x.getDate() + n); return x.toISOString().slice(0, 10); };
+
+// Mensurations : dernière valeur et évolution depuis le premier relevé
+function grilleMesures(releves) {
+  return `<div class="grille-mesures">${MESURES.map(([cle, nom]) => {
+    // Dernière valeur mesurée (un relevé peut laisser une mesure vide) et première valeur
+    const avec = releves.filter((r) => r[cle] != null);
+    const v = avec[avec.length - 1]?.[cle], depart = avec[0]?.[cle];
+    const diff = v != null && avec.length > 1 ? Math.round((v - depart) * 10) / 10 : null;
+    return `<div class="mesure-app"><span class="petit">${nom}</span><strong>${v != null ? `${nombre(v)} cm` : '—'}</strong>
+      ${diff !== null ? `<small class="${diff < 0 ? 'baisse' : diff > 0 ? 'hausse' : ''}">${diff === 0 ? 'stable' : `${ecart(diff)} cm`}</small>` : ''}</div>`;
+  }).join('')}</div>`;
+}
+
+// Photos avant / après : premier et dernier relevé qui ont la photo
+function avantApres(releves, cote) {
+  const avec = releves.filter((r) => r[`photo_${cote}`]);
+  if (!avec.length) return '<p class="petit">Ajoute tes photos à ton prochain relevé pour voir ton avant / après.</p>';
+  const avant = avec[0], apres = avec[avec.length - 1];
+  const fig = (r, titre) => `<figure class="photo"><div class="photo-cadre" data-media="${esc(r[`photo_${cote}`])}">Photo</div><figcaption>${titre} · ${dateCourte(r.date)}</figcaption></figure>`;
+  return `<div class="grille-2">${fig(avant, 'Avant')}${avant === apres ? '' : fig(apres, 'Maintenant')}</div>`;
+}
+export async function chargerMedias(zone) {
+  for (const el of zone.querySelectorAll('[data-media]')) {
+    const url = await api.mediaUrl(el.dataset.media);
+    if (url) el.innerHTML = `<img src="${esc(url)}" alt="" loading="lazy">`;
+    else el.textContent = 'Photo (démo)';
+  }
+}
+
+function formulaireReleve(apres) {
+  const f = fenetre('Mon relevé du mois', `<form class="formulaire" id="form-releve">
+    <p class="petit">Mesure-toi au mètre ruban, le matin, au même endroit à chaque fois. Laisse vide ce que tu ne mesures pas.</p>
+    <div class="grille-2">${MESURES.map(([cle, nom]) => `<label>${nom}<span class="avec-unite"><input name="${cle}" type="number" inputmode="decimal" step="0.5" min="10" max="200"><em>cm</em></span></label>`).join('')}</div>
+    <div class="surtitre-carte">MES PHOTOS (FACULTATIF)</div>
+    <p class="petit">Même lumière, même tenue, téléphone à hauteur de taille. Elles ne sont visibles que par toi et ta coach.</p>
+    <div class="grille-3">${COTES.map(([cle, nom]) => `<label class="choix-photo">${icone('photo', 22, 'var(--accent)')}<span>${nom}</span><input type="file" name="${cle}" accept="image/*"></label>`).join('')}</div>
+    <button class="bouton-principal" type="submit">${icone('check', 18)}ENREGISTRER MON RELEVÉ</button>
+  </form>`);
+  f.querySelectorAll('.choix-photo input').forEach((x) => x.addEventListener('change', () => x.parentElement.classList.toggle('choisie', x.files.length > 0)));
+  f.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const d = new FormData(e.target);
+    const mesures = Object.fromEntries(MESURES.map(([cle]) => [cle, d.get(cle) === '' ? null : Number(String(d.get(cle)).replace(',', '.'))]));
+    const photos = {};
+    for (const [cle] of COTES) if (d.get(cle)?.size) photos[cle] = await compresserImage(d.get(cle));
+    if (Object.values(mesures).every((v) => v === null) && !Object.keys(photos).length) { toast('Ajoute au moins une mesure ou une photo.', true); return; }
+    await pendant(e.submitter, 'Envoi…', () => api.addReleve(mesures, photos));
+    fermerFenetre();
+    toast('Relevé enregistré, bravo !');
+    apres();
+  });
+}
+
 export async function progresAbonnee(racine, profil) {
-  const [pesees, ajustements, reglages] = await Promise.all([api.listPesees(profil.id), api.listAjustements(profil.id), api.getNutritionApp()]);
+  const [pesees, ajustements, reglages, releves] = await Promise.all([api.listPesees(profil.id), api.listAjustements(profil.id), api.getNutritionApp(), api.listReleves(profil.id)]);
+  const aFaire = releveAFaire(releves);
   const vmax = Number(reglages.coefficients?.vitesse_max_kg_semaine ?? 0.5), stagnation = Number(reglages.coefficients?.seuil_stagnation_kg_semaine ?? 0.1);
   const pa = profil.app || {};
   const derniere = pesees[pesees.length - 1];
@@ -66,6 +129,15 @@ export async function progresAbonnee(racine, profil) {
       ${courbe(pesees.map((p) => ({ valeur: p.poids, date: p.date })), { vide: 'La courbe apparaîtra après ta deuxième pesée.' })}
       ${vitesse !== null ? `<p class="petit">Rythme de la dernière semaine : <strong>${signe(vitesse, 2)} kg</strong>
         ${rythme === 'idéal' ? '· parfait, continue comme ça !' : rythme === 'trop rapide' ? `· un peu trop rapide (objectif : pas plus de ${nombre(vmax * 1000, 0)} g ${perte ? 'perdus' : 'pris'} par semaine)` : `· ton poids ne bouge pas`}</p>` : ''}
+    </section>
+    <section class="carte${aFaire ? ' releve-du' : ''}">
+      <div class="ligne-entre"><div class="surtitre-carte">MON RELEVÉ DU MOIS</div>
+        <span class="petit">${releves.length ? (aFaire ? 'À faire' : `Prochain le ${dateCourte(plusJoursIso(releves[releves.length - 1].date, JOURS_ENTRE_RELEVES))}`) : ''}</span></div>
+      ${releves.length ? grilleMesures(releves) : '<p class="petit">Tes mensurations et tes photos, une fois par mois : la meilleure façon de voir tes fessiers et ta silhouette changer.</p>'}
+      ${releves.some((r) => r.tour_taille != null) && releves.length > 1 ? `<div class="petit">Tour de taille</div>${courbe(releves.filter((r) => r.tour_taille != null).map((r) => ({ valeur: r.tour_taille })), { libelle: 'Évolution du tour de taille', unite: 'cm', hauteur: 80 })}` : ''}
+      ${releves.length ? `<nav class="segments" aria-label="Photos avant / après">${COTES.map(([cle, nom], i) => `<button class="segment${i === 0 ? ' actif' : ''}" data-cote="${cle}">${nom}</button>`).join('')}</nav>
+        <div id="avant-apres">${avantApres(releves, 'face')}</div>` : ''}
+      <button class="${aFaire ? 'bouton-principal' : 'bouton-contour'}" id="nouveau-releve">${icone(aFaire ? 'plus' : 'photo', 18)}${aFaire ? 'FAIRE MON RELEVÉ DU MOIS' : 'Ajouter un relevé'}</button>
     </section>
     <section class="carte">
       <div class="surtitre-carte">MON PLAN ALIMENTAIRE</div>
@@ -97,12 +169,20 @@ export async function progresAbonnee(racine, profil) {
     await api.supprimerPesee(b.dataset.supprimer);
     progresAbonnee(racine, profil);
   }));
+  racine.querySelector('#nouveau-releve').addEventListener('click', () => formulaireReleve(() => progresAbonnee(racine, profil)));
+  racine.querySelectorAll('[data-cote]').forEach((b) => b.addEventListener('click', () => {
+    racine.querySelectorAll('[data-cote]').forEach((x) => x.classList.toggle('actif', x === b));
+    const zone = racine.querySelector('#avant-apres');
+    zone.innerHTML = avantApres(releves, b.dataset.cote);
+    chargerMedias(zone);
+  }));
+  chargerMedias(racine);
   await blocCharges(racine.querySelector('#charges'), profil.id, true);
 }
 
 // ───────────── Fiche coach d'une abonnée : poids et ajustement ─────────────
 export async function blocSuiviAbonnee(zone, e) {
-  const [pesees, ajustements, pa, reglages] = await Promise.all([api.listPesees(e.id), api.listAjustements(e.id), api.getProfilApp(e.id), api.getNutritionApp()]);
+  const [pesees, ajustements, pa, reglages, releves] = await Promise.all([api.listPesees(e.id), api.listAjustements(e.id), api.getProfilApp(e.id), api.getNutritionApp(), api.listReleves(e.id)]);
   if (!pa?.complete_le) { zone.innerHTML = ''; return; }
   const palier = Number(reglages.coefficients?.palier_glucides_g ?? 30), maxi = Number(reglages.coefficients?.ajustement_max_g ?? 150);
   const vitesse = vitesseRecente(pesees);
@@ -124,7 +204,16 @@ export async function blocSuiviAbonnee(zone, e) {
       <button class="bouton-contour compact" type="submit">Appliquer</button>
     </form>
     <p class="petit">L'ajustement automatique continue ensuite à partir de la valeur que tu choisis.</p>
+  </section>
+  <section class="carte large">
+    <div class="surtitre-carte">RELEVÉS DU MOIS (${releves.length})</div>
+    ${releves.length ? `${grilleMesures(releves)}
+      <div class="tableau-releves"><div class="ligne-releve tete"><span>Date</span>${MESURES.map(([, n]) => `<span>${n}</span>`).join('')}</div>
+      ${[...releves].reverse().map((r) => `<div class="ligne-releve"><span>${dateCourte(r.date)}</span>${MESURES.map(([c]) => `<span>${r[c] != null ? nombre(r[c]) : '—'}</span>`).join('')}</div>`).join('')}</div>
+      ${COTES.map(([cle, nom]) => releves.some((r) => r[`photo_${cle}`]) ? `<div class="petit">${nom}</div>${avantApres(releves, cle)}` : '').join('')}`
+    : '<p class="petit">Pas encore de relevé.</p>'}
   </section>`;
+  chargerMedias(zone);
   zone.querySelector('#form-ajustement').addEventListener('submit', async (ev) => {
     ev.preventDefault();
     const total = Number(new FormData(ev.target).get('total'));

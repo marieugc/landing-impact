@@ -119,3 +119,29 @@ update public.nutrition_app set coefficients = '{
   "ajustement_auto": true, "vitesse_max_kg_semaine": 0.5, "seuil_stagnation_kg_semaine": 0.1,
   "palier_glucides_g": 30, "ajustement_max_g": 150, "delai_ajustement_jours": 7
 }'::jsonb || coefficients where id = 1;
+
+-- ─── Relevé du mois : mensurations + 3 photos (face, profil, dos), rappel toutes les 4 semaines ───
+create table if not exists public.releves_app (
+  id uuid primary key default gen_random_uuid(),
+  eleve_id uuid not null default auth.uid() references public.profiles on delete cascade,
+  date date not null default current_date,
+  tour_taille numeric check (tour_taille between 30 and 200),
+  hanches numeric check (hanches between 30 and 200),
+  fessiers numeric check (fessiers between 30 and 200),
+  cuisse numeric check (cuisse between 20 and 120),
+  bras numeric check (bras between 10 and 80),
+  photo_face text,
+  photo_profil text,
+  photo_dos text,
+  created_at timestamptz not null default now()
+);
+create index if not exists releves_app_eleve on public.releves_app (eleve_id, date);
+alter table public.releves_app enable row level security;
+drop policy if exists "releves lecture" on public.releves_app;
+create policy "releves lecture" on public.releves_app for select using (public.est_coach() or eleve_id = auth.uid());
+drop policy if exists "releves ajout" on public.releves_app;
+create policy "releves ajout" on public.releves_app for insert with check (eleve_id = auth.uid() and public.acces_app());
+drop policy if exists "releves suppression" on public.releves_app;
+create policy "releves suppression" on public.releves_app for delete using (eleve_id = auth.uid() and public.acces_app());
+drop policy if exists "releves coach" on public.releves_app;
+create policy "releves coach" on public.releves_app for all using (public.est_coach()) with check (public.est_coach());
