@@ -246,7 +246,13 @@ async function editeurSeance(racine, profil, pid, cid, sid) {
         </div>
       </form>`);
     const form = racine.querySelector('#form-seance');
-    const garder = () => { exercices = lireExercices(form); };
+    // Garde tout ce qui a été saisi (nom, ordre, description et exercices) avant de redessiner la page
+    const garder = () => {
+      exercices = lireExercices(form);
+      s.nom = form.elements.nom.value;
+      s.ordre = Number(form.elements.ordre.value) || 1;
+      s.description = form.elements.description.value;
+    };
     form.querySelector('#ajouter').addEventListener('click', () => { garder(); exercices.push(exerciceVide()); dessiner(); });
     form.querySelectorAll('[data-retirer]').forEach((b) => b.addEventListener('click', () => {
       garder();
