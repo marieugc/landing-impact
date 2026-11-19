@@ -53,3 +53,24 @@ test('journée type : quantités rondes, proche de la cible, poids cuit / cru in
   const riz = journeeType(b.training, REGLAGES_DEFAUT.journees.training).repas[1].items.find((x) => x.aliment.id === 'riz');
   assert.match(libelleQuantite(riz), /poids cuit/);
 });
+
+test('structure Booty Flow : pancake, avant / après l\'entraînement, 2 g/kg de protéines', () => {
+  for (const profil of [camille, { ...camille, poids: 75, objectif: 'prise_de_muscle', seances_semaine: 3 }]) {
+    const b = besoins(profil);
+    const j = journeeType(b.training, REGLAGES_DEFAUT.journees.training, REGLAGES_DEFAUT.aliments);
+    const repas = (debut) => j.repas.find((r) => r.nom.startsWith(debut));
+    const ids = (r) => r.items.map((x) => x.aliment.id);
+    assert.deepEqual(j.repas.map((r) => r.nom.split(' (')[0]), ['Petit-déjeuner', 'Déjeuner', 'Collation', 'Avant l\'entraînement', 'Après l\'entraînement', 'Dîner']);
+    assert.deepEqual(ids(repas('Petit-déjeuner')), ['oeuf', 'sarrasin']);
+    assert.match(libelleQuantite(repas('Petit-déjeuner').items[1]), /farine de sarrasin ou \d+ g de crème de riz/);
+    assert.deepEqual(ids(repas('Avant')), ['creme_riz', 'banane']);
+    assert.ok(repas('Avant').items[0].quantite >= 20, 'assez de crème de riz avant la séance');
+    assert.deepEqual(ids(repas('Après')), ['whey_iso', 'compote']);
+    // Protéines de la journée : 2 g/kg (à 3 % près, arrondis compris)
+    const cible = profil.poids * 2;
+    assert.ok(Math.abs(j.total.proteines - cible) / cible <= 0.03, `protéines ${j.total.proteines} pour ${cible}`);
+    const off = journeeType(b.off, REGLAGES_DEFAUT.journees.off, REGLAGES_DEFAUT.aliments);
+    assert.deepEqual(off.repas.map((r) => r.nom.split(' (')[0]), ['Petit-déjeuner', 'Déjeuner', 'Collation', 'Dîner']);
+    assert.ok(Math.abs(off.total.proteines - cible) / cible <= 0.03, `protéines off ${off.total.proteines} pour ${cible}`);
+  }
+});

@@ -159,15 +159,19 @@ function htmlRepas(r, i, aliments) {
   return `<fieldset class="carte-exercice repas-modele" data-repas="${i}">
     <div class="ligne-entre"><legend class="surtitre-carte">REPAS ${i + 1}</legend>
       <button type="button" class="bouton-rond" data-retirer-repas="${i}" aria-label="Supprimer le repas">${icone('poubelle', 16)}</button></div>
-    <div class="grille-3">
+    <div class="grille-2">
       <label>Nom<input data-r="nom" value="${esc(r.nom)}" required></label>
       <label>Heure<input data-r="heure" value="${esc(r.heure || '')}"></label>
+    </div>
+    <div class="grille-2">
       <label>Part de la journée<span class="avec-unite"><input data-r="part" type="number" min="0" max="100" value="${esc(r.part)}"><em>%</em></span></label>
+      <label>Part des glucides (facultatif)<span class="avec-unite"><input data-r="part_glucides" type="number" min="0" max="100" value="${esc(r.part_glucides ?? '')}" placeholder="idem"><em>%</em></span></label>
     </div>
     ${(r.aliments || []).map((x, k) => `<div class="ligne-aliment" data-aliment="${k}">
       <select data-a="aliment" aria-label="Aliment">${aliments.map((a) => `<option value="${esc(a.id)}"${a.id === x.aliment ? ' selected' : ''}>${esc(a.nom)}${a.etat ? ` (${a.etat})` : ''}</option>`).join('')}</select>
       <select data-a="role" aria-label="Rôle">${Object.entries(ROLES).map(([v, t]) => `<option value="${v}"${v === x.role ? ' selected' : ''}>${t}</option>`).join('')}</select>
-      <input data-a="quantite" type="number" min="0" value="${esc(x.quantite ?? '')}" placeholder="Qté fixe" aria-label="Quantité fixe"${x.role === 'fixe' ? '' : ' disabled'}>
+      <input data-a="quantite" type="number" min="0" value="${esc(x.quantite ?? '')}" placeholder="Qté fixe" aria-label="Quantité fixe (g, ou nombre pour un aliment à l'unité)"${x.role === 'fixe' ? '' : ' disabled'}>
+      <select data-a="ou" aria-label="Ou (alternative)"><option value="">Pas d'alternative</option>${aliments.filter((a) => a.id !== x.aliment).map((a) => `<option value="${esc(a.id)}"${(x.ou || [])[0] === a.id ? ' selected' : ''}>ou ${esc(a.nom)}</option>`).join('')}</select>
       <button type="button" class="bouton-rond" data-retirer-aliment="${i}:${k}" aria-label="Retirer">${icone('croix', 14)}</button>
     </div>`).join('')}
     <button type="button" class="lien" data-ajouter-aliment="${i}">+ Ajouter un aliment</button>
@@ -177,9 +181,12 @@ function lireRepas(zone) {
   return [...zone.querySelectorAll('.repas-modele')].map((f) => ({
     nom: f.querySelector('[data-r="nom"]').value.trim(), heure: f.querySelector('[data-r="heure"]').value.trim(),
     part: Number(f.querySelector('[data-r="part"]').value) || 0,
+    ...(f.querySelector('[data-r="part_glucides"]').value !== '' ? { part_glucides: Number(f.querySelector('[data-r="part_glucides"]').value) } : {}),
     aliments: [...f.querySelectorAll('.ligne-aliment')].map((l) => {
       const role = l.querySelector('[data-a="role"]').value;
-      return { aliment: l.querySelector('[data-a="aliment"]').value, role, ...(role === 'fixe' ? { quantite: Number(l.querySelector('[data-a="quantite"]').value) || 0 } : {}) };
+      const ou = l.querySelector('[data-a="ou"]').value;
+      return { aliment: l.querySelector('[data-a="aliment"]').value, role, ...(ou ? { ou: [ou] } : {}),
+        ...(role === 'fixe' ? { quantite: Number(l.querySelector('[data-a="quantite"]').value) || 0 } : {}) };
     })
   }));
 }
@@ -189,6 +196,7 @@ async function ongletJournees(zone, reglages) {
   let repas = structuredClone(reglages.journees?.[typeJournee] || []);
   const dessiner = () => {
     const parts = repas.reduce((t, r) => t + (Number(r.part) || 0), 0);
+    const partsG = repas.reduce((t, r) => t + (r.part_glucides === undefined || r.part_glucides === '' ? Number(r.part) || 0 : Number(r.part_glucides) || 0), 0);
     zone.innerHTML = `<nav class="segments court" aria-label="Type de journée">${Object.entries(TYPES).map(([t, nom]) =>
       `<button class="segment${t === typeJournee ? ' actif' : ''}" data-type-journee="${t}">${nom}</button>`).join('')}</nav>
       <div class="deux-colonnes">
@@ -196,7 +204,9 @@ async function ongletJournees(zone, reglages) {
           <p class="petit">Pour chaque repas : sa part de la journée, puis ses aliments. Les sources de protéines, glucides et lipides
             sont calculées pour chaque abonnée, puis arrondies (chiffres ronds). Les aliments « Quantité fixe » gardent la quantité indiquée.</p>
           ${repas.map((r, i) => htmlRepas(r, i, aliments)).join('')}
-          <p class="petit">Total des parts : <strong class="${parts === 100 ? '' : 'alerte'}">${parts} %</strong>${parts === 100 ? '' : ' (idéalement 100 %)'}</p>
+          <p class="petit">Total des parts : <strong class="${parts === 100 ? '' : 'alerte'}">${parts} %</strong>${parts === 100 ? '' : ' (idéalement 100 %)'}
+            · glucides : <strong class="${partsG === 100 ? '' : 'alerte'}">${partsG} %</strong>.
+            « Part des glucides » : pour un repas surtout glucidique (avant l'entraînement). « ou » : l'abonnée voit aussi la quantité équivalente d'un autre aliment.</p>
           <button type="button" class="bouton-contour" id="ajouter-repas">${icone('plus', 18)}Ajouter un repas</button>
           <div class="barre-enregistrer"><button class="bouton-principal" type="submit">ENREGISTRER LA JOURNÉE ${TYPES[typeJournee].toUpperCase()}</button></div>
         </form>
@@ -254,7 +264,7 @@ async function ongletAliments(zone, reglages, recharger) {
   let aliments = structuredClone(reglages.aliments || []);
   const ligne = (a, i) => `<div class="ligne-aliment-table" data-i="${i}">
     <input data-k="nom" value="${esc(a.nom)}" aria-label="Nom" required>
-    <select data-k="etat" aria-label="Poids">${[['', '—'], ['cru', 'cru'], ['cuit', 'cuit']].map(([v, t]) => `<option value="${v}"${(a.etat || '') === v ? ' selected' : ''}>${t}</option>`).join('')}</select>
+    <select data-k="etat" aria-label="Poids">${[['', '—'], ['cru', 'cru'], ['cuit', 'cuit'], ['sec', 'sec']].map(([v, t]) => `<option value="${v}"${(a.etat || '') === v ? ' selected' : ''}>${t}</option>`).join('')}</select>
     <select data-k="categorie" aria-label="Famille">${Object.entries(CATEGORIES_ALIMENTS).map(([v, t]) => `<option value="${v}"${a.categorie === v ? ' selected' : ''}>${t}</option>`).join('')}</select>
     ${['kcal', 'proteines', 'glucides', 'lipides'].map((k) => `<input data-k="${k}" type="number" step="0.1" min="0" value="${esc(a[k])}" aria-label="${k}">`).join('')}
     <input data-k="pas" type="number" min="1" value="${esc(a.pas || 50)}" aria-label="Arrondi">
