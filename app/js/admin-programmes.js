@@ -319,7 +319,7 @@ export async function blocProgrammeAbonnee(zone, e) {
   zone.innerHTML = pa?.complete_le ? `<form class="formulaire carte large" id="form-programme-abonnee">
       <div class="surtitre-carte">QUESTIONNAIRE ET PROGRAMME</div>
       <p class="petit">${pa.age} ans · ${pa.taille} cm · ${pa.poids_depart} kg au départ · ${esc(NIVEAUX[pa.niveau] || '')} · ${pa.seances_semaine} séances
-        · ${pa.lieu === 'maison' ? 'à la maison' : 'en salle'} · ${esc(OBJ[pa.objectif] || '')}</p>
+        · ${esc(OBJ[pa.objectif] || '')}</p>
       <div class="grille-2">
         <label>Programme<select name="programme_id"><option value="">Aucun</option>
           ${programmes.map((p) => `<option value="${esc(p.id)}"${p.id === pa.programme_id ? ' selected' : ''}>${esc(p.nom)}</option>`).join('')}</select></label>

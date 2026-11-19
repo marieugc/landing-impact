@@ -5,7 +5,6 @@ import { page, entete } from './eleve.js';
 import { ouvrirVideo } from './videotheque.js';
 
 export const NIVEAUX = { intermediaire: 'Intermédiaire', avancee: 'Avancée' };
-export const LIEUX = { salle: 'En salle', maison: 'À la maison' };
 export const OBJECTIFS = { perte_de_gras: 'Perte de gras', prise_de_muscle: 'Prise de muscle' };
 
 // ───────────── Questionnaire ─────────────
@@ -40,9 +39,6 @@ export async function questionnaire(racine, profil, { modification = false } = {
       <section class="carte"><div class="surtitre-carte">SÉANCES PAR SEMAINE</div>
         ${choix('seances_semaine', { 3: ['3 séances', ''], 4: ['4 séances', ''] }, r.seances_semaine)}
       </section>
-      <section class="carte"><div class="surtitre-carte">OÙ T'ENTRAÎNES-TU ?</div>
-        ${choix('lieu', { salle: ['En salle', ''], maison: ['À la maison', ''] }, r.lieu)}
-      </section>
       <section class="carte"><div class="surtitre-carte">TON OBJECTIF</div>
         ${choix('objectif', { perte_de_gras: ['Perte de gras', 'Affiner et dessiner ta silhouette'], prise_de_muscle: ['Prise de muscle', 'Développer tes fessiers et ta masse musculaire'] }, r.objectif)}
       </section>
@@ -55,7 +51,7 @@ export async function questionnaire(racine, profil, { modification = false } = {
     const d = new FormData(e.target);
     const reponses = {
       prenom: d.get('prenom').trim(), age: Number(d.get('age')), taille: Number(d.get('taille')), poids: Number(d.get('poids')),
-      niveau: d.get('niveau'), seances_semaine: Number(d.get('seances_semaine')), lieu: d.get('lieu'), objectif: d.get('objectif')
+      niveau: d.get('niveau'), seances_semaine: Number(d.get('seances_semaine')), lieu: 'salle', objectif: d.get('objectif') // toujours en salle
     };
     profil.app = await pendant(e.submitter, 'Enregistrement…', () => api.terminerQuestionnaire(reponses));
     profil.prenom = reponses.prenom;
