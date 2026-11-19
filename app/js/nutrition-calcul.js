@@ -1,0 +1,291 @@
+// CALCULATEUR NUTRITION « BOOTY FLOW APP » : besoins (kcal, protéines, glucides, lipides) et journées types.
+// Aucun chiffre n'est codé en dur ailleurs : tout vient des réglages de la coach (espace coach › Nutrition App),
+// et REGLAGES_DEFAUT ne sert que de point de départ (mêmes valeurs que supabase/nutrition-app.sql).
+
+export const REGLAGES_DEFAUT = {
+  coefficients: {
+    // Dépense de base : formule de Mifflin-St Jeor (femme) = 10 × poids + 6,25 × taille − 5 × âge − 161
+    mifflin_constante: -161,
+    // Multiplicateur d'activité selon le nombre de séances par semaine
+    activite_3_seances: 1.45,
+    activite_4_seances: 1.55,
+    // Objectif : écart par rapport à la dépense (kcal / jour, en moyenne sur la semaine)
+    deficit_perte_de_gras: 500,
+    surplus_prise_de_muscle: 500,
+    // Macros
+    proteines_g_kg: 2,
+    lipides_g_kg: 0.9,
+    // Les jours d'entraînement reçoivent ce supplément (en glucides) ; les jours off sont baissés d'autant
+    // sur la semaine, pour garder la même moyenne
+    bonus_jour_training_kcal: 150,
+    // Garde-fous
+    kcal_minimum: 1200,
+    glucides_minimum_g: 50,
+    // Ajustement automatique selon la pesée de la semaine (glucides seulement)
+    ajustement_auto: true,
+    vitesse_max_kg_semaine: 0.5,       // perte ou prise maximum par semaine
+    seuil_stagnation_kg_semaine: 0.1,  // en dessous : « le poids ne bouge pas »
+    palier_glucides_g: 30,             // ≈ 100 g de riz cuit par jour
+    ajustement_max_g: 150,             // ajustement total maximum (en plus ou en moins)
+    delai_ajustement_jours: 7          // au plus un ajustement par semaine
+  },
+  // Valeurs pour 100 g (poids indiqué : cru ou cuit). pas = arrondi des quantités ; min / max = portion minimum / maximum par repas
+  // (en g, ou en unités pour un aliment compté à l'unité) ; unite = « g » ou un mot (œuf, banane)
+  aliments: [
+    { id: 'poulet', nom: 'Blanc de poulet', etat: 'cru', categorie: 'proteine', kcal: 110, proteines: 23, glucides: 0, lipides: 1.5, min: 50, max: 200, pas: 50 },
+    { id: 'dinde', nom: 'Escalope de dinde', etat: 'cru', categorie: 'proteine', kcal: 107, proteines: 23, glucides: 0, lipides: 1.5, min: 50, max: 200, pas: 50 },
+    { id: 'boeuf5', nom: 'Bœuf haché 5 %', etat: 'cru', categorie: 'proteine', kcal: 125, proteines: 21, glucides: 0, lipides: 5, min: 100, max: 200, pas: 50 },
+    { id: 'saumon', nom: 'Saumon', etat: 'cru', categorie: 'proteine', kcal: 200, proteines: 20, glucides: 0, lipides: 13, min: 100, max: 200, pas: 50 },
+    { id: 'cabillaud', nom: 'Cabillaud', etat: 'cru', categorie: 'proteine', kcal: 80, proteines: 18, glucides: 0, lipides: 0.7, min: 100, max: 250, pas: 50 },
+    { id: 'oeuf', nom: 'Œuf', etat: '', categorie: 'proteine', kcal: 140, proteines: 12.5, glucides: 0.7, lipides: 10, min: 2, max: 4, pas: 1, unite: 'œuf', poids_unite: 60 },
+    { id: 'skyr', nom: 'Skyr nature', etat: '', categorie: 'proteine', kcal: 60, proteines: 10, glucides: 4, lipides: 0.2, min: 100, max: 300, pas: 50 },
+    { id: 'fromage_blanc', nom: 'Fromage blanc 0 %', etat: '', categorie: 'proteine', kcal: 45, proteines: 7.5, glucides: 4, lipides: 0.1, max: 300, pas: 50 },
+    { id: 'whey', nom: 'Whey', etat: '', categorie: 'proteine', kcal: 380, proteines: 80, glucides: 6, lipides: 5, max: 40, pas: 10 },
+    { id: 'whey_iso', nom: 'Whey isolate', etat: '', categorie: 'proteine', kcal: 370, proteines: 88, glucides: 2, lipides: 1, min: 20, max: 40, pas: 10 },
+    { id: 'riz', nom: 'Riz basmati', etat: 'cuit', categorie: 'glucide', kcal: 130, proteines: 2.7, glucides: 28, lipides: 0.3, min: 50, max: 250, pas: 50 },
+    { id: 'pates', nom: 'Pâtes', etat: 'cuit', categorie: 'glucide', kcal: 150, proteines: 5.5, glucides: 30, lipides: 0.9, min: 50, max: 250, pas: 50 },
+    { id: 'pdt', nom: 'Pommes de terre', etat: 'cuit', categorie: 'glucide', kcal: 80, proteines: 2, glucides: 17, lipides: 0.1, min: 100, max: 400, pas: 50 },
+    { id: 'patate_douce', nom: 'Patate douce', etat: 'cuit', categorie: 'glucide', kcal: 86, proteines: 1.6, glucides: 20, lipides: 0.1, min: 100, max: 350, pas: 50 },
+    { id: 'creme_riz', nom: 'Crème de riz', etat: 'sec', categorie: 'glucide', kcal: 360, proteines: 7, glucides: 80, lipides: 1, min: 20, max: 100, pas: 10 },
+    { id: 'sarrasin', nom: 'Farine de sarrasin', etat: 'sec', categorie: 'glucide', kcal: 340, proteines: 13, glucides: 70, lipides: 3.4, min: 30, max: 100, pas: 10 },
+    { id: 'compote', nom: 'Compote sans sucres ajoutés', etat: '', categorie: 'fruit', kcal: 55, proteines: 0.3, glucides: 12, lipides: 0.1, max: 2, pas: 1, unite: 'compote', poids_unite: 100 },
+    { id: 'avoine', nom: 'Flocons d\'avoine', etat: '', categorie: 'glucide', kcal: 370, proteines: 13, glucides: 60, lipides: 7, min: 30, max: 100, pas: 10 },
+    { id: 'pain', nom: 'Pain complet', etat: '', categorie: 'glucide', kcal: 250, proteines: 9, glucides: 45, lipides: 3.5, max: 150, pas: 25 },
+    { id: 'banane', nom: 'Banane', etat: '', categorie: 'glucide', kcal: 90, proteines: 1, glucides: 20, lipides: 0.3, max: 2, pas: 1, unite: 'banane', poids_unite: 120 },
+    { id: 'fruits_rouges', nom: 'Fruits rouges', etat: '', categorie: 'fruit', kcal: 50, proteines: 1, glucides: 9, lipides: 0.3, max: 200, pas: 50 },
+    { id: 'legumes', nom: 'Légumes verts', etat: '', categorie: 'legume', kcal: 30, proteines: 2, glucides: 4, lipides: 0.3, max: 300, pas: 50 },
+    { id: 'huile', nom: 'Huile d\'olive', etat: '', categorie: 'lipide', kcal: 900, proteines: 0, glucides: 0, lipides: 100, max: 20, pas: 5 },
+    { id: 'amandes', nom: 'Amandes', etat: '', categorie: 'lipide', kcal: 600, proteines: 21, glucides: 9, lipides: 52, max: 30, pas: 10 },
+    { id: 'avocat', nom: 'Avocat', etat: '', categorie: 'lipide', kcal: 160, proteines: 2, glucides: 2, lipides: 15, max: 100, pas: 50 },
+    { id: 'beurre_cacahuete', nom: 'Beurre de cacahuète', etat: '', categorie: 'lipide', kcal: 600, proteines: 25, glucides: 15, lipides: 50, max: 30, pas: 10 }
+  ],
+  // Journées types : chaque repas reçoit une part de la journée (%). Rôle de chaque aliment :
+  // proteine / glucide / lipide = quantité calculée pour atteindre la part du repas ; fixe = quantité donnée
+  journees: {
+    // part : part de la journée (protéines et lipides) ; part_glucides : part des glucides de la journée
+    training: [
+      { nom: 'Petit-déjeuner (pancake)', heure: '8h', part: 20, part_glucides: 20, aliments: [
+        { aliment: 'oeuf', role: 'proteine' }, { aliment: 'sarrasin', role: 'glucide', ou: ['creme_riz'] },
+        { aliment: 'banane', role: 'glucide' }] },
+      { nom: 'Déjeuner', heure: '12h30', part: 25, part_glucides: 20, aliments: [
+        { aliment: 'poulet', role: 'proteine', ou: ['dinde'] }, { aliment: 'riz', role: 'glucide', ou: ['pates'] },
+        { aliment: 'legumes', role: 'fixe', quantite: 200 }, { aliment: 'huile', role: 'lipide' }] },
+      { nom: 'Collation de l\'après-midi', heure: '16h', part: 15, part_glucides: 20, aliments: [
+        { aliment: 'poulet', role: 'proteine', ou: ['dinde'] }, { aliment: 'riz', role: 'glucide', ou: ['pates'] }] },
+      { nom: 'Avant l\'entraînement', heure: '1 h avant', part: 5, part_glucides: 15, aliments: [
+        { aliment: 'creme_riz', role: 'glucide' }, { aliment: 'banane', role: 'fixe', quantite: 1 }] },
+      { nom: 'Après l\'entraînement', heure: 'Juste après', part: 15, part_glucides: 5, aliments: [
+        { aliment: 'whey_iso', role: 'proteine' }, { aliment: 'compote', role: 'glucide' }] },
+      { nom: 'Dîner', heure: '20h', part: 20, part_glucides: 20, aliments: [
+        { aliment: 'saumon', role: 'proteine', ou: ['cabillaud'] }, { aliment: 'pdt', role: 'glucide', ou: ['patate_douce'] },
+        { aliment: 'legumes', role: 'fixe', quantite: 200 }, { aliment: 'huile', role: 'lipide' }] }
+    ],
+    off: [
+      { nom: 'Petit-déjeuner (pancake)', heure: '8h', part: 25, part_glucides: 25, aliments: [
+        { aliment: 'oeuf', role: 'proteine' }, { aliment: 'sarrasin', role: 'glucide', ou: ['creme_riz'] },
+        { aliment: 'banane', role: 'glucide' }] },
+      { nom: 'Déjeuner', heure: '12h30', part: 30, part_glucides: 25, aliments: [
+        { aliment: 'dinde', role: 'proteine', ou: ['poulet'] }, { aliment: 'riz', role: 'glucide', ou: ['pates'] },
+        { aliment: 'legumes', role: 'fixe', quantite: 200 }, { aliment: 'huile', role: 'lipide' }] },
+      { nom: 'Collation de l\'après-midi', heure: '16h', part: 15, part_glucides: 25, aliments: [
+        { aliment: 'poulet', role: 'proteine', ou: ['dinde'] }, { aliment: 'riz', role: 'glucide', ou: ['pates'] }] },
+      { nom: 'Dîner', heure: '20h', part: 30, part_glucides: 25, aliments: [
+        { aliment: 'cabillaud', role: 'proteine', ou: ['saumon'] }, { aliment: 'patate_douce', role: 'glucide', ou: ['pdt'] },
+        { aliment: 'legumes', role: 'fixe', quantite: 200 }, { aliment: 'huile', role: 'lipide' }] }
+    ]
+  }
+};
+
+const nb = (v, defaut = 0) => (Number.isFinite(Number(v)) && v !== null && v !== '' ? Number(v) : defaut);
+
+// ───────────── Besoins ─────────────
+// profil : { poids, taille, age, seances_semaine, objectif } ; renvoie les besoins des jours training et off
+// ajustement : g de glucides par jour ajoutés ou retirés par l'ajustement automatique (ou par la coach)
+export function besoins(profil, coefficients = REGLAGES_DEFAUT.coefficients, ajustement = 0) {
+  const c = { ...REGLAGES_DEFAUT.coefficients, ...coefficients };
+  const poids = nb(profil.poids), taille = nb(profil.taille), age = nb(profil.age);
+  if (!poids || !taille || !age) return null;
+  const seances = nb(profil.seances_semaine, 3);
+  const base = 10 * poids + 6.25 * taille - 5 * age + nb(c.mifflin_constante);
+  const activite = nb(seances >= 4 ? c.activite_4_seances : c.activite_3_seances, 1.5);
+  const depense = base * activite;
+  const ecart = profil.objectif === 'prise_de_muscle' ? nb(c.surplus_prise_de_muscle) : -nb(c.deficit_perte_de_gras);
+  const moyenne = Math.max(nb(c.kcal_minimum), depense + ecart);
+  const joursOff = Math.max(1, 7 - seances);
+  const bonus = nb(c.bonus_jour_training_kcal);
+  const proteines = poids * nb(c.proteines_g_kg);
+  const lipides = poids * nb(c.lipides_g_kg);
+  const jour = (kcal) => {
+    const glucides = Math.max(nb(c.glucides_minimum_g), (kcal - proteines * 4 - lipides * 9) / 4 + nb(ajustement));
+    return {
+      kcal: Math.round(proteines * 4 + lipides * 9 + glucides * 4),
+      proteines: Math.round(proteines), glucides: Math.round(glucides), lipides: Math.round(lipides)
+    };
+  };
+  return {
+    base: Math.round(base), depense: Math.round(depense), ecart, moyenne: Math.round(moyenne),
+    training: jour(Math.max(nb(c.kcal_minimum), moyenne + bonus)),
+    off: jour(Math.max(nb(c.kcal_minimum), moyenne - (bonus * seances) / joursOff))
+  };
+}
+
+// ───────────── Journée type ─────────────
+// Arrondi « chiffre rond » : multiple du pas de l'aliment (50 g → 100, 150, 200 g ; jamais 165 ou 168)
+export function arrondir(quantite, pas = 50) {
+  const p = nb(pas, 50) || 50;
+  if (!(quantite > 0)) return 0;
+  return Math.max(p, Math.round(quantite / p) * p);
+}
+
+const macros = (a, q) => ({
+  kcal: (a.kcal * q) / 100, proteines: (a.proteines * q) / 100, glucides: (a.glucides * q) / 100, lipides: (a.lipides * q) / 100
+});
+const somme = (liste) => liste.reduce((t, m) => ({
+  kcal: t.kcal + m.kcal, proteines: t.proteines + m.proteines, glucides: t.glucides + m.glucides, lipides: t.lipides + m.lipides
+}), { kcal: 0, proteines: 0, glucides: 0, lipides: 0 });
+const CLE_ROLE = { proteine: 'proteines', glucide: 'glucides', lipide: 'lipides' };
+
+// Un aliment compté à l'unité (œuf, banane) : quantité en grammes ↔ nombre d'unités
+const enGrammes = (a, q) => (a.unite && a.unite !== 'g' ? q * nb(a.poids_unite, 100) : q);
+// Portion maximum d'un aliment dans un repas (en grammes) ; sans maximum : illimité
+const maxGrammes = (a) => (nb(a.max) > 0 ? enGrammes(a, nb(a.max)) : Infinity);
+const maxQuantite = (a) => (nb(a.max) > 0 ? nb(a.max) : Infinity);
+const minQuantite = (a) => Math.max(nb(a.pas, a.unite && a.unite !== 'g' ? 1 : 50) || 1, nb(a.min));
+
+// besoinsJour : { proteines, glucides, lipides } ; repas : modèle de la coach ; aliments : table des aliments
+export function journeeType(besoinsJour, repas = [], aliments = REGLAGES_DEFAUT.aliments) {
+  const parId = new Map(aliments.map((a) => [a.id, a]));
+  // part : part de la journée (protéines, lipides et glucides) ; part_glucides (facultative) : part des glucides
+  // de la journée, pour un repas surtout glucidique (avant l'entraînement)
+  const partG = (r) => (r.part_glucides === undefined || r.part_glucides === null || r.part_glucides === '' ? nb(r.part) : nb(r.part_glucides));
+  const totalParts = repas.reduce((t, r) => t + nb(r.part), 0) || 1;
+  const totalPartsG = repas.reduce((t, r) => t + partG(r), 0) || 1;
+  const resultat = repas.map((r) => {
+    const part = nb(r.part) / totalParts;
+    const cible = { proteines: besoinsJour.proteines * part, glucides: besoinsJour.glucides * partG(r) / totalPartsG, lipides: besoinsJour.lipides * part };
+    const lignes = (r.aliments || []).map((x) => ({ ...x, a: parId.get(x.aliment) })).filter((x) => x.a);
+    // Quantités en grammes : fixes d'abord, puis chaque source ajustée à son macro (quelques passes, car un aliment
+    // apporte un peu des autres macros : l'avoine a des protéines, le saumon des lipides…)
+    const q = lignes.map((x) => (x.role === 'fixe' ? enGrammes(x.a, nb(x.quantite)) : 0));
+    for (let passe = 0; passe < 8; passe++) {
+      lignes.forEach((x, i) => {
+        const cle = CLE_ROLE[x.role];
+        if (!cle || !x.a[cle]) return;
+        const autres = somme(lignes.map((y, j) => (j === i ? macros(y.a, 0) : macros(y.a, q[j]))));
+        // Deux aliments au même rôle dans un repas se partagent le besoin
+        const memeRole = lignes.filter((y) => y.role === x.role).length;
+        q[i] = Math.min(maxGrammes(x.a), Math.max(enGrammes(x.a, minQuantite(x.a)), ((cible[cle] - autres[cle]) / memeRole) * 100 / x.a[cle]));
+      });
+    }
+    const items = lignes.map((x, i) => {
+      const unitaire = x.a.unite && x.a.unite !== 'g';
+      const valeur = unitaire ? q[i] / nb(x.a.poids_unite, 100) : q[i];
+      // Chaque aliment prévu garde au moins un pas (même si un autre aliment couvre déjà son macro)
+      const pas = nb(x.a.pas, unitaire ? 1 : 50) || 1;
+      const arrondi = x.role === 'fixe' ? nb(x.quantite)
+        : Math.min(Math.max(pas, Math.floor(maxQuantite(x.a) / pas) * pas),
+          Math.max(Math.ceil(minQuantite(x.a) / pas) * pas, unitaire ? Math.round(valeur / pas) * pas : arrondir(valeur, pas)));
+      const grammes = unitaire ? arrondi * nb(x.a.poids_unite, 100) : arrondi;
+      return { aliment: x.a, role: x.role, ou: x.ou || [], quantite: arrondi, unite: unitaire ? x.a.unite : 'g', grammes, ...arrondis(macros(x.a, grammes)) };
+    });
+    return { nom: r.nom, heure: r.heure, items, cible };
+  });
+  ajuster(resultat, besoinsJour);
+  for (const r of resultat) {
+    r.items = r.items.filter((x) => x.quantite > 0);
+    // « ou » : même apport (en glucides pour une source de glucides, en protéines pour une source de protéines…)
+    for (const it of r.items) {
+      const cle = CLE_ROLE[it.role] || 'kcal';
+      it.alternatives = (it.ou || []).map((id) => parId.get(id)).filter((b) => b && b[cle]).map((b) => {
+        const unitaire = b.unite && b.unite !== 'g';
+        const grammes = (it[cle] / b[cle]) * 100;
+        const pas = nb(b.pas, unitaire ? 1 : 50) || 1;
+        const brut = unitaire ? Math.max(pas, Math.round(grammes / nb(b.poids_unite, 100) / pas) * pas) : arrondir(grammes, pas);
+        const quantite = Math.min(brut, Math.max(pas, Math.floor(maxQuantite(b) / pas) * pas));
+        return { aliment: b, quantite, unite: unitaire ? b.unite : 'g' };
+      });
+    }
+    r.total = arrondis(somme(r.items));
+    delete r.cible;
+  }
+  const total = arrondis(somme(resultat.map((r) => r.total)));
+  // Écart à la cible dû aux portions minimum / maximum (signalé à la coach au-delà de 5 %)
+  const ecart = total.kcal - Math.round(besoinsJour.proteines * 4 + besoinsJour.glucides * 4 + besoinsJour.lipides * 9);
+  return { repas: resultat, total, ecart };
+}
+
+// Après les arrondis, la journée peut s'écarter de la cible : on ajoute ou retire un « pas » (50 g de riz, 1 œuf…)
+// aux aliments calculés, tant que ça rapproche la journée de ses macros. Les quantités restent des chiffres ronds.
+function ajuster(repas, cible) {
+  const items = repas.flatMap((r) => r.items).filter((x) => CLE_ROLE[x.role]);
+  const pasDe = (x) => nb(x.aliment.pas, x.unite === 'g' ? 50 : 1) || 1;
+  const fixer = (x, quantite) => {
+    x.quantite = quantite;
+    x.grammes = x.unite === 'g' ? quantite : quantite * nb(x.aliment.poids_unite, 100);
+    Object.assign(x, arrondis(macros(x.aliment, x.grammes)));
+  };
+  // Écart sur les trois macros (chaque macro pèse selon ses kcal) : d'abord sur la journée,
+  // puis, avec un poids plus faible, repas par repas (chaque repas reste proche de sa part : pas 50 g de poulet au déjeuner)
+  // Les protéines comptent triple : la règle des g/kg passe avant tout
+  const ecart = (t, c) => Math.abs(t.proteines - c.proteines) * 12 + Math.abs(t.glucides - c.glucides) * 4 + Math.abs(t.lipides - c.lipides) * 9;
+  const erreur = () => ecart(somme(repas.flatMap((r) => r.items)), cible)
+    + 1 * repas.reduce((t, r) => t + (r.cible ? ecart(somme(r.items), r.cible) : 0), 0);
+  for (let tour = 0; tour < 30; tour++) {
+    const avant = erreur();
+    let meilleur = null;
+    for (const x of items) {
+      for (const sens of [-1, 1]) {
+        const ancienne = x.quantite;
+        const nouvelle = ancienne + sens * pasDe(x);
+        // Un aliment prévu par la coach ne disparaît jamais : au moins un pas (50 g, 1 œuf…)
+        if (nouvelle < minQuantite(x.aliment) || nouvelle > maxQuantite(x.aliment)) continue;
+        fixer(x, nouvelle);
+        const gain = avant - erreur();
+        fixer(x, ancienne);
+        if (gain > 0.5 && (!meilleur || gain > meilleur.gain)) meilleur = { x, nouvelle, gain };
+      }
+    }
+    if (!meilleur) break;
+    fixer(meilleur.x, meilleur.nouvelle);
+  }
+}
+function arrondis(m) {
+  return { kcal: Math.round(m.kcal), proteines: Math.round(m.proteines), glucides: Math.round(m.glucides), lipides: Math.round(m.lipides) };
+}
+
+// « 150 g de riz basmati (poids cuit) », « 3 œufs », « 60 g de farine de sarrasin ou 50 g de crème de riz »
+const pluriel = (mot, n) => (n > 1 ? mot.replace(/^(\S+?)(s|x)?(\s|$)/, (m, debut, fin, suite) => `${debut}${fin || 's'}${suite}`) : mot);
+function libelleSimple(item) {
+  const a = item.aliment;
+  if (item.unite !== 'g') return `${item.quantite} ${pluriel(item.unite || a.nom.toLowerCase(), item.quantite)}`;
+  const etat = a.etat === 'cuit' ? ' (poids cuit)' : a.etat === 'cru' ? ' (poids cru)' : '';
+  const nom = `${a.nom.charAt(0).toLowerCase()}${a.nom.slice(1)}`;
+  return `${item.quantite} g ${/^[aeiouyhéèêœ]/i.test(nom) ? 'd\'' : 'de '}${nom}${etat}`;
+}
+export function libelleQuantite(item) {
+  return [libelleSimple(item), ...(item.alternatives || []).map(libelleSimple)].join(' ou ');
+}
+
+// ───────────── Ajustement automatique selon la pesée ─────────────
+// Même règle que la fonction enregistrer_pesee() de supabase/suivi-app.sql.
+// pesees : [{ date: 'AAAA-MM-JJ', poids }] (la nouvelle pesée comprise) ; renvoie { delta, total, vitesse, raison }
+const jours = (a, b) => Math.round((new Date(`${a}T12:00:00Z`) - new Date(`${b}T12:00:00Z`)) / 864e5);
+export function decisionAjustement({ objectif, pesees, date, ajustement = 0, ajusteLe = null, coefficients = {} }) {
+  const c = { ...REGLAGES_DEFAUT.coefficients, ...coefficients };
+  const actuelle = pesees.find((p) => p.date === date);
+  if (!c.ajustement_auto || !actuelle) return { delta: 0 };
+  if (ajusteLe && jours(date, ajusteLe) < nb(c.delai_ajustement_jours, 7)) return { delta: 0, raison: 'attente' };
+  const ref = pesees.filter((p) => jours(date, p.date) >= 7 && jours(date, p.date) <= 21).sort((a, b) => b.date.localeCompare(a.date))[0];
+  if (!ref) return { delta: 0, raison: 'pas assez de pesées' };
+  const vitesse = Math.round(((actuelle.poids - ref.poids) / (jours(date, ref.date) / 7)) * 100) / 100;
+  const vmax = nb(c.vitesse_max_kg_semaine, 0.5), stagnation = nb(c.seuil_stagnation_kg_semaine, 0.1), palier = nb(c.palier_glucides_g, 30);
+  let delta = 0, raison = null;
+  if (objectif === 'prise_de_muscle') {
+    if (vitesse > vmax) [delta, raison] = [-palier, 'prise de poids trop rapide'];
+    else if (vitesse < stagnation) [delta, raison] = [palier, 'poids qui ne bouge pas'];
+  } else if (vitesse < -vmax) [delta, raison] = [palier, 'perte de poids trop rapide'];
+  else if (vitesse > -stagnation) [delta, raison] = [-palier, 'poids qui ne bouge pas'];
+  const maxi = nb(c.ajustement_max_g, 150);
+  const total = Math.max(-maxi, Math.min(maxi, nb(ajustement) + delta));
+  return { delta: total - nb(ajustement), total, vitesse, raison: total - nb(ajustement) ? raison : null };
+}

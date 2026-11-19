@@ -193,6 +193,80 @@ Chaque élève active les notifications une fois depuis son accueil (même bouto
 Si ta fonction s'appelle autrement que `rappels-bilans` (par exemple `rappels-bilans-`), mets son
 adresse exacte dans les fichiers SQL avant de les lancer.
 
+## Étape 7 : Booty Flow App (abonnement Systeme.io à 49,90 €/mois)
+
+Trois formules : **Personnalisé** et **Autonomie** (coaching, bilan chaque semaine ou une fois par mois)
+et **App** (abonnement autonome payé sur Systeme.io). Tes élèves actuelles passent en Personnalisé, sans
+aucun changement pour elles. Les nouveaux comptes créés avec « Créer mon compte » attendent ta validation
+(encart « À valider » dans Mes élèves, où tu choisis leur formule).
+
+### 7a. Mettre à jour la base (dans cet ordre)
+
+1. **Sauvegarde** : SQL Editor › colle `supabase/sauvegarde.sql` › Run.
+2. **Fusionne** la pull request de la mise à jour sur GitHub (l'app se met à jour en 1 à 2 minutes).
+3. SQL Editor › colle `supabase/formules.sql` › Run.
+4. SQL Editor › colle `supabase/webhook-systemeio.sql` › Run.
+   Puis, dans cet ordre, `supabase/programmes-app.sql` (questionnaire et programmes),
+   `supabase/nutrition-app.sql` (calculateur nutrition) et `supabase/suivi-app.sql` (pesées et ajustement automatique).
+5. Edge Functions › `rappels-bilans` › Code : colle la nouvelle version de `index.ts` › Deploy
+   (bilan mensuel pour Autonomie, pas de rappel de bilan pour les abonnées App).
+
+### 7b. L'e-mail de bienvenue
+
+1. **Envoi des e-mails avec ton adresse Hostinger** (l'envoi intégré de Supabase est très limité) :
+   Supabase › Authentication › Emails › **SMTP Settings** › active « Enable Custom SMTP » :
+
+   | Champ | Valeur |
+   |---|---|
+   | Sender email | ton adresse Hostinger (ex. `contact@tondomaine.fr`) |
+   | Sender name | `Marie · Booty Flow` |
+   | Host | `smtp.hostinger.com` |
+   | Port | `465` |
+   | Username | ton adresse Hostinger complète |
+   | Password | le mot de passe de cette boîte mail |
+
+   Puis Authentication › **Rate Limits** › « Rate limit for sending emails » : monte à 100 par heure si besoin.
+   Dans Hostinger (hPanel › Emails), vérifie que SPF, DKIM et DMARC sont actifs (sinon l'e-mail risque d'arriver en spam).
+2. Authentication › Emails › **Invite user** : objet `Bienvenue dans Booty Flow App 💜 Crée ton mot de passe`,
+   et dans le corps, colle le contenu de `supabase/emails/bienvenue-app.html`.
+3. Authentication › Sign In / Providers › Email › **Email OTP Expiration** : mets `86400` (le lien reste valable 24 h).
+
+### 7c. La fonction qui reçoit les paiements (webhook)
+
+1. Choisis ton **jeton secret** : SQL Editor › `select replace(gen_random_uuid()::text || gen_random_uuid()::text, '-', '');` › Run, et copie le résultat.
+2. Edge Functions › **Secrets** › ajoute :
+
+   | Nom | Valeur |
+   |---|---|
+   | `SYSTEMEIO_WEBHOOK_SECRET` | le jeton secret de l'étape 1 |
+   | `SYSTEMEIO_OFFER_ID` | l'identifiant de ton offre Booty Flow App dans Systeme.io |
+   | `SYSTEMEIO_FILTRE_IP` | `oui` (mets `non` seulement pendant les essais de 7d) |
+   | `APP_URL` | `https://marieugc.github.io/landing-impact/app/` |
+
+3. Edge Functions › Deploy a new function › Via Editor › nom **`webhook-systemeio`**, deux fichiers :
+   `index.ts` et `traitement.ts` (copiés depuis `supabase/functions/webhook-systemeio/`) › Deploy.
+   Dans ses réglages, **désactive « Verify JWT »** (elle est protégée par le jeton secret).
+4. Dans **Systeme.io** › Paramètres › Webhooks › Créer : colle cette adresse (avec TON jeton à la fin) et coche
+   « New sale » et « Sale canceled » :
+
+   ```
+   https://ubenkqedyjrdeyetzzet.supabase.co/functions/v1/webhook-systemeio?secret=TON-JETON-SECRET
+   ```
+
+5. Dans `app/js/config.js`, remplis `CALENDLY_URL`, `SYSTEMEIO_ESPACE_CLIENT_URL` et `PAGE_VENTE_APP_URL`.
+
+### 7d. Tester sans payer
+
+Copie les blocs de `supabase/tests/simuler-webhooks.sql` dans SQL Editor, un par un (le fichier explique
+ce qui doit se passer à chaque bloc) : achat, doublon, résiliation, fin d'accès, réabonnement.
+Chaque webhook reçu apparaît dans l'espace coach › partie **Abonnées Booty Flow App › Journal Systeme.io**,
+avec son contenu brut (clique sur une ligne).
+
+> 🔎 **Après le premier vrai achat** : ouvre le journal et vérifie que la ligne est « Traité ».
+> Si elle est « Ignoré » ou « Erreur », envoie-moi le contenu brut : j'adapte la lecture des données.
+> Fais de même au **premier renouvellement mensuel** (environ un mois après) pour vérifier qu'il prolonge bien l'accès.
+> Si la ligne est « Refusé » (adresse IP non autorisée), mets `SYSTEMEIO_FILTRE_IP` à `non` et préviens-moi.
+
 ## Ce que fait l'app
 
 **Espace élève (téléphone)**

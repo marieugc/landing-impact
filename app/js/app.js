@@ -1,7 +1,7 @@
 // Démarrage de l'app : connexion, choix élève/coach, navigation entre les écrans.
-import { api, MODE } from './data.js';
+import { api, MODE, ARRIVEE_INVITATION } from './data.js';
 import { esc, icone, toast, pendant, fenetre, VERSION_APP } from './ui.js';
-import { ecransEleve, nouvellesVideosCoach } from './eleve.js';
+import { ouvrirEleve, nouvellesVideosCoach } from './eleve.js';
 import { ecransCoach } from './coach.js';
 import { nonLus } from './chat.js';
 import { nouveautes } from './videotheque.js';
@@ -84,7 +84,8 @@ async function rafraichirProfil() {
   if (!profil) return;
   try {
     const frais = await api.getProfile(profil.id);
-    if (!frais || JSON.stringify(frais) === JSON.stringify(profil)) return;
+    const { app, ...actuel } = profil; // réponses au questionnaire App : rechargées à part
+    if (!frais || JSON.stringify(frais) === JSON.stringify(actuel)) return;
     profil = frais;
     if (!document.querySelector('.fenetre')) afficher();
   } catch (e) { /* hors ligne : on garde le profil actuel */ }
@@ -116,6 +117,8 @@ function ecranConnexion(onglet = 'connexion') {
       <div class="surtitre-carte">ESSAYER LA DÉMO</div>
       <button class="bouton-contour" data-demo="sarah@demo.fr">${icone('accueil', 18)}Espace élève (Sarah)</button>
       <button class="bouton-contour" data-demo="chloe@demo.fr">${icone('etoile', 18)}Espace compétitrice (Chloé)</button>
+      <button class="bouton-contour" data-demo="emma@demo.fr">${icone('haltere', 18)}Abonnée Booty Flow App (Emma)</button>
+      <button class="bouton-contour" data-demo="nina@demo.fr">${icone('compte', 18)}Nouvelle abonnée App : questionnaire (Nina)</button>
       <button class="bouton-contour" data-demo="marie@demo.fr">${icone('eleves', 18)}Espace coach (Marie)</button>
       <button class="lien" id="reinit">Remettre la démo à zéro</button>
     </div>` : ''}
@@ -165,15 +168,16 @@ function ecranConnexion(onglet = 'connexion') {
   });
 }
 
-function ecranNouveauMotDePasse() {
-  const f = fenetre('Nouveau mot de passe', `<form class="formulaire">
-    <label>Nouveau mot de passe<input name="mdp" type="password" minlength="6" autocomplete="new-password" required></label>
+function ecranNouveauMotDePasse(bienvenue = false) {
+  const f = fenetre(bienvenue ? 'Crée ton mot de passe' : 'Nouveau mot de passe', `<form class="formulaire">
+    ${bienvenue ? '<p>Bienvenue dans Booty Flow App ! Choisis ton mot de passe : tu t\'en serviras pour te connecter à l\'app.</p>' : ''}
+    <label>${bienvenue ? 'Mon mot de passe' : 'Nouveau mot de passe'}<input name="mdp" type="password" minlength="6" autocomplete="new-password" required></label>
     <button class="bouton-principal" type="submit">ENREGISTRER</button></form>`);
   f.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     await pendant(e.submitter, 'Enregistrement…', () => api.updatePassword(new FormData(e.target).get('mdp')));
     f.remove();
-    toast('Mot de passe modifié.');
+    toast(bienvenue ? 'Mot de passe enregistré, bienvenue !' : 'Mot de passe modifié.');
     demarrer();
   });
 }
@@ -189,7 +193,7 @@ async function afficher() {
       if (racineRoute !== 'coach') { location.replace('#/coach'); return; }
       const [sous, ...params] = reste;
       const ecran = {
-        '': ecransCoach.tableau, undefined: ecransCoach.tableau,
+        '': ecransCoach.tableau, undefined: ecransCoach.tableau, abonnees: ecransCoach.abonnees, webhooks: ecransCoach.webhooks, programmes: ecransCoach.programmes, 'nutrition-app': ecransCoach.nutritionApp, 'bilans-app': ecransCoach.bilansApp,
         eleve: ecransCoach.fiche, videos: ecransCoach.videos, bilans: ecransCoach.bilans,
         competitrices: ecransCoach.competitrices, nutrition: ecransCoach.plansNutrition,
         charges: ecransCoach.suiviCharges, messages: ecransCoach.messages,
@@ -197,9 +201,7 @@ async function afficher() {
       }[sous] || ecransCoach.tableau;
       await ecran(racine, profil, params);
     } else {
-      const ecran = ecransEleve[racineRoute];
-      if (!ecran) { location.replace('#/accueil'); return; }
-      await ecran(racine, profil);
+      if (!(await ouvrirEleve(racine, profil, racineRoute))) { location.replace('#/accueil'); return; }
       racine.querySelector('.mobile-contenu')?.scrollTo(0, 0);
     }
   } catch (e) {
@@ -244,16 +246,19 @@ async function majPastille() {
     poserPastille(racine.querySelector(coach ? 'a[href="#/coach/messages"]' : '[data-onglet="chat"]'), n,
       (x) => `${pluriel(x, 'message')} non lu${x > 1 ? 's' : ''}`);
     if (coach) {
-      const [bilans, mouvements, posings] = await Promise.all([
-        api.compterBilansNonLus(), api.compterVideosACorriger('mouvement'), api.compterVideosACorriger('posing')
+      const [bilans, mouvements, posings, bilansApp] = await Promise.all([
+        api.compterBilansNonLus(), api.compterVideosACorriger('mouvement'), api.compterVideosACorriger('posing'),
+        api.compterBilansAppNonLus?.().catch(() => 0) ?? 0
       ]);
+      poserPastille(racine.querySelector('a[href="#/coach/bilans-app"]'), bilansApp,
+        (x) => `${pluriel(x, 'bilan')} du mois à répondre`);
       poserPastille(racine.querySelector('a[href="#/coach/bilans"]'), bilans,
         (x) => `${pluriel(x, 'bilan')} à lire`);
       poserPastille(racine.querySelector('a[href="#/coach/videos"]'), mouvements,
         (x) => `${pluriel(x, 'vidéo')} à corriger`);
       poserPastille(racine.querySelector('a[href="#/coach/competitrices"]'), posings,
         (x) => `${pluriel(x, 'vidéo')} de posing à corriger`);
-      badgeIcone(n + bilans + mouvements + posings);
+      badgeIcone(n + bilans + mouvements + posings + bilansApp);
     } else {
       badgeIcone(n);
       const nouvelles = (await nouveautes(profil)).length;
@@ -293,6 +298,7 @@ racine.addEventListener('click', async (e) => {
 });
 window.addEventListener('hashchange', afficher);
 
+let invitationAOuvrir = ARRIVEE_INVITATION;
 async function demarrer() {
   racine.innerHTML = '<div class="chargement" aria-label="Chargement"></div>';
   const session = await api.getSession();
@@ -305,7 +311,9 @@ async function demarrer() {
     return;
   }
   afficher();
+  if (invitationAOuvrir) { invitationAOuvrir = false; ecranNouveauMotDePasse(true); }
   synchroniserRappels(profil);
+  api.marquerActivite?.().catch(() => {}); // dernière activité, visible dans l'admin
 }
 
 api.onRecovery(ecranNouveauMotDePasse);

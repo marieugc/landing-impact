@@ -601,3 +601,206 @@ span.vignette { cursor: default; }
 /* Carte « Rappels de bilan » sur l'accueil élève */
 .carte-rappels { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
 .carte-rappels p { margin: 0; }
+
+/* ───────── Formules (Personnalisé / Autonomie / App) ───────── */
+.encart-coaching { border-color: var(--accent); background: linear-gradient(160deg, var(--carte-2), var(--carte)); }
+.encart-coaching strong { font-family: var(--titre); font-size: 16px; }
+.encart-coaching .petit { margin: 0; }
+.encart-coaching .bouton-contour { align-self: flex-start; }
+.icone-cadenas { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 12px; background: var(--carte); border: 1px solid var(--bord); flex-shrink: 0; }
+[aria-disabled="true"].bouton-principal, [aria-disabled="true"].bouton-contour { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+/* Mon compte */
+.ligne-compte { padding: 10px 0; border-bottom: 1px solid var(--bord); gap: 12px; }
+.ligne-compte:last-child { border-bottom: 0; }
+.ligne-compte strong { text-align: right; }
+
+/* Page « Passer au coaching » */
+.offre .titre-carte { margin: 0; }
+.offre .petit { margin: 0; }
+.offre.mise-en-avant { border-color: var(--accent); box-shadow: 0 0 24px rgba(178, 102, 255, 0.25); }
+.offre.offre-actuelle { opacity: 0.85; }
+.liste-offre { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.liste-offre li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.35; }
+.liste-offre li svg { flex-shrink: 0; margin-top: 1px; }
+.liste-offre .non-inclus { color: var(--doux); }
+.prix-offre { margin: 0; font-family: var(--titre); font-size: 22px; font-weight: 800; color: var(--lilas); }
+
+/* Admin : comptes à valider, abonnées App, formule dans la fiche */
+.attente { border-color: var(--orange); }
+.attente .petit { margin: 0; }
+.ligne-attente { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding-top: 12px; border-top: 1px solid var(--bord); }
+.ligne-attente select, .bloc-formule select { min-height: 44px; padding: 0 14px; border-radius: 12px; background: var(--carte-2); border: 1px solid var(--bord); color: var(--texte); font: inherit; }
+.tableau-tete.lignes-abonnees, .tableau-ligne.lignes-abonnees { grid-template-columns: 2.4fr 1.3fr 1fr 1.2fr 1fr 40px; }
+.ligne-filtres { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.ligne-filtres .filtres { margin: 0; }
+.ligne-filtres input[type="search"] { min-height: 44px; min-width: 240px; padding: 0 14px; border-radius: 12px; background: var(--carte); border: 1px solid var(--bord); color: var(--texte); font: inherit; }
+.bloc-formule { border: 1px solid var(--bord); border-radius: 16px; padding: 14px; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.bloc-formule legend { padding: 0 6px; }
+.bloc-formule .petit { margin: 0; }
+@media (max-width: 899px) {
+  .ligne-attente { grid-template-columns: 1fr auto; }
+  .ligne-attente .cellule-nom { grid-column: 1 / -1; }
+  .tableau-ligne.lignes-abonnees { grid-template-columns: 1fr auto; }
+  .tableau-ligne.lignes-abonnees > :nth-child(n+2):nth-child(-n+5) { grid-column: 1; }
+  .tableau-ligne.lignes-abonnees > :nth-child(6) { grid-column: 2; grid-row: 1 / span 5; }
+  .ligne-filtres input[type="search"] { min-width: 0; width: 100%; }
+}
+.tableau-tete.lignes-webhooks, .tableau-ligne.lignes-webhooks { grid-template-columns: 1fr 1fr 1.6fr 0.8fr 2.6fr; }
+button.tableau-ligne { width: 100%; background: none; border-left: 0; border-right: 0; border-bottom: 0; text-align: left; font: inherit; }
+.lien-journal { align-self: flex-start; }
+pre.json { margin: 8px 0 0; padding: 12px; max-height: 50vh; overflow: auto; border-radius: 12px; background: var(--fond); border: 1px solid var(--bord); font-size: 12px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+@media (max-width: 899px) {
+  .tableau-ligne.lignes-webhooks { grid-template-columns: 1fr auto; }
+  .tableau-ligne.lignes-webhooks > :nth-child(n+2) { grid-column: 1; }
+  .tableau-ligne.lignes-webhooks > :nth-child(4) { grid-column: 2; grid-row: 1; }
+}
+/* Menu coach : partie Coaching / partie Abonnées Booty Flow App */
+.menu-groupe { margin: 14px 12px 2px; font-family: var(--titre); font-size: 10.5px; font-weight: 700; letter-spacing: 1.6px; color: var(--doux); opacity: 0.8; }
+.menu-groupe:first-child { margin-top: 0; }
+.menu-groupe-app { color: var(--vert); opacity: 1; padding-top: 14px; border-top: 1px solid var(--bord); }
+.menu-lien.menu-app.actif { color: var(--vert); }
+@media (max-width: 899px) {
+  .menu-groupe { display: none; }
+  .menu-lien.menu-app { border: 1px solid rgba(127, 224, 184, 0.35); }
+}
+
+/* ───────── Booty Flow App : questionnaire ───────── */
+.choix-pastilles { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.formulaire .pastille-choix, .pastille-choix { position: relative; display: block; cursor: pointer; color: var(--texte); }
+.pastille-choix input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.pastille-choix span { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--bord); background: var(--carte-2); }
+.pastille-choix strong { font-size: 15px; }
+.pastille-choix small { font-size: 12px; color: var(--doux); line-height: 1.35; }
+.pastille-choix input:checked + span { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; background: rgba(178, 102, 255, 0.14); }
+.pastille-choix input:focus-visible + span { outline: 2px solid var(--lilas); outline-offset: 2px; }
+
+/* ───────── Booty Flow App : programme ───────── */
+.defile-semaines { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 4px; scrollbar-width: none; }
+.defile-semaines::-webkit-scrollbar { display: none; }
+.pastille-semaine { flex: 0 0 36px; height: 36px; border-radius: 18px; border: 1px solid var(--bord); background: var(--carte-2); color: var(--doux); font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; }
+.pastille-semaine.faite { color: var(--vert); border-color: rgba(127, 224, 184, 0.5); }
+.pastille-semaine.en-cours { border-color: var(--lilas); color: var(--lilas); }
+.pastille-semaine.actif { background: var(--accent); border-color: var(--accent); color: var(--fond); }
+.carte-seance.du-jour { border-color: var(--accent); }
+.carte-seance .titre-carte { margin: 0; }
+.carte-seance .petit { margin: 0; }
+.liste-exercices { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.exercice { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: var(--carte-2); border: 1px solid var(--bord); }
+.exercice p { margin: 0; }
+.exercice .bouton-contour { align-self: flex-start; }
+.exercice-tete { display: flex; gap: 10px; align-items: flex-start; }
+.exercice-tete > div { flex: 1; min-width: 0; }
+.exercice-tete .numero { flex: 0 0 26px; height: 26px; border-radius: 13px; background: var(--accent); color: var(--fond); font-weight: 800; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; }
+.exercice-chiffres { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--doux); }
+.exercice-chiffres b { color: var(--texte); font-size: 15px; }
+.exercice-charge { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; color: var(--lilas); }
+.exercice-charge svg { flex-shrink: 0; margin-top: 1px; }
+.exercice details summary { cursor: pointer; color: var(--lilas); }
+.carte-bravo { border-color: var(--vert); }
+.carte-bravo .petit { margin: 0; }
+
+/* ───────── Coach : éditeur de programmes ───────── */
+.grille-programmes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.carte-programme { color: var(--texte); }
+.carte-programme:hover { border-color: var(--accent); }
+.ligne-cycle { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--bord); color: var(--texte); }
+.ligne-cycle > a, .ligne-cycle > span { display: flex; flex-direction: column; gap: 2px; color: var(--texte); min-width: 0; }
+.lien-bloc:hover strong { color: var(--lilas); }
+.actions-ligne { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.actions-ligne .bouton-rond { width: 36px; height: 36px; }
+.ligne-boutons { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; }
+.lien.danger { color: var(--orange); }
+.grille-semaines { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.carte-exercice { border: 1px solid var(--bord); border-radius: 16px; padding: 16px; margin: 0; display: flex; flex-direction: column; gap: 12px; background: var(--carte-2); }
+.carte-exercice legend { padding: 0; float: left; }
+.carte-exercice .ligne-entre { clear: both; }
+.carte-exercice .grille-2, .carte-exercice .grille-3 { gap: 10px; }
+.progression summary { cursor: pointer; color: var(--lilas); font-weight: 700; font-size: 13.5px; }
+.tableau-progression { display: grid; grid-template-columns: 34px 70px 100px 1fr; gap: 6px 8px; align-items: center; margin: 12px 0 8px; }
+.tableau-progression input { min-height: 36px; padding: 0 10px; border-radius: 10px; background: var(--fond); border: 1px solid var(--bord); color: var(--texte); font: inherit; font-size: 13px; width: 100%; }
+.barre-enregistrer { position: sticky; bottom: 0; padding: 12px 0; background: linear-gradient(transparent, var(--carte) 30%); }
+@media (max-width: 600px) {
+  .tableau-progression { grid-template-columns: 28px 52px 70px 1fr; gap: 4px; }
+  .ligne-cycle { flex-direction: column; align-items: flex-start; }
+}
+button.segment { border: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 700; color: var(--doux); }
+button.segment.actif { background: var(--carte-2); color: var(--lilas); }
+.bloc-video-exercice { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 14px; border: 1px dashed var(--bord); }
+.bloc-video-exercice .petit { margin: 0; }
+.etat-video { display: flex; align-items: center; gap: 6px; color: var(--vert); }
+.etat-video .lien { padding: 0 6px; }
+.etat-video[hidden] { display: none; }
+
+/* ───────── Booty Flow App : nutrition ───────── */
+button.sans-style { all: unset; display: block; cursor: pointer; border-radius: 16px; }
+button.sans-style:focus-visible { outline: 2px solid var(--lilas); outline-offset: 2px; }
+.tuiles-jours { align-items: stretch; }
+.tuile-jour { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 14px; border-radius: 16px; border: 1px solid var(--bord); background: var(--carte-2); }
+.tuile-jour.actif { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.tuile-jour .gros-chiffre { font-size: 26px; }
+.ligne-macros { display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; color: var(--doux); }
+.ligne-macros b { color: var(--texte); }
+.liste-repas-app { display: flex; flex-direction: column; gap: 10px; }
+.repas-app { padding: 12px 14px; border-radius: 14px; background: var(--carte-2); border: 1px solid var(--bord); display: flex; flex-direction: column; gap: 6px; }
+.repas-app ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; font-size: 14px; }
+.repas-app .petit { margin: 0; }
+.total-journee { margin: 0; font-size: 14px; }
+/* Coach */
+.deux-colonnes { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.deux-colonnes > .carte:last-child { position: sticky; top: 16px; }
+.grille-exemple { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.grille-exemple label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--doux); }
+.grille-exemple input, .grille-exemple select, .ligne-aliment select, .ligne-aliment input, .ligne-aliment-table input, .ligne-aliment-table select {
+  min-height: 38px; padding: 0 10px; border-radius: 10px; background: var(--fond); border: 1px solid var(--bord); color: var(--texte); font: inherit; font-size: 13px; width: 100%; min-width: 0; }
+.ligne-aliment { display: grid; grid-template-columns: 1.3fr 1.1fr 80px 1.2fr 36px; gap: 8px; align-items: center; }
+.ligne-aliment input:disabled { opacity: 0.35; }
+.ligne-aliment .bouton-rond, .ligne-aliment-table .bouton-rond { width: 36px; height: 36px; }
+.tableau-aliments { overflow-x: auto; display: flex; flex-direction: column; gap: 6px; }
+.ligne-aliment-table { display: grid; grid-template-columns: minmax(160px, 2fr) 70px 110px repeat(4, 64px) repeat(3, 70px) 80px 70px 36px; gap: 6px; align-items: center; min-width: 1100px; }
+.ligne-aliment-table.tete { font-family: var(--titre); font-size: 10.5px; font-weight: 700; letter-spacing: 1px; color: var(--doux); text-transform: uppercase; }
+.segments.court { max-width: 360px; }
+.alerte { color: var(--orange); }
+@media (max-width: 1100px) {
+  .deux-colonnes { grid-template-columns: minmax(0, 1fr); }
+  .deux-colonnes > .carte:last-child { position: static; }
+  .grille-exemple { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) { .ligne-aliment { grid-template-columns: 1fr 1fr; } }
+
+/* ───────── Booty Flow App : pesées et ajustement ───────── */
+.ligne-pesee { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.ligne-pesee .avec-unite { flex: 1 1 140px; }
+.ligne-pesee select { flex: 1 1 240px; min-height: 44px; padding: 0 12px; border-radius: 12px; background: var(--carte-2); border: 1px solid var(--bord); color: var(--texte); font: inherit; }
+.liste-ajustements, .liste-pesees { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.liste-ajustements li, .liste-pesees li { display: grid; grid-template-columns: 70px 1fr; gap: 2px 10px; padding: 8px 0; border-top: 1px solid var(--bord); font-size: 14px; align-items: center; }
+.liste-ajustements li .petit { grid-column: 2; }
+.liste-pesees li { grid-template-columns: 1fr auto auto; }
+.ajustement-actif { display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 10px 12px; border-radius: 12px; background: rgba(178, 102, 255, 0.12); font-size: 13.5px; }
+.ajustement-actif svg { flex-shrink: 0; margin-top: 2px; }
+details.carte > summary { cursor: pointer; }
+/* Relevé du mois */
+.releve-du { border-color: var(--accent); }
+.grille-mesures { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+.mesure-app { display: flex; flex-direction: column; gap: 2px; padding: 10px; border-radius: 12px; background: var(--carte-2); border: 1px solid var(--bord); }
+.mesure-app strong { font-size: 16px; }
+.mesure-app small { font-size: 12px; color: var(--doux); }
+.mesure-app small.baisse { color: var(--vert); }
+.mesure-app small.hausse { color: var(--lilas); }
+.photo-cadre img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+.tableau-releves { overflow-x: auto; display: flex; flex-direction: column; }
+.ligne-releve { display: grid; grid-template-columns: 90px repeat(5, minmax(70px, 1fr)); gap: 8px; padding: 8px 0; border-top: 1px solid var(--bord); font-size: 13.5px; min-width: 480px; }
+.ligne-releve.tete { border-top: 0; font-family: var(--titre); font-size: 10.5px; font-weight: 700; letter-spacing: 1px; color: var(--doux); text-transform: uppercase; }
+/* Bilan du mois */
+.bilan-envoye { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 14px; background: var(--carte-2); border: 1px solid var(--bord); }
+.bilan-envoye p { margin: 0; }
+.bilan-envoye .bouton-contour { align-self: flex-start; }
+.bilan-app.a-repondre { border-color: var(--orange); }
+.question-bilan { display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 12px; background: var(--carte-2); }
+.question-bilan p { margin: 0; }
+.question-bilan .bouton-contour { align-self: flex-start; }
+/* Montée en gamme */
+.encart-montee { border-color: var(--accent); background: linear-gradient(160deg, rgba(178, 102, 255, 0.18), var(--carte)); }
+.encart-montee strong { font-family: var(--titre); font-size: 16px; }
+.encart-montee .petit { margin: 0; }
+.bouton-rond.petit-rond { width: 32px; height: 32px; }

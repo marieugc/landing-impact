@@ -62,5 +62,13 @@ create trigger notifier_coach after insert on public.videos for each row execute
 drop trigger if exists notifier_coach on public.charges;
 create trigger notifier_coach after insert on public.charges for each row execute function public.notifier_coach();
 
+-- Bilan du mois Booty Flow App (si la table existe : supabase/suivi-app.sql)
+do $$ begin
+  if to_regclass('public.releves_app') is not null then
+    drop trigger if exists notifier_coach on public.releves_app;
+    create trigger notifier_coach after insert on public.releves_app for each row execute function public.notifier_coach();
+  end if;
+end $$;
+
 -- Pour vérifier après un essai (dernier appel envoyé à la fonction) :
 -- select status_code, content from net._http_response order by created desc limit 1;

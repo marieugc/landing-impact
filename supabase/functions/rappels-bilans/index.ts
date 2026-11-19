@@ -50,24 +50,30 @@ function dimancheApres(d: string, ecart = 0) {
   const debut = plusJours(d, ecart);
   return plusJours(debut, (7 - jourUTC(debut).getUTCDay()) % 7);
 }
-type Eleve = { id: string; prenom: string | null; prochain_bilan: string | null; created_at: string };
+type Eleve = {
+  id: string; prenom: string | null; prochain_bilan: string | null; created_at: string;
+  formule?: string; compte_valide?: boolean; statut_abonnement?: string;
+};
+// Bilan chaque semaine (Personnalisé) ou toutes les 4 semaines (Autonomie). Pas de bilan pour la formule App.
+const pasBilan = (e: Eleve) => (e.formule === 'autonomie' ? 28 : 7);
+const recoitBilans = (e: Eleve) => (e.formule ?? 'personnalise') !== 'app' && e.compte_valide !== false && e.statut_abonnement !== 'expire';
 // L'ancienne date « prochain_bilan » réglée par la coach est ignorée : c'est toujours le week-end.
 function departBilans(e: Eleve, dates: string[]) {
   if (dates.length) return dimancheApres([...dates].sort()[0]);
   return dimancheApres(e.created_at.slice(0, 10), 4);
 }
 // Dernière échéance passée ou du jour (null si la première n'est pas encore arrivée)
-function derniereEcheance(depart: string, aujourdhui: string) {
+function derniereEcheance(depart: string, aujourdhui: string, pas = 7) {
   const n = ecartJours(depart, aujourdhui);
   if (n > 0) return null;
-  return plusJours(depart, Math.floor(-n / 7) * 7);
+  return plusJours(depart, Math.floor(-n / pas) * pas);
 }
 // Le bilan compte s'il a été envoyé le samedi ou le dimanche de ce week-end
 const bilanRecu = (echeance: string, dates: string[]) => dates.some((d) => d >= plusJours(echeance, -1));
 
 const MESSAGES = {
   rappel: (prenom: string) => ({
-    titre: 'Ton bilan de la semaine',
+    titre: 'Ton bilan',
     corps: `${prenom ? `${prenom}, ton` : 'Ton'} bilan n'est pas encore envoyé : pense à le faire ce soir (poids, photos et ton état de la semaine).`,
     url: '#/bilan'
   }),
@@ -105,6 +111,13 @@ export function messageCoach(table: string, l: Ligne, prenom: string) {
         tag: `video-${l.id}`
       };
     }
+    case 'releves_app':
+      return {
+        titre: `Bilan du mois · ${qui}`,
+        corps: typeof l.question === 'string' && l.question.trim() ? `Question : ${court(l.question.trim(), 100)}` : 'Bilan du mois reçu (Booty Flow App).',
+        url: '#/coach/bilans-app',
+        tag: `bilan-app-${l.id}`
+      };
     case 'charges':
       return {
         titre: `${qui} a noté ses charges`,
@@ -141,6 +154,8 @@ export function messageEleve(evenement: string, l: Ligne, coach: string) {
         url: posing ? '#/posing' : '#/mouvement',
         tag: `video-${l.id}`
       };
+    case 'bilan_app':
+      return { titre: 'Ta coach a répondu', corps: `${qui} a répondu à ton bilan du mois.`, url: '#/progres', tag: `bilan-app-${l.id}` };
     case 'bilan':
       return { titre: 'Retour sur ton bilan', corps: `${qui} a commenté ton bilan de la semaine.`, url: '#/progres', tag: `bilan-${l.id}` };
   }
@@ -177,7 +192,9 @@ Deno.serve(async (req) => {
     const ligne: Ligne = corpsRequete.ligne ?? {};
     const eleveId = String(ligne.eleve_id ?? '');
     if (!/^[0-9a-f-]{36}$/i.test(eleveId)) return new Response('Élève inconnue', { status: 400 });
-    const [eleve] = await rest(`profiles?id=eq.${eleveId}&select=prenom`) as { prenom: string | null }[];
+    const [eleve] = await rest(`profiles?id=eq.${eleveId}&select=*`) as { prenom: string | null; formule?: string }[];
+    // Abonnées Booty Flow App : seul leur bilan du mois notifie la coach (pas les charges notées)
+    if (eleve?.formule === 'app' && corpsRequete.table !== 'releves_app') return Response.json({ moment: 'coach', envoyes: 0, raison: 'abonnée App' });
     const message = messageCoach(String(corpsRequete.table), ligne, eleve?.prenom ?? '');
     if (!message) return new Response('Table inconnue', { status: 400 });
     const coachs = await rest('profiles?role=eq.coach&select=id') as { id: string }[];
@@ -206,7 +223,8 @@ Deno.serve(async (req) => {
   if (!['rappel', 'retard', 'test'].includes(moment)) return new Response('Moment inconnu', { status: 400 });
 
   const [eleves, bilans, abonnements] = await Promise.all([
-    rest('profiles?role=eq.eleve&select=id,prenom,prochain_bilan,created_at'),
+    // select=* : fonctionne avant comme après supabase/formules.sql (formule, compte_valide…)
+    rest('profiles?role=eq.eleve&select=*'),
     rest('bilans?select=eleve_id,date'),
     rest('abonnements_push?select=id,eleve_id,endpoint,p256dh,auth')
   ]) as [Eleve[], { eleve_id: string; date: string }[], (Abonnement & { id: string; eleve_id: string })[]];
@@ -214,8 +232,9 @@ Deno.serve(async (req) => {
   // Qui doit recevoir la notification ?
   const cibles = eleves.filter((e) => {
     if (moment === 'test') return true;
+    if (!recoitBilans(e)) return false;
     const dates = bilans.filter((b) => b.eleve_id === e.id).map((b) => b.date);
-    const echeance = derniereEcheance(departBilans(e, dates), paris.date);
+    const echeance = derniereEcheance(departBilans(e, dates), paris.date, pasBilan(e));
     if (!echeance || bilanRecu(echeance, dates)) return false;
     // Dimanche soir : rien reçu samedi ni aujourd'hui ; lundi : week-end passé sans bilan
     return moment === 'rappel' ? echeance === paris.date : echeance < paris.date;

@@ -1,0 +1,25 @@
+<!--
+  E-MAIL DE BIENVENUE « BOOTY FLOW APP »
+  Supabase › Authentication › Emails (Email Templates) › « Invite user »
+    Objet (Subject) : Bienvenue dans Booty Flow App 💜 Crée ton mot de passe
+    Corps (Message body) : colle tout le code ci-dessous (à partir de <div…).
+  {{ .ConfirmationURL }} est le lien sécurisé personnel, rempli automatiquement par Supabase.
+  {{ .Data.prenom }} est le prénom donné lors de l'achat sur Systeme.io.
+-->
+<div style="margin:0;padding:24px 12px;background:#12022A;font-family:Arial,Helvetica,sans-serif;color:#F7F1FF;">
+  <div style="max-width:520px;margin:0 auto;background:#1F0B3D;border:1px solid #3D1D6B;border-radius:20px;padding:32px 24px;">
+    <p style="margin:0 0 6px;font-size:12px;letter-spacing:2px;font-weight:bold;color:#BCA8DE;">BOOTY FLOW APP</p>
+    <h1 style="margin:0 0 18px;font-size:24px;line-height:1.3;color:#F7F1FF;">Bienvenue {{ .Data.prenom }} 💜</h1>
+    <p style="margin:0 0 14px;font-size:15px;line-height:1.6;">Merci pour ta confiance ! Ton espace Booty Flow App est prêt :
+      ton programme de 12 semaines, la vidéothèque, ton calculateur nutrition, ton suivi de progression et le live du mois.</p>
+    <p style="margin:0 0 24px;font-size:15px;line-height:1.6;">Il te reste une seule étape : <strong>créer ton mot de passe</strong>.</p>
+    <p style="margin:0 0 24px;text-align:center;">
+      <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:15px 28px;background:#B266FF;color:#12022A;text-decoration:none;font-weight:bold;font-size:15px;letter-spacing:1px;border-radius:14px;">CRÉER MON MOT DE PASSE</a>
+    </p>
+    <p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#BCA8DE;">Ensuite, ajoute l'app sur l'écran d'accueil de ton téléphone
+      (iPhone : Safari › Partager › « Sur l'écran d'accueil » ; Android : Chrome › ⋮ › « Installer l'application »).</p>
+    <p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#BCA8DE;">Le lien a expiré ? Ouvre l'app, clique sur « Mot de passe oublié ? »
+      et indique cette même adresse e-mail : tu recevras un nouveau lien.</p>
+    <p style="margin:24px 0 0;font-size:15px;">À très vite,<br><strong>Marie</strong> · Booty Flow</p>
+  </div>
+</div>
