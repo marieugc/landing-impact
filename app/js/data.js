@@ -169,7 +169,7 @@ const OFFRES_DEMO = [
     inclus: ['Programmes préconçus de 12 semaines', 'Vidéothèque (exercices + mindset)', 'Calculateur nutrition et journées types',
       'Suivi de progression (charges, mensurations, photos)', 'Bilan du mois avec ma réponse + 1 vidéo technique'],
     non_inclus: ['Programme et plan alimentaire personnalisés', 'Bilan chaque semaine avec ta coach', 'Messagerie et suivi individuel', 'Corrections vidéo individuelles'],
-    prix: '49 €/mois', bouton: null }
+    prix: '49,90 €/mois', bouton: null }
 ];
 
 // 12 semaines sans consigne (nouveau cycle)

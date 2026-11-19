@@ -178,5 +178,5 @@ insert into public.offres (id, ordre, nom, accroche, inclus, non_inclus, prix, b
 ('app', 3, 'Booty Flow App', 'Ta formule actuelle : 100 % autonome.',
   '["Programmes préconçus de 12 semaines","Vidéothèque (exercices + mindset)","Calculateur nutrition et journées types","Suivi de progression (charges, mensurations, photos)","Bilan du mois avec ma réponse + 1 vidéo technique"]',
   '["Programme et plan alimentaire personnalisés","Bilan chaque semaine avec ta coach","Messagerie et suivi individuel","Corrections vidéo individuelles"]',
-  '49 €/mois', null, false)
+  '49,90 €/mois', null, false)
 on conflict (id) do nothing;

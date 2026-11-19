@@ -193,7 +193,7 @@ Chaque élève active les notifications une fois depuis son accueil (même bouto
 Si ta fonction s'appelle autrement que `rappels-bilans` (par exemple `rappels-bilans-`), mets son
 adresse exacte dans les fichiers SQL avant de les lancer.
 
-## Étape 7 : Booty Flow App (abonnement Systeme.io à 49 €/mois)
+## Étape 7 : Booty Flow App (abonnement Systeme.io à 49,90 €/mois)
 
 Trois formules : **Personnalisé** et **Autonomie** (coaching, bilan chaque semaine ou une fois par mois)
 et **App** (abonnement autonome payé sur Systeme.io). Tes élèves actuelles passent en Personnalisé, sans
