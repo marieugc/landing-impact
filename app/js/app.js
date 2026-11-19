@@ -193,7 +193,7 @@ async function afficher() {
       if (racineRoute !== 'coach') { location.replace('#/coach'); return; }
       const [sous, ...params] = reste;
       const ecran = {
-        '': ecransCoach.tableau, undefined: ecransCoach.tableau, abonnees: ecransCoach.abonnees, webhooks: ecransCoach.webhooks, programmes: ecransCoach.programmes, 'nutrition-app': ecransCoach.nutritionApp,
+        '': ecransCoach.tableau, undefined: ecransCoach.tableau, abonnees: ecransCoach.abonnees, webhooks: ecransCoach.webhooks, programmes: ecransCoach.programmes, 'nutrition-app': ecransCoach.nutritionApp, 'bilans-app': ecransCoach.bilansApp,
         eleve: ecransCoach.fiche, videos: ecransCoach.videos, bilans: ecransCoach.bilans,
         competitrices: ecransCoach.competitrices, nutrition: ecransCoach.plansNutrition,
         charges: ecransCoach.suiviCharges, messages: ecransCoach.messages,
@@ -246,16 +246,19 @@ async function majPastille() {
     poserPastille(racine.querySelector(coach ? 'a[href="#/coach/messages"]' : '[data-onglet="chat"]'), n,
       (x) => `${pluriel(x, 'message')} non lu${x > 1 ? 's' : ''}`);
     if (coach) {
-      const [bilans, mouvements, posings] = await Promise.all([
-        api.compterBilansNonLus(), api.compterVideosACorriger('mouvement'), api.compterVideosACorriger('posing')
+      const [bilans, mouvements, posings, bilansApp] = await Promise.all([
+        api.compterBilansNonLus(), api.compterVideosACorriger('mouvement'), api.compterVideosACorriger('posing'),
+        api.compterBilansAppNonLus?.().catch(() => 0) ?? 0
       ]);
+      poserPastille(racine.querySelector('a[href="#/coach/bilans-app"]'), bilansApp,
+        (x) => `${pluriel(x, 'bilan')} du mois à répondre`);
       poserPastille(racine.querySelector('a[href="#/coach/bilans"]'), bilans,
         (x) => `${pluriel(x, 'bilan')} à lire`);
       poserPastille(racine.querySelector('a[href="#/coach/videos"]'), mouvements,
         (x) => `${pluriel(x, 'vidéo')} à corriger`);
       poserPastille(racine.querySelector('a[href="#/coach/competitrices"]'), posings,
         (x) => `${pluriel(x, 'vidéo')} de posing à corriger`);
-      badgeIcone(n + bilans + mouvements + posings);
+      badgeIcone(n + bilans + mouvements + posings + bilansApp);
     } else {
       badgeIcone(n);
       const nouvelles = (await nouveautes(profil)).length;

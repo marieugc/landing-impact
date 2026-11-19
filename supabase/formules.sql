@@ -176,7 +176,7 @@ insert into public.offres (id, ordre, nom, accroche, inclus, non_inclus, prix, b
   '["Programme d''entraînement 100 % personnalisé","Plan alimentaire personnalisé et ajusté","Bilan chaque mois avec mon retour","Messagerie avec moi (écrit et vocal)","Corrections vidéo individuelles de tes exercices","Vidéothèque complète","Suivi des charges et de ta progression"]',
   '["Bilan chaque semaine (1 bilan par mois)"]', null, 'Réserver mon Audit', false),
 ('app', 3, 'Booty Flow App', 'Ta formule actuelle : 100 % autonome.',
-  '["Programmes préconçus de 12 semaines","Vidéothèque (exercices + mindset)","Calculateur nutrition et journées types","Suivi de progression (charges, mensurations, photos)","Live du mois + 1 vidéo technique par mois"]',
-  '["Programme et plan alimentaire personnalisés","Bilans avec ta coach","Messagerie et suivi individuel","Corrections vidéo individuelles"]',
+  '["Programmes préconçus de 12 semaines","Vidéothèque (exercices + mindset)","Calculateur nutrition et journées types","Suivi de progression (charges, mensurations, photos)","Bilan du mois avec ma réponse + 1 vidéo technique"]',
+  '["Programme et plan alimentaire personnalisés","Bilan chaque semaine avec ta coach","Messagerie et suivi individuel","Corrections vidéo individuelles"]',
   '49 €/mois', null, false)
 on conflict (id) do nothing;

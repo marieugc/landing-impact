@@ -145,3 +145,35 @@ drop policy if exists "releves suppression" on public.releves_app;
 create policy "releves suppression" on public.releves_app for delete using (eleve_id = auth.uid() and public.acces_app());
 drop policy if exists "releves coach" on public.releves_app;
 create policy "releves coach" on public.releves_app for all using (public.est_coach()) with check (public.est_coach());
+
+-- ─── Bilan du mois (remplace le Live) : le relevé du mois devient un bilan auquel la coach répond ───
+alter table public.releves_app add column if not exists ressenti text;
+alter table public.releves_app add column if not exists question text;          -- question technique
+alter table public.releves_app add column if not exists video_exercice text;    -- exercice filmé
+alter table public.releves_app add column if not exists video_chemin text;      -- 1 vidéo technique par bilan
+alter table public.releves_app add column if not exists retour text;            -- réponse de la coach
+alter table public.releves_app add column if not exists retour_audio text;
+alter table public.releves_app add column if not exists retour_audio_duree int;
+alter table public.releves_app add column if not exists retour_photos jsonb not null default '[]';
+alter table public.releves_app add column if not exists retour_le timestamptz;
+alter table public.releves_app add column if not exists lu boolean not null default false;
+
+-- L'abonnée envoie son bilan, mais ne peut pas écrire la réponse de la coach
+drop policy if exists "releves ajout" on public.releves_app;
+create policy "releves ajout" on public.releves_app for insert with check (
+  eleve_id = auth.uid() and public.acces_app() and retour is null and retour_audio is null and retour_le is null and lu = false
+);
+
+-- Notifications (si les notifications sont installées : supabase/notifications-coach.sql et notifications-eleves.sql)
+-- Coach : nouveau bilan du mois. Abonnée : la coach a répondu.
+do $$
+begin
+  if to_regprocedure('public.notifier_coach()') is not null then
+    drop trigger if exists notifier_coach on public.releves_app;
+    create trigger notifier_coach after insert on public.releves_app for each row execute function public.notifier_coach();
+  end if;
+  if to_regprocedure('public.notifier_eleve()') is not null then
+    drop trigger if exists notifier_eleve on public.releves_app;
+    create trigger notifier_eleve after update of retour_le on public.releves_app for each row execute function public.notifier_eleve();
+  end if;
+end $$;

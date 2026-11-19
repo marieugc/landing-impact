@@ -111,6 +111,13 @@ export function messageCoach(table: string, l: Ligne, prenom: string) {
         tag: `video-${l.id}`
       };
     }
+    case 'releves_app':
+      return {
+        titre: `Bilan du mois · ${qui}`,
+        corps: typeof l.question === 'string' && l.question.trim() ? `Question : ${court(l.question.trim(), 100)}` : 'Bilan du mois reçu (Booty Flow App).',
+        url: '#/coach/bilans-app',
+        tag: `bilan-app-${l.id}`
+      };
     case 'charges':
       return {
         titre: `${qui} a noté ses charges`,
@@ -147,6 +154,8 @@ export function messageEleve(evenement: string, l: Ligne, coach: string) {
         url: posing ? '#/posing' : '#/mouvement',
         tag: `video-${l.id}`
       };
+    case 'bilan_app':
+      return { titre: 'Ta coach a répondu', corps: `${qui} a répondu à ton bilan du mois.`, url: '#/progres', tag: `bilan-app-${l.id}` };
     case 'bilan':
       return { titre: 'Retour sur ton bilan', corps: `${qui} a commenté ton bilan de la semaine.`, url: '#/progres', tag: `bilan-${l.id}` };
   }
@@ -184,8 +193,8 @@ Deno.serve(async (req) => {
     const eleveId = String(ligne.eleve_id ?? '');
     if (!/^[0-9a-f-]{36}$/i.test(eleveId)) return new Response('Élève inconnue', { status: 400 });
     const [eleve] = await rest(`profiles?id=eq.${eleveId}&select=*`) as { prenom: string | null; formule?: string }[];
-    // Abonnées Booty Flow App : pas de notification à la coach (pas de suivi individuel)
-    if (eleve?.formule === 'app') return Response.json({ moment: 'coach', envoyes: 0, raison: 'abonnée App' });
+    // Abonnées Booty Flow App : seul leur bilan du mois notifie la coach (pas les charges notées)
+    if (eleve?.formule === 'app' && corpsRequete.table !== 'releves_app') return Response.json({ moment: 'coach', envoyes: 0, raison: 'abonnée App' });
     const message = messageCoach(String(corpsRequete.table), ligne, eleve?.prenom ?? '');
     if (!message) return new Response('Table inconnue', { status: 400 });
     const coachs = await rest('profiles?role=eq.coach&select=id') as { id: string }[];

@@ -28,7 +28,7 @@ const COACHING = ['plan_perso', 'bilans', 'messagerie', 'corrections', 'posing',
 const DROITS = {
   personnalise: COACHING,
   autonomie: COACHING,
-  app: ['programmes_app', 'videotheque', 'nutrition_app', 'progression', 'charges', 'live', 'offres']
+  app: ['programmes_app', 'videotheque', 'nutrition_app', 'progression', 'charges', 'bilan_mensuel', 'offres']
 };
 export const aAcces = (p, fonction) => accesOuvert(p) && (DROITS[formuleDe(p)] || []).includes(fonction);
 
@@ -38,7 +38,7 @@ export const intervalleBilan = (p) => (formuleDe(p) === 'autonomie' ? 28 : 7);
 // Encart affiché aux abonnées App à la place des sections de coaching
 export const SECTIONS_COACHING = {
   plan_perso: ['Programme et plan alimentaire personnalisés', 'Un programme et une diète construits pour toi, ajustés au fil de tes bilans.'],
-  bilans: ['Bilans avec ta coach', 'Chaque bilan reçoit un retour personnalisé : mensurations, photos, ressenti, ajustements.'],
+  bilans: ['Bilan chaque semaine avec ta coach', 'Un bilan chaque semaine avec un retour personnalisé et des ajustements de ton programme et de ta diète.'],
   messagerie: ['Messagerie et suivi individuel', 'Pose tes questions à ta coach à l\'écrit ou en vocal, et sois suivie de près.'],
   corrections: ['Corrections vidéo individuelles', 'Envoie tes vidéos d\'exercices et reçois une correction détaillée de ta technique.']
 };

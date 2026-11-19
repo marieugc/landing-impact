@@ -26,6 +26,9 @@ begin
   elsif TG_TABLE_NAME = 'bilans' then
     -- Premier retour de la coach sur ce bilan
     if TG_OP = 'UPDATE' and n ->> 'retour_le' is not null and o ->> 'retour_le' is null then evenement := 'bilan'; end if;
+  elsif TG_TABLE_NAME = 'releves_app' then
+    -- Booty Flow App : premier retour de la coach sur le bilan du mois
+    if TG_OP = 'UPDATE' and n ->> 'retour_le' is not null and o ->> 'retour_le' is null then evenement := 'bilan_app'; end if;
   end if;
   if evenement is null then return new; end if;
 

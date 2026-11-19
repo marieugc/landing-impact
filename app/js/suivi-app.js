@@ -3,6 +3,11 @@ import { api } from './data.js';
 import { esc, icone, toast, pendant, dateCourte, nombre, courbe, joursAvant, fenetre, fermerFenetre, compresserImage, ecart } from './ui.js';
 import { page, entete, blocCharges } from './eleve.js';
 import { encartCoaching } from './formules.js';
+import { NOM_COACH } from './config.js';
+import { retourBilanHtml, brancherRetours, retourEstNouveau, marquerRetoursVus } from './bilans.js';
+import { videoPrete } from './compression.js';
+import { enregistreurVocal } from './vocal.js';
+import { page as pageCoach } from './coach.js';
 
 const signe = (v, dec = 1) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${nombre(Math.abs(v), dec)}`;
 
@@ -74,25 +79,41 @@ export async function chargerMedias(zone) {
 }
 
 function formulaireReleve(apres) {
-  const f = fenetre('Mon relevé du mois', `<form class="formulaire" id="form-releve">
-    <p class="petit">Mesure-toi au mètre ruban, le matin, au même endroit à chaque fois. Laisse vide ce que tu ne mesures pas.</p>
+  const f = fenetre('Mon bilan du mois', `<form class="formulaire" id="form-releve">
+    <p class="petit">Une fois par mois : tes mensurations, tes photos, ton ressenti et ta question technique. ${esc(NOM_COACH)} te répond personnellement.</p>
+    <div class="surtitre-carte">MES MENSURATIONS</div>
+    <p class="petit">Au mètre ruban, le matin, au même endroit à chaque fois. Laisse vide ce que tu ne mesures pas.</p>
     <div class="grille-2">${MESURES.map(([cle, nom]) => `<label>${nom}<span class="avec-unite"><input name="${cle}" type="number" inputmode="decimal" step="0.5" min="10" max="200"><em>cm</em></span></label>`).join('')}</div>
     <div class="surtitre-carte">MES PHOTOS (FACULTATIF)</div>
     <p class="petit">Même lumière, même tenue, téléphone à hauteur de taille. Elles ne sont visibles que par toi et ta coach.</p>
     <div class="grille-3">${COTES.map(([cle, nom]) => `<label class="choix-photo">${icone('photo', 22, 'var(--accent)')}<span>${nom}</span><input type="file" name="${cle}" accept="image/*"></label>`).join('')}</div>
-    <button class="bouton-principal" type="submit">${icone('check', 18)}ENREGISTRER MON RELEVÉ</button>
+    <div class="surtitre-carte">MON MOIS</div>
+    <label>Comment s'est passé ton mois ?<textarea name="ressenti" rows="3" placeholder="Énergie, séances, alimentation, motivation…"></textarea></label>
+    <div class="surtitre-carte">MA VIDÉO TECHNIQUE (1 PAR MOIS, FACULTATIF)</div>
+    <label>Exercice filmé<input name="video_exercice" placeholder="Ex. : Hip thrust"></label>
+    <label class="choix-video">${icone('video', 18, 'var(--accent)')}<span>Choisir ma vidéo (50 Mo max)</span><input type="file" name="video" accept="video/*"></label>
+    <label>Ma question<textarea name="question" rows="2" placeholder="Ex. : est-ce que je descends assez bas ?"></textarea></label>
+    <button class="bouton-principal" type="submit">${icone('envoi', 18)}ENVOYER MON BILAN</button>
   </form>`);
-  f.querySelectorAll('.choix-photo input').forEach((x) => x.addEventListener('change', () => x.parentElement.classList.toggle('choisie', x.files.length > 0)));
+  f.querySelectorAll('.choix-photo input, .choix-video input').forEach((x) => x.addEventListener('change', () => {
+    x.parentElement.classList.toggle('choisie', x.files.length > 0);
+    if (x.name === 'video' && x.files[0]) x.previousElementSibling.textContent = x.files[0].name;
+  }));
   f.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const d = new FormData(e.target);
     const mesures = Object.fromEntries(MESURES.map(([cle]) => [cle, d.get(cle) === '' ? null : Number(String(d.get(cle)).replace(',', '.'))]));
+    const texte = (k) => String(d.get(k) || '').trim() || null;
+    Object.assign(mesures, { ressenti: texte('ressenti'), question: texte('question'), video_exercice: texte('video_exercice') });
     const photos = {};
     for (const [cle] of COTES) if (d.get(cle)?.size) photos[cle] = await compresserImage(d.get(cle));
-    if (Object.values(mesures).every((v) => v === null) && !Object.keys(photos).length) { toast('Ajoute au moins une mesure ou une photo.', true); return; }
-    await pendant(e.submitter, 'Envoi…', () => api.addReleve(mesures, photos));
+    const fichierVideo = d.get('video')?.size ? d.get('video') : null;
+    if (MESURES.every(([cle]) => mesures[cle] === null) && !Object.keys(photos).length && !mesures.ressenti && !mesures.question && !fichierVideo) {
+      toast('Remplis au moins une partie de ton bilan.', true); return;
+    }
+    await pendant(e.submitter, 'Envoi…', async () => api.addReleve(mesures, photos, await videoPrete(fichierVideo, e.submitter)));
     fermerFenetre();
-    toast('Relevé enregistré, bravo !');
+    toast(`Bilan envoyé ! ${NOM_COACH} te répond très vite.`);
     apres();
   });
 }
@@ -100,6 +121,7 @@ function formulaireReleve(apres) {
 export async function progresAbonnee(racine, profil) {
   const [pesees, ajustements, reglages, releves] = await Promise.all([api.listPesees(profil.id), api.listAjustements(profil.id), api.getNutritionApp(), api.listReleves(profil.id)]);
   const aFaire = releveAFaire(releves);
+  const dernierBilan = releves[releves.length - 1];
   const vmax = Number(reglages.coefficients?.vitesse_max_kg_semaine ?? 0.5), stagnation = Number(reglages.coefficients?.seuil_stagnation_kg_semaine ?? 0.1);
   const pa = profil.app || {};
   const derniere = pesees[pesees.length - 1];
@@ -131,13 +153,20 @@ export async function progresAbonnee(racine, profil) {
         ${rythme === 'idéal' ? '· parfait, continue comme ça !' : rythme === 'trop rapide' ? `· un peu trop rapide (objectif : pas plus de ${nombre(vmax * 1000, 0)} g ${perte ? 'perdus' : 'pris'} par semaine)` : `· ton poids ne bouge pas`}</p>` : ''}
     </section>
     <section class="carte${aFaire ? ' releve-du' : ''}">
-      <div class="ligne-entre"><div class="surtitre-carte">MON RELEVÉ DU MOIS</div>
+      <div class="ligne-entre"><div class="surtitre-carte">MON BILAN DU MOIS</div>
         <span class="petit">${releves.length ? (aFaire ? 'À faire' : `Prochain le ${dateCourte(plusJoursIso(releves[releves.length - 1].date, JOURS_ENTRE_RELEVES))}`) : ''}</span></div>
       ${releves.length ? grilleMesures(releves) : '<p class="petit">Tes mensurations et tes photos, une fois par mois : la meilleure façon de voir tes fessiers et ta silhouette changer.</p>'}
       ${releves.some((r) => r.tour_taille != null) && releves.length > 1 ? `<div class="petit">Tour de taille</div>${courbe(releves.filter((r) => r.tour_taille != null).map((r) => ({ valeur: r.tour_taille })), { libelle: 'Évolution du tour de taille', unite: 'cm', hauteur: 80 })}` : ''}
       ${releves.length ? `<nav class="segments" aria-label="Photos avant / après">${COTES.map(([cle, nom], i) => `<button class="segment${i === 0 ? ' actif' : ''}" data-cote="${cle}">${nom}</button>`).join('')}</nav>
         <div id="avant-apres">${avantApres(releves, 'face')}</div>` : ''}
-      <button class="${aFaire ? 'bouton-principal' : 'bouton-contour'}" id="nouveau-releve">${icone(aFaire ? 'plus' : 'photo', 18)}${aFaire ? 'FAIRE MON RELEVÉ DU MOIS' : 'Ajouter un relevé'}</button>
+      ${dernierBilan ? `<div class="bilan-envoye">
+        <div class="surtitre-carte">MON BILAN DU ${esc(dateCourte(dernierBilan.date).toUpperCase())}</div>
+        ${dernierBilan.ressenti ? `<p class="texte">${esc(dernierBilan.ressenti)}</p>` : ''}
+        ${dernierBilan.question ? `<p class="petit"><strong>Ma question${dernierBilan.video_exercice ? ` (${esc(dernierBilan.video_exercice)})` : ''} :</strong> ${esc(dernierBilan.question)}</p>` : ''}
+        ${dernierBilan.video_chemin ? `<button type="button" class="bouton-contour compact" data-video-bilan="${esc(dernierBilan.video_chemin)}">${icone('lecture', 16)}Ma vidéo</button>` : ''}
+        ${retourBilanHtml(dernierBilan) || `<p class="petit">En attente de la réponse de ${esc(NOM_COACH)}.</p>`}
+      </div>` : ''}
+      <button class="${aFaire ? 'bouton-principal' : 'bouton-contour'}" id="nouveau-releve">${icone(aFaire ? 'plus' : 'envoi', 18)}${aFaire ? 'FAIRE MON BILAN DU MOIS' : 'Envoyer un nouveau bilan'}</button>
     </section>
     <section class="carte">
       <div class="surtitre-carte">MON PLAN ALIMENTAIRE</div>
@@ -177,6 +206,15 @@ export async function progresAbonnee(racine, profil) {
     chargerMedias(zone);
   }));
   chargerMedias(racine);
+  brancherRetours(racine);
+  racine.querySelectorAll('[data-video-bilan]').forEach((b) => b.addEventListener('click', async () => {
+    const url = await api.mediaUrl(b.dataset.videoBilan);
+    fenetre('Ma vidéo', url ? `<video src="${esc(url)}" controls playsinline class="lecteur"></video>` : '<p class="vide">Vidéo indisponible (démo).</p>');
+  }));
+  if (releves.some((r) => retourEstNouveau(r, profil.id))) {
+    marquerRetoursVus(profil.id);
+    document.dispatchEvent(new CustomEvent('messages-lus'));
+  }
   await blocCharges(racine.querySelector('#charges'), profil.id, true);
 }
 
@@ -222,4 +260,52 @@ export async function blocSuiviAbonnee(zone, e) {
     toast('Ajustement enregistré : son plan alimentaire est recalculé.');
     blocSuiviAbonnee(zone, e);
   });
+}
+
+// ───────────── Espace coach : bilans du mois des abonnées App ─────────────
+let filtreBilansApp = 'a_repondre';
+export async function bilansApp(racine, profil) {
+  const tous = await api.listBilansApp();
+  const aRepondre = tous.filter((b) => !b.retour_le);
+  const visibles = filtreBilansApp === 'a_repondre' ? aRepondre : tous;
+  const carte = (b) => `<article class="carte bilan-app${b.retour_le ? '' : ' a-repondre'}" data-bilan="${esc(b.id)}">
+    <div class="ligne-entre"><div><div class="surtitre-carte">${esc((b.prenom || '').toUpperCase())} · BILAN DU ${esc(dateCourte(b.date).toUpperCase())}</div></div>
+      <a href="#/coach/eleve/${esc(b.eleve_id)}" class="petit">Voir sa fiche</a></div>
+    <div class="grille-mesures">${MESURES.filter(([c]) => b[c] != null).map(([c, n]) => `<div class="mesure-app"><span class="petit">${n}</span><strong>${nombre(b[c])} cm</strong></div>`).join('') || '<p class="petit">Pas de mensurations.</p>'}</div>
+    ${COTES.some(([c]) => b[`photo_${c}`]) ? `<div class="grille-3">${COTES.filter(([c]) => b[`photo_${c}`]).map(([c, n]) => `<figure class="photo"><div class="photo-cadre" data-media="${esc(b[`photo_${c}`])}">Photo</div><figcaption>${n}</figcaption></figure>`).join('')}</div>` : ''}
+    ${b.ressenti ? `<p class="texte"><strong>Son mois :</strong> ${esc(b.ressenti)}</p>` : ''}
+    ${b.question || b.video_chemin ? `<div class="question-bilan"><strong>Sa question${b.video_exercice ? ` · ${esc(b.video_exercice)}` : ''}</strong>
+      ${b.question ? `<p class="texte">${esc(b.question)}</p>` : ''}
+      ${b.video_chemin ? `<button type="button" class="bouton-contour compact" data-video-bilan="${esc(b.video_chemin)}">${icone('lecture', 16)}Voir sa vidéo</button>` : ''}</div>` : ''}
+    ${b.retour_le ? retourBilanHtml(b, { pourCoach: true }) : `<form class="formulaire reponse-bilan-app">
+      <label>Ta réponse<textarea name="texte" rows="4" placeholder="Ton retour sur son mois, ses mensurations, ses photos et sa vidéo…"></textarea></label>
+      <div class="zone-vocal"></div>
+      <button class="bouton-principal compact" type="submit">${icone('envoi', 16)}ENVOYER MA RÉPONSE</button>
+    </form>`}
+  </article>`;
+  racine.innerHTML = pageCoach(profil, 'coach/bilans-app', `<div class="bureau-tete"><div><div class="surtitre">ABONNÉES BOOTY FLOW APP</div><h1>Bilans du mois</h1></div></div>
+    <div class="filtres"><button class="filtre${filtreBilansApp === 'a_repondre' ? ' actif' : ''}" data-filtre="a_repondre">À répondre · ${aRepondre.length}</button>
+      <button class="filtre${filtreBilansApp === 'tous' ? ' actif' : ''}" data-filtre="tous">Tous · ${tous.length}</button></div>
+    <div class="pile">${visibles.map(carte).join('') || '<p class="vide">Aucun bilan à répondre. Bravo !</p>'}</div>`);
+  racine.querySelectorAll('[data-filtre]').forEach((x) => x.addEventListener('click', () => { filtreBilansApp = x.dataset.filtre; bilansApp(racine, profil); }));
+  racine.querySelectorAll('[data-video-bilan]').forEach((x) => x.addEventListener('click', async () => {
+    const url = await api.mediaUrl(x.dataset.videoBilan);
+    fenetre('Sa vidéo', url ? `<video src="${esc(url)}" controls playsinline class="lecteur"></video>` : '<p class="vide">Vidéo indisponible (démo).</p>');
+  }));
+  racine.querySelectorAll('.reponse-bilan-app').forEach((form) => {
+    const art = form.closest('[data-bilan]');
+    const b = tous.find((x) => x.id === art.dataset.bilan);
+    const vocal = enregistreurVocal(form.querySelector('.zone-vocal'));
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const texte = new FormData(form).get('texte').trim();
+      if (!texte && !vocal.fichier()) { toast('Écris une réponse ou enregistre un vocal.', true); return; }
+      await pendant(e.submitter, 'Envoi…', () => api.repondreBilanApp(b.id, b.eleve_id, { texte, audio: vocal.fichier(), duree: vocal.duree() }));
+      toast(`Réponse envoyée à ${b.prenom || 'ton abonnée'}.`);
+      document.dispatchEvent(new CustomEvent('messages-lus'));
+      bilansApp(racine, profil);
+    });
+  });
+  chargerMedias(racine);
+  brancherRetours(racine);
 }

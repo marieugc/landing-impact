@@ -13,7 +13,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v15';
+const CLE_DEMO = 'bootyflow-demo-v16';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -167,8 +167,8 @@ const OFFRES_DEMO = [
     non_inclus: ['Bilan chaque semaine (1 bilan par mois)'], prix: null, bouton: 'Réserver mon Audit' },
   { id: 'app', ordre: 3, nom: 'Booty Flow App', accroche: 'Ta formule actuelle : 100 % autonome.', mise_en_avant: false,
     inclus: ['Programmes préconçus de 12 semaines', 'Vidéothèque (exercices + mindset)', 'Calculateur nutrition et journées types',
-      'Suivi de progression (charges, mensurations, photos)', 'Live du mois + 1 vidéo technique par mois'],
-    non_inclus: ['Programme et plan alimentaire personnalisés', 'Bilans avec ta coach', 'Messagerie et suivi individuel', 'Corrections vidéo individuelles'],
+      'Suivi de progression (charges, mensurations, photos)', 'Bilan du mois avec ma réponse + 1 vidéo technique'],
+    non_inclus: ['Programme et plan alimentaire personnalisés', 'Bilan chaque semaine avec ta coach', 'Messagerie et suivi individuel', 'Corrections vidéo individuelles'],
     prix: '49 €/mois', bouton: null }
 ];
 
@@ -198,8 +198,12 @@ async function demoApp() {
     d.pesees = [64.2, 63.8, 63.5, 63.4].map((poids, i) => ({ id: id(), eleve_id: 'emma', date: dansJours(-28 + i * 7), poids }));
     d.ajustements = [];
     // Relevés du mois d'Emma : mensurations (sans photos en démo)
-    d.releves = [[-31, 70, 99, 101, 57.5, 28.5], [-3, 68.5, 98, 101.5, 56.5, 28.5]].map(([j, tour_taille, hanches, fessiers, cuisse, bras]) =>
-      ({ id: id(), eleve_id: 'emma', date: dansJours(j), tour_taille, hanches, fessiers, cuisse, bras, photo_face: null, photo_profil: null, photo_dos: null }));
+    d.releves = [[-31, 70, 99, 101, 57.5, 28.5], [-3, 68.5, 98, 101.5, 56.5, 28.5]].map(([j, tour_taille, hanches, fessiers, cuisse, bras], i) =>
+      ({ id: id(), eleve_id: 'emma', date: dansJours(j), tour_taille, hanches, fessiers, cuisse, bras, photo_face: null, photo_profil: null, photo_dos: null,
+        ressenti: i ? 'Je me sens plus forte sur le hip thrust, un peu fatiguée en fin de semaine.' : 'Premier mois, j\'apprends les mouvements.',
+        question: i ? 'Est-ce que je descends assez bas sur les fentes bulgares ?' : null, video_exercice: i ? 'Fentes bulgares' : null, video_chemin: null,
+        retour: i ? null : 'Super premier mois Emma ! Ton tour de taille va bouger, garde le cap sur les protéines.',
+        retour_audio: null, retour_audio_duree: null, retour_photos: [], retour_le: i ? null : dansJours(-29) + 'T18:00:00.000Z', lu: !i }));
     ecrireDemo(d);
   }
   return d;
@@ -394,12 +398,27 @@ const demo = {
   async listReleves(uid) {
     return ((await demoApp()).releves || []).filter((r) => r.eleve_id === uid).sort((a, b) => a.date.localeCompare(b.date));
   },
-  async addReleve(mesures, photos = {}) {
+  async addReleve(mesures, photos = {}, video = null) {
     const d = await demoApp();
     d.releves ??= [];
     const uid = localStorage.getItem(CLE_SESSION);
-    d.releves.push({ id: id(), eleve_id: uid, date: aujourdhui(), ...mesures,
-      photo_face: garderFichier(photos.face), photo_profil: garderFichier(photos.profil), photo_dos: garderFichier(photos.dos) });
+    d.releves.push({ id: id(), eleve_id: uid, date: aujourdhui(), ...mesures, video_chemin: garderFichier(video),
+      photo_face: garderFichier(photos.face), photo_profil: garderFichier(photos.profil), photo_dos: garderFichier(photos.dos),
+      retour: null, retour_audio: null, retour_audio_duree: null, retour_photos: [], retour_le: null, lu: false });
+    ecrireDemo(d);
+  },
+  // Coach : tous les bilans du mois des abonnées App
+  async listBilansApp() {
+    const d = await demoApp();
+    return (d.releves || []).map((r) => ({ ...r, prenom: d.profiles.find((p) => p.id === r.eleve_id)?.prenom }))
+      .sort((a, b) => b.date.localeCompare(a.date));
+  },
+  async compterBilansAppNonLus() { return ((await demoApp()).releves || []).filter((r) => !r.lu).length; },
+  async repondreBilanApp(rid, eleveId, { texte, audio, duree }) {
+    const d = await demoApp();
+    const r = d.releves.find((x) => x.id === rid);
+    Object.assign(r, { retour: texte || null, retour_le: new Date().toISOString(), lu: true });
+    if (audio) Object.assign(r, { retour_audio: garderFichier(audio), retour_audio_duree: duree || null });
     ecrireDemo(d);
   },
   async supprimerReleve(rid) {
@@ -851,11 +870,26 @@ const reel = {
     const { data, error } = await (await client()).from('releves_app').select('*').eq('eleve_id', uid).order('date');
     return error ? [] : data;
   },
-  async addReleve(mesures, photos = {}) {
+  async addReleve(mesures, photos = {}, video = null) {
     const uid = (await reel.getSession())?.userId;
     const ligne = { ...mesures, eleve_id: uid };
     for (const cote of ['face', 'profil', 'dos']) ligne[`photo_${cote}`] = await envoyerFichier(uid, 'suivi', photos[cote]);
+    if (video) ligne.video_chemin = await envoyerFichier(uid, 'suivi-videos', video);
     verifier(await (await client()).from('releves_app').insert(ligne));
+  },
+  async listBilansApp() {
+    const { data, error } = await (await client()).from('releves_app').select('*, profiles(prenom)').order('date', { ascending: false }).limit(300);
+    return error ? [] : data.map((r) => ({ ...r, prenom: r.profiles?.prenom }));
+  },
+  async compterBilansAppNonLus() {
+    const { count, error } = await (await client()).from('releves_app').select('id', { count: 'exact', head: true }).eq('lu', false);
+    return error ? 0 : count || 0;
+  },
+  // Réponse de la coach : texte et/ou vocal (rangé dans le dossier de l'abonnée pour qu'elle puisse l'écouter)
+  async repondreBilanApp(rid, eleveId, { texte, audio, duree }) {
+    const maj = { retour: texte || null, retour_le: new Date().toISOString(), lu: true };
+    if (audio) Object.assign(maj, { retour_audio: await envoyerFichier(eleveId, 'bilans-retours', audio), retour_audio_duree: duree || null });
+    verifier(await (await client()).from('releves_app').update(maj).eq('id', rid));
   },
   async supprimerReleve(rid) { verifier(await (await client()).from('releves_app').delete().eq('id', rid)); },
   async ajusterGlucidesCoach(uid, total, raison) {

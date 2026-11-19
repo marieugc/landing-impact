@@ -11,6 +11,7 @@ import { programme, questionnaire, etatProgramme } from './programme-app.js';
 import { nutritionAbonnee, profilCalcul } from './nutrition-app.js';
 import { besoins } from './nutrition-calcul.js';
 import { progresAbonnee, peseeAFaire, releveAFaire } from './suivi-app.js';
+import { retourEstNouveau } from './bilans.js';
 
 const lienExterne = (url, texte, classe = 'bouton-principal') => url
   ? `<a href="${esc(url)}" class="${classe}" target="_blank" rel="noopener">${texte}</a>`
@@ -26,7 +27,6 @@ function piedDePage() {
 }
 
 // Bientôt : écrans construits aux étapes suivantes (programmes, nutrition, live)
-const bientot = (texte) => `<section class="carte"><div class="surtitre-carte">BIENTÔT DISPONIBLE</div><p class="texte">${texte}</p></section>`;
 
 // ───────────── Accueil ─────────────
 async function accueil(racine, profil) {
@@ -43,10 +43,15 @@ async function accueil(racine, profil) {
       <span class="carte-nouveaute-texte"><span class="surtitre-carte">C'EST LE MOMENT</span>
         <strong>Ma pesée de la semaine</strong><span class="petit">Ton plan alimentaire s'ajuste selon ton poids</span></span>
       ${icone('chevron', 18, 'var(--doux)')}</a>` : ''}
+    ${releves.some((r) => retourEstNouveau(r, profil.id)) ? `<a href="#/progres" class="carte carte-training nouveau">
+      <span class="icone-training">${icone('chat', 24, 'var(--accent)')}</span>
+      <span class="carte-nouveaute-texte"><span class="surtitre-carte">NOUVEAU · RÉPONSE DE ${esc(NOM_COACH.toUpperCase())}</span>
+        <strong>${esc(NOM_COACH)} a répondu à ton bilan du mois</strong><span class="petit">Voir sa réponse</span></span>
+      ${icone('chevron', 18, 'var(--doux)')}</a>` : ''}
     ${!peseeAFaire(pesees) && releveAFaire(releves) ? `<a href="#/progres" class="carte carte-training nouveau">
       <span class="icone-training">${icone('photo', 24, 'var(--accent)')}</span>
       <span class="carte-nouveaute-texte"><span class="surtitre-carte">C'EST LE MOMENT</span>
-        <strong>Mon relevé du mois</strong><span class="petit">Mensurations et photos : vois ta silhouette changer</span></span>
+        <strong>Mon bilan du mois</strong><span class="petit">Mensurations, photos, ta question : ${esc(NOM_COACH)} te répond</span></span>
       ${icone('chevron', 18, 'var(--doux)')}</a>` : ''}
     <a href="#/programme" class="carte carte-training">
       <span class="icone-training">${icone('haltere', 24, 'var(--accent)')}</span>
@@ -62,8 +67,8 @@ async function accueil(racine, profil) {
     <div class="grille-2">
       <a href="#/nutrition" class="carte carte-mini">${icone('nutrition', 22, 'var(--accent)')}
         <div><div class="petit">Nutrition</div><strong>${besoinsJour ? `${besoinsJour.training.kcal.toLocaleString('fr-FR')} kcal jour training` : 'Mes journées types'}</strong></div></a>
-      <a href="#/live" class="carte carte-mini">${icone('video', 22, 'var(--accent)')}
-        <div><div class="petit">Live du mois</div><strong>Avec ${esc(NOM_COACH)}</strong></div></a>
+      <a href="#/progres" class="carte carte-mini">${icone('chat', 22, 'var(--accent)')}
+        <div><div class="petit">Bilan du mois</div><strong>Avec ${esc(NOM_COACH)}</strong></div></a>
     </div>
     <div id="zone-rappels"></div>
     ${encartCoaching('messagerie')}
@@ -77,12 +82,8 @@ const nutrition = nutritionAbonnee;
 
 const progres = progresAbonnee;
 
-async function live(racine, profil) {
-  racine.innerHTML = page(profil, 'accueil', `
-    <header class="entete"><a href="#/accueil" class="bouton-rond" aria-label="Retour">${icone('retour', 20)}</a>
-      <div><div class="surtitre">AVEC ${esc(NOM_COACH.toUpperCase())}</div><h1>Live du mois</h1></div></header>`
-    + bientot('La date du prochain live, le lien pour le rejoindre et le dépôt de ta vidéo technique du mois arrivent ici très bientôt.'));
-}
+// L'ancien « Live du mois » est remplacé par le bilan du mois (onglet Progrès)
+const live = async () => { location.replace('#/progres'); };
 
 // Sections de coaching ouvertes par une abonnée App (lien direct, ancien favori…) : encart à la place
 function sectionCoaching(section, onglet, surtitre, titre) {
