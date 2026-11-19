@@ -219,7 +219,9 @@ async function ongletJournees(zone, reglages) {
       const j = b ? journeeType(b[typeJournee], lireRepas(form), aliments) : null;
       zone.querySelector('#apercu-journee').innerHTML = `<div class="surtitre-carte">APERÇU POUR L'EXEMPLE</div>${champsExemple()}
         ${j ? `<p class="petit">Cible : ${chiffre(b[typeJournee].kcal)} kcal · P ${b[typeJournee].proteines} · G ${b[typeJournee].glucides} · L ${b[typeJournee].lipides}</p>
-        ${htmlJournee(j)}<p class="total-journee">Total : <strong>${chiffre(j.total.kcal)} kcal</strong> · P ${j.total.proteines} · G ${j.total.glucides} · L ${j.total.lipides}</p>` : ''}`;
+        ${htmlJournee(j)}<p class="total-journee">Total : <strong>${chiffre(j.total.kcal)} kcal</strong> · P ${j.total.proteines} · G ${j.total.glucides} · L ${j.total.lipides}</p>
+        ${Math.abs(j.ecart) > b[typeJournee].kcal * 0.05 ? `<p class="petit alerte">${j.ecart > 0 ? `${chiffre(j.ecart)} kcal de trop : les portions minimum sont trop grandes pour cette cible`
+          : `Il manque ${chiffre(-j.ecart)} kcal : les portions maximum sont atteintes`}. Ajuste les min / max dans Aliments, ou ajoute / retire une source dans un repas.</p>` : ''}` : ''}`;
       brancherExemple(zone.querySelector('#apercu-journee'), apercu);
     };
     apercu();
@@ -268,6 +270,8 @@ async function ongletAliments(zone, reglages, recharger) {
     <select data-k="categorie" aria-label="Famille">${Object.entries(CATEGORIES_ALIMENTS).map(([v, t]) => `<option value="${v}"${a.categorie === v ? ' selected' : ''}>${t}</option>`).join('')}</select>
     ${['kcal', 'proteines', 'glucides', 'lipides'].map((k) => `<input data-k="${k}" type="number" step="0.1" min="0" value="${esc(a[k])}" aria-label="${k}">`).join('')}
     <input data-k="pas" type="number" min="1" value="${esc(a.pas || 50)}" aria-label="Arrondi">
+    <input data-k="min" type="number" min="0" value="${esc(a.min ?? '')}" placeholder="—" aria-label="Portion minimum par repas">
+    <input data-k="max" type="number" min="0" value="${esc(a.max ?? '')}" placeholder="—" aria-label="Portion maximum par repas">
     <input data-k="unite" value="${esc(a.unite && a.unite !== 'g' ? a.unite : '')}" placeholder="g" aria-label="Unité">
     <input data-k="poids_unite" type="number" min="0" value="${esc(a.poids_unite || '')}" placeholder="—" aria-label="Poids d'une unité">
     <button type="button" class="bouton-rond" data-supprimer="${i}" aria-label="Supprimer ${esc(a.nom)}">${icone('poubelle', 16)}</button>
@@ -275,10 +279,11 @@ async function ongletAliments(zone, reglages, recharger) {
   const dessiner = () => {
     zone.innerHTML = `<form class="formulaire carte" id="form-aliments">
       <p class="petit">Valeurs pour 100 g. « Poids » : cru pour les viandes et poissons, cuit pour le riz, les pâtes et les pommes de terre (affiché à l'abonnée).
-        « Arrondi » : les quantités sont des multiples de ce nombre (50 → 100, 150, 200 g). Pour un aliment compté à l'unité (œuf, banane),
+        « Arrondi » : les quantités sont des multiples de ce nombre (50 → 100, 150, 200 g). « Min » et « Max » : portion la plus petite
+        et la plus grande dans un même repas (en g, ou en unités) ; au-delà du max, les glucides vont aux autres repas. Pour un aliment compté à l'unité (œuf, banane),
         indique l'unité, son poids, et un arrondi de 1.</p>
       <div class="tableau-aliments">
-        <div class="ligne-aliment-table tete"><span>Aliment</span><span>Poids</span><span>Famille</span><span>kcal</span><span>Prot.</span><span>Gluc.</span><span>Lip.</span><span>Arrondi</span><span>Unité</span><span>g / unité</span><span></span></div>
+        <div class="ligne-aliment-table tete"><span>Aliment</span><span>Poids</span><span>Famille</span><span>kcal</span><span>Prot.</span><span>Gluc.</span><span>Lip.</span><span>Arrondi</span><span>Min / repas</span><span>Max / repas</span><span>Unité</span><span>g / unité</span><span></span></div>
         ${aliments.map(ligne).join('')}
       </div>
       <button type="button" class="bouton-contour" id="ajouter-aliment">${icone('plus', 18)}Ajouter un aliment</button>
@@ -291,7 +296,7 @@ async function ongletAliments(zone, reglages, recharger) {
       const unite = v('unite');
       return { ...a, nom: v('nom'), etat: v('etat'), categorie: v('categorie'),
         kcal: Number(v('kcal')) || 0, proteines: Number(v('proteines')) || 0, glucides: Number(v('glucides')) || 0, lipides: Number(v('lipides')) || 0,
-        pas: Number(v('pas')) || 50, ...(unite ? { unite, poids_unite: Number(v('poids_unite')) || 100 } : { unite: undefined, poids_unite: undefined }) };
+        pas: Number(v('pas')) || 50, min: Number(v('min')) || undefined, max: Number(v('max')) || undefined, ...(unite ? { unite, poids_unite: Number(v('poids_unite')) || 100 } : { unite: undefined, poids_unite: undefined }) };
     });
     form.querySelector('#ajouter-aliment').addEventListener('click', () => {
       aliments = lire();
