@@ -13,7 +13,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v14';
+const CLE_DEMO = 'bootyflow-demo-v15';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
