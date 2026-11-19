@@ -103,3 +103,27 @@ test('portions réalistes à tous les niveaux de calories (min / max par repas)'
     }
   }
 });
+
+test('ajustement automatique selon la pesée (glucides seulement)', async () => {
+  const { decisionAjustement } = await import('../js/nutrition-calcul.js');
+  const p = (date, poids) => ({ date, poids });
+  const d = '2026-11-18';
+  // Perte de gras
+  assert.equal(decisionAjustement({ objectif: 'perte_de_gras', date: d, pesees: [p('2026-11-11', 62), p(d, 62)] }).delta, -30);
+  assert.equal(decisionAjustement({ objectif: 'perte_de_gras', date: d, pesees: [p('2026-11-11', 62), p(d, 61.2)] }).delta, 30);
+  assert.equal(decisionAjustement({ objectif: 'perte_de_gras', date: d, pesees: [p('2026-11-11', 62), p(d, 61.7)] }).delta, 0);
+  // Prise de muscle
+  assert.equal(decisionAjustement({ objectif: 'prise_de_muscle', date: d, pesees: [p('2026-11-11', 60), p(d, 60.05)] }).delta, 30);
+  assert.equal(decisionAjustement({ objectif: 'prise_de_muscle', date: d, pesees: [p('2026-11-11', 60), p(d, 60.8)] }).delta, -30);
+  assert.equal(decisionAjustement({ objectif: 'prise_de_muscle', date: d, pesees: [p('2026-11-11', 60), p(d, 60.3)] }).delta, 0);
+  // Pas assez de recul, attente d'une semaine, plafond
+  assert.equal(decisionAjustement({ objectif: 'perte_de_gras', date: d, pesees: [p('2026-11-15', 62), p(d, 62)] }).delta, 0);
+  assert.equal(decisionAjustement({ objectif: 'perte_de_gras', date: d, ajusteLe: '2026-11-14', pesees: [p('2026-11-11', 62), p(d, 62)] }).delta, 0);
+  assert.equal(decisionAjustement({ objectif: 'perte_de_gras', date: d, ajustement: -150, pesees: [p('2026-11-11', 62), p(d, 62)] }).delta, 0);
+  // L'ajustement ne touche que les glucides
+  const avant = besoins(camille), apres = besoins(camille, undefined, -30);
+  assert.equal(apres.training.glucides, avant.training.glucides - 30);
+  assert.equal(apres.training.proteines, avant.training.proteines);
+  assert.equal(apres.training.lipides, avant.training.lipides);
+  assert.equal(apres.off.glucides, avant.off.glucides - 30);
+});

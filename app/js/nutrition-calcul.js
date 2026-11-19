@@ -20,7 +20,14 @@ export const REGLAGES_DEFAUT = {
     bonus_jour_training_kcal: 150,
     // Garde-fous
     kcal_minimum: 1200,
-    glucides_minimum_g: 50
+    glucides_minimum_g: 50,
+    // Ajustement automatique selon la pesée de la semaine (glucides seulement)
+    ajustement_auto: true,
+    vitesse_max_kg_semaine: 0.5,       // perte ou prise maximum par semaine
+    seuil_stagnation_kg_semaine: 0.1,  // en dessous : « le poids ne bouge pas »
+    palier_glucides_g: 30,             // ≈ 100 g de riz cuit par jour
+    ajustement_max_g: 150,             // ajustement total maximum (en plus ou en moins)
+    delai_ajustement_jours: 7          // au plus un ajustement par semaine
   },
   // Valeurs pour 100 g (poids indiqué : cru ou cuit). pas = arrondi des quantités ; min / max = portion minimum / maximum par repas
   // (en g, ou en unités pour un aliment compté à l'unité) ; unite = « g » ou un mot (œuf, banane)
@@ -93,7 +100,8 @@ const nb = (v, defaut = 0) => (Number.isFinite(Number(v)) && v !== null && v !==
 
 // ───────────── Besoins ─────────────
 // profil : { poids, taille, age, seances_semaine, objectif } ; renvoie les besoins des jours training et off
-export function besoins(profil, coefficients = REGLAGES_DEFAUT.coefficients) {
+// ajustement : g de glucides par jour ajoutés ou retirés par l'ajustement automatique (ou par la coach)
+export function besoins(profil, coefficients = REGLAGES_DEFAUT.coefficients, ajustement = 0) {
   const c = { ...REGLAGES_DEFAUT.coefficients, ...coefficients };
   const poids = nb(profil.poids), taille = nb(profil.taille), age = nb(profil.age);
   if (!poids || !taille || !age) return null;
@@ -108,7 +116,7 @@ export function besoins(profil, coefficients = REGLAGES_DEFAUT.coefficients) {
   const proteines = poids * nb(c.proteines_g_kg);
   const lipides = poids * nb(c.lipides_g_kg);
   const jour = (kcal) => {
-    const glucides = Math.max(nb(c.glucides_minimum_g), (kcal - proteines * 4 - lipides * 9) / 4);
+    const glucides = Math.max(nb(c.glucides_minimum_g), (kcal - proteines * 4 - lipides * 9) / 4 + nb(ajustement));
     return {
       kcal: Math.round(proteines * 4 + lipides * 9 + glucides * 4),
       proteines: Math.round(proteines), glucides: Math.round(glucides), lipides: Math.round(lipides)
@@ -256,4 +264,28 @@ function libelleSimple(item) {
 }
 export function libelleQuantite(item) {
   return [libelleSimple(item), ...(item.alternatives || []).map(libelleSimple)].join(' ou ');
+}
+
+// ───────────── Ajustement automatique selon la pesée ─────────────
+// Même règle que la fonction enregistrer_pesee() de supabase/suivi-app.sql.
+// pesees : [{ date: 'AAAA-MM-JJ', poids }] (la nouvelle pesée comprise) ; renvoie { delta, total, vitesse, raison }
+const jours = (a, b) => Math.round((new Date(`${a}T12:00:00Z`) - new Date(`${b}T12:00:00Z`)) / 864e5);
+export function decisionAjustement({ objectif, pesees, date, ajustement = 0, ajusteLe = null, coefficients = {} }) {
+  const c = { ...REGLAGES_DEFAUT.coefficients, ...coefficients };
+  const actuelle = pesees.find((p) => p.date === date);
+  if (!c.ajustement_auto || !actuelle) return { delta: 0 };
+  if (ajusteLe && jours(date, ajusteLe) < nb(c.delai_ajustement_jours, 7)) return { delta: 0, raison: 'attente' };
+  const ref = pesees.filter((p) => jours(date, p.date) >= 7 && jours(date, p.date) <= 21).sort((a, b) => b.date.localeCompare(a.date))[0];
+  if (!ref) return { delta: 0, raison: 'pas assez de pesées' };
+  const vitesse = Math.round(((actuelle.poids - ref.poids) / (jours(date, ref.date) / 7)) * 100) / 100;
+  const vmax = nb(c.vitesse_max_kg_semaine, 0.5), stagnation = nb(c.seuil_stagnation_kg_semaine, 0.1), palier = nb(c.palier_glucides_g, 30);
+  let delta = 0, raison = null;
+  if (objectif === 'prise_de_muscle') {
+    if (vitesse > vmax) [delta, raison] = [-palier, 'prise de poids trop rapide'];
+    else if (vitesse < stagnation) [delta, raison] = [palier, 'poids qui ne bouge pas'];
+  } else if (vitesse < -vmax) [delta, raison] = [palier, 'perte de poids trop rapide'];
+  else if (vitesse > -stagnation) [delta, raison] = [-palier, 'poids qui ne bouge pas'];
+  const maxi = nb(c.ajustement_max_g, 150);
+  const total = Math.max(-maxi, Math.min(maxi, nb(ajustement) + delta));
+  return { delta: total - nb(ajustement), total, vitesse, raison: total - nb(ajustement) ? raison : null };
 }

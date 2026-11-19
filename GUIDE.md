@@ -206,6 +206,8 @@ aucun changement pour elles. Les nouveaux comptes créés avec « Créer mon com
 2. **Fusionne** la pull request de la mise à jour sur GitHub (l'app se met à jour en 1 à 2 minutes).
 3. SQL Editor › colle `supabase/formules.sql` › Run.
 4. SQL Editor › colle `supabase/webhook-systemeio.sql` › Run.
+   Puis, dans cet ordre, `supabase/programmes-app.sql` (questionnaire et programmes),
+   `supabase/nutrition-app.sql` (calculateur nutrition) et `supabase/suivi-app.sql` (pesées et ajustement automatique).
 5. Edge Functions › `rappels-bilans` › Code : colle la nouvelle version de `index.ts` › Deploy
    (bilan mensuel pour Autonomie, pas de rappel de bilan pour les abonnées App).
 

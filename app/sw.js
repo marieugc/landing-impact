@@ -27,6 +27,7 @@ const FICHIERS = [
   './js/programme-app.js',
   './js/nutrition-app.js',
   './js/nutrition-calcul.js',
+  './js/suivi-app.js',
   './js/admin-programmes.js',
   './js/app.js?v=33',
   './img/banniere.jpg',

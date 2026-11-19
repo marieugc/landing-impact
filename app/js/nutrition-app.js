@@ -1,10 +1,11 @@
 // BOOTY FLOW APP — page Nutrition de l'abonnée (besoins + journées types) et réglages de la coach.
 import { api } from './data.js';
-import { esc, icone, toast, pendant, nombre } from './ui.js';
+import { esc, icone, toast, pendant, nombre, dateCourte } from './ui.js';
 import { page as pageEleve, entete } from './eleve.js';
 import { page as pageCoach } from './coach.js';
 import { encartCoaching } from './formules.js';
 import { besoins, journeeType, libelleQuantite, REGLAGES_DEFAUT } from './nutrition-calcul.js';
+import { texteAjustement } from './suivi-app.js';
 
 const OBJECTIFS = { perte_de_gras: 'Perte de gras', prise_de_muscle: 'Prise de muscle' };
 const TYPES = { training: 'Jour training', off: 'Jour off' };
@@ -35,8 +36,10 @@ function htmlJournee(j) {
 // ───────────── Page Nutrition de l'abonnée ─────────────
 let typeAffiche = 'training';
 export async function nutritionAbonnee(racine, profil) {
-  const reglages = await api.getNutritionApp();
-  const b = besoins(profilCalcul(profil.app), reglages.coefficients);
+  const [reglages, pesees] = await Promise.all([api.getNutritionApp(), api.listPesees(profil.id).catch(() => [])]);
+  const poids = pesees[pesees.length - 1]?.poids;
+  const ajustement = profil.app?.ajustement_glucides || 0;
+  const b = besoins(profilCalcul(profil.app, poids), reglages.coefficients, ajustement);
   if (!b) {
     racine.innerHTML = pageEleve(profil, 'nutrition', entete('MA NUTRITION', 'Mes besoins') + `<section class="carte">
       <p class="texte">Complète tes informations (âge, taille, poids) pour calculer tes besoins.</p>
@@ -49,8 +52,8 @@ export async function nutritionAbonnee(racine, profil) {
     <section class="carte">
       <div class="ligne-entre"><div class="surtitre-carte">OBJECTIF : ${esc((OBJECTIFS[pa.objectif] || '').toUpperCase())}</div>
         <a href="#/questionnaire" class="petit">Modifier</a></div>
-      <p class="petit">Calculé pour ${nombre(profilCalcul(pa).poids)} kg, ${nombre(pa.taille, 0)} cm, ${pa.age} ans et ${pa.seances_semaine} séances par semaine.
-        Moyenne de la semaine : <strong>${chiffre(b.moyenne)} kcal</strong> par jour.</p>
+      <p class="petit">Calculé pour ${nombre(profilCalcul(pa, poids).poids)} kg${poids ? ' (ta dernière pesée)' : ''}, ${nombre(pa.taille, 0)} cm, ${pa.age} ans et ${pa.seances_semaine} séances par semaine.</p>
+      ${ajustement ? `<p class="ajustement-actif">${icone('progres', 16, 'var(--accent)')}<span>Ajusté selon ton poids : <strong>${esc(texteAjustement(ajustement))}</strong>${pa.ajuste_le ? ` depuis le ${dateCourte(pa.ajuste_le)}` : ''}</span></p>` : ''}
       <div class="grille-2 tuiles-jours">
         <button class="sans-style" data-type="training">${tuileMacros(b.training, 'JOUR TRAINING', typeAffiche === 'training')}</button>
         <button class="sans-style" data-type="off">${tuileMacros(b.off, 'JOUR OFF', typeAffiche === 'off')}</button>
@@ -86,6 +89,12 @@ const COEFFICIENTS = [
     ['proteines_g_kg', 'Protéines', 'g/kg', '0.1'],
     ['lipides_g_kg', 'Lipides', 'g/kg', '0.1'],
     ['bonus_jour_training_kcal', 'Supplément des jours training (en glucides)', 'kcal', '10']]],
+  ['AJUSTEMENT AUTOMATIQUE SELON LE POIDS (GLUCIDES SEULEMENT)', [
+    ['vitesse_max_kg_semaine', 'Vitesse maximum (perte ou prise) par semaine', 'kg', '0.05'],
+    ['seuil_stagnation_kg_semaine', 'En dessous, « le poids ne bouge pas »', 'kg', '0.05'],
+    ['palier_glucides_g', 'Palier d\'ajustement (30 g ≈ 100 g de riz cuit)', 'g/jour', '5'],
+    ['ajustement_max_g', 'Ajustement total maximum (en plus ou en moins)', 'g/jour', '5'],
+    ['delai_ajustement_jours', 'Délai minimum entre deux ajustements', 'jours', '1']]],
   ['GARDE-FOUS', [
     ['kcal_minimum', 'Calories minimum par jour', 'kcal', '10'],
     ['glucides_minimum_g', 'Glucides minimum par jour', 'g', '5']]]
@@ -125,6 +134,8 @@ async function ongletCalcul(zone, reglages, recharger) {
   zone.innerHTML = `<div class="deux-colonnes">
     <form class="formulaire carte" id="form-coefficients">
       ${COEFFICIENTS.map(([titre, champs]) => `<fieldset class="bloc-formule"><legend class="surtitre-carte">${titre}</legend>
+        ${titre.startsWith('AJUSTEMENT') ? `<label class="case"><input type="checkbox" name="ajustement_auto"${c.ajustement_auto !== false ? ' checked' : ''}>
+          <span>Ajuster automatiquement le plan à chaque pesée (au plus une fois par semaine)</span></label>` : ''}
         ${champs.map(([cle, libelle, unite, pas]) => `<label>${libelle}<span class="avec-unite"><input name="${cle}" type="number" step="${pas}" value="${esc(c[cle])}" required><em>${unite}</em></span></label>`).join('')}
       </fieldset>`).join('')}
       <p class="petit">Dépense = (10 × poids + 6,25 × taille − 5 × âge + constante) × multiplicateur d'activité. Puis − déficit ou + surplus.
@@ -134,7 +145,8 @@ async function ongletCalcul(zone, reglages, recharger) {
     <section class="carte" id="apercu-calcul"></section>
   </div>`;
   const form = zone.querySelector('#form-coefficients');
-  const lire = () => Object.fromEntries(COEFFICIENTS.flatMap(([, ch]) => ch).map(([cle]) => [cle, Number(form.elements[cle].value)]));
+  const lire = () => ({ ...Object.fromEntries(COEFFICIENTS.flatMap(([, ch]) => ch).map(([cle]) => [cle, Number(form.elements[cle].value)])),
+    ajustement_auto: form.elements.ajustement_auto.checked });
   const dessiner = () => {
     const b = besoins(exemple, lire());
     zone.querySelector('#apercu-calcul').innerHTML = `<div class="surtitre-carte">EXEMPLE (MODIFIABLE)</div>${champsExemple()}

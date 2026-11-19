@@ -13,7 +13,7 @@ const dansJours = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0,
 
 // ───────────────────────── MODE DÉMO ─────────────────────────
 
-const CLE_DEMO = 'bootyflow-demo-v12';
+const CLE_DEMO = 'bootyflow-demo-v13';
 const CLE_SESSION = 'bootyflow-demo-session';
 const fichiersDemo = new Map(); // vidéos/photos gardées le temps de la visite
 
@@ -194,6 +194,9 @@ async function demoApp() {
     d.seancesFaites = [1, 2].flatMap((semaine) => emma.map((s, i) => ({ id: id(), eleve_id: 'emma', seance_id: s.id, cycle_numero: 1, semaine,
       statut: 'faite', fait_le: dansJours(-17 + (semaine - 1) * 7 + i * 2) + 'T18:00:00.000Z' })));
     d.seancesFaites.push({ id: id(), eleve_id: 'emma', seance_id: emma[0].id, cycle_numero: 1, semaine: 3, statut: 'faite', fait_le: dansJours(-2) + 'T18:00:00.000Z' });
+    // Pesées d'Emma : elle perd bien au début, puis son poids stagne (sa prochaine pesée déclenchera un ajustement)
+    d.pesees = [64.2, 63.8, 63.5, 63.4].map((poids, i) => ({ id: id(), eleve_id: 'emma', date: dansJours(-28 + i * 7), poids }));
+    d.ajustements = [];
     ecrireDemo(d);
   }
   return d;
@@ -362,6 +365,42 @@ const demo = {
     ecrireDemo(d);
   },
   async listProfilsApp() { return Object.values((await demoApp()).profilsApp); },
+  // ── Pesées et ajustement automatique (même règle que enregistrer_pesee() côté base) ──
+  async listPesees(uid) {
+    return (await demoApp()).pesees.filter((p) => p.eleve_id === uid).sort((a, b) => a.date.localeCompare(b.date));
+  },
+  async listAjustements(uid) {
+    return (await demoApp()).ajustements.filter((a) => a.eleve_id === uid).sort((a, b) => a.date.localeCompare(b.date));
+  },
+  async enregistrerPesee(poids, date = aujourdhui()) {
+    const d = await demoApp();
+    const uid = localStorage.getItem(CLE_SESSION);
+    d.pesees = d.pesees.filter((p) => !(p.eleve_id === uid && p.date === date));
+    d.pesees.push({ id: id(), eleve_id: uid, date, poids });
+    const pa = d.profilsApp[uid] || {};
+    const { decisionAjustement, REGLAGES_DEFAUT } = await import('./nutrition-calcul.js');
+    const r = decisionAjustement({ objectif: pa.objectif, date, ajustement: pa.ajustement_glucides || 0, ajusteLe: pa.ajuste_le,
+      pesees: d.pesees.filter((p) => p.eleve_id === uid), coefficients: (d.nutritionApp || REGLAGES_DEFAUT).coefficients });
+    if (r.delta) {
+      Object.assign(pa, { ajustement_glucides: r.total, ajuste_le: date });
+      d.ajustements.push({ id: id(), eleve_id: uid, date, delta: r.delta, total: r.total, vitesse: r.vitesse, raison: r.raison, par_coach: false });
+    }
+    ecrireDemo(d);
+    return r;
+  },
+  async supprimerPesee(pid) {
+    const d = await demoApp();
+    d.pesees = d.pesees.filter((p) => p.id !== pid);
+    ecrireDemo(d);
+  },
+  async ajusterGlucidesCoach(uid, total, raison) {
+    const d = await demoApp();
+    const pa = d.profilsApp[uid];
+    const delta = total - (pa.ajustement_glucides || 0);
+    Object.assign(pa, { ajustement_glucides: total, ajuste_le: aujourdhui() });
+    d.ajustements.push({ id: id(), eleve_id: uid, date: aujourdhui(), delta, total, vitesse: null, raison: raison || 'ajustement de la coach', par_coach: true });
+    ecrireDemo(d);
+  },
   async envoyerVideoExercice(fichier) { return garderFichier(fichier); },
   // Réglages du calculateur nutrition (coefficients, aliments, journées types)
   async getNutritionApp() {
@@ -774,6 +813,27 @@ const reel = {
   },
   async saveNutritionApp(patch) {
     verifier(await (await client()).from('nutrition_app').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', 1));
+  },
+  // ── Pesées et ajustement automatique (calculé dans la base : enregistrer_pesee) ──
+  async listPesees(uid) {
+    const { data, error } = await (await client()).from('pesees_app').select('*').eq('eleve_id', uid).order('date');
+    return error ? [] : data;
+  },
+  async listAjustements(uid) {
+    const { data, error } = await (await client()).from('ajustements_app').select('*').eq('eleve_id', uid).order('date').order('created_at');
+    return error ? [] : data;
+  },
+  async enregistrerPesee(poids, date) {
+    return verifier(await (await client()).rpc('enregistrer_pesee', date ? { p_poids: poids, p_date: date } : { p_poids: poids }));
+  },
+  async supprimerPesee(pid) { verifier(await (await client()).from('pesees_app').delete().eq('id', pid)); },
+  async ajusterGlucidesCoach(uid, total, raison) {
+    const sb = await client();
+    const pa = verifier(await sb.from('profils_app').select('ajustement_glucides').eq('eleve_id', uid).single());
+    const today = new Date().toISOString().slice(0, 10);
+    verifier(await sb.from('profils_app').update({ ajustement_glucides: total, ajuste_le: today, updated_at: new Date().toISOString() }).eq('eleve_id', uid));
+    verifier(await sb.from('ajustements_app').insert({ eleve_id: uid, date: today, delta: total - (pa.ajustement_glucides || 0), total,
+      raison: raison || 'ajustement de la coach', par_coach: true }));
   },
   // Vidéo d'un exercice de programme : rangée dans le dossier « bibliotheque », lisible par les abonnées (accès ouvert)
   async envoyerVideoExercice(fichier) { return envoyerFichier('bibliotheque', 'exercices', fichier); },

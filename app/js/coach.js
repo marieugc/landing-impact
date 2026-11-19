@@ -18,6 +18,7 @@ import { CATEGORIES, vignette, chargerMiniatures, ouvrirVideo, lienValide, lecte
 import { carteRappels } from './rappels.js';
 import { programmesApp, blocProgrammeAbonnee } from './admin-programmes.js';
 import { reglagesNutrition } from './nutrition-app.js';
+import { blocSuiviAbonnee } from './suivi-app.js';
 import { FORMULES, STATUTS, formuleDe, statutDe, estApp, compteValide, accesOuvert, intervalleBilan } from './formules.js';
 
 const VERT = '#7FE0B8';
@@ -309,8 +310,9 @@ async function ficheSuivi(zone, e, recharger) {
     <button class="bouton-principal" type="submit">ENREGISTRER</button>
   </form>`;
   if (app) {
-    zone.insertAdjacentHTML('beforeend', '<div id="programme-abonnee"></div>');
+    zone.insertAdjacentHTML('beforeend', '<div id="programme-abonnee"></div><div id="suivi-abonnee"></div>');
     blocProgrammeAbonnee(zone.querySelector('#programme-abonnee'), e);
+    blocSuiviAbonnee(zone.querySelector('#suivi-abonnee'), e);
   }
   zone.querySelector('#form-suivi').addEventListener('submit', async (ev) => {
     ev.preventDefault();

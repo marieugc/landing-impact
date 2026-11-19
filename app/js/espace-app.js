@@ -10,6 +10,7 @@ import { nouveautes, vignette, chargerMiniatures } from './videotheque.js';
 import { programme, questionnaire, etatProgramme } from './programme-app.js';
 import { nutritionAbonnee, profilCalcul } from './nutrition-app.js';
 import { besoins } from './nutrition-calcul.js';
+import { progresAbonnee, peseeAFaire } from './suivi-app.js';
 
 const lienExterne = (url, texte, classe = 'bouton-principal') => url
   ? `<a href="${esc(url)}" class="${classe}" target="_blank" rel="noopener">${texte}</a>`
@@ -29,12 +30,18 @@ const bientot = (texte) => `<section class="carte"><div class="surtitre-carte">B
 
 // ───────────── Accueil ─────────────
 async function accueil(racine, profil) {
-  const [nouvelles, etat, reglages] = await Promise.all([nouveautes(profil), etatProgramme(profil).catch(() => null), api.getNutritionApp().catch(() => null)]);
-  const besoinsJour = reglages ? besoins(profilCalcul(profil.app), reglages.coefficients) : null;
+  const [nouvelles, etat, reglages, pesees] = await Promise.all([nouveautes(profil), etatProgramme(profil).catch(() => null),
+    api.getNutritionApp().catch(() => null), api.listPesees(profil.id).catch(() => [])]);
+  const besoinsJour = reglages ? besoins(profilCalcul(profil.app, pesees[pesees.length - 1]?.poids), reglages.coefficients, profil.app?.ajustement_glucides || 0) : null;
   const duJour = etat?.seanceDuJour;
   racine.innerHTML = page(profil, 'accueil', `
     <img src="img/banniere.jpg" alt="Booty Flow" class="banniere">
     <div class="ligne-entre"><div class="bonjour">Bonjour ${esc(profil.prenom)}</div>${badge('BOOTY FLOW APP')}</div>
+    ${peseeAFaire(pesees) ? `<a href="#/progres" class="carte carte-training nouveau">
+      <span class="icone-training">${icone('progres', 24, 'var(--accent)')}</span>
+      <span class="carte-nouveaute-texte"><span class="surtitre-carte">C'EST LE MOMENT</span>
+        <strong>Ma pesée de la semaine</strong><span class="petit">Ton plan alimentaire s'ajuste selon ton poids</span></span>
+      ${icone('chevron', 18, 'var(--doux)')}</a>` : ''}
     <a href="#/programme" class="carte carte-training">
       <span class="icone-training">${icone('haltere', 24, 'var(--accent)')}</span>
       <span class="carte-nouveaute-texte"><span class="surtitre-carte">${etat?.termine ? `CYCLE ${etat.pa.cycle_numero} TERMINÉ` : 'LA SÉANCE DU JOUR'}</span>
@@ -62,13 +69,7 @@ async function accueil(racine, profil) {
 
 const nutrition = nutritionAbonnee;
 
-async function progres(racine, profil) {
-  racine.innerHTML = page(profil, 'progres', entete('MES RÉSULTATS', 'Progression') + `
-    <div id="charges"></div>
-    ${bientot('Tes mensurations, ton poids et tes photos avec leurs courbes d\'évolution arrivent ici très bientôt.')}
-    ${encartCoaching('bilans')}`);
-  await blocCharges(racine.querySelector('#charges'), profil.id, true);
-}
+const progres = progresAbonnee;
 
 async function live(racine, profil) {
   racine.innerHTML = page(profil, 'accueil', `
