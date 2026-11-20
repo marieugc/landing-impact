@@ -1,0 +1,512 @@
+{
+  "eleve": "Naima",
+  "coach": "Booty Flow Coaching",
+  "titre": "Programme 12 semaines · objectif 26 pompes + fessiers",
+  "sousTitre": "Réussir 26 pompes au test militaire, prendre de la masse sur les fessiers et te tonifier partout, en respectant tes genoux, ta hanche droite et tes pieds plats. 3 séances de 1h30 maximum : mobilité, renforcement et cardio compris.",
+  "semaine": [
+    {
+      "jour": "Lundi",
+      "type": "haut",
+      "seance": "A · haut du corps, pompes + fessiers légers"
+    },
+    {
+      "jour": "Mardi",
+      "type": "repos",
+      "seance": "Repos · pompes « grease the groove » + marche 30 min"
+    },
+    {
+      "jour": "Mercredi",
+      "type": "bas",
+      "seance": "B · bas du corps, fessiers lourds"
+    },
+    {
+      "jour": "Jeudi",
+      "type": "repos",
+      "seance": "Repos · mobilité 15 min"
+    },
+    {
+      "jour": "Vendredi",
+      "type": "bas",
+      "seance": "C · corps entier, pompes + fessiers"
+    },
+    {
+      "jour": "Samedi",
+      "type": "repos",
+      "seance": "Repos actif"
+    },
+    {
+      "jour": "Dimanche",
+      "type": "repos",
+      "seance": "Repos"
+    }
+  ],
+  "structure": "Chaque séance dure 85 à 90 min : 12 à 15 min de mobilité et d'activation, 45 à 50 min de renforcement, 15 à 20 min de cardio, 5 min de retour au calme.\nLe cardio se fait toujours après la musculation.\nLe mardi : pompes « grease the groove » (5 petites séries à 40 % de ton max, réparties dans la journée, jamais jusqu'à l'échec) + 30 min de marche active.\nLe jeudi : la mobilité de la séance A (15 min), rien de plus.",
+  "notation": "Tempo : descente, pause, montée (ex. 3-1-1 : 3 s de descente, 1 s de pause, 1 s de montée).\nGarde 1 à 2 répétitions en réserve sur chaque série, sauf indication contraire.\nSuperset : les exercices « a » et « b » s'enchaînent, le repos est pris après le « b ».\nSur tous les exercices unilatéraux, commence par la jambe gauche (ton côté le plus faible) et fais 1 série de plus de ce côté quand c'est indiqué.\nCôtes basses et bassin légèrement rentré sur tous les exercices de fessiers : tu ne dois jamais sentir tes lombaires travailler.",
+  "echauffementBas": "",
+  "echauffementHaut": "",
+  "extras": [
+    {
+      "titre": "🎯 Les 3 objectifs",
+      "texte": "1. Réussir 26 pompes strictes au standard militaire.\n2. Prendre de la masse sur les fessiers (14 à 18 séries ciblées par semaine).\n3. Te tonifier partout et retrouver de la mobilité : épaules au-dessus de la tête, chevilles, hanches."
+    },
+    {
+      "titre": "🔍 Ce que dit ton bilan postural",
+      "texte": "Bras au-dessus de la tête limités : haut du dos raide, grand dorsal et petit pectoral courts → mobilité thoracique et travail des omoplates à chaque séance, landmine press à la place du développé militaire.\nChevilles limitées (G 8 cm / D 9 cm) et pieds plats → mobilité de cheville, « pied court », mollets et tibial.\nSquat sur une jambe très difficile, côté gauche plus faible → travail unilatéral progressif et abducteurs.\nPont fessier ressenti dans le bas du dos → bassin rentré, côtes basses : le fessier doit faire le travail.\nGenoux sensibles en position assise → isométrie des quadriceps, squats sur box à une hauteur sans douleur, et te lever toutes les 30 à 45 min.\nHanche / aine droite sensible → pas de flexion de hanche profonde forcée, adducteurs renforcés en douceur."
+    },
+    {
+      "titre": "💪 Ta progression aux pompes (selon ton test)",
+      "texte": "Jour 1 : test du maximum de pompes strictes (corps gainé, poitrine jusqu'au niveau d'un poing, coudes à 45°). Ton résultat donne ton niveau.\nNiveau 1 (0 à 5) : 4 × 8-10 pompes inclinées (mains sur un banc) + 3 × 3 négatives de 4 s au sol. On abaisse le support chaque semaine.\nNiveau 2 (6 à 12) : échelle 1-2-3-4-5, 2 à 3 fois, en t'arrêtant 1 à 2 reps avant l'échec.\nNiveau 3 (13 à 20) : 5 séries à 60-70 % de ton max + 1 série à 1-2 reps de l'échec. Pompes en déficit ou lestées légères en séance C.\nNiveau 4 (21 et plus) : 1 série max + 3 séries à 50 %. Une fois par semaine, simulation complète du test.\nRetest toutes les 4 semaines. Omoplates qui s'écartent en haut, fessiers serrés, bassin qui ne s'affaisse pas."
+    },
+    {
+      "titre": "🚦 La règle de la douleur",
+      "texte": "Douleur de 0 à 3/10 pendant l'exercice, et pas pire le lendemain : tu continues.\nAu-delà : tu réduis l'amplitude ou la charge sur cet exercice.\nSi ta hanche ou ton aine restent au-dessus de 4/10 après 3 à 4 semaines : on consulte un kiné.\nLe claquement du genou droit sans douleur n'est pas un problème. S'il devient douloureux ou s'il gonfle, on consulte."
+    },
+    {
+      "titre": "🥗 Nutrition pour prendre du fessier",
+      "texte": "Protéines : 1,6 à 2 g par kg de poids de corps et par jour.\nLéger surplus : +200 à +300 kcal par jour, pour prendre 0,25 à 0,5 % de ton poids par mois.\nL'effet sur les pompes est négligeable avec ce surplus. Si ton test militaire approche, on repasse à l'équilibre calorique 3 à 4 semaines avant."
+    },
+    {
+      "titre": "📋 À faire",
+      "texte": "L'auto-test diastasis avant la semaine 3 : s'il est positif, on adapte le gainage.\nTes semelles orthopédiques pour courir. Le renforcement, pieds nus si possible.\nNoter tes charges et tes reps à chaque séance (surtout hip thrust, fente arrière, soulevé de terre roumain et pompes)."
+    }
+  ],
+  "seances": [
+    {
+      "emoji": "💪",
+      "type": "haut",
+      "jour": "Lundi",
+      "titre": "A · haut du corps, pompes + fessiers légers",
+      "focus": "La séance clé des pompes, avec un rappel fessiers en fin de séance",
+      "note": "Cardio après la musculation : 15 min de rameur fractionné (8 × 1 min rapide / 1 min lente, ou moins selon le temps restant), puis 5 min de retour au calme.",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Respiration 90/90 au sol, pieds au mur",
+          "lien": "",
+          "series": "5 grandes expirations",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E2",
+          "nom": "Open book (ouverture thoracique)",
+          "lien": "",
+          "series": "2 × 8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E3",
+          "nom": "Extension du haut du dos sur rouleau",
+          "lien": "",
+          "series": "2 × 8",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E4",
+          "nom": "Glissés d'avant-bras au mur (serratus)",
+          "lien": "",
+          "series": "2 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E5",
+          "nom": "Étirement du petit pectoral dans une porte",
+          "lien": "",
+          "series": "2 × 30 s",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E6",
+          "nom": "Étirement du grand dorsal, coudes sur un banc",
+          "lien": "",
+          "series": "2 × 30 s",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E7",
+          "nom": "Pompes scapulaires (push-up plus)",
+          "lien": "",
+          "series": "2 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        },
+        {
+          "n": "E8",
+          "nom": "Dead bug",
+          "lien": "",
+          "series": "2 × 6 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation, bas du dos collé au sol"
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Pompes selon ton niveau",
+          "lien": "",
+          "series": "4-5 séries (voir progression aux pompes)",
+          "tempo": "",
+          "repos": "2'",
+          "notes": "Corps gainé, coudes à 45°, poitrine jusqu'au niveau d'un poing"
+        },
+        {
+          "n": "2a",
+          "nom": "Développé couché haltères",
+          "lien": "",
+          "series": "3 × 8-10",
+          "tempo": "3-1-1",
+          "repos": "0",
+          "notes": "Enchaîner avec le 2b"
+        },
+        {
+          "n": "2b",
+          "nom": "Rowing un bras haltère",
+          "lien": "",
+          "series": "3 × 10-12 / bras",
+          "tempo": "2-1-1",
+          "repos": "90 s",
+          "notes": ""
+        },
+        {
+          "n": "3a",
+          "nom": "Tirage vertical poulie (ou rowing inversé)",
+          "lien": "",
+          "series": "3 × 10-12",
+          "tempo": "2-1-2",
+          "repos": "0",
+          "notes": "Enchaîner avec le 3b"
+        },
+        {
+          "n": "3b",
+          "nom": "Face pull poulie ou élastique",
+          "lien": "",
+          "series": "3 × 15",
+          "tempo": "2-1-2",
+          "repos": "75 s",
+          "notes": "Santé des épaules"
+        },
+        {
+          "n": "4a",
+          "nom": "Hip thrust léger",
+          "lien": "",
+          "series": "3 × 15-20",
+          "tempo": "2-2-1",
+          "repos": "0",
+          "notes": "Contraction tenue 2 s en haut. Enchaîner avec le 4b"
+        },
+        {
+          "n": "4b",
+          "nom": "Abduction machine, buste penché (ou élastique assise)",
+          "lien": "",
+          "series": "2 × 20",
+          "tempo": "2-1-1",
+          "repos": "60 s",
+          "notes": ""
+        },
+        {
+          "n": "5",
+          "nom": "Planche, bassin rentré et fessiers serrés",
+          "lien": "",
+          "series": "2 × 30 s",
+          "tempo": "",
+          "repos": "45 s",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "emoji": "🍑",
+      "type": "bas",
+      "jour": "Mercredi",
+      "titre": "B · bas du corps, fessiers lourds",
+      "focus": "La séance clé des fessiers : le hip thrust est le mouvement le plus lourd de la semaine",
+      "note": "Cardio après la musculation : 15 min de vélo en endurance douce (tu peux parler), sans impact pour les genoux.\nEn fin de séance si tu as le temps : chaise contre un mur à 60°, 4 × 30-45 s (calme les genoux).",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Genou au mur avec élastique (mobilité de cheville)",
+          "lien": "",
+          "series": "2 × 10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": "1 passage de plus à droite"
+        },
+        {
+          "n": "E2",
+          "nom": "Pied court (voûte plantaire)",
+          "lien": "",
+          "series": "3 × 10 s / pied",
+          "tempo": "",
+          "repos": "",
+          "notes": "Raccourcir le pied sans recroqueviller les orteils"
+        },
+        {
+          "n": "E3",
+          "nom": "Passages de hanche 90/90",
+          "lien": "",
+          "series": "2 × 6",
+          "tempo": "",
+          "repos": "",
+          "notes": "En douceur, sans forcer côté droit"
+        },
+        {
+          "n": "E4",
+          "nom": "Clamshell élastique",
+          "lien": "",
+          "series": "2 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Gauche en premier"
+        },
+        {
+          "n": "E5",
+          "nom": "Pont fessier au poids du corps",
+          "lien": "",
+          "series": "2 × 12",
+          "tempo": "",
+          "repos": "",
+          "notes": "Bassin rentré, côtes basses"
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Hip thrust lourd",
+          "lien": "",
+          "series": "4 × 6-10",
+          "tempo": "2-1-1",
+          "repos": "2'30",
+          "notes": "Menton rentré, bassin en rétroversion, tu sens les fessiers et pas les lombaires. Charge à augmenter chaque semaine"
+        },
+        {
+          "n": "2",
+          "nom": "Fente arrière en déficit (pied avant sur step 5-10 cm), buste penché",
+          "lien": "",
+          "series": "3 × 8-10 / jambe",
+          "tempo": "3-0-1",
+          "repos": "1'30",
+          "notes": "Gauche en premier, genou aligné avec le 2e orteil"
+        },
+        {
+          "n": "3",
+          "nom": "Soulevé de terre roumain haltères",
+          "lien": "",
+          "series": "3 × 8-10",
+          "tempo": "3-0-1",
+          "repos": "2'",
+          "notes": "Étirement des fessiers en bas, dos neutre"
+        },
+        {
+          "n": "4",
+          "nom": "Squat goblet sur box",
+          "lien": "",
+          "series": "3 × 10",
+          "tempo": "3-0-1",
+          "repos": "90 s",
+          "notes": "Hauteur de box sans douleur au genou, à abaisser progressivement"
+        },
+        {
+          "n": "5a",
+          "nom": "Marche latérale élastique",
+          "lien": "",
+          "series": "2 × 12 pas / côté",
+          "tempo": "",
+          "repos": "0",
+          "notes": "Enchaîner avec le 5b"
+        },
+        {
+          "n": "5b",
+          "nom": "Copenhague levier court (genou posé)",
+          "lien": "",
+          "series": "2 × 20 s / côté",
+          "tempo": "",
+          "repos": "60 s",
+          "notes": "Seulement si l'aine reste à 3/10 maximum"
+        },
+        {
+          "n": "6",
+          "nom": "Mollets debout sur marche + relevés de pointe de pied (tibial)",
+          "lien": "",
+          "series": "2 × 15 chacun",
+          "tempo": "2-1-1",
+          "repos": "45 s",
+          "notes": "Pour la voûte plantaire et la cheville"
+        }
+      ]
+    },
+    {
+      "emoji": "🔥",
+      "type": "bas",
+      "jour": "Vendredi",
+      "titre": "C · corps entier, pompes + fessiers",
+      "focus": "Volume de pompes et fessiers en isolation",
+      "note": "Cardio après la musculation : 15 à 20 min de course fractionnée avec tes semelles (2 min d'échauffement, puis 6 × 1'30 rapide / 1'30 marche ou trot lent). Si les genoux dépassent 3/10 : vélo ou rameur à la place.",
+      "echauffement": [
+        {
+          "n": "E1",
+          "nom": "Open book (ouverture thoracique)",
+          "lien": "",
+          "series": "2 × 8 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E2",
+          "nom": "Genou au mur avec élastique",
+          "lien": "",
+          "series": "2 × 10 / côté",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E3",
+          "nom": "Étirement du grand dorsal, coudes sur un banc",
+          "lien": "",
+          "series": "2 × 30 s",
+          "tempo": "",
+          "repos": "",
+          "notes": ""
+        },
+        {
+          "n": "E4",
+          "nom": "Clamshell élastique",
+          "lien": "",
+          "series": "2 × 15",
+          "tempo": "",
+          "repos": "",
+          "notes": "Gauche en premier"
+        },
+        {
+          "n": "E5",
+          "nom": "Pompes scapulaires (push-up plus)",
+          "lien": "",
+          "series": "2 × 10",
+          "tempo": "",
+          "repos": "",
+          "notes": "Activation"
+        }
+      ],
+      "exercices": [
+        {
+          "n": "1",
+          "nom": "Pompes en EMOM",
+          "lien": "",
+          "series": "10 min : au début de chaque minute, 40-50 % de ton max",
+          "tempo": "",
+          "repos": "reste de la minute",
+          "notes": "Niveau 1 : en pompes inclinées"
+        },
+        {
+          "n": "2",
+          "nom": "Extension à 45° orientée fessiers",
+          "lien": "",
+          "series": "3 × 12-15",
+          "tempo": "2-1-2",
+          "repos": "75 s",
+          "notes": "Dos arrondi, pieds tournés vers l'extérieur"
+        },
+        {
+          "n": "3",
+          "nom": "Pont fessier une jambe (puis hip thrust une jambe)",
+          "lien": "",
+          "series": "3 × 10 / côté + 1 série à gauche",
+          "tempo": "2-2-1",
+          "repos": "60 s",
+          "notes": "Bassin horizontal, la hanche ne doit pas tomber"
+        },
+        {
+          "n": "4",
+          "nom": "Kickback poulie basse",
+          "lien": "",
+          "series": "3 × 12-15 / jambe",
+          "tempo": "2-1-1",
+          "repos": "60 s",
+          "notes": ""
+        },
+        {
+          "n": "5",
+          "nom": "Step-up sur box",
+          "lien": "",
+          "series": "2 × 8 / jambe",
+          "tempo": "2-0-1",
+          "repos": "60 s",
+          "notes": "Gauche en premier, genou aligné"
+        },
+        {
+          "n": "6a",
+          "nom": "Landmine press, à genoux ou debout",
+          "lien": "",
+          "series": "3 × 10 / bras",
+          "tempo": "2-0-1",
+          "repos": "0",
+          "notes": "Remplace le développé militaire. Enchaîner avec le 6b"
+        },
+        {
+          "n": "6b",
+          "nom": "Rowing inversé",
+          "lien": "",
+          "series": "3 × 12",
+          "tempo": "2-1-2",
+          "repos": "75 s",
+          "notes": ""
+        },
+        {
+          "n": "7",
+          "nom": "Pallof press",
+          "lien": "",
+          "series": "2 × 10 / côté",
+          "tempo": "",
+          "repos": "45 s",
+          "notes": "Anti-rotation"
+        }
+      ]
+    }
+  ],
+  "progression": "Hip thrust, fente arrière en déficit, soulevé de terre roumain : +2,5 à 5 kg ou +1 à 2 reps chaque semaine, à noter dans ton carnet.\nPompes : retest toutes les 4 semaines, tu passes au niveau suivant dès que tu atteins le seuil.\nSemaine 6 : retest du squat sur une jambe et du genou au mur. Si le split squat est maîtrisé, on passe au split squat bulgare.",
+  "cycle": [
+    {
+      "semaines": "S1-4",
+      "objectif": "Technique et tolérance : 3 × 12-15 sur les exercices principaux (hip thrust compris), effort 7/10. Priorité : sentir le fessier et pas les lombaires. Retest pompes en fin de S4."
+    },
+    {
+      "semaines": "S5-8",
+      "objectif": "Force et hypertrophie : 4 × 8-10, effort 8/10, surcharge progressive chaque semaine. Pompes : niveau supérieur, lest léger. Retest en fin de S8."
+    },
+    {
+      "semaines": "S9-11",
+      "objectif": "Densité : 4 × 6-8 et circuits. Pompes : tests sous-maximaux et simulations du test militaire."
+    },
+    {
+      "semaines": "S12",
+      "objectif": "Décharge et test officiel des 26 pompes."
+    }
+  ],
+  "decharge": "La semaine 12 est volontairement allégée : mêmes séances, mêmes exercices, volume réduit de moitié, pour arriver fraîche au test de pompes.",
+  "pourquoi": "",
+  "alerte": "",
+  "regles": [
+    {
+      "titre": "📉 Séries : moitié",
+      "texte": "Un exercice à 4 séries passe à 2, un exercice à 3 séries passe à 1 ou 2."
+    },
+    {
+      "titre": "💪 Pompes",
+      "texte": "Pas de pompes pendant les 2 jours qui précèdent le test. Le jour du test : échauffement de la séance A, puis 1 série max."
+    }
+  ]
+}
