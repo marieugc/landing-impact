@@ -55,7 +55,7 @@
     },
     {
       "titre": "💪 Ta progression aux pompes",
-      "texte": "Jour 1 : fais le plus de pompes possible, bien faites. Ce chiffre, c'est ton max.\nLundi, selon ton max :\n• moins de 6 : 4 × 10 pompes mains sur un banc, puis 3 descentes lentes au sol\n• 6 à 12 : 1, 2, 3, 4, 5 pompes avec une courte pause entre chaque, 2 à 3 fois\n• 13 à 20 : 5 séries de 10, puis 1 série au max\n• 21 et plus : 1 série au max, puis 3 séries de la moitié\nMercredi : 5 petites séries faciles dans la journée (la moitié de ton max). Jamais jusqu'à l'échec.\nJeudi : chrono de 10 min. Au début de chaque minute, la moitié de ton max, puis repos.\nToutes les 4 semaines, refais le test : ton nouveau max change tes chiffres."
+      "texte": "Jour 1 : fais le plus de pompes possible, bien faites. Ce chiffre, c'est ton max.\nLundi, selon ton max :\n• moins de 6 : 4 × 10 pompes mains sur un banc, puis 3 descentes lentes au sol\n• 6 à 12 : 1, 2, 3, 4, 5 pompes avec une courte pause entre chaque, 2 à 3 fois\n• 13 à 20 : 5 séries de 10, puis 1 série au max\n• 21 et plus : 1 série au max, puis 3 séries de la moitié\nMercredi : 5 petites séries faciles dans la journée (la moitié de ton max). Jamais jusqu'à l'échec.\nJeudi : lance un chrono de 10 min. Au début de chaque minute, fais la moitié de ton max (ex. max 10 → 5 pompes), puis repose-toi jusqu'à la minute suivante.\nToutes les 4 semaines, refais le test : ton nouveau max change tes chiffres."
     },
     {
       "titre": "🚦 La règle de la douleur",
@@ -404,12 +404,12 @@
       "exercices": [
         {
           "n": "1",
-          "nom": "Pompes en EMOM",
+          "nom": "Pompes : 1 série au début de chaque minute, pendant 10 min",
           "lien": "",
-          "series": "10 min : au début de chaque minute, 40-50 % de ton max",
+          "series": "10 séries de la moitié de ton max",
           "tempo": "",
-          "repos": "reste de la minute",
-          "notes": "Niveau 1 : en pompes inclinées. Niveau 3 et plus : finir par 1 série en déficit ou lestée légère"
+          "repos": "le reste de la minute",
+          "notes": "Lance un chrono. Au début de chaque minute, fais la moitié de ton max (ex. max 10 → 5 pompes), puis repose-toi jusqu'à la minute suivante. Si tu fais moins de 6 pompes au sol : mains sur un banc."
         },
         {
           "n": "2a",
