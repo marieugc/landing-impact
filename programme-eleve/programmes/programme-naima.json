@@ -12,7 +12,7 @@
     {
       "jour": "Mardi",
       "type": "bas",
-      "seance": "Bas B · fessiers lourds"
+      "seance": "Bas B · fessiers lourds + ischios"
     },
     {
       "jour": "Mercredi",
@@ -32,7 +32,7 @@
     {
       "jour": "Samedi",
       "type": "bas",
-      "seance": "Bas D · fessiers volume"
+      "seance": "Bas D · fessiers volume + quadriceps"
     },
     {
       "jour": "Dimanche",
@@ -231,7 +231,7 @@
       "emoji": "🍑",
       "type": "bas",
       "jour": "Mardi",
-      "titre": "Bas B · fessiers lourds",
+      "titre": "Bas B · fessiers lourds + ischios",
       "focus": "La séance clé des fessiers : le hip thrust est le mouvement le plus lourd de la semaine",
       "note": "Cardio après la musculation : 15 min de vélo en endurance douce (tu peux parler), sans impact pour les genoux.",
       "echauffement": [
@@ -307,7 +307,7 @@
           "series": "3 × 8-10",
           "tempo": "3-0-1",
           "repos": "2'",
-          "notes": "Étirement des fessiers en bas, dos neutre"
+          "notes": "Étirement des fessiers et des ischios en bas, dos neutre"
         },
         {
           "n": "4",
@@ -316,33 +316,33 @@
           "series": "3 × 10",
           "tempo": "3-0-1",
           "repos": "90 s",
-          "notes": "Hauteur de box sans douleur au genou, à abaisser progressivement"
+          "notes": "Quadriceps. Hauteur de box sans douleur au genou, à abaisser progressivement"
         },
         {
-          "n": "5a",
-          "nom": "Marche latérale élastique",
+          "n": "5",
+          "nom": "Leg curl assis",
           "lien": "",
-          "series": "2 × 12 pas / côté",
-          "tempo": "",
-          "repos": "0",
-          "notes": "Enchaîner avec le 5b"
+          "series": "3 × 10-12",
+          "tempo": "3-0-1",
+          "repos": "75 s",
+          "notes": "Ischios. Descente lente sur 3 s, c'est elle qui fait travailler le muscle"
         },
         {
-          "n": "5b",
+          "n": "6a",
           "nom": "Copenhague levier court (genou posé)",
           "lien": "",
           "series": "2 × 20 s / côté",
           "tempo": "",
-          "repos": "60 s",
-          "notes": "Seulement si l'aine reste à 3/10 maximum"
+          "repos": "0",
+          "notes": "Seulement si l'aine reste à 3/10 maximum. Enchaîner avec le 6b"
         },
         {
-          "n": "6",
+          "n": "6b",
           "nom": "Mollets debout sur marche + relevés de pointe de pied (tibial)",
           "lien": "",
           "series": "2 × 15 chacun",
           "tempo": "2-1-1",
-          "repos": "45 s",
+          "repos": "60 s",
           "notes": "Pour la voûte plantaire et la cheville"
         }
       ]
@@ -480,8 +480,8 @@
       "emoji": "🍑",
       "type": "bas",
       "jour": "Samedi",
-      "titre": "Bas D · fessiers volume",
-      "focus": "Fessiers en isolation et travail sur une jambe",
+      "titre": "Bas D · fessiers volume + quadriceps",
+      "focus": "Fessiers en isolation, quadriceps et travail sur une jambe",
       "note": "Cardio après la musculation : 15 à 20 min de course fractionnée avec tes semelles (2 min d'échauffement, puis 6 × 1'30 rapide / 1'30 marche ou trot lent). Si les genoux dépassent 3/10 : vélo ou rameur à la place.",
       "echauffement": [
         {
@@ -542,12 +542,12 @@
         },
         {
           "n": "2",
-          "nom": "Extension à 45° orientée fessiers",
+          "nom": "Presse à cuisses, pieds au milieu de la plateforme",
           "lien": "",
-          "series": "3 × 12-15",
-          "tempo": "2-1-2",
-          "repos": "75 s",
-          "notes": "Dos arrondi, pieds tournés vers l'extérieur"
+          "series": "3 × 10-12",
+          "tempo": "3-0-1",
+          "repos": "2'",
+          "notes": "Quadriceps. Descends seulement jusqu'où le genou reste sans douleur (0 à 3/10), bassin collé au dossier"
         },
         {
           "n": "3",
@@ -556,10 +556,28 @@
           "series": "3 × 8 / jambe",
           "tempo": "2-0-1",
           "repos": "75 s",
-          "notes": "Gauche en premier, genou aligné"
+          "notes": "Gauche en premier, genou aligné. Pousse avec la jambe du haut, pas d'élan avec celle du bas"
         },
         {
           "n": "4",
+          "nom": "Extension à 45° orientée fessiers",
+          "lien": "",
+          "series": "3 × 12-15",
+          "tempo": "2-1-2",
+          "repos": "75 s",
+          "notes": "Dos arrondi, pieds tournés vers l'extérieur"
+        },
+        {
+          "n": "5a",
+          "nom": "Leg curl couché",
+          "lien": "",
+          "series": "3 × 10-12",
+          "tempo": "3-0-1",
+          "repos": "0",
+          "notes": "Ischios. Hanches collées au banc. Enchaîner avec le 5b"
+        },
+        {
+          "n": "5b",
           "nom": "Kickback poulie basse",
           "lien": "",
           "series": "3 × 12-15 / jambe",
@@ -568,31 +586,22 @@
           "notes": ""
         },
         {
-          "n": "5a",
+          "n": "6a",
           "nom": "Abduction machine, buste penché",
           "lien": "",
           "series": "3 × 15-20",
           "tempo": "2-1-1",
           "repos": "0",
-          "notes": "Enchaîner avec le 5b"
+          "notes": "Enchaîner avec le 6b"
         },
         {
-          "n": "5b",
+          "n": "6b",
           "nom": "Chaise contre un mur à 60°",
           "lien": "",
           "series": "3 × 30-45 s",
           "tempo": "",
           "repos": "60 s",
-          "notes": "Calme les genoux"
-        },
-        {
-          "n": "6",
-          "nom": "Mollets debout sur marche + relevés de pointe de pied (tibial)",
-          "lien": "",
-          "series": "2 × 15 chacun",
-          "tempo": "2-1-1",
-          "repos": "45 s",
-          "notes": ""
+          "notes": "Quadriceps en isométrique, calme les genoux"
         }
       ]
     }
