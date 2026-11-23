@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GluteLab — Séance express</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0A0A;--panel:#131313;--panel2:#1A1A1A;--line:#272727;--text:#F4F4F4;--muted:#9B9B9B;
+  --neon:#C04CFF;--pink:#FF4FD8;--low:#4DF0A0;--mid:#FFC24D;--high:#FF5C7A;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:15px/1.45 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+header{padding:22px 20px 14px;max-width:1240px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font:900 26px/1 Archivo,sans-serif;letter-spacing:-.5px}
+.brand span{background:linear-gradient(90deg,var(--neon),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:13px;margin-top:6px}
+.tabs{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tabs-in{max-width:1240px;margin:0 auto;display:flex;gap:6px;padding:10px 20px}
+.tabs button{padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px;color:var(--muted);border:1px solid var(--line)}
+.tabs button.on{color:#fff;border-color:var(--neon);background:rgba(192,76,255,.14);box-shadow:0 0 18px rgba(192,76,255,.25)}
+main{max-width:1240px;margin:0 auto;padding:18px 20px 90px}
+.tab{display:none}.tab.on{display:block}
+.grid{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
+.form{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;position:sticky;top:70px;max-height:calc(100vh - 86px);overflow:auto}
+.grp{margin-bottom:16px}.grp:last-child{margin-bottom:0}
+.lbl{font:800 11px/1 Archivo,sans-serif;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:8px;display:flex;gap:6px;align-items:center}
+.lbl .multi{font:500 10px Inter;letter-spacing:0;text-transform:none;color:#666}
+.hint{font-size:12px;color:#7d7d7d;margin-top:6px;line-height:1.35}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:8px 12px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);font-size:13.5px;font-weight:500;transition:.15s}
+.chip:hover{border-color:#444}
+.chip.on{background:rgba(192,76,255,.18);border-color:var(--neon);color:#fff;font-weight:600}
+.out{min-width:0}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.head h2{font:900 24px/1.1 Archivo,sans-serif;letter-spacing:-.3px}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pill{font-size:12px;padding:4px 9px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:#cfcfcf}
+.actions{display:flex;gap:8px}
+.btn{padding:10px 14px;border-radius:10px;font-weight:600;font-size:13.5px;border:1px solid var(--line);background:var(--panel2)}
+.btn:hover{border-color:#555}
+.btn.main{background:linear-gradient(90deg,var(--neon),var(--pink));border:0;color:#fff}
+.keys{background:linear-gradient(135deg,rgba(192,76,255,.12),rgba(255,79,216,.06));border:1px solid rgba(192,76,255,.45);border-radius:var(--r);padding:14px 16px;margin-bottom:14px}
+.keys h4,.warm h4{font:800 11px Archivo;text-transform:uppercase;letter-spacing:1.2px;color:var(--pink);margin-bottom:8px}
+.keys ul{list-style:none;display:grid;gap:6px}
+.keys li{padding-left:18px;position:relative;font-size:14px}
+.keys li:before{content:"→";position:absolute;left:0;color:var(--neon);font-weight:700}
+.warm{background:var(--panel);border:1px dashed #3a3a3a;border-radius:var(--r);padding:12px 16px;margin-bottom:12px}
+.warm .row{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0}
+.warm .row b{font-weight:600}.warm .row span{color:var(--muted)}
+.list{display:grid;gap:10px}
+.ex{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.ex.pre{border-color:rgba(255,194,77,.5)}
+.ex-top{display:flex;gap:12px;align-items:flex-start}
+.num{font:900 22px/1 Archivo;color:var(--neon);min-width:30px;padding-top:2px}
+.ex-main{flex:1;min-width:0}
+.ex h3{font:800 17px/1.2 Archivo,sans-serif}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.m{font-size:12.5px;padding:3px 8px;border-radius:7px;background:#0d0d0d;border:1px solid var(--line);color:#d8d8d8;white-space:nowrap}
+.m.big{color:#fff;font-weight:700;border-color:#3a3a3a}
+.swap{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);font-size:16px;flex:none}
+.swap:hover{border-color:var(--neon)}
+.cues{list-style:none;margin:10px 0 0 42px;display:grid;gap:5px}
+.cues li{font-size:13.5px;color:#dcdcdc;padding-left:16px;position:relative}
+.cues li:before{content:"";position:absolute;left:2px;top:7px;width:6px;height:6px;border-radius:50%;background:var(--pink)}
+.cues li.perso{color:#fff}
+.cues li.perso:before{background:var(--neon);box-shadow:0 0 8px var(--neon)}
+.tag-pre{display:inline-block;margin:8px 0 0 42px;font-size:12px;font-weight:600;color:var(--mid)}
+.techwrap{margin:10px 0 0 42px}
+.tech{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:9px;font-size:13px;font-weight:700;border:1px solid}
+.tech small{font-weight:500;opacity:.8}
+.tech.c1{color:var(--low);border-color:rgba(77,240,160,.45);background:rgba(77,240,160,.08)}
+.tech.c2{color:var(--mid);border-color:rgba(255,194,77,.45);background:rgba(255,194,77,.08)}
+.tech.c3{color:var(--high);border-color:rgba(255,92,122,.5);background:rgba(255,92,122,.08)}
+.tech.add{color:var(--muted);border:1px dashed #3a3a3a;font-weight:600}
+.tech.add:hover{color:#fff;border-color:var(--neon)}
+.how{font-size:13px;color:#cfcfcf;margin-top:6px;line-height:1.4}
+.week{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--neon);border-radius:var(--r);padding:12px 16px;margin-bottom:12px}
+.week b{font:900 20px Archivo;color:var(--neon);flex:none}
+.week p{font-size:14px}
+.rule{font-size:13px;color:var(--muted);margin-top:12px;padding:12px 14px;border-radius:10px;background:var(--panel);border:1px solid var(--line)}
+.rule b{color:#fff}
+.safety{font-size:12.5px;color:#ff9aac;margin-top:10px}
+.lib{margin-top:30px}
+.lib h3{font:900 20px Archivo;margin-bottom:4px}
+.lib .sub{margin-bottom:12px}
+.libgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px;text-align:left;width:100%}
+.card .t{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card h5{font:800 15px Archivo}
+.dot{font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px}
+.dot.c1{color:var(--low);background:rgba(77,240,160,.1)}.dot.c2{color:var(--mid);background:rgba(255,194,77,.1)}.dot.c3{color:var(--high);background:rgba(255,92,122,.1)}
+.card p{font-size:13px;color:#d4d4d4;margin-top:6px}
+.card .more{display:none;font-size:12.5px;color:var(--muted);margin-top:6px}
+.card.open .more{display:block}
+.card .lv{font-size:11px;color:#777;margin-top:6px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(30px);opacity:0;background:#fff;color:#000;font-weight:700;padding:10px 16px;border-radius:999px;transition:.25s;z-index:50;font-size:14px}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.jump{display:none}
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .form{position:static;max-height:none}
+  .jump{display:block;position:fixed;left:16px;right:16px;bottom:14px;z-index:30;padding:14px;border-radius:12px;font-weight:700;background:linear-gradient(90deg,var(--neon),var(--pink));color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.6)}
+  .cues,.techwrap,.tag-pre{margin-left:0}
+  .head h2{font-size:21px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Glute<span>Lab</span> · Séance express</div>
+    <div class="sub">Séances d’hypertrophie des fessiers. Choisis le profil → la séance se construit. Touche ↻ pour changer un exo, touche la technique pour la changer.</div>
+  </div>
+</header>
+<nav class="tabs"><div class="tabs-in">
+  <button data-tab="profil" class="on">Séance sur-mesure</button>
+  <button data-tab="prog">Progression &amp; intensité</button>
+</div></nav>
+<main>
+  <section class="tab on" id="tab-profil">
+    <div class="grid"><aside class="form" id="form-profil"></aside><div class="out" id="out-profil"></div></div>
+  </section>
+  <section class="tab" id="tab-prog">
+    <div class="grid"><aside class="form" id="form-prog"></aside><div class="out" id="out-prog"></div></div>
+    <div class="lib" id="lib"></div>
+  </section>
+</main>
+<button class="jump" id="jump">Voir la séance ↓</button>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= DONNÉES ================= */
+const T={
+ pause:{n:"Pause 2 s",c:1,l:1,how:"Tiens 2 s dans la position la plus dure à chaque rep (en haut sur thrust/kickback/abduction, en bas sur squat/fente). Charge −10 %.",when:"Toutes les séries. Parfait dès la débutante pour apprendre à sentir le fessier.",where:"Thrust, kickback, abduction, fentes"},
+ tempo:{n:"Excentrique 3-4 s",c:1,l:1,how:"Descente contrôlée en 3-4 s, remontée dynamique.",when:"Toutes les séries. À privilégier sur les polyarticulaires libres (squat, RDL).",where:"Squat, RDL, fentes, presse"},
+ prefat:{n:"Pré-fatigue",c:2,l:1,how:"Isolation (abduction ou kickback) juste avant le gros exo, sans repos entre les deux.",when:"Quand les quadriceps ou les ischios volent le travail.",where:"Abduction → squat/presse, kickback → fente",lib:1},
+ lp:{n:"Partielles en étirement",c:2,l:2,how:"À l’échec en amplitude complète, enchaîne 5 à 8 demi-reps dans la moitié basse (position étirée).",when:"Dernière série uniquement.",where:"Hack, presse, fentes, hyperextension, abduction"},
+ one14:{n:"Reps 1¼",c:2,l:2,how:"Descends en bas, remonte d’un quart, redescends, puis remonte en entier = 1 rep. Charge −20 %.",when:"Toutes les séries de l’exo, 2 à 3 semaines max.",where:"Squat goblet, hack, presse, fentes"},
+ myo:{n:"Myo-reps",c:2,l:2,how:"1 série de 12-20 reps à RIR 1, puis 5 respirations → 3-5 reps, à répéter 3 à 5 fois. Stop dès qu’une rep est perdue.",when:"Remplace les séries 2 et 3 : idéal quand le temps manque.",where:"Abduction, kickback, hyperextension, thrust machine"},
+ rp:{n:"Rest-pause",c:3,l:2,how:"Série à RIR 0-1 → 15 s de repos → max de reps → 15 s → max de reps.",when:"Dernière série.",where:"Thrust machine, presse, hack, abduction"},
+ drop:{n:"Drop set",c:3,l:3,how:"À l’échec technique, baisse la charge de 20-25 % sans repos et repars jusqu’à l’échec. 1 à 2 drops max.",when:"Dernière série, sur machine ou câble uniquement.",where:"Abduction, kickback, presse, thrust machine"},
+ mech:{n:"Drop set mécanique",c:3,l:3,how:"À l’échec, passe sans repos à une variante plus facile : thrust → glute bridge → frog pumps, ou abduction penchée → droite → partielles.",when:"Dernière série du dernier exo.",where:"Thrust, abduction"}
+};
+const WHEN_SHORT={pause:"toutes les séries",tempo:"toutes les séries",one14:"toutes les séries",myo:"remplace les séries 2-3",lp:"dernière série",rp:"dernière série",drop:"dernière série",mech:"dernière série"};
+const COST=["","Fatigue faible","Fatigue moyenne","Fatigue élevée"];
+const LV=["","Débutante","Intermédiaire","Avancée"];
+
+/* s = slot, w = lieu, z = zones, l = niveau min, lb = déconseillé lombaires sensibles, g = déconseillé genoux sensibles, h = dominante hanche, t = techniques compatibles */
+const EX=[
+ {id:"hack",n:"Hack squat pieds hauts",s:"stretch",w:"salle",z:["bas","global"],l:1,h:1,t:["tempo","pause","lp","one14","rp","drop"],c:"Descends le plus bas possible, bassin calé contre le dossier."},
+ {id:"presse",n:"Presse pieds hauts et écartés",s:"stretch",w:"salle",z:["bas","global"],l:1,h:1,t:["tempo","lp","one14","rp","drop"],c:"Genoux vers la poitrine en bas, sans que les fesses décollent du siège."},
+ {id:"belt",n:"Belt squat",s:"stretch",w:"salle",z:["bas","global"],l:1,t:["tempo","pause","lp","one14","rp"],c:"Amplitude complète, hanches qui reculent à la descente."},
+ {id:"squatb",n:"Squat barre profond",s:"stretch",w:"salle",z:["bas","global"],l:2,lb:1,g:1,t:["tempo","pause"],c:"Cuisses au moins parallèles, gainage avant chaque rep."},
+ {id:"goblet",n:"Squat goblet profond",s:"stretch",w:"both",z:["bas","global"],l:1,t:["tempo","pause","one14","lp"],c:"Coudes entre les genoux en bas, buste fier."},
+ {id:"sumo",n:"Squat sumo haltère sur 2 steps",s:"stretch",w:"both",z:["bas","cotes","global"],l:1,h:1,t:["tempo","pause","one14","lp"],c:"L’haltère descend sous le niveau des pieds pour gagner en amplitude."},
+
+ {id:"rdl",n:"Soulevé de terre roumain barre",s:"hinge",w:"salle",z:["bas"],l:1,lb:1,t:["tempo","pause"],c:"Barre collée aux cuisses, hanches loin derrière, dos neutre."},
+ {id:"rdlh",n:"RDL haltères",s:"hinge",w:"both",z:["bas"],l:1,lb:1,t:["tempo","pause","lp"],c:"Haltères le long des jambes, descends jusqu’à l’étirement max dos neutre."},
+ {id:"hyper",n:"Hyperextension 45° focus fessiers",s:"hinge",w:"salle",z:["bas","haut","global"],l:1,t:["pause","myo","lp","rp","drop"],c:"Dos légèrement arrondi, pointes ouvertes, pousse le bassin dans le coussin."},
+ {id:"pull",n:"Pull-through câble",s:"hinge",w:"salle",z:["bas","global"],l:1,t:["pause","myo","rp"],c:"Hanches en arrière comme pour fermer une porte avec les fesses, serre en haut."},
+ {id:"pullel",n:"Pull-through élastique",s:"hinge",w:"maison",z:["bas","global"],l:1,t:["pause","myo"],c:"Élastique entre les jambes, hanches en arrière, verrouille en serrant."},
+ {id:"sldl",n:"RDL unilatéral haltère",s:"hinge",w:"both",z:["bas","cotes"],l:2,t:["tempo","pause"],c:"Bassin à plat : la hanche de la jambe arrière ne s’ouvre pas."},
+ {id:"revhyp",n:"Reverse hyper",s:"hinge",w:"salle",z:["bas","haut"],l:2,t:["pause","myo","rp"],c:"Monte les jambes jusqu’à l’alignement avec le buste, sans élan."},
+
+ {id:"htb",n:"Hip thrust barre",s:"thrust",w:"salle",z:["global","haut"],l:1,t:["pause","tempo","rp"],c:"Omoplates sur le banc, tibias verticaux en haut, regard vers l’avant."},
+ {id:"htm",n:"Hip thrust machine",s:"thrust",w:"salle",z:["global","haut"],l:1,t:["pause","myo","rp","drop","mech"],c:"Charge lourde : contrôle 1 s en haut, amplitude complète en bas."},
+ {id:"htbs",n:"Hip thrust B-stance",s:"thrust",w:"salle",z:["haut","cotes"],l:2,t:["pause","myo"],c:"Pied d’appui à plat, l’autre posé sur le talon (20 % du poids max)."},
+ {id:"hth",n:"Hip thrust haltère (banc ou canapé)",s:"thrust",w:"maison",z:["global","haut"],l:1,t:["pause","myo","rp","mech"],c:"Haltère calé sur le pli de hanche, pause en haut."},
+ {id:"bridge",n:"Glute bridge lesté",s:"thrust",w:"both",z:["global","haut"],l:1,t:["pause","myo","mech"],c:"Dos au sol, pousse dans les talons, serre 1 s en haut."},
+
+ {id:"farr",n:"Fente arrière en déficit",s:"unilat",w:"both",z:["bas","global"],l:1,t:["tempo","pause","lp","one14"],c:"Pied avant sur une cale de 5-10 cm pour gagner en étirement."},
+ {id:"bulg",n:"Fente bulgare buste penché",s:"unilat",w:"both",z:["bas","global"],l:2,g:1,t:["tempo","pause","lp","one14"],c:"Buste penché, descends jusqu’à ce que le genou arrière frôle le sol."},
+ {id:"stepbas",n:"Step-up banc bas buste penché",s:"unilat",w:"both",z:["haut","global"],l:1,t:["tempo","pause"],c:"Buste penché vers l’avant, tout le poids sur le talon du pied posé."},
+ {id:"fm",n:"Fentes marchées grands pas",s:"unilat",w:"both",z:["global","bas"],l:1,g:1,t:["tempo"],c:"Grands pas, buste légèrement penché, pousse dans le talon avant."},
+ {id:"stepup",n:"Step-up banc haut",s:"unilat",w:"both",z:["haut","global"],l:2,g:1,t:["tempo","pause"],c:"Monte sans pousser avec la jambe arrière, contrôle la descente."},
+ {id:"curtsy",n:"Fente croisée (curtsy) haltère",s:"unilat",w:"both",z:["cotes","haut"],l:2,g:1,t:["tempo","pause"],c:"Jambe arrière qui croise en diagonale, hanches face à l’avant."},
+
+ {id:"abdp",n:"Abduction machine buste penché",s:"abd",w:"salle",z:["haut","cotes","global"],l:1,t:["pause","myo","lp","rp","drop","mech"],c:"Buste penché, mains sur la machine, ouvre et tiens 1 s."},
+ {id:"abdc",n:"Abduction câble debout",s:"abd",w:"salle",z:["cotes","haut"],l:1,t:["pause","myo","lp"],c:"Buste légèrement penché vers le support, jambe qui part en diagonale arrière."},
+ {id:"abde",n:"Abduction élastique assise penchée",s:"abd",w:"maison",z:["haut","cotes","global"],l:1,t:["pause","myo","lp","mech"],c:"Élastique au-dessus des genoux, buste penché, ouvre et tiens 1 s."},
+ {id:"abdl",n:"Abduction couchée sur le côté lestée",s:"abd",w:"maison",z:["cotes"],l:1,t:["pause","myo"],c:"Jambe légèrement en arrière de l’axe du corps, pointe du pied vers le bas."},
+
+ {id:"kbc",n:"Kickback câble",s:"iso",w:"salle",z:["haut","global"],l:1,t:["pause","myo","drop"],c:"Buste penché et calé, pousse le talon vers l’arrière et le haut."},
+ {id:"kbm",n:"Kickback machine",s:"iso",w:"salle",z:["global","haut"],l:1,t:["pause","myo","rp","drop"],c:"Hanche collée au coussin, aucun mouvement du bassin."},
+ {id:"kblat",n:"Kickback câble en diagonale",s:"iso",w:"salle",z:["cotes","haut"],l:2,t:["pause","myo"],c:"Pousse vers l’arrière ET l’extérieur à 30°, bassin fixe."},
+ {id:"frog",n:"Frog pumps lestés",s:"iso",w:"both",z:["haut"],l:1,t:["pause","myo"],c:"Plantes de pieds collées, genoux ouverts, reps courtes et serrées."},
+ {id:"kbe",n:"Kickback élastique en quadrupédie",s:"iso",w:"maison",z:["haut","global"],l:1,t:["pause","myo"],c:"Dos plat, pousse le talon vers le plafond sans cambrer."}
+];
+
+const MOD={
+ stretch:{endormis:"Pense « hanches en arrière » à la descente, pas « genoux en avant ».",quads:"Pousse dans le talon, genoux qui partent vers l’extérieur.",lombs:"Descends seulement tant que le bassin ne bascule pas.",large:"Pieds plus larges que les épaules, pointes ouvertes à 30°.",etroit:"Pieds largeur de hanches, pointes ouvertes à 10-15°.",longs:"Le buste se penche : c’est normal et bon pour le fessier, garde le dos neutre.",courts:"Pieds plus hauts / plus loin pour sortir des quadriceps."},
+ hinge:{endormis:"Pointes de pied ouvertes à 20-30° pour mettre le fessier dans l’axe.",ischios:"Genoux fléchis à 20-30° : pense « hanches en arrière », pas « buste en bas ».",lombs:"Arrête la descente dès que le dos s’arrondit ou que le bassin bascule.",large:"Pointes ouvertes, prise un peu plus large."},
+ thrust:{endormis:"Pause 2 s en haut, serre fort avant de redescendre.",quads:"Recule les pieds de 5 cm et pousse dans les talons.",ischios:"Rapproche les pieds : tibias verticaux en position haute.",lombs:"Menton rentré, côtes basses, rétroversion en haut. Stop à l’alignement épaules-hanches-genoux.",large:"Pieds un peu plus écartés, pointes et genoux ouverts.",etroit:"Pieds largeur de hanches, pousse les genoux vers l’extérieur."},
+ unilat:{endormis:"Pousse dans le talon avant, cherche l’étirement en bas.",quads:"Buste penché à 30-45°, pied avant plus loin.",lombs:"Bassin face à l’avant, pas de cambrure en remontant.",longs:"Grand pas : laisse le genou arrière descendre bas.",courts:"Allonge la foulée pour garder le tibia avant vertical."},
+ abd:{endormis:"Pousse avec les genoux, pas avec les pieds. Contrôle le retour.",lombs:"Dos calé, pas de cambrure pour tricher.",dips:"Buste penché, pause 1 s jambes ouvertes : c’est l’exo qui remplit les côtés.",etroit:"Exo prioritaire pour elle : élargit visuellement le haut de la silhouette."},
+ iso:{endormis:"Pause 2 s en contraction, la jambe ne monte pas plus haut que la hanche.",ischios:"Genou légèrement fléchi et fixe pour couper les ischios.",lombs:"Buste stable, aucune cambrure en fin de mouvement.",dips:"Trajectoire en diagonale vers l’extérieur (30°)."}
+};
+const FLAG_ORDER=["endormis","quads","ischios","lombs","dips","large","etroit","longs","courts"];
+
+const ACT={
+ bridge:{n:"Glute bridge élastique",d:"2 × 15 · pause 2 s en haut"},
+ abd:{n:"Abduction élastique assise",d:"2 × 20"},
+ kb:{n:"Kickback élastique quadrupédie",d:"2 × 12 / jambe"}
+};
+
+const TPL={
+ global:[["stretch",1],["thrust",1],["hinge",5],["unilat",2],["abd",3],["iso",4]],
+ haut:[["thrust",1],["unilat",3],["stretch",5],["abd",2],["iso",4],["abd",6]],
+ bas:[["stretch",1],["hinge",2],["unilat",3],["thrust",4],["abd",5],["iso",6]],
+ cotes:[["thrust",2],["unilat",4],["abd",1],["stretch",6],["abd",3],["iso",5]],
+ etirement:[["stretch",1],["hinge",2],["unilat",3],["stretch",6],["abd",4],["iso",5]],
+ contraction:[["thrust",1],["unilat",3],["abd",2],["iso",4],["thrust",6],["iso",5]]
+};
+TPL.mixte=TPL.global;
+
+const NB={45:4,60:5,75:6};
+const PREF={1:["pause","tempo"],2:["myo","rp","lp","one14","pause"],3:["drop","mech","rp","myo","lp"]};
+const RIR={1:"2-3",2:"1-2",3:"0-1 dernière série"};
+
+const W={
+ 1:{n:"S1",name:"Base",rir:["3","3","2-3"],tech:[0,0,0],rule:"<b>Trouve les charges.</b> Reste à RIR 3, note la charge et les reps de chaque série : c’est la référence du bloc."},
+ 2:{n:"S2",name:"Volume",rir:["2-3","2","2"],tech:[1,1,1],plus:1,rule:"<b>+1 série</b> sur les 2 premiers exos. Haut de la fourchette atteint sur toutes les séries → +2,5 à 5 kg."},
+ 3:{n:"S3",name:"Intensité",rir:["2","1-2","1"],tech:[1,1,2],plus:1,rule:"<b>On rapproche de l’échec.</b> Charges en hausse dès que les reps le permettent, techniques sur les derniers exos."},
+ 4:{n:"S4",name:"Pic",rir:["1-2","1","0-1 dernière série"],tech:[1,2,2],plus:1,rule:"<b>Semaine la plus dure.</b> Dernière série proche de l’échec sur les exos stables (machines, câbles). Jamais à l’échec sur squat ou RDL barre."},
+ 5:{n:"DL",name:"Deload",rir:["4","4","4"],tech:[0,0,0],deload:1,rule:"<b>Récupération.</b> Mêmes exos, 2 séries par exo, mêmes charges (ou −10 %), aucune technique. Puis on relance un bloc avec des charges plus hautes qu’en S1."}
+};
+
+/* ================= MOTEUR ================= */
+function score(e,cfg){
+ let s=0;
+ if(cfg.zone&&cfg.zone!=="global"&&e.z.includes(cfg.zone))s+=3;
+ const f=cfg.flags||{};
+ if((f.quads||f.courts)&&e.h)s+=2;
+ if(f.longs&&e.id==="squatb")s+=1;
+ if(f.lombs&&e.lb)s-=1;
+ return s;
+}
+function params(e,L){
+ const base={stretch:[3,"8-10","2-3 min"],hinge:[3,"8-12","2 min"],thrust:[3,"8-12","2 min"],unilat:[3,"10-12 / jambe","90 s"],abd:[3,"15-20","60 s"],iso:[3,"12-15","60 s"]}[e.s].slice();
+ if(L===1){if(e.s==="stretch")base[1]="10-12";if(e.s==="abd"||e.s==="iso")base[0]=2;}
+ if(L===3){if(e.s==="thrust"){base[0]=4;base[1]="6-10";}if(e.s==="stretch")base[1]="6-10";}
+ if(e.id==="frog")base[1]="20-30";
+ if(e.id==="bridge")base[1]="12-15";
+ return {sets:base[0],reps:base[1],rest:base[2]};
+}
+function cuesFor(e,flags){
+ const out=[{t:e.c,p:0}];const m=MOD[e.s]||{};
+ for(const f of FLAG_ORDER){if(out.length>=3)break;if(flags&&flags[f]&&m[f])out.push({t:m[f],p:1});}
+ return out;
+}
+function gen(cfg){
+ const L=+cfg.lvl;
+ const order=cfg.tpl.map((x,i)=>({slot:x[0],p:x[1],i})).sort((a,b)=>a.p-b.p||a.i-b.i).slice(0,cfg.n).sort((a,b)=>a.i-b.i);
+ const used=new Set();const items=[];
+ for(const o of order){
+  let c=EX.filter(e=>e.s===o.slot&&e.l<=L&&!used.has(e.id)&&(cfg.cons.maison?e.w!=="salle":e.w!=="maison")&&!(cfg.cons.lomb&&e.lb)&&!(cfg.cons.genou&&e.g));
+  c=c.map((e,j)=>({e,sc:score(e,cfg),j})).sort((a,b)=>b.sc-a.sc||a.j-b.j).map(x=>x.e);
+  if(!c.length)continue;
+  const e=c[(cfg.sw[o.i]||0)%c.length];used.add(e.id);
+  items.push(Object.assign({e,key:o.i,alt:c.length,cues:cuesFor(e,cfg.flags)},params(e,L)));
+ }
+ if(cfg.flags&&(cfg.flags.quads)){
+  let k=items.findIndex(x=>x.e.s==="abd");if(k<0)k=items.findIndex(x=>x.e.s==="iso");
+  if(k>0){const it=items.splice(k,1)[0];it.prefat=1;it.sets=2;it.reps="15-20";it.rest="0 s → enchaîne";items.unshift(it);}
+ }
+ if(cfg.plus&&L>=2){let n=0;for(const it of items){if(it.prefat)continue;it.sets++;if(++n>=2)break;}}
+ if(cfg.deload){for(const it of items)it.sets=2;}
+ // techniques
+ const usedT=new Set();let left=cfg.techN;
+ for(let k=items.length-1;k>=0&&left>0;k--){
+  const it=items[k];if(it.prefat)continue;
+  for(const t of PREF[L]){
+   if(!it.e.t.includes(t)||T[t].l>L||usedT.has(t))continue;
+   if(t==="mech"&&k!==items.length-1)continue;
+   it.tech=t;usedT.add(t);left--;break;
+  }
+ }
+ for(const it of items){
+  it.opts=[null].concat(it.e.t.filter(t=>T[t].l<=L));
+  if(Object.prototype.hasOwnProperty.call(cfg.to,it.key))it.tech=cfg.to[it.key];
+  it.rir=cfg.rir;
+ }
+ return items;
+}
+
+/* ================= ÉTAT & FORMULAIRES ================= */
+const S={
+ profil:{lvl:"2",obj:"global",bassin:"std",femur:"std",dips:"0",rec:[],cons:[],dur:"60",sw:{},to:{}},
+ prog:{lvl:"2",focus:"mixte",week:"1",lieu:"salle",dur:"60",sw:{},to:{}}
+};
+const FORMS={
+ profil:[
+  {k:"lvl",l:"Niveau",o:[["1","Débutante"],["2","Intermédiaire"],["3","Avancée"]]},
+  {k:"obj",l:"Priorité galbe",o:[["global","Volume global"],["haut","Haut du fessier"],["bas","Bas / pli fessier"],["cotes","Côtés / hip dips"]]},
+  {k:"bassin",l:"Bassin",o:[["std","Standard"],["large","Large"],["etroit","Étroit"]]},
+  {k:"femur",l:"Proportions",o:[["std","Standard"],["longs","Fémurs longs"],["courts","Fémurs courts"]],h:"Test rapide : squat au poids du corps, talons au sol. Le buste plonge vers l’avant → fémurs longs. Buste très droit → fémurs courts."},
+  {k:"dips",l:"Hip dips marqués",o:[["0","Non"],["1","Oui"]]},
+  {k:"rec",l:"Ce qu’elle ressent",m:1,o:[["endormis","Ne sent pas ses fessiers"],["quads","Ça brûle dans les quadriceps"],["ischios","Ça tire dans les ischios"],["lombs","Les lombaires compensent"]]},
+  {k:"cons",l:"Contraintes",m:1,o:[["lomb","Lombaires sensibles"],["genou","Genoux sensibles"],["maison","À la maison"]]},
+  {k:"dur",l:"Durée",o:[["45","45 min"],["60","60 min"],["75","75 min"]]}
+ ],
+ prog:[
+  {k:"lvl",l:"Niveau",o:[["1","Débutante"],["2","Intermédiaire"],["3","Avancée"]]},
+  {k:"focus",l:"Type de séance",o:[["etirement","Étirement"],["contraction","Contraction"],["mixte","Mixte"]],h:"Sur 2 séances fessiers par semaine : une Étirement + une Contraction."},
+  {k:"week",l:"Semaine du bloc",o:[["1","S1 Base"],["2","S2 Volume"],["3","S3 Intensité"],["4","S4 Pic"],["5","Deload"]]},
+  {k:"lieu",l:"Lieu",o:[["salle","Salle"],["maison","Maison"]]},
+  {k:"dur",l:"Durée",o:[["45","45 min"],["60","60 min"],["75","75 min"]]}
+ ]
+};
+function renderForm(tab){
+ const st=S[tab];
+ document.getElementById("form-"+tab).innerHTML=FORMS[tab].map(g=>`
+  <div class="grp"><div class="lbl">${g.l}${g.m?'<span class="multi">plusieurs choix</span>':''}</div>
+  <div class="chips">${g.o.map(([v,t])=>{const on=g.m?st[g.k].includes(v):st[g.k]===v;return `<button class="chip${on?' on':''}" data-tab="${tab}" data-k="${g.k}" data-v="${v}" data-m="${g.m?1:0}">${t}</button>`}).join("")}</div>
+  ${g.h?`<div class="hint">${g.h}</div>`:''}</div>`).join("");
+}
+
+/* ================= RENDU ================= */
+const LAST={};
+function techBlock(it,tab){
+ if(!it.tech)return `<div class="techwrap"><button class="tech add" data-tech="${tab}" data-key="${it.key}">+ Technique d’intensité</button></div>`;
+ const t=T[it.tech];
+ return `<div class="techwrap"><button class="tech c${t.c}" data-tech="${tab}" data-key="${it.key}">⚡ ${t.n} <small>· ${WHEN_SHORT[it.tech]}</small></button><div class="how">${t.how}</div></div>`;
+}
+function exCard(it,i,tab){
+ return `<article class="ex${it.prefat?' pre':''}">
+  <div class="ex-top"><span class="num">${String(i+1).padStart(2,"0")}</span>
+   <div class="ex-main"><h3>${it.e.n}</h3>
+    <div class="meta"><span class="m big">${it.sets} × ${it.reps}</span><span class="m">RIR ${it.prefat?"2":it.rir}</span><span class="m">Repos ${it.rest}</span></div></div>
+   ${it.alt>1?`<button class="swap" title="Autre exercice" data-swap="${tab}" data-key="${it.key}">↻</button>`:''}
+  </div>
+  ${it.prefat?'<div class="tag-pre">⚡ Pré-fatigue : enchaîne directement avec l’exo 02, sans repos.</div>':''}
+  <ul class="cues">${it.cues.map(c=>`<li class="${c.p?'perso':''}">${c.t}</li>`).join("")}</ul>
+  ${it.prefat?'':techBlock(it,tab)}
+ </article>`;
+}
+function warmFor(obj,flags){
+ const k=obj==="haut"?["bridge","kb"]:obj==="cotes"?["abd","bridge"]:["bridge","abd"];
+ return `<div class="warm"><h4>Échauffement ciblé · 5 min</h4>${k.map(x=>`<div class="row"><b>${ACT[x].n}</b><span>${ACT[x].d}</span></div>`).join("")}${flags&&flags.endormis?'<div class="hint">Main posée sur le fessier qui travaille : elle doit le sentir se contracter avant de commencer.</div>':''}</div>`;
+}
+function keysFor(st,f){
+ const k=[];
+ k.push({global:"Séance équilibrée : étirement + contraction + unilatéral + abduction.",haut:"Priorité haut du fessier : thrust, abduction penchée et kickback portent la séance.",bas:"Priorité bas du fessier : exos en étirement (presse/hack pieds hauts, RDL, fente profonde). Amplitude complète non négociable.",cotes:"Priorité côtés : le moyen fessier passe 2 fois dans la séance (abduction penchée + debout)."}[st.obj]);
+ if(f.dips)k.push("Hip dips = forme du bassin. On remplit autour (moyen + haut du fessier) : promets du galbe, pas leur disparition.");
+ if(f.quads)k.push("Pré-fatigue : l’abduction passe avant le premier gros exo pour que le fessier soit déjà « allumé ».");
+ if(f.ischios)k.push("Si elle sent les ischios au thrust : pieds plus proches, tibias verticaux en haut.");
+ if(f.lombs)k.push("Lock-out : on s’arrête à l’alignement épaules-hanches-genoux. Rétroversion, côtes basses.");
+ if(f.endormis)k.push("Pause 2 s en contraction sur les exos d’isolation pendant 3-4 semaines, le temps que la connexion se fasse.");
+ if(f.etroit)k.push("Bassin étroit : l’abduction est son exo signature pour élargir visuellement la silhouette.");
+ if(f.large)k.push("Bassin large : stance plus large et pointes ouvertes sur squats et thrust, elle sera plus forte et sentira mieux.");
+ if(f.longs)k.push("Fémurs longs : son squat est naturellement « fessier » (buste penché), ne la redresse pas à tout prix.");
+ if(f.courts)k.push("Fémurs courts : le squat part vite dans les quads → presse/hack pieds hauts et charnière de hanche en priorité.");
+ if(st.cons.includes("genou"))k.push("Genoux sensibles : dominante hanche, fente arrière, step-up bas.");
+ if(st.cons.includes("lomb"))k.push("Lombaires sensibles : pas de squat barre ni de RDL barre.");
+ return k.slice(0,6);
+}
+function flagsOf(st){
+ const f={};st.rec.forEach(r=>f[r]=1);
+ if(st.dips==="1")f.dips=1;if(st.bassin!=="std")f[st.bassin]=1;if(st.femur!=="std")f[st.femur]=1;
+ if(st.obj==="cotes")f.dips=f.dips||0;
+ return f;
+}
+function consOf(arr){return {lomb:arr.includes("lomb"),genou:arr.includes("genou"),maison:arr.includes("maison")};}
+function totalSets(items){return items.reduce((a,b)=>a+b.sets,0);}
+
+function renderProfil(){
+ const st=S.profil,L=+st.lvl,f=flagsOf(st),cons=consOf(st.cons);
+ const items=gen({lvl:st.lvl,tpl:TPL[st.obj],zone:st.obj,flags:f,cons,n:Math.min(NB[st.dur],L===1?5:6),sw:st.sw,to:st.to,techN:{1:1,2:1,3:2}[L],rir:RIR[L]});
+ const objName={global:"Volume global",haut:"Haut du fessier",bas:"Bas du fessier",cotes:"Côtés"}[st.obj];
+ const title=`${objName} · ${LV[L]}`;
+ const keys=keysFor(st,f);
+ LAST.profil={title,items,warm:true,obj:st.obj,keys};
+ document.getElementById("out-profil").innerHTML=`
+  <div class="head"><div><h2>${title}</h2><div class="pills"><span class="pill">${items.length} exercices</span><span class="pill">${totalSets(items)} séries fessiers</span><span class="pill">${st.dur} min</span>${cons.maison?'<span class="pill">Maison</span>':''}</div></div>
+   <div class="actions"><button class="btn" data-regen="profil">↻ Tout changer</button><button class="btn main" data-copy="profil">Copier</button></div></div>
+  <div class="keys"><h4>Pour cette cliente</h4><ul>${keys.map(k=>`<li>${k}</li>`).join("")}</ul></div>
+  ${warmFor(st.obj,f)}
+  <div class="list">${items.map((it,i)=>exCard(it,i,"profil")).join("")}</div>
+  <div class="rule"><b>Pour qu’elle prenne du muscle :</b> chaque série compte seulement si elle finit proche de l’échec (RIR indiqué) en amplitude complète. Haut de la fourchette atteint sur toutes les séries → +2,5 à 5 kg et retour en bas de fourchette. Mêmes exos 4 à 6 semaines pour pouvoir progresser dessus.</div>
+  ${(cons.lomb||cons.genou)?'<div class="safety">Douleur aiguë, irradiation, engourdissement ou gonflement → on arrête l’exo et on oriente vers un professionnel de santé.</div>':''}`;
+}
+function renderProg(){
+ const st=S.prog,L=+st.lvl,w=W[st.week];
+ const items=gen({lvl:st.lvl,tpl:TPL[st.focus],zone:null,flags:{},cons:{maison:st.lieu==="maison"},n:Math.min(NB[st.dur],L===1?5:6),sw:st.sw,to:st.to,techN:w.tech[L-1],rir:w.rir[L-1],plus:w.plus,deload:w.deload});
+ const fName={etirement:"Étirement",contraction:"Contraction",mixte:"Mixte"}[st.focus];
+ const title=`${fName} · ${w.n} ${w.name} · ${LV[L]}`;
+ LAST.prog={title,items,warm:true,obj:st.focus==="contraction"?"haut":"global",keys:[w.rule.replace(/<[^>]+>/g,"")]};
+ document.getElementById("out-prog").innerHTML=`
+  <div class="head"><div><h2>${title}</h2><div class="pills"><span class="pill">${items.length} exercices</span><span class="pill">${totalSets(items)} séries fessiers</span><span class="pill">RIR ${w.rir[L-1]}</span><span class="pill">${items.filter(i=>i.tech).length} technique(s)</span></div></div>
+   <div class="actions"><button class="btn" data-regen="prog">↻ Tout changer</button><button class="btn main" data-copy="prog">Copier</button></div></div>
+  <div class="week"><b>${w.n}</b><p>${w.rule}</p></div>
+  ${warmFor(LAST.prog.obj)}
+  <div class="list">${items.map((it,i)=>exCard(it,i,"prog")).join("")}</div>
+  <div class="rule"><b>Règles d’intensité :</b> 1 à 2 techniques max par séance, sur les derniers exos. Jamais de drop set ni de rest-pause sur squat ou RDL barre. Touche un badge ⚡ pour en changer.</div>`;
+}
+function renderLib(){
+ const ids=Object.keys(T);
+ document.getElementById("lib").innerHTML=`<h3>Boîte à techniques</h3><div class="sub">Touche une carte pour voir où et quand l’utiliser.</div>
+ <div class="libgrid">${ids.map(id=>{const t=T[id];return `<button class="card" data-card>
+  <div class="t"><h5>${t.n}</h5><span class="dot c${t.c}">${COST[t.c].replace("Fatigue ","")}</span></div>
+  <p>${t.how}</p><div class="more"><b>Quand :</b> ${t.when}<br><b>Sur :</b> ${t.where}</div>
+  <div class="lv">À partir du niveau ${LV[t.l].toLowerCase()}</div></button>`}).join("")}</div>`;
+}
+function render(tab){renderForm(tab);tab==="profil"?renderProfil():renderProg();}
+
+/* ================= COPIE ================= */
+function toText(tab){
+ const d=LAST[tab];if(!d)return "";
+ const k=d.obj==="haut"?["bridge","kb"]:d.obj==="cotes"?["abd","bridge"]:["bridge","abd"];
+ let s=`SÉANCE FESSIERS — ${d.title}\n\nÉchauffement (5 min)\n`+k.map(x=>`• ${ACT[x].n} : ${ACT[x].d}`).join("\n")+"\n\n";
+ d.items.forEach((it,i)=>{
+  s+=`${i+1}. ${it.e.n} — ${it.sets} × ${it.reps} · RIR ${it.prefat?"2":it.rir} · repos ${it.rest}\n`;
+  if(it.prefat)s+="   ⚡ Pré-fatigue : enchaîne avec l’exo suivant sans repos\n";
+  it.cues.forEach(c=>s+=`   → ${c.t}\n`);
+  if(it.tech)s+=`   ⚡ ${T[it.tech].n} (${WHEN_SHORT[it.tech]}) : ${T[it.tech].how}\n`;
+  s+="\n";
+ });
+ if(d.keys&&d.keys.length)s+="Points clés :\n"+d.keys.map(x=>"• "+x).join("\n");
+ return s.trim();
+}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),1800);}
+
+/* ================= ÉVÉNEMENTS ================= */
+function init(){
+ document.addEventListener("click",ev=>{
+  const b=ev.target.closest("button");if(!b)return;
+  if(b.dataset.tab&&b.parentElement.classList.contains("tabs-in")){
+   document.querySelectorAll(".tabs-in button").forEach(x=>x.classList.toggle("on",x===b));
+   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.id==="tab-"+b.dataset.tab));
+   window.scrollTo({top:0});return;
+  }
+  if(b.classList.contains("chip")){
+   const st=S[b.dataset.tab],k=b.dataset.k,v=b.dataset.v;
+   if(b.dataset.m==="1"){const a=st[k];const i=a.indexOf(v);i<0?a.push(v):a.splice(i,1);}else st[k]=v;
+   st.sw={};st.to={};render(b.dataset.tab);return;
+  }
+  if(b.dataset.swap){const st=S[b.dataset.swap],key=b.dataset.key;st.sw[key]=(st.sw[key]||0)+1;delete st.to[key];render(b.dataset.swap);return;}
+  if(b.dataset.tech){
+   const tab=b.dataset.tech,key=+b.dataset.key,it=LAST[tab].items.find(x=>x.key===key);
+   const i=it.opts.indexOf(it.tech||null);S[tab].to[key]=it.opts[(i+1)%it.opts.length];render(tab);return;
+  }
+  if(b.dataset.regen){const st=S[b.dataset.regen];st.sw={};for(let i=0;i<6;i++)st.sw[i]=Math.floor(Math.random()*6);st.to={};render(b.dataset.regen);return;}
+  if(b.dataset.copy){
+   const txt=toText(b.dataset.copy);
+   try{navigator.clipboard.writeText(txt).then(()=>toast("Séance copiée ✓"),()=>toast("Copie bloquée par le navigateur"));}catch(e){toast("Copie bloquée par le navigateur");}
+   return;
+  }
+  if(b.hasAttribute("data-card")){b.classList.toggle("open");return;}
+  if(b.id==="jump"){const on=document.querySelector(".tab.on .out");on&&on.scrollIntoView({behavior:"smooth"});}
+ });
+ render("profil");render("prog");renderLib();
+}
+if(typeof document!=="undefined")init();
+if(typeof module!=="undefined")module.exports={gen,TPL,EX,T,W,flagsOf,consOf,keysFor};
+</script>
+</body>
+</html>

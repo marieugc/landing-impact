@@ -6,6 +6,13 @@ page de vente ugc pixel
 L'application de coaching (espace élève + espace coach) est dans le dossier [`app/`](app/).
 Pour la mettre en ligne pas à pas, suis le [**GUIDE.md**](GUIDE.md).
 
+## Outil « GluteLab · Séance express » 🍑
+
+Générateur de séances d'hypertrophie des fessiers pour coachs, dans [`glutelab/index.html`](glutelab/index.html) :
+séance sur mesure selon le profil de la cliente (niveau, zone à galber, bassin, proportions, ressenti, contraintes, durée),
+consignes techniques, techniques d'intensité, progression sur un bloc de 4 semaines + deload, bouton « Copier ».
+Une fois GitHub Pages activé : `https://marieugc.github.io/landing-impact/glutelab/`
+
 ## Test « Fessier court ou fessier long ? » 🍑
 
 Mini-guide interactif (lead magnet) dans [`test-fessier/index.html`](test-fessier/index.html).
