@@ -108,3 +108,13 @@ Tout reste enregistré sur son téléphone tant qu'elle n'a pas envoyé. Si l'en
 - **Espace coach** (connexion avec le compte coach de l'app) : `https://marieugc.github.io/landing-impact/bilan-postural/?coach`
   → liste des bilans reçus, photos et vidéos, réponses, grille de lecture de chaque test, bouton « Copier le lien » pour une nouvelle élève.
 - Les tests (textes, consignes, repères, ce que tu observes) se modifient en haut du `<script>` (`TESTS`).
+
+## Routine dos douce 🌙💜
+
+Routine de mobilité douce (6 exercices, 5-6 min, matin et soir) pour les élèves qui ont mal au bas du dos,
+dans [`routine-dos/index.html`](routine-dos/index.html) : consignes, lien vers la vidéo de chaque exercice,
+cases à cocher avec anneau de progression (remis à zéro chaque jour), onglets Matin / Soir, minuteurs intégrés,
+règles d'or et signes qui doivent faire consulter.
+
+- Lien élève (prénom pré-rempli) : `https://marieugc.github.io/landing-impact/routine-dos/?p=Audrey`
+- Les exercices (textes, dosages, liens vidéo Drive) se modifient en haut du `<script>` (`EX`).
