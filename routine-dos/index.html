@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Routine dos – Booty Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Dancing+Script:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: douce, rassurante, coach qui accompagne
+   IDEA: une carte de routine Booty Flow qu'on coche matin et soir
+   PICTURE: anneau de progression néon + cartes d'exercices avec minuteur
+   COLOUR/TYPE: nuit violette, violet néon, rose ; Anton + Dancing Script + DM Sans
+   LAYOUT: en-tête avec anneau, liste d'exercices, consignes, alerte */
+:root{color-scheme:dark;--bg:#0e0618;--panel:#1a0c2e;--panel2:#231140;--ink:#f3ecff;--mute:#b9a6d9;--neon:#b45cff;--neon2:#e04bff;--line:#3a2160;--ok:#7cf2c4}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:72px}
+body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,#3b1170 0%,transparent 60%),var(--bg);color:var(--ink);font:16px/1.55 "DM Sans",system-ui,sans-serif;overflow-x:clip;min-height:100vh}
+.wrap{max-width:860px;margin:0 auto;padding:clamp(24px,4vw,48px) max(5vw,16px) 64px}
+header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;margin-bottom:28px}
+.brand{font-family:"Dancing Script",cursive;font-size:30px;color:var(--neon);text-shadow:0 0 18px rgba(180,92,255,.7);line-height:1}
+.brand small{display:block;font-family:Anton,sans-serif;font-size:13px;letter-spacing:.3em;color:var(--ink);text-shadow:none;margin-top:4px}
+h1{font-family:Anton,sans-serif;font-weight:400;font-size:clamp(34px,6vw,50px);line-height:1.05;margin:18px 0 8px;text-wrap:balance}
+.intro{color:var(--mute);margin:0;max-width:52ch}
+.ring{width:132px;height:132px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .n{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-family:Anton,sans-serif;font-size:30px;line-height:1}
+.ring .n span{display:block;font:500 13px "DM Sans",sans-serif;color:var(--mute);margin-top:4px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+.tabs button,.btn{font:600 15px "DM Sans",sans-serif;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--neon);border-color:var(--neon);color:#16052b;box-shadow:0 0 20px rgba(180,92,255,.55)}
+button:focus-visible,a:focus-visible{outline:3px solid var(--neon2);outline-offset:3px}
+.list{display:grid;gap:14px;padding:0;margin:0;list-style:none}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:20px;padding:18px 20px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;transition:border-color .3s,box-shadow .3s}
+.card.done{border-color:var(--neon);box-shadow:0 0 0 1px var(--neon),0 0 28px rgba(180,92,255,.25)}
+.check{width:44px;height:44px;border-radius:50%;border:2px solid var(--neon);background:transparent;color:transparent;font-size:22px;cursor:pointer;display:grid;place-items:center}
+.done .check{background:var(--neon);color:#16052b}
+.card h2{font-family:Anton,sans-serif;font-weight:400;font-size:24px;line-height:1.1;margin:6px 0 2px}
+.dose{color:var(--neon);font-weight:700;margin:0 0 8px}
+.card p.how{margin:0 0 12px;color:var(--ink)}
+.tip{font-size:14px;color:var(--mute);margin:0 0 14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.video{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;background:var(--neon);color:#16052b;font-weight:700;text-decoration:none;box-shadow:0 0 18px rgba(180,92,255,.45)}
+.video svg{width:16px;height:16px}
+.timer{font-variant-numeric:tabular-nums}
+.timer.run{border-color:var(--neon2);color:var(--neon2)}
+.note{margin-top:28px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px}
+.note h3,.alert h3{font-family:Anton,sans-serif;font-weight:400;font-size:22px;margin:0 0 8px}
+.note ul,.alert ul{margin:0;padding-left:20px}
+.note li,.alert li{margin:4px 0}
+.alert{margin-top:14px;border-radius:20px;padding:20px;border:1px solid #ff5c8a;background:rgba(255,92,138,.08)}
+.alert h3{color:#ff8fb0}
+.reset{margin-top:20px;background:transparent}
+.bravo{display:none;margin:18px 0 0;text-align:center;font-family:"Dancing Script",cursive;font-size:30px;color:var(--neon);text-shadow:0 0 16px rgba(180,92,255,.6)}
+.bravo.show{display:block}
+footer{margin-top:32px;text-align:center;color:var(--mute);font-size:14px}
+@media(max-width:600px){header{grid-template-columns:1fr}.ring{width:112px;height:112px}.card{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="brand">Booty Flow<small>COACHING</small></div>
+    <h1>Ta routine dos douce<span id="nm"></span></h1>
+    <p class="intro">5 à 6 minutes, matin et soir. Clique sur chaque vidéo pour voir le mouvement, puis coche quand c'est fait. Tout se fait lentement et sans douleur 💜</p>
+  </div>
+  <div class="ring" aria-live="polite">
+    <svg viewBox="0 0 120 120" aria-hidden="true">
+      <circle cx="60" cy="60" r="50" fill="none" stroke="#3a2160" stroke-width="10"/>
+      <circle id="arc" cx="60" cy="60" r="50" fill="none" stroke="url(#g)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16" style="transition:stroke-dashoffset .5s"/>
+      <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#b45cff"/><stop offset="1" stop-color="#e04bff"/></linearGradient></defs>
+    </svg>
+    <div class="n"><div><b id="count">0/6</b><span>exercices</span></div></div>
+  </div>
+</header>
+
+<div class="tabs" role="group" aria-label="Moment de la journée">
+  <button type="button" data-s="matin" aria-pressed="true">☀︎ Matin</button>
+  <button type="button" data-s="soir" aria-pressed="false">☾ Soir</button>
+</div>
+
+<ol class="list" id="list"></ol>
+<p class="bravo" id="bravo">Bravo, routine terminée !</p>
+
+<section class="note">
+  <h3>Les règles d'or</h3>
+  <ul>
+    <li>Aucun mouvement ne doit faire mal : si ça tire trop, réduis l'amplitude ou passe à l'exercice suivant.</li>
+    <li>Respire calmement pendant tout le mouvement, ne bloque jamais ta respiration.</li>
+    <li>Marche 20 à 30 minutes chaque jour et lève-toi toutes les 30-45 minutes si tu es assise longtemps.</li>
+    <li>La chaleur (bouillotte, douche chaude) soulage bien le bas du dos.</li>
+  </ul>
+</section>
+
+<section class="alert">
+  <h3>Consulte rapidement si…</h3>
+  <ul>
+    <li>la douleur descend dans la jambe, ou tu as des fourmillements ou un engourdissement ;</li>
+    <li>tu sens une perte de force dans une jambe ;</li>
+    <li>tu as mal la nuit sans position qui soulage, ou de la fièvre ;</li>
+    <li>tu as des troubles urinaires ou intestinaux : dans ce cas, c'est les urgences.</li>
+  </ul>
+</section>
+
+<div style="text-align:center"><button type="button" class="btn reset" id="reset">Recommencer la routine</button></div>
+<footer>Booty Flow Coaching · Marie</footer>
+</div>
+
+<script>
+{
+const EX=[
+ {t:"Respiration ventrale",d:"1 minute · 10 respirations",s:60,h:"Allongée sur le dos, genoux fléchis, une main sur le ventre. Inspire par le nez en gonflant le ventre, puis expire lentement par la bouche.",tip:"Le but : relâcher les tensions du dos avant de bouger.",u:"https://drive.google.com/file/d/1Zmv47imKQ0RiM8HUKdMR3L5uZUVIbuSg/view?usp=sharing"},
+ {t:"Bascule du bassin",d:"10 répétitions",h:"Même position. Plaque doucement le bas du dos contre le sol en expirant, puis relâche en creusant légèrement.",tip:"Petit mouvement, lent et contrôlé.",u:"https://drive.google.com/file/d/1iWxCrbELiOlKvdwAgfhlARhx5G8eddIa/view?usp=drive_link"},
+ {t:"Essuie-glace des genoux",d:"10 répétitions de chaque côté",h:"Sur le dos, pieds à plat un peu plus écartés que le bassin. Laisse tomber les deux genoux d'un côté sans forcer, puis de l'autre.",tip:"Les épaules restent au sol, petite amplitude.",u:"https://drive.google.com/file/d/1w9oGSaaCDQdZBHUhturKwYhIypPiUmrh/view?usp=sharing"},
+ {t:"Genou vers la poitrine",d:"3 × 20 secondes par jambe",s:20,h:"Ramène un genou vers la poitrine avec les mains, l'autre jambe reste pliée, pied au sol.",tip:"Étirement doux : tu ne tires pas fort.",u:"https://drive.google.com/file/d/1UZuqekHVMPUj_lwBXrz9DeGnAuHzlEKR/view?usp=drive_link"},
+ {t:"Chat-vache",d:"10 répétitions",h:"À quatre pattes, mains sous les épaules, genoux sous les hanches. Arrondis le dos en expirant, puis creuse légèrement en inspirant.",tip:"Lentement, sans aller au bout de l'amplitude.",u:"https://drive.google.com/file/d/1VLDXeBwoPWyaOD1IBK80RQS3R-tjlbd8/view?usp=drive_link"},
+ {t:"Étirement dorsal",d:"30 secondes",s:30,h:"Fesses vers les talons, bras tendus devant, front au sol (posture de l'enfant).",tip:"Si ça tire trop : écarte les genoux ou glisse un coussin sous le ventre.",u:"https://drive.google.com/file/d/1Ihkd8TtwkH2Xnib-FkigHuKHgBvmPOTt/view?usp=drive_link"}
+];
+const list=document.getElementById('list'),arc=document.getElementById('arc'),count=document.getElementById('count'),bravo=document.getElementById('bravo');
+const play='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>';
+let slot='matin',state={matin:[],soir:[]};
+const day=new Date().toDateString();
+const prenom=(new URLSearchParams(location.search).get('p')||'').trim().slice(0,30);
+if(prenom)document.getElementById('nm').textContent=', '+prenom;
+const KEY='bf-routine-dos-'+(prenom||'eleve').toLowerCase();
+try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&raw.day===day)state=raw.state}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({day,state}))}catch(e){}};
+list.innerHTML=EX.map((e,i)=>`<li class="card" id="ex${i}">
+ <button type="button" class="check" data-i="${i}" aria-label="Marquer ${e.t} comme fait">✓</button>
+ <div><h2>${i+1}. ${e.t}</h2><p class="dose">${e.d}</p><p class="how">${e.h}</p><p class="tip">${e.tip}</p>
+ <div class="row"><a class="video" href="${e.u}" target="_blank" rel="noopener">${play} Voir la vidéo</a>
+ ${e.s?`<button type="button" class="btn timer" data-s="${e.s}" data-i="${i}">⏱ ${e.s} s</button>`:''}</div></div></li>`).join('');
+function render(){
+ const done=state[slot];
+ EX.forEach((e,i)=>{const c=document.getElementById('ex'+i),on=done.includes(i);c.classList.toggle('done',on);c.querySelector('.check').setAttribute('aria-pressed',on)});
+ count.textContent=done.length+'/6';
+ arc.style.strokeDashoffset=314.16*(1-done.length/6);
+ bravo.classList.toggle('show',done.length===6);
+ document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===slot));
+}
+const timers={};
+list.addEventListener('click',ev=>{
+ const ck=ev.target.closest('.check');
+ if(ck){const i=+ck.dataset.i,a=state[slot];const k=a.indexOf(i);k<0?a.push(i):a.splice(k,1);save();render();return}
+ const tm=ev.target.closest('.timer');
+ if(tm){const i=tm.dataset.i,s=+tm.dataset.s;
+  if(timers[i]){clearInterval(timers[i]);timers[i]=null;tm.classList.remove('run');tm.textContent='⏱ '+s+' s';return}
+  let left=s;tm.classList.add('run');tm.textContent='⏸ '+left+' s';
+  timers[i]=setInterval(()=>{left--;tm.textContent='⏸ '+left+' s';
+   if(left<=0){clearInterval(timers[i]);timers[i]=null;tm.classList.remove('run');tm.textContent='✓ Terminé · relancer';try{navigator.vibrate&&navigator.vibrate(200)}catch(e){}}},1000)}
+});
+document.querySelector('.tabs').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;slot=b.dataset.s;render()});
+document.getElementById('reset').addEventListener('click',()=>{state[slot]=[];save();render()});
+const h=new Date().getHours();if(h>=15)slot='soir';
+render();
+}
+</script>
+</body>
+</html>
